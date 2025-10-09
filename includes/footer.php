@@ -5,7 +5,7 @@
                 <!-- University Info Column -->
                 <div class="footer-section university-info">
                     <div class="footer-logo-section">
-                        <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="footer-logo">
+                        <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png" alt="University of Perpetual Help System" class="footer-logo">
                         <div class="university-details">
                             <h3 class="university-name">University of Perpetual Help System Laguna</h3>
                             <p class="university-tagline">Character Building is Nation Building</p>
@@ -65,12 +65,12 @@
                 <div class="footer-section">
                     <h4 class="footer-subtitle">Quick Links</h4>
                     <ul class="footer-links">
-                        <li><a href="index.php">Home</a></li>
-                        <li><a href="about.php">About</a></li>
-                        <li><a href="contact.php">Contact</a></li>
-                        <li><a href="campuses.php">Campuses</a></li>
-                        <li><a href="admissions.php">Admissions</a></li>
-                        <li><a href="academics.php">Academics</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php">Home</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php">About</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>contact.php">Contact</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>campuses.php">Campuses</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>admissions.php">Admissions</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>academics.php">Academics</a></li>
                     </ul>
                 </div>
             </div>
@@ -80,16 +80,16 @@
                 <div class="footer-bottom-content">
                     <p class="copyright">&copy; <?php echo date('Y'); ?> University of Perpetual Help System Laguna. All rights reserved.</p>
                     <div class="footer-bottom-links">
-                        <a href="privacy-policy.php" class="footer-bottom-link">Privacy Policy</a>
-                        <a href="terms-of-service.php" class="footer-bottom-link">Terms of Service</a>
-                        <a href="accessibility.php" class="footer-bottom-link">Accessibility</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>privacy-policy.php" class="footer-bottom-link">Privacy Policy</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>terms-of-service.php" class="footer-bottom-link">Terms of Service</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>accessibility.php" class="footer-bottom-link">Accessibility</a>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="assets/js/script.js"></script>
+    <script src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/js/script.js"></script>
     
     <?php if (isset($additional_js)): ?>
         <?php foreach ($additional_js as $js): ?>

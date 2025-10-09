@@ -8,11 +8,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($page_title) ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
-    <link rel="icon" type="image/png" href="assets/images/logo.png">
-    <link rel="shortcut icon" type="image/png" href="assets/images/logo.png">
-    <link rel="apple-touch-icon" href="assets/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
+    <link rel="apple-touch-icon" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/css/style.css">
     <?php if (isset($additional_css)): ?>
         <?php foreach ($additional_css as $css): ?>
             <link rel="stylesheet" href="<?php echo $css; ?>">
@@ -25,8 +25,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         <div class="nav-container">
             <!-- First Column: Logo -->
             <div class="nav-logo">
-                <a href="index.php">
-                    <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php">
+                    <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             
@@ -67,51 +67,51 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 <!-- Second Row: Main Menu -->
                 <div class="nav-menu" id="nav-menu">
                     <div class="nav-item">
-                        <a href="index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php" class="nav-link dropdown-toggle">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <div class="dropdown-item-with-submenu">
                                 <a href="#" class="dropdown-link dropdown-parent">Basic Education <i class="fas fa-chevron-right submenu-chevron"></i></a>
                                 <div class="submenu-dropdown">
-                                    <a href="#" class="submenu-link">Senior High School</a>
-                                    <a href="#" class="submenu-link">Junior High School</a>
-                                    <a href="#" class="submenu-link">Grade School</a>
+                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/senior-high-school.php" class="submenu-link">Senior High School</a>
+                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/junior-high-school.php" class="submenu-link">Junior High School</a>
+                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/grade-school.php" class="submenu-link">Grade School</a>
                                 </div>
                             </div>
-                            <a href="#" class="dropdown-link">Aviation</a>
-                            <a href="#" class="dropdown-link">Arts & Sciences</a>
-                            <a href="#" class="dropdown-link">Business & Accountancy</a>
-                            <a href="#" class="dropdown-link">Computer Studies</a>
-                            <a href="#" class="dropdown-link">Criminology</a>
-                            <a href="#" class="dropdown-link">Education</a>
-                            <a href="#" class="dropdown-link">Engineering & Architecture</a>
-                            <a href="#" class="dropdown-link">International Hospitality Management</a>
-                            <a href="#" class="dropdown-link">Maritime</a>
-                            <a href="#" class="dropdown-link">Law/Juris Doctor</a>
-                            <a href="#" class="dropdown-link">Graduate School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/aviation.php" class="dropdown-link">Aviation</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/arts-sciences.php" class="dropdown-link">Arts & Sciences</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/business-accountancy.php" class="dropdown-link">Business & Accountancy</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/computer-studies.php" class="dropdown-link">Computer Studies</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/criminology.php" class="dropdown-link">Criminology</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/education.php" class="dropdown-link">Education</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/engineering-architecture.php" class="dropdown-link">Engineering & Architecture</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/hospitality-management.php" class="dropdown-link">International Hospitality Management</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/maritime.php" class="dropdown-link">Maritime</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/law.php" class="dropdown-link">Law/Juris Doctor</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/graduate-school.php" class="dropdown-link">Graduate School</a>
                         </div>
                     </div>
                     
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle">Online Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="#" class="dropdown-link">Instructions</a>
-                            <a href="#" class="dropdown-link">GTI Online Grades</a>
-                            <a href="#" class="dropdown-link">Moodle</a>
-                            <a href="#" class="dropdown-link">Google Account</a>
-                            <a href="#" class="dropdown-link">Online Payment</a>
-                            <a href="#" class="dropdown-link">Microsoft 365</a>
-                            <a href="#" class="dropdown-link">Saliksik</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>ols_instructions.php" class="dropdown-link">Instructions</a>
+                            <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">GTI Online Grades</a>
+                            <a href="https://uphslms.com/blended/login/index.php" target="_blank" class="dropdown-link">Moodle</a>
+                            <a href="https://accounts.google.com/signin" target="_blank" class="dropdown-link">Google Account</a>
+                            <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">Online Payment</a>
+                            <a href="https://login.microsoftonline.com/" target="_blank" class="dropdown-link">Microsoft 365</a>
+                            <a href="https://saliksikuphsl.org/" target="_blank" class="dropdown-link">Saliksik</a>
                         </div>
                     </div>
                     
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="#" class="dropdown-link">Alumni</a>
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="dropdown-link">Alumni</a>
                             <a href="#" class="dropdown-link">Careers</a>
                             <a href="#" class="dropdown-link">Clinic</a>
                             <a href="#" class="dropdown-link">Community Outreach Department</a>
@@ -175,7 +175,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <div class="mobile-sidebar" id="mobile-sidebar">
         <div class="mobile-sidebar-header">
             <div class="mobile-sidebar-logo">
-                <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="mobile-logo-img">
+                <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png" alt="University of Perpetual Help System" class="mobile-logo-img">
                 <h2 class="mobile-site-name">UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h2>
             </div>
             <button class="mobile-sidebar-close" id="mobile-sidebar-close">
@@ -194,51 +194,51 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         
         <nav class="mobile-sidebar-menu">
             <div class="mobile-nav-item">
-                <a href="index.php" class="mobile-nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php" class="mobile-nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php" class="mobile-nav-link mobile-dropdown-toggle">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <div class="mobile-dropdown-item-with-submenu">
                         <a href="#" class="mobile-dropdown-link mobile-dropdown-parent">Basic Education <i class="fas fa-chevron-right mobile-submenu-chevron"></i></a>
                         <div class="mobile-submenu-dropdown">
-                            <a href="#" class="mobile-submenu-link">Senior High School</a>
-                            <a href="#" class="mobile-submenu-link">Junior High School</a>
-                            <a href="#" class="mobile-submenu-link">Grade School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/senior-high-school.php" class="mobile-submenu-link">Senior High School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/junior-high-school.php" class="mobile-submenu-link">Junior High School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/grade-school.php" class="mobile-submenu-link">Grade School</a>
                         </div>
                     </div>
-                    <a href="#" class="mobile-dropdown-link">Aviation</a>
-                    <a href="#" class="mobile-dropdown-link">Arts & Sciences</a>
-                    <a href="#" class="mobile-dropdown-link">Business & Accountancy</a>
-                    <a href="#" class="mobile-dropdown-link">Computer Studies</a>
-                    <a href="#" class="mobile-dropdown-link">Criminology</a>
-                    <a href="#" class="mobile-dropdown-link">Education</a>
-                    <a href="#" class="mobile-dropdown-link">Engineering & Architecture</a>
-                    <a href="#" class="mobile-dropdown-link">International Hospitality Management</a>
-                    <a href="#" class="mobile-dropdown-link">Maritime</a>
-                    <a href="#" class="mobile-dropdown-link">Law/Juris Doctor</a>
-                    <a href="#" class="mobile-dropdown-link">Graduate School</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/aviation.php" class="mobile-dropdown-link">Aviation</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/arts-sciences.php" class="mobile-dropdown-link">Arts & Sciences</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/business-accountancy.php" class="mobile-dropdown-link">Business & Accountancy</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/computer-studies.php" class="mobile-dropdown-link">Computer Studies</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/criminology.php" class="mobile-dropdown-link">Criminology</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/education.php" class="mobile-dropdown-link">Education</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/engineering-architecture.php" class="mobile-dropdown-link">Engineering & Architecture</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/hospitality-management.php" class="mobile-dropdown-link">International Hospitality Management</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/maritime.php" class="mobile-dropdown-link">Maritime</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/law.php" class="mobile-dropdown-link">Law/Juris Doctor</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/graduate-school.php" class="mobile-dropdown-link">Graduate School</a>
                 </div>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Online Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="#" class="mobile-dropdown-link">Instructions</a>
-                    <a href="#" class="mobile-dropdown-link">GTI Online Grades</a>
-                    <a href="#" class="mobile-dropdown-link">Moodle</a>
-                    <a href="#" class="mobile-dropdown-link">Google Account</a>
-                    <a href="#" class="mobile-dropdown-link">Online Payment</a>
-                    <a href="#" class="mobile-dropdown-link">Microsoft 365</a>
-                    <a href="#" class="mobile-dropdown-link">Saliksik</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>ols_instructions.php" class="mobile-dropdown-link">Instructions</a>
+                    <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">GTI Online Grades</a>
+                    <a href="https://uphslms.com/blended/login/index.php" target="_blank" class="mobile-dropdown-link">Moodle</a>
+                    <a href="https://accounts.google.com/signin" target="_blank" class="mobile-dropdown-link">Google Account</a>
+                    <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">Online Payment</a>
+                    <a href="https://login.microsoftonline.com/" target="_blank" class="mobile-dropdown-link">Microsoft 365</a>
+                    <a href="https://saliksikuphsl.org/" target="_blank" class="mobile-dropdown-link">Saliksik</a>
                 </div>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="#" class="mobile-dropdown-link">Alumni</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="mobile-dropdown-link">Alumni</a>
                     <a href="#" class="mobile-dropdown-link">Careers</a>
                     <a href="#" class="mobile-dropdown-link">Clinic</a>
                     <a href="#" class="mobile-dropdown-link">Community Outreach Department</a>
