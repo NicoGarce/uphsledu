@@ -34,27 +34,27 @@
                 <div class="footer-section">
                     <h4 class="footer-subtitle">Online Services</h4>
                     <ul class="footer-links">
-                        <li><a href="#" class="service-link">
+                        <li><a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="service-link">
                             <i class="fas fa-graduation-cap"></i>
                             School Automate (GTI)
                         </a></li>
-                        <li><a href="#" class="service-link">
+                        <li><a href="https://uphslms.com/blended/login/index.php" target="_blank" class="service-link">
                             <i class="fas fa-book"></i>
                             Moodle
                         </a></li>
-                        <li><a href="#" class="service-link">
+                        <li><a href="https://accounts.google.com/signin" target="_blank" class="service-link">
                             <i class="fab fa-google"></i>
                             Google Workspace
                         </a></li>
-                        <li><a href="#" class="service-link">
+                        <li><a href="https://login.microsoftonline.com/" target="_blank" class="service-link">
                             <i class="fab fa-microsoft"></i>
                             Microsoft 365
                         </a></li>
-                        <li><a href="#" class="service-link">
+                        <li><a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="service-link">
                             <i class="fas fa-credit-card"></i>
                             Online Payment
                         </a></li>
-                        <li><a href="#" class="service-link">
+                        <li><a href="https://saliksikuphsl.org/" target="_blank" class="service-link">
                             <i class="fas fa-search"></i>
                             Saliksik
                         </a></li>
@@ -72,6 +72,31 @@
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>admissions.php">Admissions</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>academics.php">Academics</a></li>
                     </ul>
+                </div>
+                
+                <!-- Contact Information Column -->
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Contact Information</h4>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <h5>Our Business Office</h5>
+                            <p>UPH Compound, National Highway,<br>
+                            Sto. Niño, City of Biñan, Laguna</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <h5>Phone</h5>
+                            <p><a href="tel:02-779-5310">02-779-5310</a></p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <h5>Email</h5>
+                            <ul class="email-links">
+                                <li><a href="mailto:marketing@uphsl.edu.ph">marketing@uphsl.edu.ph</a></li>
+                                <li><a href="mailto:info@uphsl.edu.ph">info@uphsl.edu.ph</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             

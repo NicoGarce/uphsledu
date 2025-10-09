@@ -7,7 +7,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
+    <title><?php echo (isset($page_title) && $page_title !== 'Home') ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
     <link rel="icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
     <link rel="shortcut icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
     <link rel="apple-touch-icon" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
