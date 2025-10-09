@@ -118,17 +118,51 @@ function initializeDatabase() {
         $pdo->exec($postCategoriesTable);
         $pdo->exec($commentsTable);
         
-        // Create default admin user if no users exist
+        // Create default users if no users exist
         $stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
         $result = $stmt->fetch();
         
         if ($result['count'] == 0) {
-            $adminPassword = password_hash('admin123', PASSWORD_DEFAULT);
+            // Create super admin account
+            $superAdminPassword = password_hash('SuperAdmin@2024', PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("
                 INSERT INTO users (username, email, password, first_name, last_name, role) 
                 VALUES (?, ?, ?, ?, ?, ?)
             ");
-            $stmt->execute(['admin', 'admin@uphs.edu.ph', $adminPassword, 'Admin', 'User', 'super_admin']);
+            $stmt->execute(['web-admin', 'web-admin@uphsl.edu.ph', $superAdminPassword, 'Web', 'Administrator', 'super_admin']);
+            
+            // Create marketing staff as author
+            $authorPassword = password_hash('Marketing@2024', PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("
+                INSERT INTO users (username, email, password, first_name, last_name, role) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute(['marketing-author', 'marketing.author@uphsl.edu.ph', $authorPassword, 'Marketing', 'Author', 'author']);
+            
+            // Create marketing staff as admin
+            $adminPassword = password_hash('MarketingAdmin@2024', PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("
+                INSERT INTO users (username, email, password, first_name, last_name, role) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute(['marketing-admin', 'marketing.admin@uphsl.edu.ph', $adminPassword, 'Marketing', 'Admin', 'admin']);
+            
+            // Create some default categories
+            $defaultCategories = [
+                ['name' => 'News', 'slug' => 'news', 'description' => 'University news and announcements'],
+                ['name' => 'Events', 'slug' => 'events', 'description' => 'University events and activities'],
+                ['name' => 'Academics', 'slug' => 'academics', 'description' => 'Academic programs and updates'],
+                ['name' => 'Student Life', 'slug' => 'student-life', 'description' => 'Student activities and achievements'],
+                ['name' => 'Research', 'slug' => 'research', 'description' => 'Research projects and publications']
+            ];
+            
+            foreach ($defaultCategories as $category) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO categories (name, slug, description) 
+                    VALUES (?, ?, ?)
+                ");
+                $stmt->execute([$category['name'], $category['slug'], $category['description']]);
+            }
         }
         
         return true;
