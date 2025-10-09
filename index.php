@@ -29,23 +29,6 @@ $recent_posts = getRecentPosts(6);
                 </a>
             </div>
             
-            <!-- Mobile Search Bar -->
-            <div class="nav-search-mobile">
-                <form class="search-form" action="posts.php" method="GET">
-                    <input type="text" name="search" class="search-input" placeholder="Search posts..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-            </div>
-            
-            <!-- Mobile Menu Toggle -->
-            <div class="nav-toggle" id="nav-toggle">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
-            
             <!-- Second Column: Site Info and Menu -->
             <div class="nav-content">
                 <!-- First Row: Site Name and Search -->
@@ -63,40 +46,57 @@ $recent_posts = getRecentPosts(6);
                     </div>
                 </div>
                 
+                <!-- Mobile Search Bar (separate from nav-header) -->
+                <div class="nav-search mobile-search">
+                    <form class="search-form">
+                        <input type="text" placeholder="Search..." class="search-input">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Mobile Menu Toggle Button -->
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                
                 <!-- Second Row: Main Menu -->
-                <div class="nav-menu" id="nav-menu">
+            <div class="nav-menu" id="nav-menu">
                     <div class="nav-item">
-                        <a href="index.php" class="nav-link active">Home</a>
+                <a href="index.php" class="nav-link active">Home</a>
                     </div>
                     
+                    
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">Programs</a>
+                        <a href="#" class="nav-link dropdown-toggle">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <div class="dropdown-section">
-                                <h4>Basic Education</h4>
-                                <a href="#" class="dropdown-link">Senior High School</a>
-                                <a href="#" class="dropdown-link">Junior High School</a>
-                                <a href="#" class="dropdown-link">Grade School</a>
+                            <div class="dropdown-item-with-submenu">
+                                <a href="#" class="dropdown-link dropdown-parent">Basic Education <i class="fas fa-chevron-right submenu-chevron"></i></a>
+                                <div class="submenu-dropdown">
+                                    <a href="#" class="submenu-link">Senior High School</a>
+                                    <a href="#" class="submenu-link">Junior High School</a>
+                                    <a href="#" class="submenu-link">Grade School</a>
+                                </div>
                             </div>
-                            <div class="dropdown-section">
-                                <h4>Higher Education</h4>
-                                <a href="#" class="dropdown-link">Aviation</a>
-                                <a href="#" class="dropdown-link">Arts & Sciences</a>
-                                <a href="#" class="dropdown-link">Business & Accountancy</a>
-                                <a href="#" class="dropdown-link">Computer Studies</a>
-                                <a href="#" class="dropdown-link">Criminology</a>
-                                <a href="#" class="dropdown-link">Education</a>
-                                <a href="#" class="dropdown-link">Engineering & Architecture</a>
-                                <a href="#" class="dropdown-link">International Hospitality Management</a>
-                                <a href="#" class="dropdown-link">Maritime</a>
-                                <a href="#" class="dropdown-link">Law/Juris Doctor</a>
-                                <a href="#" class="dropdown-link">Graduate School</a>
-                            </div>
+                            <a href="#" class="dropdown-link">Aviation</a>
+                            <a href="#" class="dropdown-link">Arts & Sciences</a>
+                            <a href="#" class="dropdown-link">Business & Accountancy</a>
+                            <a href="#" class="dropdown-link">Computer Studies</a>
+                            <a href="#" class="dropdown-link">Criminology</a>
+                            <a href="#" class="dropdown-link">Education</a>
+                            <a href="#" class="dropdown-link">Engineering & Architecture</a>
+                            <a href="#" class="dropdown-link">International Hospitality Management</a>
+                            <a href="#" class="dropdown-link">Maritime</a>
+                            <a href="#" class="dropdown-link">Law/Juris Doctor</a>
+                            <a href="#" class="dropdown-link">Graduate School</a>
                         </div>
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">Online Services</a>
+                        <a href="#" class="nav-link dropdown-toggle">Online Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="#" class="dropdown-link">Instructions</a>
                             <a href="#" class="dropdown-link">GTI Online Grades</a>
@@ -109,7 +109,7 @@ $recent_posts = getRecentPosts(6);
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">Support Services</a>
+                        <a href="#" class="nav-link dropdown-toggle">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="#" class="dropdown-link">Alumni</a>
                             <a href="#" class="dropdown-link">Careers</a>
@@ -128,7 +128,7 @@ $recent_posts = getRecentPosts(6);
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">About</a>
+                        <a href="#" class="nav-link dropdown-toggle">About <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="#" class="dropdown-link">About Us</a>
                             <a href="#" class="dropdown-link">Contact Us</a>
@@ -139,7 +139,7 @@ $recent_posts = getRecentPosts(6);
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">Online Payment</a>
+                        <a href="#" class="nav-link dropdown-toggle">Online Payment <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="#" class="dropdown-link">Entrance Exam</a>
                             <a href="#" class="dropdown-link">New Enrollees</a>
@@ -155,33 +155,151 @@ $recent_posts = getRecentPosts(6);
                         <a href="#" class="nav-link">SDG Initiatives</a>
                     </div>
                     
-                    <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if (isset($_SESSION['user_id'])): ?>
                         <div class="nav-item">
-                            <a href="dashboard.php" class="nav-link">Dashboard</a>
+                    <a href="dashboard.php" class="nav-link">Dashboard</a>
                         </div>
                         <div class="nav-item">
-                            <a href="logout.php" class="nav-link">Logout</a>
+                    <a href="logout.php" class="nav-link">Logout</a>
                         </div>
-                    <?php endif; ?>
+                <?php endif; ?>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section with Video Background -->
-    <section class="hero">
-        <div class="video-container">
-            <div class="video-wrapper">
-                <iframe 
-                    id="youtube-video"
-                    src="https://www.youtube.com/embed/kCIdWgbfuoE?autoplay=1&mute=1&loop=1&playlist=kCIdWgbfuoE&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&disablekb=1&cc_load_policy=0&start=0&end=0&enablejsapi=0&wmode=opaque&origin=*&playsinline=1&html5=1" 
-                    frameborder="0" 
-                    allow="autoplay; encrypted-media; fullscreen" 
-                    allowfullscreen
-                    style="pointer-events: none; border: none; outline: none;"
-                    loading="eager">
-                </iframe>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="mobile-sidebar-overlay" id="mobile-sidebar-overlay"></div>
+    
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobile-sidebar">
+        <div class="mobile-sidebar-header">
+            <div class="mobile-sidebar-logo">
+                <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="mobile-logo-img">
+                <h2 class="mobile-site-name">UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h2>
             </div>
+            <button class="mobile-sidebar-close" id="mobile-sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mobile-sidebar-search">
+            <form class="mobile-search-form">
+                <input type="text" placeholder="Search..." class="mobile-search-input">
+                <button type="submit" class="mobile-search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        
+        <nav class="mobile-sidebar-menu">
+            <div class="mobile-nav-item">
+                <a href="index.php" class="mobile-nav-link active">Home</a>
+            </div>
+            
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <div class="mobile-dropdown-item-with-submenu">
+                        <a href="#" class="mobile-dropdown-link mobile-dropdown-parent">Basic Education <i class="fas fa-chevron-right mobile-submenu-chevron"></i></a>
+                        <div class="mobile-submenu-dropdown">
+                            <a href="#" class="mobile-submenu-link">Senior High School</a>
+                            <a href="#" class="mobile-submenu-link">Junior High School</a>
+                            <a href="#" class="mobile-submenu-link">Grade School</a>
+                        </div>
+                    </div>
+                    <a href="#" class="mobile-dropdown-link">Aviation</a>
+                    <a href="#" class="mobile-dropdown-link">Arts & Sciences</a>
+                    <a href="#" class="mobile-dropdown-link">Business & Accountancy</a>
+                    <a href="#" class="mobile-dropdown-link">Computer Studies</a>
+                    <a href="#" class="mobile-dropdown-link">Criminology</a>
+                    <a href="#" class="mobile-dropdown-link">Education</a>
+                    <a href="#" class="mobile-dropdown-link">Engineering & Architecture</a>
+                    <a href="#" class="mobile-dropdown-link">International Hospitality Management</a>
+                    <a href="#" class="mobile-dropdown-link">Maritime</a>
+                    <a href="#" class="mobile-dropdown-link">Law/Juris Doctor</a>
+                    <a href="#" class="mobile-dropdown-link">Graduate School</a>
+                </div>
+            </div>
+            
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Online Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <a href="#" class="mobile-dropdown-link">Instructions</a>
+                    <a href="#" class="mobile-dropdown-link">GTI Online Grades</a>
+                    <a href="#" class="mobile-dropdown-link">Moodle</a>
+                    <a href="#" class="mobile-dropdown-link">Google Account</a>
+                    <a href="#" class="mobile-dropdown-link">Online Payment</a>
+                    <a href="#" class="mobile-dropdown-link">Microsoft 365</a>
+                    <a href="#" class="mobile-dropdown-link">Saliksik</a>
+                </div>
+            </div>
+            
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <a href="#" class="mobile-dropdown-link">Alumni</a>
+                    <a href="#" class="mobile-dropdown-link">Careers</a>
+                    <a href="#" class="mobile-dropdown-link">Clinic</a>
+                    <a href="#" class="mobile-dropdown-link">Community Outreach Department</a>
+                    <a href="#" class="mobile-dropdown-link">International and External Affairs</a>
+                    <a href="#" class="mobile-dropdown-link">Guidance and Admission</a>
+                    <a href="#" class="mobile-dropdown-link">Library</a>
+                    <a href="#" class="mobile-dropdown-link">Quality Assurance</a>
+                    <a href="#" class="mobile-dropdown-link">Research</a>
+                </div>
+            </div>
+            
+            <div class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link">Campuses</a>
+            </div>
+            
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">About <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <a href="#" class="mobile-dropdown-link">About Us</a>
+                    <a href="#" class="mobile-dropdown-link">Contact Us</a>
+                    <a href="#" class="mobile-dropdown-link">Environmental Policy</a>
+                    <a href="#" class="mobile-dropdown-link">University Policy</a>
+                    <a href="#" class="mobile-dropdown-link">Map</a>
+                </div>
+            </div>
+            
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Online Payment <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <a href="#" class="mobile-dropdown-link">Entrance Exam</a>
+                    <a href="#" class="mobile-dropdown-link">New Enrollees</a>
+                    <a href="#" class="mobile-dropdown-link">Enrolled Students</a>
+                </div>
+            </div>
+            
+            <div class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link">Calendar</a>
+            </div>
+            
+            <div class="mobile-nav-item">
+                <a href="#" class="mobile-nav-link">SDG Initiatives</a>
+            </div>
+            
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="mobile-nav-item">
+                    <a href="dashboard.php" class="mobile-nav-link">Dashboard</a>
+                </div>
+                <div class="mobile-nav-item">
+                    <a href="logout.php" class="mobile-nav-link">Logout</a>
+                </div>
+            <?php endif; ?>
+        </nav>
+    </div>
+
+    <!-- Hero Section with Image Background -->
+    <section class="hero">
+        <div class="hero-background">
+            <img 
+                src="assets/images/UPHSL Facade.png" 
+                alt="University of Perpetual Help System Laguna" 
+                class="hero-image">
         </div>
         <div class="video-overlay">
             <div class="hero-content">
@@ -214,6 +332,19 @@ $recent_posts = getRecentPosts(6);
                             <div class="news-carousel" id="newsCarousel">
                                 <?php foreach ($recent_posts as $index => $post): ?>
                                     <div class="news-slide <?php echo $index === 0 ? 'active' : ''; ?>">
+                                        <div class="news-slide-meta">
+                                            <span class="news-slide-date">
+                                                <i class="fas fa-calendar"></i>
+                                                <?php echo formatDate($post['created_at']); ?>
+                                            </span>
+                                        </div>
+                                        <div class="news-slide-title-overlay">
+                                            <h3 class="news-slide-title">
+                                                <a href="post.php?slug=<?php echo $post['slug']; ?>">
+                                                    <?php echo htmlspecialchars($post['title']); ?>
+                                                </a>
+                                            </h3>
+                                        </div>
                                         <div class="news-slide-image">
                                             <?php if ($post['featured_image']): ?>
                                                 <?php 
@@ -226,31 +357,6 @@ $recent_posts = getRecentPosts(6);
                                                     <i class="fas fa-newspaper"></i>
                                                 </div>
                                             <?php endif; ?>
-                                        </div>
-                                        <div class="news-slide-content">
-                                            <div class="news-slide-meta">
-                                                <span class="news-slide-date">
-                                                    <i class="fas fa-calendar"></i>
-                                                    <?php echo formatDate($post['created_at']); ?>
-                                                </span>
-                                                <span class="news-slide-author">
-                                                    <i class="fas fa-user"></i>
-                                                    <?php echo htmlspecialchars($post['author_name']); ?>
-                                                </span>
-                                            </div>
-                                            <h3 class="news-slide-title">
-                                                <a href="post.php?slug=<?php echo $post['slug']; ?>">
-                                                    <?php echo htmlspecialchars($post['title']); ?>
-                                                </a>
-                                            </h3>
-                                            <p class="news-slide-excerpt">
-                                                <?php echo htmlspecialchars($post['excerpt'] ?? getExcerpt($post['content'], 200)); ?>
-                                            </p>
-                                            <div class="news-slide-footer">
-                                                <a href="post.php?slug=<?php echo $post['slug']; ?>" class="read-more-btn">
-                                                    Read More <i class="fas fa-arrow-right"></i>
-                                                </a>
-                                            </div>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -270,6 +376,17 @@ $recent_posts = getRecentPosts(6);
                         
                         <div class="news-actions">
                             <a href="posts.php" class="btn btn-primary">View All Posts</a>
+                            <div class="social-media-icons">
+                                <a href="#" class="social-icon instagram" title="Follow us on Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="social-icon youtube" title="Subscribe to our YouTube">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                                <a href="#" class="social-icon tiktok" title="Follow us on TikTok">
+                                    <i class="fab fa-tiktok"></i>
+                                </a>
+                            </div>
                         </div>
                     <?php else: ?>
                         <div class="empty-news">
@@ -281,13 +398,6 @@ $recent_posts = getRecentPosts(6);
                 </div>
                 
                 <div class="facebook-feed">
-                    <div class="facebook-header">
-                        <h3 class="facebook-title">
-                            <i class="fab fa-facebook"></i>
-                            Follow Us on Facebook
-                        </h3>
-                        <p class="facebook-subtitle">Stay connected with our latest updates</p>
-                    </div>
                     <div class="facebook-embed">
                         <div class="fb-page" 
                              data-href="https://www.facebook.com/uphsl.info.ph" 
@@ -299,6 +409,13 @@ $recent_posts = getRecentPosts(6);
                              data-hide-cover="false" 
                              data-show-facepile="false">
                         </div>
+                    </div>
+                    <div class="facebook-header">
+                        <h3 class="facebook-title">
+                            <i class="fab fa-facebook"></i>
+                            Follow Us on Facebook
+                        </h3>
+                        <p class="facebook-subtitle">Stay connected with our latest updates</p>
                     </div>
                 </div>
             </div>
@@ -444,53 +561,89 @@ $recent_posts = getRecentPosts(6);
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-section">
-                    <h3 class="footer-title">
+                <!-- University Info Column -->
+                <div class="footer-section university-info">
+                    <div class="footer-logo-section">
                         <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="footer-logo">
-                    </h3>
-                    <p class="footer-description">
-                        University of Perpetual Help System - Character Building is Nation Building
-                    </p>
+                        <div class="university-details">
+                            <h3 class="university-name">University of Perpetual Help System Laguna</h3>
+                            <p class="university-tagline">Character Building is Nation Building</p>
+                        </div>
+                    </div>
                     <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link facebook" title="Follow us on Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link twitter" title="Follow us on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link instagram" title="Follow us on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link youtube" title="Subscribe to our YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="social-link linkedin" title="Connect with us on LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
                     </div>
                 </div>
                 
+                <!-- Online Services Column -->
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Online Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" class="service-link">
+                            <i class="fas fa-graduation-cap"></i>
+                            School Automate (GTI)
+                        </a></li>
+                        <li><a href="#" class="service-link">
+                            <i class="fas fa-book"></i>
+                            Moodle
+                        </a></li>
+                        <li><a href="#" class="service-link">
+                            <i class="fab fa-google"></i>
+                            Google Workspace
+                        </a></li>
+                        <li><a href="#" class="service-link">
+                            <i class="fab fa-microsoft"></i>
+                            Microsoft 365
+                        </a></li>
+                        <li><a href="#" class="service-link">
+                            <i class="fas fa-credit-card"></i>
+                            Online Payment
+                        </a></li>
+                        <li><a href="#" class="service-link">
+                            <i class="fas fa-search"></i>
+                            Saliksik
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Quick Links Column -->
                 <div class="footer-section">
                     <h4 class="footer-subtitle">Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="index.php">Home</a></li>
                         <li><a href="about.php">About</a></li>
                         <li><a href="contact.php">Contact</a></li>
-                        <li><a href="login.php">Login</a></li>
+                        <li><a href="campuses.php">Campuses</a></li>
+                        <li><a href="admissions.php">Admissions</a></li>
+                        <li><a href="academics.php">Academics</a></li>
                     </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4 class="footer-subtitle">Categories</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Technology</a></li>
-                        <li><a href="#">Lifestyle</a></li>
-                        <li><a href="#">Business</a></li>
-                        <li><a href="#">Travel</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4 class="footer-subtitle">Contact Info</h4>
-                    <div class="contact-info">
-                        <p><i class="fas fa-envelope"></i> info@myblog.com</p>
-                        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-                        <p><i class="fas fa-map-marker-alt"></i> New York, NY</p>
-                    </div>
                 </div>
             </div>
             
+            <!-- Footer Bottom -->
             <div class="footer-bottom">
-                <p>&copy; <?php echo date('Y'); ?> University of Perpetual Help System. All rights reserved.</p>
+                <div class="footer-bottom-content">
+                    <p class="copyright">&copy; <?php echo date('Y'); ?> University of Perpetual Help System Laguna. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="privacy-policy.php" class="footer-bottom-link">Privacy Policy</a>
+                        <a href="terms-of-service.php" class="footer-bottom-link">Terms of Service</a>
+                        <a href="accessibility.php" class="footer-bottom-link">Accessibility</a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
