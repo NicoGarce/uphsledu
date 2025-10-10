@@ -112,7 +112,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         <a href="#" class="nav-link dropdown-toggle">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="dropdown-link">Alumni</a>
-                            <a href="#" class="dropdown-link">Careers</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>careers.php" class="dropdown-link">Careers</a>
                             <a href="#" class="dropdown-link">Clinic</a>
                             <a href="#" class="dropdown-link">Community Outreach Department</a>
                             <a href="#" class="dropdown-link">International and External Affairs</a>
@@ -239,7 +239,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="mobile-dropdown-link">Alumni</a>
-                    <a href="#" class="mobile-dropdown-link">Careers</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>careers.php" class="mobile-dropdown-link">Careers</a>
                     <a href="#" class="mobile-dropdown-link">Clinic</a>
                     <a href="#" class="mobile-dropdown-link">Community Outreach Department</a>
                     <a href="#" class="mobile-dropdown-link">International and External Affairs</a>
