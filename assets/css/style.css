@@ -3047,40 +3047,56 @@ h2, h3, h4, h5, h6 {
 }
 
 /* Contact Information Styles */
-.contact-details {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.footer-section .contact-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
 }
 
-.contact-item {
-    margin-bottom: 8px;
+.footer-section .contact-item {
+    margin-bottom: 8px !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    display: block !important;
+    align-items: unset !important;
+    gap: unset !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    transition: none !important;
 }
 
-.contact-item h5 {
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.footer-section .contact-item:hover {
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-.contact-item p {
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.5;
-    margin: 0;
+.footer-section .contact-item h5 {
+    color: white !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    display: block !important;
 }
 
-.contact-item a {
-    color: white;
-    text-decoration: none;
-    transition: color 0.3s ease;
+.footer-section .contact-item p {
+    color: rgba(255, 255, 255, 0.8) !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+    font-size: 0.9rem !important;
 }
 
-.contact-item a:hover {
-    color: #ccc;
-    text-decoration: underline;
+.footer-section .contact-item a {
+    color: white !important;
+    text-decoration: none !important;
+    transition: color 0.3s ease !important;
+}
+
+.footer-section .contact-item a:hover {
+    color: #ccc !important;
+    text-decoration: underline !important;
 }
 
 .email-links {
@@ -3321,12 +3337,16 @@ h2, h3, h4, h5, h6 {
         gap: 25px;
     }
     
-    .contact-details {
+    .footer-section .contact-details {
         gap: 12px;
     }
     
-    .contact-item h5 {
-        font-size: 0.85rem;
+    .footer-section .contact-item h5 {
+        font-size: 0.9rem;
+    }
+    
+    .footer-section .contact-item p {
+        font-size: 0.8rem;
     }
     
     .email-links a {
@@ -3339,12 +3359,16 @@ h2, h3, h4, h5, h6 {
         gap: 30px;
     }
     
-    .contact-details {
+    .footer-section .contact-details {
         gap: 15px;
     }
     
-    .contact-item h5 {
-        font-size: 0.9rem;
+    .footer-section .contact-item h5 {
+        font-size: 0.95rem;
+    }
+    
+    .footer-section .contact-item p {
+        font-size: 0.85rem;
     }
     
     .email-links a {
