@@ -13,8 +13,9 @@ function getRecentPosts($limit = 10) {
         JOIN users u ON p.author_id = u.id 
         WHERE p.status = 'published' 
         ORDER BY p.created_at DESC 
-        LIMIT " . $limit
-    );
+        LIMIT :limit
+    ");
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll();
 }
@@ -272,8 +273,10 @@ function getPublishedPosts($page = 1, $limit = 10) {
         JOIN users u ON p.author_id = u.id 
         WHERE p.status = 'published' 
         ORDER BY p.created_at DESC 
-        LIMIT " . $limit . " OFFSET " . $offset
-    );
+        LIMIT :limit OFFSET :offset
+    ");
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll();
 }

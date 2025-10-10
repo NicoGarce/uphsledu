@@ -181,6 +181,17 @@ h2, h3, h4, h5, h6 {
     color: #ffc63e;
 }
 
+/* Dropdown link active states */
+.dropdown-link.active {
+    background: rgba(255, 198, 62, 0.2);
+    color: #ffc63e;
+}
+
+.submenu-link.active {
+    background: rgba(255, 198, 62, 0.2);
+    color: #ffc63e;
+}
+
 .dropdown {
     position: relative;
 }
@@ -3805,6 +3816,17 @@ h2, h3, h4, h5, h6 {
 }
 
 .mobile-nav-link.active {
+    background: rgba(255, 198, 62, 0.2);
+    color: #ffc63e;
+}
+
+/* Mobile dropdown link active states */
+.mobile-dropdown-link.active {
+    background: rgba(255, 198, 62, 0.2);
+    color: #ffc63e;
+}
+
+.mobile-submenu-link.active {
     background: rgba(255, 198, 62, 0.2);
     color: #ffc63e;
 }

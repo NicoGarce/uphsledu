@@ -71,34 +71,34 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php" class="nav-link dropdown-toggle">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php" class="nav-link dropdown-toggle <?php echo (strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school'])) ? 'active' : ''; ?>">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <div class="dropdown-item-with-submenu">
                                 <a href="#" class="dropdown-link dropdown-parent">Basic Education <i class="fas fa-chevron-right submenu-chevron"></i></a>
                                 <div class="submenu-dropdown">
-                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/senior-high-school.php" class="submenu-link">Senior High School</a>
-                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/junior-high-school.php" class="submenu-link">Junior High School</a>
-                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/grade-school.php" class="submenu-link">Grade School</a>
+                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/senior-high-school.php" class="submenu-link <?php echo ($current_page == 'senior-high-school') ? 'active' : ''; ?>">Senior High School</a>
+                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/junior-high-school.php" class="submenu-link <?php echo ($current_page == 'junior-high-school') ? 'active' : ''; ?>">Junior High School</a>
+                                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/grade-school.php" class="submenu-link <?php echo ($current_page == 'grade-school') ? 'active' : ''; ?>">Grade School</a>
                                 </div>
                             </div>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/aviation.php" class="dropdown-link">Aviation</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/arts-sciences.php" class="dropdown-link">Arts & Sciences</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/business-accountancy.php" class="dropdown-link">Business & Accountancy</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/computer-studies.php" class="dropdown-link">Computer Studies</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/criminology.php" class="dropdown-link">Criminology</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/education.php" class="dropdown-link">Education</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/engineering-architecture.php" class="dropdown-link">Engineering & Architecture</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/hospitality-management.php" class="dropdown-link">International Hospitality Management</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/maritime.php" class="dropdown-link">Maritime</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/law.php" class="dropdown-link">Law/Juris Doctor</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/graduate-school.php" class="dropdown-link">Graduate School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/aviation.php" class="dropdown-link <?php echo ($current_page == 'aviation') ? 'active' : ''; ?>">Aviation</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/arts-sciences.php" class="dropdown-link <?php echo ($current_page == 'arts-sciences') ? 'active' : ''; ?>">Arts & Sciences</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/business-accountancy.php" class="dropdown-link <?php echo ($current_page == 'business-accountancy') ? 'active' : ''; ?>">Business & Accountancy</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/computer-studies.php" class="dropdown-link <?php echo ($current_page == 'computer-studies') ? 'active' : ''; ?>">Computer Studies</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/criminology.php" class="dropdown-link <?php echo ($current_page == 'criminology') ? 'active' : ''; ?>">Criminology</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/education.php" class="dropdown-link <?php echo ($current_page == 'education') ? 'active' : ''; ?>">Education</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/engineering-architecture.php" class="dropdown-link <?php echo ($current_page == 'engineering-architecture') ? 'active' : ''; ?>">Engineering & Architecture</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/hospitality-management.php" class="dropdown-link <?php echo ($current_page == 'hospitality-management') ? 'active' : ''; ?>">International Hospitality Management</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/maritime.php" class="dropdown-link <?php echo ($current_page == 'maritime') ? 'active' : ''; ?>">Maritime</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/law.php" class="dropdown-link <?php echo ($current_page == 'law') ? 'active' : ''; ?>">Law/Juris Doctor</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/graduate-school.php" class="dropdown-link <?php echo ($current_page == 'graduate-school') ? 'active' : ''; ?>">Graduate School</a>
                         </div>
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">Online Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="#" class="nav-link dropdown-toggle <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Online Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>ols_instructions.php" class="dropdown-link">Instructions</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>ols_instructions.php" class="dropdown-link <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Instructions</a>
                             <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">GTI Online Grades</a>
                             <a href="https://uphslms.com/blended/login/index.php" target="_blank" class="dropdown-link">Moodle</a>
                             <a href="https://accounts.google.com/signin" target="_blank" class="dropdown-link">Google Account</a>
@@ -109,13 +109,13 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="dropdown-link">Alumni</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="dropdown-link">Careers</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="dropdown-link">University Clinic</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="dropdown-link">Community Outreach Department</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="dropdown-link">International and External Affairs</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International and External Affairs</a>
                             <a href="#" class="dropdown-link">Guidance and Admission</a>
                             <a href="#" class="dropdown-link">Library</a>
                             <a href="#" class="dropdown-link">Quality Assurance</a>
@@ -198,34 +198,34 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php" class="mobile-nav-link mobile-dropdown-toggle">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php" class="mobile-nav-link mobile-dropdown-toggle <?php echo (strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school'])) ? 'active' : ''; ?>">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <div class="mobile-dropdown-item-with-submenu">
                         <a href="#" class="mobile-dropdown-link mobile-dropdown-parent">Basic Education <i class="fas fa-chevron-right mobile-submenu-chevron"></i></a>
                         <div class="mobile-submenu-dropdown">
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/senior-high-school.php" class="mobile-submenu-link">Senior High School</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/junior-high-school.php" class="mobile-submenu-link">Junior High School</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/grade-school.php" class="mobile-submenu-link">Grade School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/senior-high-school.php" class="mobile-submenu-link <?php echo ($current_page == 'senior-high-school') ? 'active' : ''; ?>">Senior High School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/junior-high-school.php" class="mobile-submenu-link <?php echo ($current_page == 'junior-high-school') ? 'active' : ''; ?>">Junior High School</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/grade-school.php" class="mobile-submenu-link <?php echo ($current_page == 'grade-school') ? 'active' : ''; ?>">Grade School</a>
                         </div>
                     </div>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/aviation.php" class="mobile-dropdown-link">Aviation</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/arts-sciences.php" class="mobile-dropdown-link">Arts & Sciences</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/business-accountancy.php" class="mobile-dropdown-link">Business & Accountancy</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/computer-studies.php" class="mobile-dropdown-link">Computer Studies</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/criminology.php" class="mobile-dropdown-link">Criminology</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/education.php" class="mobile-dropdown-link">Education</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/engineering-architecture.php" class="mobile-dropdown-link">Engineering & Architecture</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/hospitality-management.php" class="mobile-dropdown-link">International Hospitality Management</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/maritime.php" class="mobile-dropdown-link">Maritime</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/law.php" class="mobile-dropdown-link">Law/Juris Doctor</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/graduate-school.php" class="mobile-dropdown-link">Graduate School</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/aviation.php" class="mobile-dropdown-link <?php echo ($current_page == 'aviation') ? 'active' : ''; ?>">Aviation</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/arts-sciences.php" class="mobile-dropdown-link <?php echo ($current_page == 'arts-sciences') ? 'active' : ''; ?>">Arts & Sciences</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/business-accountancy.php" class="mobile-dropdown-link <?php echo ($current_page == 'business-accountancy') ? 'active' : ''; ?>">Business & Accountancy</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/computer-studies.php" class="mobile-dropdown-link <?php echo ($current_page == 'computer-studies') ? 'active' : ''; ?>">Computer Studies</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/criminology.php" class="mobile-dropdown-link <?php echo ($current_page == 'criminology') ? 'active' : ''; ?>">Criminology</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/education.php" class="mobile-dropdown-link <?php echo ($current_page == 'education') ? 'active' : ''; ?>">Education</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/engineering-architecture.php" class="mobile-dropdown-link <?php echo ($current_page == 'engineering-architecture') ? 'active' : ''; ?>">Engineering & Architecture</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/hospitality-management.php" class="mobile-dropdown-link <?php echo ($current_page == 'hospitality-management') ? 'active' : ''; ?>">International Hospitality Management</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/maritime.php" class="mobile-dropdown-link <?php echo ($current_page == 'maritime') ? 'active' : ''; ?>">Maritime</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/law.php" class="mobile-dropdown-link <?php echo ($current_page == 'law') ? 'active' : ''; ?>">Law/Juris Doctor</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs/graduate-school.php" class="mobile-dropdown-link <?php echo ($current_page == 'graduate-school') ? 'active' : ''; ?>">Graduate School</a>
                 </div>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Online Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Online Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>ols_instructions.php" class="mobile-dropdown-link">Instructions</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>ols_instructions.php" class="mobile-dropdown-link <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Instructions</a>
                     <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">GTI Online Grades</a>
                     <a href="https://uphslms.com/blended/login/index.php" target="_blank" class="mobile-dropdown-link">Moodle</a>
                     <a href="https://accounts.google.com/signin" target="_blank" class="mobile-dropdown-link">Google Account</a>
@@ -236,13 +236,13 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="mobile-dropdown-link">Alumni</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="mobile-dropdown-link">Careers</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="mobile-dropdown-link">University Clinic</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="mobile-dropdown-link">Community Outreach Department</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="mobile-dropdown-link">International and External Affairs</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="mobile-dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="mobile-dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="mobile-dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="mobile-dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International and External Affairs</a>
                     <a href="#" class="mobile-dropdown-link">Guidance and Admission</a>
                     <a href="#" class="mobile-dropdown-link">Library</a>
                     <a href="#" class="mobile-dropdown-link">Quality Assurance</a>
