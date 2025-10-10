@@ -16,8 +16,13 @@ include '../includes/header.php';
     <!-- Page Header -->
     <section class="page-header" style="background-image: url('img/banner/CRIMINOLOGY.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
-            <h1>Criminology</h1>
-            <p>Protecting communities through justice and law enforcement</p>
+            <div class="banner-logo">
+                <img src="img/logo/uphsl-criminology-logo.png" alt="Criminology Logo">
+            </div>
+            <div class="banner-content">
+                <h1>College of Criminology</h1>
+                <p>The College of Criminology aims to produce graduates imbued with technical skills and knowledge in the field of law enforcement, public safety, industrial security and social defense, coupled with a deep sense of loyalty to God, country, people, and Alma Mater.</p>
+            </div>
         </div>
     </section>
 
@@ -27,181 +32,114 @@ include '../includes/header.php';
             <div class="content-wrapper">
                 <div class="content-main">
                     <article class="content-article">
-                        <h2>About Criminology</h2>
-                        <p>Our Criminology program provides comprehensive education in criminal justice, law enforcement, and forensic science. Students learn about crime prevention, investigation techniques, and the administration of justice to prepare for careers in law enforcement and criminal justice.</p>
-                        
-                        <h2>Undergraduate Programs</h2>
-                        
-                        <div class="program-section">
-                            <h3>Bachelor of Science in Criminology (BS Criminology)</h3>
-                            <p>A four-year program that prepares students for careers in law enforcement, criminal investigation, and criminal justice administration.</p>
+                        <!-- Mission Section -->
+                        <section class="mission-vision-section">
+                            <h2>Mission</h2>
+                            <p>UPHSL College of Criminology is committed to develop competent, morally upright, and service and research oriented graduates, who have the passion for excellence in the field of criminology and criminal justice administration.</p>
+                        </section>
+
+                        <!-- Vision Section -->
+                        <section class="mission-vision-section">
+                            <h2>Vision</h2>
+                            <p>UPHSL College of Criminology is committed to develop competent, morally upright, and service and research oriented graduates, who have the passion for excellence in the field of criminology and criminal justice administration.</p>
+                        </section>
+
+                        <!-- Programs Section -->
+                        <section class="programs-section">
+                            <h2>Programs Offered</h2>
                             
-                            <h4>Core Subjects:</h4>
+                            <div class="program-section">
+                                <h3>Bachelor of Science in Criminology</h3>
+                                <p>The University of Perpetual Help System Laguna Bachelor of Science in Criminology program is dedicated to produce graduates who:</p>
+                                <ul>
+                                    <li>Deliver efficient and effective services in the field of criminology and criminal justice administration</li>
+                                    <li>Respectful of human rights</li>
+                                    <li>Foster the value of leadership, integrity, accountability and responsibility while serving the community and the country</li>
+                                    <li>Are service and research oriented criminologists and criminal justice professionals</li>
+                                    <li>Are continually engage in life-long learning and professional development through continuing professional education</li>
+                                </ul>
+                                
+                                <h4>Student Outcomes:</h4>
+                                <ul>
+                                    <li>Articulate and discuss the latest development in the specific field of practice (PQF level 6 descriptor)</li>
+                                    <li>Effectively communicate orally and in writing using both English and Filipino</li>
+                                    <li>Work effectively and independently in multi-disciplinary and multi-cultural teams (PQF level 6 descriptor)</li>
+                                    <li>Act in recognition of professional, social and ethical responsibility</li>
+                                    <li>Preserve and promote "Filipino historical and cultural heritage" (based on RA 7722)</li>
+                                    <li>Conduct criminological research on crime, crime caution, victims, and offenders to include deviant behavior</li>
+                                    <li>Internalize the concepts of human rights and victim welfare</li>
+                                    <li>Demonstrate competence and broad understanding in law enforcement administration, public safety and criminal justice</li>
+                                    <li>Utilize criminalistics or forensic science in the investigation and detection of crime</li>
+                                    <li>Apply the principles and jurisprudence of criminal law, evidence and criminal procedure</li>
+                                    <li>Ensure offenders welfare and development for their re-integration to the community</li>
+                                    <li>Participate in the generation of new knowledge or in research and development projects</li>
+                                </ul>
+                            </div>
+                        </section>
+
+                        <!-- Career Opportunities Section -->
+                        <section class="career-opportunities-section">
+                            <h2>Career Opportunities</h2>
+                            <div class="career-grid">
+                                <div class="career-category">
+                                    <h3>Government Agencies</h3>
+                                    <ul>
+                                        <li>PHILIPPINE NATIONAL POLICE</li>
+                                        <li>BUREAU OF FIRE PROTECTION</li>
+                                        <li>BUREAU OF JAIL MANAGEMENT AND PENOLOGY</li>
+                                        <li>PHILIPPINE DRUG ENFORCEMENT AGENCY</li>
+                                        <li>NATIONAL BUREAU OF INVESTIGATION</li>
+                                        <li>BUREAU OF IMMIGRATION</li>
+                                        <li>BUREAU OF CORRECTIONS</li>
+                                        <li>PHILIPPINE COAST GUARD</li>
+                                        <li>LAND TRANSPORTATION OFFICE</li>
+                                        <li>PHILIPPINE ARMY</li>
+                                        <li>PHILIPPINE AIRFORCE</li>
+                                        <li>PHILIPPINE NAVY</li>
+                                        <li>BANKO SENTRAL NG PILIPINAS</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="career-category">
+                                    <h3>Private Sector</h3>
+                                    <ul>
+                                        <li>PRIVATE INDUSTRIES</li>
+                                        <li>PRIVATE SECURITY POSITIONS</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Quality Policy Section -->
+                        <section class="objectives-section">
+                            <h2>Quality Policy</h2>
+                            <p>The College of Criminology is committed to producing competent and competitive criminology/criminal justice professionals and information science specialist who are holistic graduates, achievers of life imbued with Christian values and research oriented leaders in quality education.</p>
+                            
+                            <p>Pursuing our commitment through:</p>
                             <ul>
-                                <li>Introduction to Criminology</li>
-                                <li>Criminal Law</li>
-                                <li>Criminal Procedure</li>
-                                <li>Crime Detection and Investigation</li>
-                                <li>Forensic Science</li>
-                                <li>Police Organization and Administration</li>
-                                <li>Juvenile Delinquency</li>
-                                <li>Victimology</li>
-                                <li>Correctional Administration</li>
-                                <li>Human Rights Education</li>
+                                <li>Relevant and updated curriculum</li>
+                                <li>Adept delivery mechanism</li>
+                                <li>Intellectual and professional fulfillment of faculty and staff</li>
+                                <li>Quality Research</li>
+                                <li>College Social and Environmental responsibility</li>
+                                <li>Involvement of all stakeholders in growth and development of the college</li>
+                                <li>Continuous quality improvement upgrading of infrastructure and facilities</li>
+                                <li>Resilient congenial facilitative learning environment</li>
+                                <li>Spiritual formation - Stewards of God's creation</li>
                             </ul>
-                        </div>
-                        
-                        <h2>Specializations</h2>
-                        <div class="specialization-grid">
-                            <div class="specialization-card">
-                                <h4>Law Enforcement</h4>
-                                <p>Focus on police work, investigation, and crime prevention.</p>
-                                <ul>
-                                    <li>Police Operations</li>
-                                    <li>Criminal Investigation</li>
-                                    <li>Traffic Management</li>
-                                    <li>Community Policing</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="specialization-card">
-                                <h4>Forensic Science</h4>
-                                <p>Specialization in crime scene investigation and evidence analysis.</p>
-                                <ul>
-                                    <li>Crime Scene Investigation</li>
-                                    <li>Fingerprint Analysis</li>
-                                    <li>Ballistics</li>
-                                    <li>DNA Analysis</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="specialization-card">
-                                <h4>Corrections</h4>
-                                <p>Focus on correctional administration and rehabilitation.</p>
-                                <ul>
-                                    <li>Prison Management</li>
-                                    <li>Rehabilitation Programs</li>
-                                    <li>Parole and Probation</li>
-                                    <li>Correctional Counseling</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="specialization-card">
-                                <h4>Security Management</h4>
-                                <p>Private security and corporate security management.</p>
-                                <ul>
-                                    <li>Corporate Security</li>
-                                    <li>Risk Assessment</li>
-                                    <li>Security Technology</li>
-                                    <li>Emergency Response</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <h2>Practical Training</h2>
-                        <div class="training-grid">
-                            <div class="training-card">
-                                <h4>Field Training</h4>
-                                <p>Hands-on experience with law enforcement agencies.</p>
-                                <ul>
-                                    <li>Police Station Internship</li>
-                                    <li>Court Observation</li>
-                                    <li>Correctional Facility Visit</li>
-                                    <li>Crime Scene Simulation</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="training-card">
-                                <h4>Laboratory Work</h4>
-                                <p>Forensic science laboratory training and practice.</p>
-                                <ul>
-                                    <li>Fingerprint Analysis Lab</li>
-                                    <li>Ballistics Laboratory</li>
-                                    <li>Chemistry Laboratory</li>
-                                    <li>Computer Forensics Lab</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="training-card">
-                                <h4>Physical Training</h4>
-                                <p>Physical fitness and self-defense training.</p>
-                                <ul>
-                                    <li>Physical Fitness Program</li>
-                                    <li>Self-Defense Training</li>
-                                    <li>Arnis (Filipino Martial Arts)</li>
-                                    <li>Firearms Training</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <h2>Career Opportunities</h2>
-                        <div class="career-grid">
-                            <div class="career-category">
-                                <h4>Law Enforcement</h4>
-                                <ul>
-                                    <li>Police Officer</li>
-                                    <li>Detective</li>
-                                    <li>Special Agent</li>
-                                    <li>Intelligence Officer</li>
-                                    <li>Traffic Enforcer</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="career-category">
-                                <h4>Forensic Science</h4>
-                                <ul>
-                                    <li>Crime Scene Investigator</li>
-                                    <li>Forensic Analyst</li>
-                                    <li>Fingerprint Expert</li>
-                                    <li>Ballistics Expert</li>
-                                    <li>Digital Forensics Specialist</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="career-category">
-                                <h4>Corrections</h4>
-                                <ul>
-                                    <li>Correctional Officer</li>
-                                    <li>Probation Officer</li>
-                                    <li>Parole Officer</li>
-                                    <li>Rehabilitation Counselor</li>
-                                    <li>Prison Administrator</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="career-category">
-                                <h4>Private Sector</h4>
-                                <ul>
-                                    <li>Security Manager</li>
-                                    <li>Loss Prevention Specialist</li>
-                                    <li>Corporate Investigator</li>
-                                    <li>Risk Assessment Analyst</li>
-                                    <li>Security Consultant</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <h2>Professional Certifications</h2>
-                        <ul>
-                            <li>Criminology Licensure Examination (CLE)</li>
-                            <li>Security Guard License</li>
-                            <li>Firearms License</li>
-                            <li>Driving License</li>
-                            <li>First Aid Certification</li>
-                        </ul>
-                        
-                        <h2>Admission Requirements</h2>
-                        <ul>
-                            <li>High School Diploma or equivalent</li>
-                            <li>Passed UPHSL Entrance Examination</li>
-                            <li>Report Card (Form 138)</li>
-                            <li>Certificate of Good Moral Character</li>
-                            <li>Birth Certificate (PSA)</li>
-                            <li>2x2 ID Photos</li>
-                            <li>Medical Certificate</li>
-                            <li>NBI Clearance</li>
-                            <li>Police Clearance</li>
-                        </ul>
+                        </section>
+
+                        <!-- Quality Objectives Section -->
+                        <section class="objectives-section">
+                            <h2>Quality Objectives</h2>
+                            <ul>
+                                <li>To develop professionals with appropriate technical and professional competencies for international market</li>
+                                <li>To achieve recognition as one of the respected universities in the country</li>
+                                <li>To serve as venue for knowledge generation and dissemination</li>
+                                <li>To uplift the quality of life of people living in the adopted community</li>
+                                <li>To deliver quality services to the clientele</li>
+                            </ul>
+                        </section>
                     </article>
                 </div>
                 
@@ -209,45 +147,62 @@ include '../includes/header.php';
                     <div class="sidebar-widget">
                         <h3>Program Details</h3>
                         <ul>
+                            <li><strong>College:</strong> College of Criminology</li>
                             <li><strong>Duration:</strong> 4 years</li>
-                            <li><strong>Specializations:</strong> 4</li>
-                            <li><strong>Field Training:</strong> Required</li>
-                            <li><strong>Class Size:</strong> 30-35 students</li>
+                            <li><strong>Program:</strong> Bachelor of Science in Criminology</li>
+                            <li><strong>Focus:</strong> Law Enforcement & Criminal Justice</li>
                         </ul>
                     </div>
                     
                     <div class="sidebar-widget">
-                        <h3>Faculty</h3>
-                        <p>Our faculty includes licensed criminologists, retired law enforcement officers, and forensic science experts with extensive field experience.</p>
-                    </div>
-                    
-                    <div class="sidebar-widget">
-                        <h3>Laboratories</h3>
+                        <h3>Key Features</h3>
                         <ul>
-                            <li>Forensic Science Laboratory</li>
-                            <li>Fingerprint Analysis Lab</li>
-                            <li>Ballistics Laboratory</li>
-                            <li>Computer Forensics Lab</li>
-                            <li>Crime Scene Simulation Room</li>
+                            <li>Technical skills and knowledge</li>
+                            <li>Law enforcement training</li>
+                            <li>Public safety education</li>
+                            <li>Industrial security focus</li>
+                            <li>Social defense principles</li>
+                            <li>Christian values integration</li>
                         </ul>
                     </div>
                     
                     <div class="sidebar-widget">
-                        <h3>Partnerships</h3>
+                        <h3>Career Preparation</h3>
                         <ul>
-                            <li>Philippine National Police</li>
-                            <li>National Bureau of Investigation</li>
-                            <li>Bureau of Jail Management</li>
-                            <li>Private Security Agencies</li>
+                            <li>Government agencies</li>
+                            <li>Law enforcement</li>
+                            <li>Forensic science</li>
+                            <li>Corrections</li>
+                            <li>Private security</li>
+                            <li>Research and development</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <h3>Professional Values</h3>
+                        <ul>
+                            <li>Loyalty to God</li>
+                            <li>Service to country</li>
+                            <li>Dedication to people</li>
+                            <li>Alma Mater pride</li>
+                            <li>Moral uprightness</li>
+                            <li>Research orientation</li>
                         </ul>
                     </div>
                     
                     <div class="sidebar-widget">
                         <h3>Contact Information</h3>
-                        <p><strong>Department Head:</strong><br>
-                        Dr. Pedro Santos<br>
-                        (02) 123-4575<br>
-                        criminology.department@uphsl.edu.ph</p>
+                        <p><strong>Email:</strong><br>
+                        <a href="mailto:criminology@uphsl.edu.ph">criminology@uphsl.edu.ph</a></p>
+                        
+                        <p><strong>Phone:</strong><br>
+                        02-779-5310</p>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <h3>Our Business Office</h3>
+                        <p>UPH Compound, National Highway,<br>
+                        Sto. Niño, City of Biñan, Laguna</p>
                     </div>
                 </aside>
             </div>

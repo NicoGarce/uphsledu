@@ -16,8 +16,10 @@ include '../includes/header.php';
     <!-- Page Header -->
     <section class="page-header" style="background-image: url('img/banner/BASIC EDUCATION.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
-            <h1>Grade School</h1>
-            <p>Nurturing young minds for a bright future</p>
+            <div class="banner-content">
+                <h1>Early Education & Grade School</h1>
+                <p>Developing the whole child as a lifelong learner</p>
+            </div>
         </div>
     </section>
 
@@ -27,65 +29,95 @@ include '../includes/header.php';
             <div class="content-wrapper">
                 <div class="content-main">
                     <article class="content-article">
-                        <h2>About Grade School</h2>
-                        <p>Our Grade School program provides a strong foundation for young learners from Kindergarten to Grade 6. We focus on developing essential academic skills, character formation, and social development in a nurturing environment.</p>
-                        
-                        <h2>Grade Levels</h2>
-                        <div class="grade-levels">
-                            <div class="grade-card">
-                                <h3>Kindergarten</h3>
-                                <p>Introduction to school life, basic literacy, and social skills development.</p>
+                        <!-- Mission Section -->
+                        <section class="mission-vision-section">
+                            <h2>Mission</h2>
+                            <p>The Basic Education Department- Early Education and Grade School shall develop the whole child as a lifelong learner. It shall provide an encouraging and caring environment that will enhance the child's unique talents and potentials.</p>
+                        </section>
+
+                        <!-- Vision Section -->
+                        <section class="mission-vision-section">
+                            <h2>Vision</h2>
+                            <p>The Basic Education Department- Grade School will be a benchmark of best practices in early and grade school education.</p>
+                        </section>
+
+                        <!-- Program Educational Objectives -->
+                        <section class="objectives-section">
+                            <h2>Program Educational Objectives</h2>
+                            <p>Guided by the University's Mission, the Perpetualite Pupils are/can:</p>
+                            <ul>
+                                <li>Apply basic skills in the core learning areas.</li>
+                                <li>Demonstrate good citizenship qualities through community service and outreach activities.</li>
+                                <li>Performs skills to enable him to respond to real life situation.</li>
+                                <li>Actuate integral character formation in his personal life and interpersonal dealings.</li>
+                                <li>Demonstrate proficiency in oral and written communication for effective human relation.</li>
+                            </ul>
+                        </section>
+
+                        <!-- Basic Education Requirements -->
+                        <section class="programs-section">
+                            <h2>Basic Education Requirements for Enrolment</h2>
+                            <ol>
+                                <li>Beat (Basic Education Admission Test) Result</li>
+                                <li>Form 138 - School Report Card</li>
+                                <li>Form 137 - Student's Permanent Record (Original and 2 photocopies)</li>
+                                <li>PSA Birth Certificate (Original and 2 photocopies)</li>
+                                <li>Certificate of Good Moral</li>
+                                <li>One piece ling brown envelope with plastic</li>
+                                <li>Three copies recent 2x2 picture</li>
+                            </ol>
+                        </section>
+
+                        <!-- Faculty Section -->
+                        <section class="faculty-section">
+                            <h2>Faculty of Instruction</h2>
+                            <div class="faculty-grid">
+                                <div class="faculty-category">
+                                    <h3>Teaching Staff</h3>
+                                    <div class="faculty-list">
+                                        <div class="faculty-member">
+                                            <strong>Abanto, Ailyn F.</strong> - LPT
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Arcellana, Maria Ana P.</strong> - LPT
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Cerico, Agnes S.</strong> - LPT with MA Units
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Danila, Anna Liza M.</strong> - LPT with Early Education Specialization
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>De Jesus, Leah Marie A.</strong> - LPT
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Del Rosario, Cristy G.</strong> - LPT with MA Units
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Dela Peña, Joan P.</strong> - LPT with MA Units
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Honduna, Ma. Fe P.</strong> - LPT with Early Education Specialization
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Noche, John Kenneth G.</strong> - LPT
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Olino, Sherry Miann O.</strong> - LPT
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Peña, Susan M.</strong> - LPT with MA Units
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Rosado, Jovel T.</strong> - LPT, MAED with Doctoral Units
+                                        </div>
+                                        <div class="faculty-member">
+                                            <strong>Sumeguin, Eszel Joe R.</strong> - LPT
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="grade-card">
-                                <h3>Grades 1-3 (Primary)</h3>
-                                <p>Foundation building in reading, writing, mathematics, and character formation.</p>
-                            </div>
-                            <div class="grade-card">
-                                <h3>Grades 4-6 (Intermediate)</h3>
-                                <p>Advanced academic skills and preparation for high school.</p>
-                            </div>
-                        </div>
-                        
-                        <h2>Core Subjects</h2>
-                        <ul>
-                            <li>Language Arts (English & Filipino)</li>
-                            <li>Mathematics</li>
-                            <li>Science</li>
-                            <li>Social Studies</li>
-                            <li>Values Education</li>
-                            <li>Physical Education</li>
-                            <li>Music and Arts</li>
-                            <li>Computer Education</li>
-                        </ul>
-                        
-                        <h2>Special Programs</h2>
-                        <div class="program-grid">
-                            <div class="program-card">
-                                <h4>Reading Program</h4>
-                                <p>Comprehensive literacy development for all grade levels.</p>
-                            </div>
-                            <div class="program-card">
-                                <h4>Math Enhancement</h4>
-                                <p>Specialized mathematics instruction and problem-solving skills.</p>
-                            </div>
-                            <div class="program-card">
-                                <h4>Character Formation</h4>
-                                <p>Values education and moral development programs.</p>
-                            </div>
-                            <div class="program-card">
-                                <h4>Arts and Crafts</h4>
-                                <p>Creative expression and artistic skill development.</p>
-                            </div>
-                        </div>
-                        
-                        <h2>Admission Requirements</h2>
-                        <ul>
-                            <li>Birth Certificate (PSA)</li>
-                            <li>Medical Certificate</li>
-                            <li>2x2 ID Photos</li>
-                            <li>Previous School Records (for transferees)</li>
-                            <li>Parent/Guardian ID</li>
-                        </ul>
+                        </section>
                     </article>
                 </div>
                 
@@ -93,19 +125,35 @@ include '../includes/header.php';
                     <div class="sidebar-widget">
                         <h3>Program Details</h3>
                         <ul>
+                            <li><strong>Program:</strong> Early Education & Grade School</li>
                             <li><strong>Duration:</strong> 7 years (K-6)</li>
-                            <li><strong>Age Range:</strong> 4-12 years</li>
-                            <li><strong>Class Size:</strong> 25-30 students</li>
-                            <li><strong>Student-Teacher Ratio:</strong> 1:25</li>
+                            <li><strong>Focus:</strong> Whole child development</li>
+                            <li><strong>Environment:</strong> Encouraging and caring</li>
                         </ul>
                     </div>
                     
                     <div class="sidebar-widget">
                         <h3>Contact Information</h3>
-                        <p><strong>Principal:</strong><br>
-                        Mrs. Ana Dela Cruz<br>
-                        (02) 123-4572<br>
-                        gs.principal@uphsl.edu.ph</p>
+                        <p><strong>Email:</strong><br>
+                        <a href="mailto:basiced@uphsl.edu.ph">basiced@uphsl.edu.ph</a></p>
+                        
+                        <p><strong>Phone:</strong><br>
+                        02-779-5310</p>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <h3>Business Hours</h3>
+                        <ul>
+                            <li><strong>Weekdays:</strong> 8am to 5pm</li>
+                            <li><strong>Saturday:</strong> 8am to 5pm</li>
+                            <li><strong>Sunday:</strong> Closed</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <h3>Our Business Office</h3>
+                        <p>UPH Compound, National Highway,<br>
+                        Sto. Niño, City of Biñan, Laguna</p>
                     </div>
                 </aside>
             </div>

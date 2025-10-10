@@ -73,15 +73,15 @@ include 'includes/header.php';
                 
                 <!-- Right Column: Tagline -->
                 <div class="hero-tagline">
-                    <div class="hero-content">
-                        <div class="tagline-container">
-                            <h1 class="tagline">Character Building is Nation Building</h1>
-                        </div>
-                        <p class="hero-description">
-                            Excellence in education, character formation, and nation building. Join our community of learners and discover endless opportunities for academic and personal growth.
-                        </p>
-                        <div class="hero-buttons">
-                            <a href="#programs" class="btn btn-primary">Explore Programs</a>
+            <div class="hero-content">
+                <div class="tagline-container">
+                    <h1 class="tagline">Character Building is Nation Building</h1>
+                </div>
+                <p class="hero-description">
+                    Excellence in education, character formation, and nation building. Join our community of learners and discover endless opportunities for academic and personal growth.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#programs" class="btn btn-primary">Explore Programs</a>
                         </div>
                     </div>
                 </div>

@@ -16,8 +16,13 @@ include '../includes/header.php';
     <!-- Page Header -->
     <section class="page-header" style="background-image: url('img/banner/CHIM.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
-            <h1>International Hospitality Management</h1>
-            <p>Excellence in hospitality and tourism management</p>
+            <div class="banner-logo">
+                <img src="img/logo/uphsl-cihm-logo.png" alt="Hospitality Management Logo">
+            </div>
+            <div class="banner-content">
+                <h1>College of International Hospitality Management</h1>
+                <p>The College of International Hospitality Management and Tourism educates the next generation of leaders and managers for the world's fastest growing and most dynamic industry. The impressive CIHM building provides an ideal learning environment through modern facilities to allow students in honing their skills and knowledge in a realistic setting.</p>
+            </div>
         </div>
     </section>
 
@@ -27,207 +32,115 @@ include '../includes/header.php';
             <div class="content-wrapper">
                 <div class="content-main">
                     <article class="content-article">
-                        <h2>About International Hospitality Management</h2>
-                        <p>Our International Hospitality Management program prepares students for leadership roles in the global hospitality and tourism industry. We provide comprehensive training in hotel operations, food service, tourism management, and international business practices.</p>
-                        
-                        <h2>Undergraduate Programs</h2>
-                        
-                        <div class="program-section">
-                            <h3>Bachelor of Science in International Hospitality Management (BS IHM)</h3>
-                            <p>A four-year program that combines hospitality management with international business practices and cultural awareness.</p>
+                        <!-- Mission Section -->
+                        <section class="mission-vision-section">
+                            <h2>Mission</h2>
+                            <p>The CIHM is dedicated to produce dynamic, globally-competitive, and successful individuals who are God-fearing and service-oriented, through quality leadership, advancement in education, research, human resource development and extension services.</p>
+                        </section>
+
+                        <!-- Vision Section -->
+                        <section class="mission-vision-section">
+                            <h2>Vision</h2>
+                            <p>The CIHM envisions itself to be the center of excellence in the fields of Hospitality Management and Nutrition and Dietetics through the quality education and development of highly skilled and competent individuals.</p>
+                        </section>
+
+                        <!-- Programs Section -->
+                        <section class="programs-section">
+                            <h2>Programs Offered</h2>
                             
-                            <h4>Core Subjects:</h4>
+                            <div class="program-section">
+                                <h3>Bachelor of Science in Hospitality Management</h3>
+                                <p>The course offers an intensive four-year academic program that equip students with competencies to prepare them to become future hoteliers, restaurateurs and entrepreneurs.</p>
+                                
+                                <h4>Program Educational Objectives:</h4>
+                                <ul>
+                                    <li>Apply comprehensive knowledge and skills to keep pace with the global demands in the hospitality and tourism industry</li>
+                                    <li>Demonstrate expertise in specialized hospitality and tourism industry positions</li>
+                                    <li>Apply effective leadership in managing hospitality and tourism related - businesses</li>
+                                    <li>Extend entrepreneurial knowledge and skills in hospitality and tourism services to generate livelihood opportunities for the community</li>
+                                    <li>Actualize the Christian virtues in the quest for the best quality of life</li>
+                                    <li>Value the importance of research and continuing educational opportunities</li>
+                                </ul>
+                                
+                                <h4>Student Outcomes:</h4>
+                                <ul>
+                                    <li>Demonstrate knowledge of tourism industry, local tourism products and services</li>
+                                    <li>Utilize information technology applications for tourism and hospitality</li>
+                                    <li>Demonstrate administrative and management skills in a service-oriented business organization</li>
+                                    <li>Produce food products and services complying with enterprise standards</li>
+                                    <li>Perform and provide full guest cycle services for front office</li>
+                                    <li>Perform and maintain various housekeeping services for guest and facility operations</li>
+                                    <li>Plan and implement a risk management program to provide a safe and secure workplace</li>
+                                    <li>Provide food and beverage services, and manage the operation seamlessly based on industry standards</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="program-section">
+                                <h3>Bachelor of Science in Nutrition & Dietetics</h3>
+                                <p>A degree in Nutrition and Dietetics aims to adequately equip the students with fundamental knowledge and attitude in nutrition, dietetics, food service, management and allied fields in order to prepare them for the responsibilities in food and nutrition research, teaching and commercial food service.</p>
+                                
+                                <h4>Program Educational Objectives:</h4>
+                                <ul>
+                                    <li>Apply comprehensive knowledge and skills to keep pace with the global demands in the hospitality and tourism industry</li>
+                                    <li>Demonstrate expertise in specialized hospitality and tourism industry positions</li>
+                                    <li>Apply effective leadership in managing hospitality and tourism related - businesses</li>
+                                    <li>Extend entrepreneurial knowledge and skills in hospitality and tourism services to generate livelihood opportunities for the community</li>
+                                    <li>Actualize the Christian virtues in the quest for the best quality of life</li>
+                                    <li>Value the importance of research and continuing educational opportunities</li>
+                                </ul>
+                                
+                                <h4>Student Outcomes:</h4>
+                                <ul>
+                                    <li>Promote the role of nutrition and dietetics for human well-being in relation to the needs, resources and potentials of individuals, groups and families</li>
+                                    <li>Practice comprehensive nutritional care for the total wellness of individuals in a multidisciplinary and multi-cultural settings</li>
+                                    <li>Integrate nutrition concerns with local and national development efforts</li>
+                                    <li>Manage nutrition programs for individuals, groups and institutions</li>
+                                    <li>Manage a foodservice unit in hospital or other settings</li>
+                                    <li>Implement an economically viable activity related to nutrition and dietetics</li>
+                                    <li>Design and/or conduct scientific study on food, nutrition and related topics</li>
+                                    <li>Uphold ethical standards of the profession</li>
+                                    <li>Engage in lifelong learning activities</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="program-section">
+                                <h3>Bachelor of Science in Tourism Management</h3>
+                                <p>Boast of its academic curriculum which provides students necessary skills to prepare them for Hospitality practices in the field of Tourism as early as within a year of enrollment.</p>
+                                
+                                <h4>Program Educational Objectives:</h4>
+                                <ul>
+                                    <li>Apply comprehensive knowledge and skills to keep pace with the global demands in the travel and tourism industry</li>
+                                    <li>Demonstrate expertise in specialized travel and tourism industry positions</li>
+                                    <li>Apply effective leadership in managing travel and tourism related-businesses</li>
+                                    <li>Extend entrepreneurial knowledge and skills in travel and tourism services to generate livelihood opportunities for the community</li>
+                                    <li>Actualize the Christian virtues in the quest for the best quality of life</li>
+                                    <li>Value the importance of research and continuing educational opportunities</li>
+                                </ul>
+                                
+                                <h4>Student Outcomes:</h4>
+                                <ul>
+                                    <li>Value the importance of research and continuing educational opportunities</li>
+                                    <li>Utilize information technology applications for tourism and hospitality</li>
+                                    <li>Utilize various communication channels proficiently in dealing with guests and college</li>
+                                    <li>Research, plan, and conduct various tour guiding activities</li>
+                                    <li>Develop appropriate marketing programs and arrange the required travel services</li>
+                                    <li>Plan / organize, implement, and evaluate MICE activities</li>
+                                    <li>Plan, develop, and evaluate tourism sites and attractions</li>
+                                </ul>
+                            </div>
+                        </section>
+
+                        <!-- Quality Objectives Section -->
+                        <section class="objectives-section">
+                            <h2>Quality Objectives</h2>
+                            <p>The College of Engineering, as envisioned by our Founder, should be able to:</p>
                             <ul>
-                                <li>Introduction to Hospitality Industry</li>
-                                <li>Hotel Operations Management</li>
-                                <li>Food and Beverage Management</li>
-                                <li>Front Office Operations</li>
-                                <li>Housekeeping Management</li>
-                                <li>Restaurant Management</li>
-                                <li>Event Management</li>
-                                <li>Tourism Planning and Development</li>
-                                <li>International Business</li>
-                                <li>Cross-Cultural Communication</li>
+                                <li>To develop cosmopolitan and service provider professional responsive to the needs of hospitality, tourism industry and nutrition related services</li>
+                                <li>To achieve recognition as one of the respected universities in the field of Hospitality, Tourism, and Nutrition & Dietetics</li>
+                                <li>To develop quality and responsive research activities that address emerging issues in Hospitality, Tourism and Nutrition</li>
+                                <li>To develop and implement sustainable program-based community extension activities participated in by various stakeholders</li>
                             </ul>
-                        </div>
-                        
-                        <div class="program-section">
-                            <h3>Bachelor of Science in Tourism Management (BS Tourism)</h3>
-                            <p>A four-year program focused on tourism planning, development, and management.</p>
-                            
-                            <h4>Core Subjects:</h4>
-                            <ul>
-                                <li>Introduction to Tourism</li>
-                                <li>Tourism Planning and Development</li>
-                                <li>Tourism Marketing</li>
-                                <li>Travel Agency Operations</li>
-                                <li>Tour Guiding</li>
-                                <li>Eco-Tourism</li>
-                                <li>Cultural Tourism</li>
-                                <li>MICE Management</li>
-                                <li>Tourism Economics</li>
-                                <li>Tourism Policy and Law</li>
-                            </ul>
-                        </div>
-                        
-                        <h2>Specializations</h2>
-                        <div class="specialization-grid">
-                            <div class="specialization-card">
-                                <h4>Hotel Management</h4>
-                                <p>Focus on hotel operations and management.</p>
-                                <ul>
-                                    <li>Front Office Management</li>
-                                    <li>Housekeeping Operations</li>
-                                    <li>Revenue Management</li>
-                                    <li>Guest Relations</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="specialization-card">
-                                <h4>Food Service Management</h4>
-                                <p>Specialization in restaurant and food service operations.</p>
-                                <ul>
-                                    <li>Restaurant Operations</li>
-                                    <li>Menu Planning</li>
-                                    <li>Food Safety</li>
-                                    <li>Culinary Arts</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="specialization-card">
-                                <h4>Event Management</h4>
-                                <p>Focus on planning and managing events and conferences.</p>
-                                <ul>
-                                    <li>Event Planning</li>
-                                    <li>Conference Management</li>
-                                    <li>Wedding Planning</li>
-                                    <li>Exhibition Management</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="specialization-card">
-                                <h4>Tourism Development</h4>
-                                <p>Specialization in tourism planning and development.</p>
-                                <ul>
-                                    <li>Destination Management</li>
-                                    <li>Sustainable Tourism</li>
-                                    <li>Community-Based Tourism</li>
-                                    <li>Heritage Tourism</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <h2>Practical Training</h2>
-                        <div class="training-grid">
-                            <div class="training-card">
-                                <h4>Hotel Internship</h4>
-                                <p>Hands-on experience in hotel operations.</p>
-                                <ul>
-                                    <li>Front Office Training</li>
-                                    <li>Housekeeping Operations</li>
-                                    <li>Food and Beverage Service</li>
-                                    <li>Guest Relations</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="training-card">
-                                <h4>Restaurant Training</h4>
-                                <p>Practical experience in food service operations.</p>
-                                <ul>
-                                    <li>Kitchen Operations</li>
-                                    <li>Service Standards</li>
-                                    <li>Menu Development</li>
-                                    <li>Customer Service</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="training-card">
-                                <h4>Tourism Practicum</h4>
-                                <p>Field experience in tourism operations.</p>
-                                <ul>
-                                    <li>Travel Agency Operations</li>
-                                    <li>Tour Guiding</li>
-                                    <li>Event Management</li>
-                                    <li>Destination Marketing</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <h2>International Programs</h2>
-                        <ul>
-                            <li>Study Abroad Programs</li>
-                            <li>International Internships</li>
-                            <li>Cultural Exchange Programs</li>
-                            <li>International Certification Programs</li>
-                            <li>Language Training (English, Mandarin, Japanese, Korean)</li>
-                        </ul>
-                        
-                        <h2>Career Opportunities</h2>
-                        <div class="career-grid">
-                            <div class="career-category">
-                                <h4>Hotel Industry</h4>
-                                <ul>
-                                    <li>Hotel Manager</li>
-                                    <li>Front Office Manager</li>
-                                    <li>Food and Beverage Manager</li>
-                                    <li>Housekeeping Manager</li>
-                                    <li>Revenue Manager</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="career-category">
-                                <h4>Restaurant Industry</h4>
-                                <ul>
-                                    <li>Restaurant Manager</li>
-                                    <li>Executive Chef</li>
-                                    <li>Food Service Director</li>
-                                    <li>Catering Manager</li>
-                                    <li>Banquet Manager</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="career-category">
-                                <h4>Tourism Industry</h4>
-                                <ul>
-                                    <li>Tourism Officer</li>
-                                    <li>Travel Agency Manager</li>
-                                    <li>Tour Guide</li>
-                                    <li>Destination Manager</li>
-                                    <li>MICE Coordinator</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="career-category">
-                                <h4>Event Management</h4>
-                                <ul>
-                                    <li>Event Planner</li>
-                                    <li>Conference Manager</li>
-                                    <li>Wedding Coordinator</li>
-                                    <li>Exhibition Manager</li>
-                                    <li>Corporate Event Manager</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <h2>Professional Certifications</h2>
-                        <ul>
-                            <li>Certified Hospitality Professional (CHP)</li>
-                            <li>Food Safety Certification</li>
-                            <li>Tourism Professional Certification</li>
-                            <li>Event Management Certification</li>
-                            <li>International Language Certifications</li>
-                        </ul>
-                        
-                        <h2>Admission Requirements</h2>
-                        <ul>
-                            <li>High School Diploma or equivalent</li>
-                            <li>Passed UPHSL Entrance Examination</li>
-                            <li>Report Card (Form 138)</li>
-                            <li>Certificate of Good Moral Character</li>
-                            <li>Birth Certificate (PSA)</li>
-                            <li>2x2 ID Photos</li>
-                            <li>Medical Certificate</li>
-                        </ul>
+                        </section>
                     </article>
                 </div>
                 
@@ -235,45 +148,59 @@ include '../includes/header.php';
                     <div class="sidebar-widget">
                         <h3>Program Details</h3>
                         <ul>
+                            <li><strong>College:</strong> International Hospitality Management</li>
                             <li><strong>Duration:</strong> 4 years</li>
-                            <li><strong>Programs:</strong> 2</li>
-                            <li><strong>Specializations:</strong> 4</li>
-                            <li><strong>Class Size:</strong> 25-30 students</li>
+                            <li><strong>Programs:</strong> 3 Bachelor's Programs</li>
+                            <li><strong>Focus:</strong> Hospitality & Tourism Excellence</li>
                         </ul>
                     </div>
                     
                     <div class="sidebar-widget">
-                        <h3>Faculty</h3>
-                        <p>Our faculty includes hospitality industry professionals, certified trainers, and international experts with extensive experience in hotels, restaurants, and tourism.</p>
-                    </div>
-                    
-                    <div class="sidebar-widget">
-                        <h3>Facilities</h3>
+                        <h3>Programs Offered</h3>
                         <ul>
-                            <li>Training Hotel</li>
-                            <li>Restaurant Laboratory</li>
-                            <li>Event Management Center</li>
-                            <li>Tourism Information Center</li>
-                            <li>Language Laboratory</li>
+                            <li><strong>BSHM:</strong> Hospitality Management</li>
+                            <li><strong>BSND:</strong> Nutrition & Dietetics</li>
+                            <li><strong>BSTM:</strong> Tourism Management</li>
                         </ul>
                     </div>
                     
                     <div class="sidebar-widget">
-                        <h3>Industry Partnerships</h3>
+                        <h3>Key Features</h3>
                         <ul>
-                            <li>International Hotel Chains</li>
-                            <li>Restaurant Groups</li>
-                            <li>Tourism Agencies</li>
-                            <li>Event Management Companies</li>
+                            <li>Center of excellence in hospitality</li>
+                            <li>Modern facilities & realistic setting</li>
+                            <li>Global industry preparation</li>
+                            <li>God-fearing & service-oriented</li>
+                            <li>Quality leadership development</li>
+                            <li>Research & extension services</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <h3>Career Preparation</h3>
+                        <ul>
+                            <li>Hoteliers & Restaurateurs</li>
+                            <li>Tourism Professionals</li>
+                            <li>Nutrition & Dietetics</li>
+                            <li>Food Service Management</li>
+                            <li>Event Management</li>
+                            <li>Entrepreneurship</li>
                         </ul>
                     </div>
                     
                     <div class="sidebar-widget">
                         <h3>Contact Information</h3>
-                        <p><strong>Department Head:</strong><br>
-                        Ms. Sofia Reyes<br>
-                        (02) 123-4578<br>
-                        hospitality.department@uphsl.edu.ph</p>
+                        <p><strong>Email:</strong><br>
+                        <a href="mailto:cihm@uphsl.edu.ph">cihm@uphsl.edu.ph</a></p>
+                        
+                        <p><strong>Phone:</strong><br>
+                        02-779-5310</p>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <h3>Our Business Office</h3>
+                        <p>UPH Compound, National Highway,<br>
+                        Sto. Niño, City of Biñan, Laguna</p>
                     </div>
                 </aside>
             </div>
