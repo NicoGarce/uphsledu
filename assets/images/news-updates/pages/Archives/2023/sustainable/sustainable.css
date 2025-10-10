@@ -1,0 +1,35 @@
+:root {
+    --default-back: #1c4da1;
+    --default-2: #143980;
+    --default-3: #527bbd;
+    --default-4: #c4daf1;
+    --default-5: #e0b03c;
+    --default-6: #ffc63e;
+    --default-7: #ffe18b;
+    --default-8: #f9eed3;
+  }
+
+.content{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1300px;
+  margin: 10px auto;
+  padding: 10px 20px;
+}
+.content > img{
+  width: 900px;
+}
+
+.fb-share{
+  margin: 10px;
+}
+
+.athletics-title{
+  color: var(--default-2);
+  font-size: 2em;
+  padding: 10px 0 20px 0;
+  text-align: center;
+}

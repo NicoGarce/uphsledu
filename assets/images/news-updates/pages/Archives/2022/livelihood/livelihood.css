@@ -1,0 +1,53 @@
+:root {
+    --default-back: #1c4da1;
+    --default-2: #143980;
+    --default-3: #527bbd;
+    --default-4: #c4daf1;
+    --default-5: #e0b03c;
+    --default-6: #ffc63e;
+    --default-7: #ffe18b;
+    --default-8: #f9eed3;
+  }
+
+.livelihood-title {
+  text-align: center;
+  padding: 20px 0 30px 0;
+  font-size: 2em;
+  color: var(--default-back);
+}
+.content {
+  display: flex;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+.content > p {
+  text-align: justify;
+  padding: 10px 20px;
+  font-size: 1.1em;
+}
+.contents {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+.livelihood-img {
+  width: 400px;
+}
+.contents > p {
+  font-size: 1.1em;
+}
+.img-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.livelihood-imgs {
+  width: 400px;
+  margin: 20px;
+}
+.scholar-vid{
+    width: 600px;
+}

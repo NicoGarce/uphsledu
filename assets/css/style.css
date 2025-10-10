@@ -1608,28 +1608,81 @@ h2, h3, h4, h5, h6 {
 @media (max-width: 1024px) and (min-width: 769px) {
     .hero-layout {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 25px;
         text-align: center;
         justify-content: center;
-        padding: 0 20px;
+        padding: 0 30px;
+        max-width: 700px;
+        margin: 0 auto;
         width: 100%;
     }
     
-    .hero-latest-post,
+    .hero-latest-post {
+        display: none;
+    }
+    
     .hero-tagline {
         text-align: center;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     .latest-post-card {
         text-align: center;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 2rem;
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(8px);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .hero-content {
+        text-align: center;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 2rem;
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(8px);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     
     .latest-post-card .post-meta {
         align-items: center;
+        justify-content: center;
     }
     
     .latest-post-card .latest-post-title {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .latest-post-excerpt {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+    
+    .tagline {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
     }
 }
 
@@ -1644,7 +1697,10 @@ h2, h3, h4, h5, h6 {
         width: 100%;
     }
     
-    .hero-latest-post,
+    .hero-latest-post {
+        display: none;
+    }
+    
     .hero-tagline {
         text-align: center;
     }

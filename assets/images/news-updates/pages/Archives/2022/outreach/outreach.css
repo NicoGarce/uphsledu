@@ -1,0 +1,15 @@
+.img-content{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+}
+.img-contents{
+    padding-top: 10px;
+    width: 800px;
+}
+@media(max-width: 720px){
+    .img-contents{
+        width: 350px;
+    }
+}
