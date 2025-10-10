@@ -38,8 +38,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         <h1>UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h1>
                     </div>
                     <div class="nav-search">
-                        <form class="search-form">
-                            <input type="text" placeholder="Search..." class="search-input">
+                        <form class="search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
+                            <input type="text" name="q" placeholder="Search..." class="search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
                             <button type="submit" class="search-btn">
                                 <i class="fas fa-search"></i>
                             </button>
@@ -49,8 +49,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 
                 <!-- Mobile Search Bar (separate from nav-header) -->
                 <div class="nav-search mobile-search">
-                    <form class="search-form">
-                        <input type="text" placeholder="Search..." class="search-input">
+                    <form class="search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
+                        <input type="text" name="q" placeholder="Search..." class="search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -184,8 +184,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         </div>
         
         <div class="mobile-sidebar-search">
-            <form class="mobile-search-form">
-                <input type="text" placeholder="Search..." class="mobile-search-input">
+            <form class="mobile-search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
+                <input type="text" name="q" placeholder="Search..." class="mobile-search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
                 <button type="submit" class="mobile-search-btn">
                     <i class="fas fa-search"></i>
                 </button>
