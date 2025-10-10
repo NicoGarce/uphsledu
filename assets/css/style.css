@@ -273,6 +273,20 @@ h2, h3, h4, h5, h6 {
     padding-left: 12px;
 }
 
+.dropdown-link.disabled {
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.dropdown-link.disabled:hover {
+    color: #999;
+    background: transparent;
+    border-left-color: transparent;
+    padding-left: 0;
+    cursor: not-allowed;
+}
+
 /* Nested Submenu Styles */
 .dropdown-item-with-submenu {
     position: relative;
@@ -3893,6 +3907,20 @@ h2, h3, h4, h5, h6 {
     background: rgba(255, 198, 62, 0.1);
     border-left-color: #ffc63e;
     padding-left: 42px;
+}
+
+.mobile-dropdown-link.disabled {
+    color: rgba(255, 255, 255, 0.4);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.mobile-dropdown-link.disabled:hover {
+    color: rgba(255, 255, 255, 0.4);
+    background: transparent;
+    border-left-color: transparent;
+    padding-left: 30px;
+    cursor: not-allowed;
 }
 
 /* Mobile Nested Submenu Styles */

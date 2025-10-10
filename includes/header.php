@@ -141,14 +141,26 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle">Online Payment <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="#" class="dropdown-link">Entrance Exam</a>
-                            <a href="#" class="dropdown-link">New Enrollees</a>
-                            <a href="#" class="dropdown-link">Enrolled Students</a>
+                            <a href="https://uphsl.edu.ph/online_payment/guest_exam.php" target="_blank" class="dropdown-link">Entrance Exam</a>
+                            <a href="https://uphsl.edu.ph/online_payment/guest.php" target="_blank" class="dropdown-link">New Enrollees</a>
+                            <a href="https://uphsl.edu.ph/online_payment/guestold_student.php" target="_blank" class="dropdown-link">Enrolled Students</a>
                         </div>
                     </div>
                     
-                    <div class="nav-item">
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="nav-link">Calendar</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Calendar <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="dropdown-link">College Academic Calendar</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="dropdown-link">BED & SHS Academic Calendar</a>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Enrollment <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfuxQtL77zIZ13Zqzk951FiIrSpGApccIFyp_Gr6faD1vtVng/closedform" class="dropdown-link disabled" onclick="return false;">Enrollment for College & Graduate School & Juris Doctor</a>
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfh2CKtB6Nmz0CeDvWKaTETuNCbaFiZiuo2UdQ0u5t4zJtgvQ/closedform" class="dropdown-link disabled" onclick="return false;">Enrollment for Senior High School</a>
+                        </div>
                     </div>
                     
                     <div class="nav-item">
@@ -268,14 +280,26 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <div class="mobile-nav-item mobile-dropdown">
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Online Payment <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="#" class="mobile-dropdown-link">Entrance Exam</a>
-                    <a href="#" class="mobile-dropdown-link">New Enrollees</a>
-                    <a href="#" class="mobile-dropdown-link">Enrolled Students</a>
+                    <a href="https://uphsl.edu.ph/online_payment/guest_exam.php" target="_blank" class="mobile-dropdown-link">Entrance Exam</a>
+                    <a href="https://uphsl.edu.ph/online_payment/guest.php" target="_blank" class="mobile-dropdown-link">New Enrollees</a>
+                    <a href="https://uphsl.edu.ph/online_payment/guestold_student.php" target="_blank" class="mobile-dropdown-link">Enrolled Students</a>
                 </div>
             </div>
             
-            <div class="mobile-nav-item">
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="mobile-nav-link">Calendar</a>
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Calendar <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="mobile-dropdown-link">College Academic Calendar</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="mobile-dropdown-link">BED & SHS Academic Calendar</a>
+                </div>
+            </div>
+            
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Enrollment <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfuxQtL77zIZ13Zqzk951FiIrSpGApccIFyp_Gr6faD1vtVng/closedform" class="mobile-dropdown-link disabled" onclick="return false;">Enrollment for College & Graduate School & Juris Doctor</a>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfh2CKtB6Nmz0CeDvWKaTETuNCbaFiZiuo2UdQ0u5t4zJtgvQ/closedform" class="mobile-dropdown-link disabled" onclick="return false;">Enrollment for Senior High School</a>
+                </div>
             </div>
             
             <div class="mobile-nav-item">
