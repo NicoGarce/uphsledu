@@ -332,8 +332,8 @@ $recentPosts = getRecentPosts(5);
                     <ul class="footer-links">
                         <li><a href="index.php">Home</a></li>
                         <li><a href="posts.php">All Posts</a></li>
-                        <li><a href="about.php">About</a></li>
-                        <li><a href="contact.php">Contact</a></li>
+                        <li><a href="about/about.php">About</a></li>
+                        <li><a href="about/contact.php">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">

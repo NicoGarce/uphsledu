@@ -123,15 +123,16 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         </div>
                     </div>
                     
+                    
                     <div class="nav-item">
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>contact.php" class="nav-link">Campuses</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>campuses.php" class="nav-link">Campuses</a>
                     </div>
                     
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle">About <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="dropdown-link">About Us</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>contact.php" class="dropdown-link">Contact Us</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="dropdown-link">About Us</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/contact.php" class="dropdown-link">Contact Us</a>
                             <a href="#" class="dropdown-link">Environmental Policy</a>
                             <a href="#" class="dropdown-link">University Policy</a>
                             <a href="#" class="dropdown-link">Map</a>
@@ -150,8 +151,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle">Calendar <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="dropdown-link">College Academic Calendar</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="dropdown-link">BED & SHS Academic Calendar</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="dropdown-link">College Academic Calendar</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="dropdown-link">BED & SHS Academic Calendar</a>
                         </div>
                     </div>
                     
@@ -164,7 +165,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                     
                     <div class="nav-item">
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="nav-link">SDG Initiatives</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="nav-link">SDG Initiatives</a>
                     </div>
                     
                     <?php if (isset($_SESSION['user_id'])): ?>
@@ -262,15 +263,16 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 </div>
             </div>
             
+            
             <div class="mobile-nav-item">
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>contact.php" class="mobile-nav-link">Campuses</a>
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>campuses.php" class="mobile-nav-link">Campuses</a>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">About <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="mobile-dropdown-link">About Us</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>contact.php" class="mobile-dropdown-link">Contact Us</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="mobile-dropdown-link">About Us</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/contact.php" class="mobile-dropdown-link">Contact Us</a>
                     <a href="#" class="mobile-dropdown-link">Environmental Policy</a>
                     <a href="#" class="mobile-dropdown-link">University Policy</a>
                     <a href="#" class="mobile-dropdown-link">Map</a>
@@ -289,8 +291,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <div class="mobile-nav-item mobile-dropdown">
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Calendar <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="mobile-dropdown-link">College Academic Calendar</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="mobile-dropdown-link">BED & SHS Academic Calendar</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="mobile-dropdown-link">College Academic Calendar</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="mobile-dropdown-link">BED & SHS Academic Calendar</a>
                 </div>
             </div>
             
@@ -303,7 +305,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             </div>
             
             <div class="mobile-nav-item">
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="mobile-nav-link">SDG Initiatives</a>
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php" class="mobile-nav-link">SDG Initiatives</a>
             </div>
             
             <?php if (isset($_SESSION['user_id'])): ?>

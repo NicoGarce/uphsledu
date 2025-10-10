@@ -66,8 +66,8 @@
                     <h4 class="footer-subtitle">Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php">Home</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php">About</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>contact.php">Contact</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php">About</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/contact.php">Contact</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php">Programs</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php">Careers</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php">University Clinic</a></li>
