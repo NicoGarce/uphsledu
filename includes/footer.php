@@ -68,9 +68,9 @@
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php">Home</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php">About</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>contact.php">Contact</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>campuses.php">Campuses</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>admissions.php">Admissions</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>academics.php">Academics</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php">Programs</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php">Careers</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php">University Clinic</a></li>
                     </ul>
                 </div>
                 
