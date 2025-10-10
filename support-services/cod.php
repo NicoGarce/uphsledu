@@ -295,11 +295,12 @@ include '../includes/header.php';
 
     .intro-logo {
         margin-bottom: 1rem;
+        padding-top: 1rem;
     }
 
     .intro-logo img {
-        width: 100px;
-        height: 100px;
+        width: 150px;
+        height: 150px;
         object-fit: contain;
         filter: brightness(1.1);
         transition: transform 0.3s ease;
@@ -700,8 +701,8 @@ include '../includes/header.php';
         }
 
         .intro-logo img {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
         }
 
         .intro-content h2 {
