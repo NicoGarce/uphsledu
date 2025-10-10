@@ -72,6 +72,7 @@
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php">Careers</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php">University Clinic</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php">International & External Affairs</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/sps.php">Guidance & Admission</a></li>
                     </ul>
                 </div>
                 

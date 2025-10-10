@@ -109,16 +109,16 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="dropdown-link">Alumni</a>
                             <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
                             <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
                             <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
-                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International and External Affairs</a>
-                            <a href="#" class="dropdown-link">Guidance and Admission</a>
-                            <a href="#" class="dropdown-link">Library</a>
-                            <a href="#" class="dropdown-link">Quality Assurance</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/sps.php" class="dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Guidance & Admission</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/library.php" class="dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/quality-assurance.php" class="dropdown-link <?php echo ($current_page == 'quality-assurance') ? 'active' : ''; ?>">Quality Assurance</a>
                             <a href="#" class="dropdown-link">Research</a>
                         </div>
                     </div>
@@ -236,16 +236,16 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="mobile-dropdown-link">Alumni</a>
                     <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="mobile-dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
                     <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="mobile-dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
                     <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="mobile-dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
-                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="mobile-dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International and External Affairs</a>
-                    <a href="#" class="mobile-dropdown-link">Guidance and Admission</a>
-                    <a href="#" class="mobile-dropdown-link">Library</a>
-                    <a href="#" class="mobile-dropdown-link">Quality Assurance</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="mobile-dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/sps.php" class="mobile-dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Guidance & Admission</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/library.php" class="mobile-dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/quality-assurance.php" class="mobile-dropdown-link <?php echo ($current_page == 'quality-assurance') ? 'active' : ''; ?>">Quality Assurance</a>
                     <a href="#" class="mobile-dropdown-link">Research</a>
                 </div>
             </div>

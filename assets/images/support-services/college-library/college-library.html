@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="author"
+      content="Clark Leovison C. Rey, Jerome Evangelista, Rojeth Javaluyas"
+    />
+    <title>
+      College Library - University of Perpetual Help System - Laguna
+    </title>
+    <link rel="icon" type="x-icon" href="/img/SSS.png" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/library.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+      integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <header>
+    <!--Start of Navigation Bar-->
+    <nav class="navbar">
+      <!--Start of Navigation Logo-->
+      <div class="navlogo">
+        <a href="/index.html">
+          <img
+            src="/img/Logos/white.png"
+            alt="Perpetual Logo"
+            class="perpslogo"
+        /></a>
+      </div>
+      <!--End of Navigation Logo-->
+      <div class="hitbox"></div>
+
+      <ul class="navlist" tabindex="0">
+        <li class="nav-item"><a href="/index.html" class="nav-link">Home</a></li>
+
+        <!--Start of Program SubMenu-->
+        <li class="nav-item">
+          <input type="checkbox" id="programs-checkbox" />
+          <label for="programs-checkbox">Programs</label>
+          <i class="fa-solid fa-caret-down arrow prog-arrow"></i>
+          <!--Start of Basic Education-->
+          <div class="progsub">
+            <ul>
+              <li class="nav-link noHide">
+                <a href="#"
+                  >Basic Education
+                  <i class="fa-solid fa-caret-down arrow bsed-arrow"></i
+                ></a>
+                <div class="progsub-bsed">
+                  <ul>
+                    <li class="bsced">
+                      <a href="https://uphsl.edu.ph/shs/index.htm"
+                        >Senior High School</a
+                      >
+                    </li>
+                    <li class="bsced">
+                      <a href="https://uphsl.edu.ph/jhs/index.htm"
+                        >Junior High School</a
+                      >
+                    </li>
+                    <li class="bsced">
+                      <a href="https://uphsl.edu.ph/gradeschool/index.htm"
+                        >Grade School</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+              <li>
+                <a href="/programs/aviation/aviation.html" class="nav-link"
+                  >Aviation</a
+                >
+              </li>
+              <li>
+                <a href="/programs/cas/cas.html" class="nav-link"
+                  >Arts &amp; Sciences</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/programs/business-accountancy/ba.html"
+                  class="nav-link"
+                  >Business&nbsp;&amp;&nbsp;Accountancy</a
+                >
+              </li>
+              <li>
+                <a href="/programs/ccs/ccs.html" class="nav-link"
+                  >Computer Studies</a
+                >
+              </li>
+              <li>
+                <a href="/programs/criminology/crim.html" class="nav-link"
+                  >Criminology</a
+                >
+              </li>
+              <li>
+                <a href="/programs/education/education.html" class="nav-link"
+                  >Education</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/programs/engineering/engineering.html"
+                  class="nav-link"
+                  >Engineering &amp; Architecture</a
+                >
+              </li>
+              <li>
+                <a href="/programs/hospitality/cihm.html" class="nav-link"
+                  >Int'l Hospitality Management</a
+                >
+              </li>
+              <li>
+                <a href="https://uphsl.edu.ph/cmt/" class="nav-link"
+                  >Maritime</a
+                >
+              </li>
+              <li>
+                <a href="https://uphsl.edu.ph/law/" class="nav-link"
+                  >Law/Juris Doctor</a
+                >
+              </li>
+              <li>
+                <a href="https://uphsl.edu.ph/gs/" class="nav-link"
+                  >Graduate School</a
+                >
+              </li>
+              <!--End of Master/College Programs-->
+            </ul>
+          </div>
+        </li>
+        <!--End of Program SubMenu-->
+
+        <!--Start of Online Services SubMenu-->
+        <li class="nav-item">
+          <input type="checkbox" id="onlineServices-checkbox" />
+          <label for="onlineServices-checkbox">Online Services</label>
+          <i class="fa-solid fa-caret-down arrow ols-arrow"></i>
+          <div class="olssub">
+            <ul>
+              <li>
+                <a href="/olservices/gti.html" class="nav-link"
+                  >GTI&nbsp;Online Grades</a
+                >
+              </li>
+              <li>
+                <a href="/olservices/gti.html" class="nav-link">Moodle</a>
+              </li>
+              <li>
+                <a href="/olservices/gti.html" class="nav-link"
+                  >Google Account</a
+                >
+              </li>
+              <li>
+                <a href="/olservices/payment.html" class="nav-link"
+                  >Online Payment</a
+                >
+              </li>
+              <li>
+                <a href="https://www.saliksikuphsl.org/" class="nav-link"
+                  ><span style="text-align: center">Saliksik</span>
+                  (Research)</a
+                >
+              </li>
+            </ul>
+          </div>
+        </li>
+        <!--End of Online Services SubMenu-->
+
+        <!--Start of Support Services SubMenu-->
+        <li class="nav-item">
+          <input type="checkbox" id="supportServices-checkbox" />
+          <label for="supportServices-checkbox">Support Services</label>
+          <i class="fa-solid fa-caret-down arrow supser-arrow"></i>
+          <div class="supsersub">
+            <ul>
+              <li>
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform"
+                  class="nav-link"
+                  >Alumni</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/support-services/careers/careers.html"
+                  class="nav-link"
+                  >Careers</a
+                >
+              </li>
+              <li>
+                <a href="#" class="nav-link">Clinic</a>
+              </li>
+              <li>
+                <a href="/support-services/cod/cod.html" class="nav-link"
+                  >Community Outreach Department</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/support-services/internal-external/internalexternal.html"
+                  class="nav-link"
+                  >International &amp; External Affairs</a
+                >
+              </li>
+
+              <li>
+                <a href="/support-services/sps/sps.html" class="nav-link"
+                  >Guidance and Admission</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/support-services/college-library/college-library.html"
+                  class="nav-link"
+                  >Library</a
+                >
+              </li>
+              <li><a href="#" class="nav-link">Quality Assurance</a></li>
+              <li>
+                <a
+                  href="/support-services/research/research.html"
+                  class="nav-link"
+                  >Research</a
+                >
+              </li>
+            </ul>
+          </div>
+        </li>
+        <!--End of Support Services SubMenu-->
+
+        <li class="nav-item">
+          <a href="#Campuses" class="nav-link">Campuses</a>
+        </li>
+
+        <!--Start of About SubMenu-->
+        <li class="nav-item">
+          <input type="checkbox" id="about-checkbox" />
+          <label for="about-checkbox">About</label>
+          <i class="fa-solid fa-caret-down arrow abt-arrow"></i>
+          <div class="abtsub">
+            <ul>
+              <li>
+                <a href="/about/about.html" class="nav-link">About Us</a>
+              </li>
+              <li>
+                <a href="/about/contact-us.html" class="nav-link"
+                  >Contact Us</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/about/environmental-policy/environmental-policy.html"
+                  class="nav-link"
+                  >Environmental Policy</a
+                >
+              </li>
+              <li>
+                <a href="/about/misvision.html" class="nav-link"
+                  >Mission &amp; Vision</a
+                >
+              </li>
+              <li><a href="#" class="nav-link">Our Philosophy</a></li>
+              <li><a href="#" class="nav-link">Quality Policy</a></li>
+
+              <li><a href="/about/map.html" class="nav-link">Map</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <input type="checkbox" id="calendar-checkbox" />
+          <label for="calendar-checkbox">Calendar</label>
+          <i class="fa-solid fa-caret-down arrow supser-arrow"></i>
+          <div class="supsersub">
+            <ul>
+              <li>
+                <a
+                  href="/academic-calendar/COLLEGE ACADEMIC CALENDAR 2024-2025.pdf"
+                  target="_blank"
+                  >College Academic Calendar</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/academic-calendar/BED & SHS ACADEMIC CALENDAR 2024-2025.pdf"
+                  target="_blank"
+                  >BED&nbsp;&amp;&nbsp;SHS&nbsp;Academic Calendar</a
+                >
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <input type="checkbox" id="enrollment-checkbox" />
+          <label for="enrollment-checkbox">Enrollment</label>
+          <i class="fa-solid fa-caret-down arrow supser-arrow"></i>
+          <div class="supsersub">
+            <ul>
+              <li>
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSfuxQtL77zIZ13Zqzk951FiIrSpGApccIFyp_Gr6faD1vtVng/viewform"
+                  target="_blank"
+                  >Enrollment for College, Graduate School &amp; Juris Doctor</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSfh2CKtB6Nmz0CeDvWKaTETuNCbaFiZiuo2UdQ0u5t4zJtgvQ/viewform"
+                  target="_blank"
+                  >Enrollment for Senior High School</a
+                >
+              </li>
+            </ul>
+          </div>
+        </li>
+        <!--End of About SubMenu-->
+        <li class="nav-item">
+          <a
+            href="/img/Sustainable Goals/a9f3eec3-a0cc-41ed-95b5-48b9d1731e76.jpg"
+            class="enrlnw"
+            target="_blank"
+            ><span class="navenrl">SDG Initiatives
+            </span>
+          </a>
+        </li>
+        
+      </ul>
+
+      <!--Start of Hamburger Menu-->
+      <div class="navham">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+      <!--End of Hamburger Menu-->
+      <span class="yellow"></span>
+    </nav>
+  </header>
+  
+  <body>
+    <main>
+      <div class="banner">
+        <img
+          src="/img/library/uphsl-admission-banner.png"
+          alt="College Library"
+          class="img-banner"
+        />
+      </div>
+
+      <div class="mini-nav">
+        <ul>
+          <li><a href="#mission-vision">Mission And Vision</a></li>
+          <li><a href="#ccs-programs">News &amp; Updates</a></li>
+          <li><a href="#ccs-bsit">New Acquisition</a></li>
+          <li><a href="#ccs-bscs">Online Services</a></li>
+          <li><a href="#all-supports">Quality Objectives</a></li>
+          <li><a href="#History">History</a></li>
+          <li><a href="#Facilities">Facilities</a></li>
+        </ul>
+      </div>
+
+      <section class="program-overview">
+        <div class="text-overview">
+          <div class="overview-header-wrapper">
+            <h1>University Library</h1>
+          </div>
+          <p>
+            The Library Services Department manages and provides seamless access
+            to both print and online scholarly information; offers reference
+            services, research assistance, and information literacy instruction;
+            provides excellent facility and equipment. Licensed, professional,
+            and computer-savvy Librarians are always ready to assist library
+            users.
+          </p>
+        </div>
+        <div class="program-logo-container">
+          <img src="/img/library/logo.png" alt="" />
+        </div>
+      </section>
+
+      <div class="scroll-progress">
+        <span class="progress-value">
+          <svg
+            class="svg-icon"
+            style="
+              width: 1em;
+              height: 1em;
+              vertical-align: middle;
+              fill: currentColor;
+              overflow: hidden;
+            "
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M908.501333 904.832L512 508.330667 115.498667 904.832a42.666667 42.666667 0 0 1-60.330667-60.330667l426.666667-426.666666a42.666667 42.666667 0 0 1 60.330666 0l426.666667 426.666666a42.666667 42.666667 0 0 1-60.330667 60.330667z m0-298.666667L512 209.664 115.498667 606.165333a42.666667 42.666667 0 0 1-60.330667-60.330666l426.666667-426.666667a42.666667 42.666667 0 0 1 60.330666 0l426.666667 426.666667a42.666667 42.666667 0 0 1-60.330667 60.330666z"
+            /></svg>
+        </span>
+      </div>
+
+      <!--Star of Mission and Vision-->
+      <section class="mission-vision" id="mission-vision">
+        <div class="mission-vision-card">
+          <div class="card-header-wrapper">
+            <h2>Vision</h2>
+          </div>
+          <p>A dominant university library provider in global community</p>
+        </div>
+        <div class="mission-vision-card">
+          <div class="card-header-wrapper">
+            <h2>Mission</h2>
+          </div>
+          <p>
+            Committed to provide users with comprehensive resources and services
+            as tools for independent critical thinking and life-long learning.
+          </p>
+        </div>
+      </section>
+
+      <section class="news-updates" aria-labelledby="News&Updates">
+        <div class="main-title">
+          <h1>News &amp; Updates</h1>
+        </div>
+        <div class="grid-row">
+          <div class="news-cards">
+            <div class="imgs-news">
+              <img
+                src="/support-services/college-library/img/news1.png"
+                alt=""
+              />
+            </div>
+
+            <div class="news-title">
+              <h3>Faculty E-Library Virtual Orientation</h3>
+
+              <p>
+                Despite the impact of the COVID-19 crisis, the UPHSL- Main
+                Library has never stopped its services and continued to support
+                the informational needs of the Perpetualite community virtually.
+                Keeping its patrons' learning needs is the top priority of the
+                Library.
+              </p>
+            </div>
+          </div>
+
+          <div class="news-cards">
+            <div class="imgs-news">
+              <img
+                src="/support-services/college-library/img/news1.png"
+                alt=""
+              />
+            </div>
+
+            <div class="news-title">
+              <h3>Faculty E-Library Virtual Orientation</h3>
+
+              <p>
+                Despite the impact of the COVID-19 crisis, the UPHSL- Main
+                Library has never stopped its services and continued to support
+                the informational needs of the Perpetualite community virtually.
+                Keeping its patrons' learning needs is the top priority of the
+                Library.
+              </p>
+            </div>
+          </div>
+
+          <div class="news-cards">
+            <div class="imgs-news">
+              <img
+                src="/support-services/college-library/img/news1.png"
+                alt=""
+              />
+            </div>
+
+            <div class="news-title">
+              <h3>Faculty E-Library Virtual Orientation</h3>
+
+              <p>
+                Despite the impact of the COVID-19 crisis, the UPHSL- Main
+                Library has never stopped its services and continued to support
+                the informational needs of the Perpetualite community virtually.
+                Keeping its patrons' learning needs is the top priority of the
+                Library.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!--End of News and Update Section-->
+
+      <section class="acquisition">
+        <h2>New Acquisition</h2>
+        <div class="grid-cards">
+          
+          <div class="vids-cards">
+            <iframe
+              width="400"
+              height="200"
+              src="https://www.youtube.com/embed/ku6_Ud1zOsc"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+            <h3>Newly Acquired Books 2022 - 1st Batch</h3>
+          </div>
+
+          <div class="vids-cards">
+            <iframe
+              width="400"
+              height="200"
+              src="https://www.youtube.com/embed/ku6_Ud1zOsc"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+            <h3>Newly Acquired Books 2022 - 1st Batch</h3>
+          </div>
+
+          <div class="vids-cards">
+            <iframe
+              width="400"
+              height="200"
+              src="https://www.youtube.com/embed/ku6_Ud1zOsc"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+            <h3>Newly Acquired Books 2022 - 1st Batch</h3>
+          </div>
+        </div>
+      </section>
+
+      <section class="ol-services">
+        <h1>Online Services</h1>
+
+        <div class="online-services-grid">
+          
+          <div class="online-cards">
+            <div class="img-online">
+              <img
+                src="/support-services/college-library/img/olservices/uphsl-opac.jpg"
+                alt=""
+                class="imgs-ol"
+              />
+              <h3>OPAC - Online Public Access Catalogue</h3>
+            </div>
+            <p>
+              This feature-rich Online LMS, there is never a need to worry on
+              valuable data. All of your data, including archival data, remains
+              instantly accessible all the timeâ€”with no system slowdown.
+              Up-to-date information on books, members and status reports is
+              just a click away. <br /><br />Broadcasting feature is added in
+              the system to help not only the administrations but also the
+              members in information dissemination. Security of data is never a
+              question with multiple implementation procedures, from associating
+              username to links the user is authorized to visit, access level
+              rights, to recording of every transaction that the system is
+              handling.
+            </p>
+          </div>
+
+          <div class="online-cards">
+            <div class="img-online">
+              <img
+                src="/support-services/college-library/img/olservices/uphsl-ebsco.png"
+                alt=""
+                class="ebesco"
+              />
+              <h3>EBSCOhost</h3>
+            </div>
+            <p>
+              a powerful online reference system accessible via internet. It
+              offers a variety of proprietary full-text databases and popular
+              databases from leading information providers. The comprehensive
+              databases range from general reference collections to specially
+              designed, subject-specific databases for public, academic,
+              medical, corporate, and school libraries
+            </p>
+          </div>
+
+          <div class="online-cards">
+            <div class="img-online">
+              <img
+                src="/support-services/college-library/img/olservices/uphsl-pej.png"
+                alt=""
+                class="ebesco"
+              />
+              <h3>Philippine E-Journals</h3>
+            </div>
+            <p>
+              An expanding collection of academic journals that are made
+              accessible globally throuh a signle Web-based platform. It is
+              hosted by C&E Publishing, Inc., a premier educational publisher in
+              the Philippines and a leader in the distribution of integrated
+              information-based solutions.
+            </p>
+          </div>
+
+          <div class="online-cards">
+            <div class="img-online">
+              <img
+                src="/support-services/college-library/img/olservices/starbooks.png"
+                alt=""
+                class="imgs-ol"
+              />
+              <h3>Starbooks</h3>
+            </div>
+            <p>
+              State of the art facilities to access science and technology
+              information via the STOO portals. A technically-qualified staff
+              will be on hand to assist STARBOOKS users on-site white an online
+              Librarian's HelpDesk service will also be available to answer
+              queries. <br /><br />
+
+              Throuhg the STARBOOKS Program, Filipinos can have access to
+              scientific information for their research needs or simply satisfy
+              their curious minds. Eventually, it is hoped that (1) it will
+              create interest in the field of Science and Technology which may
+              increase the number of Filipinos enrolling in S&T courses, (2)
+              encourage great and curious minds to develop new ideas -
+              inventions and innovations, and (3) inspire one's capacity for
+              entrepreneurship and research for socio-economic development.
+            </p>
+          </div>
+
+          <div class="online-cards">
+            <div class="img-online">
+              <img
+                src="/support-services/college-library/img/olservices/escra.png"
+                alt=""
+                class="ebesco"
+              />
+              <h3>eSCRA Online</h3>
+            </div>
+            <p>
+              A Complete Decision from1901 to the Present. Online Library,
+              Always Updated and Available. Search and Browse Modes Makes it
+              Fast and Intuitive. Smart Searching through Intelligent Fields.
+              TrueCite Technology gives you the same look and feel as the book.
+            </p>
+          </div>
+
+          <div class="online-cards">
+            <div class="img-online">
+              <img
+                src="/support-services/college-library/img/olservices/turnitin.png"
+                alt=""
+                class="imgs-ol"
+              />
+              <h3>Turnitin</h3>
+            </div>
+            <p>
+              An expanding collection of academic journals that are made
+              accessible globally throuh a signle Web-based platform. It is
+              hosted by C&E Publishing, Inc., a premier educational publisher in
+              the Philippines and a leader in the distribution of integrated
+              information-based solutions.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="quality-objectives">
+        <div class="main-content">
+
+        <div class="main-title">
+          <h1>Quality Objectives</h1>
+        </div>
+
+        <ul>
+          <li>To develop better access to resources and services.</li>
+          <li>To collaborate with all stakeholders on their learning needs and experience.</li>
+          <li>To assist the faculty in updating references for their course syllabi.</li>
+          <li>To disseminate new services and promote their use.</li>
+          <li>To use feedback for continual improvement.</li>
+          <li>To expand proactive library user education and information literacy program.</li>
+        </ul>
+        
+      </div>
+
+      </section>
+
+
+      <!-- footer -->
+      <footer>
+        <div class="footer-top">
+          <ul class="footer-top-ul">
+            <li><a href="#">About UPHSL JONELTA</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">FAQ's</a></li>
+            <li><a href="#">News</a></li>
+
+            <div class="footer-icons">
+              <li class="icons">
+                <a href="https://www.facebook.com/uphsl.info.ph" target="_blank"
+                  ><i
+                    class="fa-brands fa-facebook fa-lg"
+                    style="color: #d3c5c5"
+                  ></i
+                ></a>
+              </li>
+              <li class="icons">
+                <a href="https://www.youtube.com/@uphsltv1397" target="_blank"
+                  ><i
+                    class="fa-brands fa-youtube fa-lg"
+                    style="color: #d3c5c5"
+                  ></i
+                ></a>
+              </li>
+            </div>
+          </ul>
+        </div>
+
+        <div class="footer-bottom">
+          <img class="footer-logo" src="/img/LG6.png" alt="" />
+
+          <div class="foot-copyright">
+            <p class="footer-copyright">
+              Copyright Â© 2023 University of Perpetual Help JONELTA - All Rights
+              Reserved
+            </p>
+
+            <div class="footer-icons"></div>
+          </div>
+        </div>
+      </footer>
+      <!-- end of footer -->
+    </main>
+  </body>
+</html>
