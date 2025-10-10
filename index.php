@@ -24,6 +24,67 @@ $page_title = "Home";
 include 'includes/header.php';
 ?>
 
+    <style>
+        /* Hero Ticker & Clock */
+        .hero { position: relative; }
+        .hero-ticker {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            z-index: 2;
+        }
+        .hero-ticker-inner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 16px;
+        }
+        .hero-clock {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+        .hero-time {
+            font-weight: 600;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .hero-date {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+        .hero-ticker-track {
+            overflow: hidden;
+            flex: 1;
+        }
+        .hero-ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            will-change: transform;
+            animation: heroTickerScroll 30s linear infinite;
+        }
+        .hero-ticker-content a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 18px;
+        }
+        .hero-ticker-content a:hover { text-decoration: underline; }
+        .hero-ticker-content .sep { opacity: 0.6; margin: 0 6px; }
+        @keyframes heroTickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @media (max-width: 768px) {
+            .hero-ticker-inner { gap: 12px; padding: 8px 12px; }
+            .hero-clock { font-size: 14px; }
+            .hero-ticker-content a { margin: 0 14px; }
+        }
+    </style>
+
     <!-- Hero Section with Image Background -->
     <section class="hero">
         <div class="hero-background">
@@ -87,6 +148,25 @@ include 'includes/header.php';
                 </div>
             </div>
         </div>
+        
+        <?php if (!empty($recent_posts)): ?>
+        <div class="hero-ticker">
+            <div class="hero-ticker-inner">
+                <div class="hero-clock">
+                    <div class="hero-time" id="heroClock">--:--</div>
+                    <div class="hero-date" id="heroDate">---</div>
+                </div>
+                <div class="hero-ticker-track">
+                    <div class="hero-ticker-content" id="heroTickerContent">
+                        <?php foreach ($recent_posts as $post): ?>
+                            <a href="post.php?slug=<?php echo $post['slug']; ?>"><?php echo htmlspecialchars($post['title']); ?></a>
+                            <span class="sep">•</span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
     </section>
 
     <!-- News Section -->

@@ -194,4 +194,37 @@ document.addEventListener('DOMContentLoaded', function() {
             closeMobileSidebar();
         }
     });
+
+    // Hero Clock & Ticker
+    const heroClockEl = document.getElementById('heroClock');
+    const heroDateEl = document.getElementById('heroDate');
+    const tickerContentEl = document.getElementById('heroTickerContent');
+    if (heroClockEl) {
+        function updateClock() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            heroClockEl.textContent = now.toLocaleTimeString([], timeOptions);
+            if (heroDateEl) {
+                const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+                heroDateEl.textContent = now.toLocaleDateString([], dateOptions);
+            }
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+    if (tickerContentEl) {
+        // Duplicate content once to enable seamless scroll (animation translates -50%).
+        const originalHTML = tickerContentEl.innerHTML.trim();
+        tickerContentEl.innerHTML = originalHTML + originalHTML;
+        // Pause on hover
+        const tickerTrack = tickerContentEl.closest('.hero-ticker-track');
+        if (tickerTrack) {
+            tickerTrack.addEventListener('mouseenter', () => {
+                tickerContentEl.style.animationPlayState = 'paused';
+            });
+            tickerTrack.addEventListener('mouseleave', () => {
+                tickerContentEl.style.animationPlayState = 'running';
+            });
+        }
+    }
 });

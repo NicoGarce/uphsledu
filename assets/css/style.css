@@ -5838,3 +5838,53 @@ body.sidebar-open {
         font-size: 0.8rem;
     }
 }
+
+/* Safe ticker layout (label + scrolling titles) */
+.news-ticker {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex: 1;
+	min-width: 0; /* allow flex child to shrink without overflow */
+	overflow: hidden; /* clip scrolling content */
+}
+
+.ticker-label {
+	flex-shrink: 0; /* keep label visible */
+}
+
+.ticker-content {
+	display: flex;
+	gap: 40px;
+	white-space: nowrap;
+	animation: ticker 30s linear infinite;
+	will-change: transform;
+}
+
+/* Visual dividers between titles */
+.ticker-item + .ticker-item {
+	padding-left: 18px;
+	margin-left: 18px;
+	position: relative;
+}
+
+.ticker-item + .ticker-item::before {
+	content: "|";
+	color: rgba(255, 255, 255, 0.6);
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/* Keep animation defined (if not already) */
+@keyframes ticker {
+	0% { transform: translateX(100%); }
+	100% { transform: translateX(-100%); }
+}
+
+/* Mobile tweaks for spacing */
+@media (max-width: 768px) {
+	.news-ticker { gap: 10px; }
+	.ticker-content { gap: 30px; }
+}
