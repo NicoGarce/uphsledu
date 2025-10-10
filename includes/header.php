@@ -115,7 +115,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                             <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="dropdown-link">Careers</a>
                             <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="dropdown-link">University Clinic</a>
                             <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="dropdown-link">Community Outreach Department</a>
-                            <a href="#" class="dropdown-link">International and External Affairs</a>
+                            <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="dropdown-link">International and External Affairs</a>
                             <a href="#" class="dropdown-link">Guidance and Admission</a>
                             <a href="#" class="dropdown-link">Library</a>
                             <a href="#" class="dropdown-link">Quality Assurance</a>
@@ -242,7 +242,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php" class="mobile-dropdown-link">Careers</a>
                     <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php" class="mobile-dropdown-link">University Clinic</a>
                     <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/cod.php" class="mobile-dropdown-link">Community Outreach Department</a>
-                    <a href="#" class="mobile-dropdown-link">International and External Affairs</a>
+                    <a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php" class="mobile-dropdown-link">International and External Affairs</a>
                     <a href="#" class="mobile-dropdown-link">Guidance and Admission</a>
                     <a href="#" class="mobile-dropdown-link">Library</a>
                     <a href="#" class="mobile-dropdown-link">Quality Assurance</a>
