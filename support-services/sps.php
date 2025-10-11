@@ -112,7 +112,6 @@ body {
     border-radius: 25px;
     font-weight: 600;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     font-size: 0.85rem;
 }
 

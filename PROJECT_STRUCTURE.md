@@ -152,3 +152,4 @@ uphsledu/
 - Asset paths updated to reflect new organization
 - Database configuration moved to `app/config/database.php`
 - All include/require statements updated to new paths
+

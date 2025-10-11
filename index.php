@@ -92,7 +92,7 @@ include 'app/includes/header.php';
     <section class="hero">
         <div class="hero-background">
             <img 
-                src="../assets/images/banners/UPHSL Facade.png" 
+                src="assets/images/banners/UPHSL Facade.png" 
                 alt="University of Perpetual Help System Laguna" 
                 class="hero-image">
         </div>
