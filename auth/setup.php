@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL System Setup Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Displays system setup information and user account details
+ */
+
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';

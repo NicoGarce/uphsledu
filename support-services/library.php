@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL College Library Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Information about the College Library services and resources
+ */
+
 $base_path = '../';
 $page_title = "University Library";
 include '../app/includes/header.php';

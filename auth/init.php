@@ -2,6 +2,10 @@
 /**
  * UPHSL Website Initialization Script
  * Run this script once to set up the database and create default user accounts
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Initializes the database and creates default user accounts for first-time setup
  */
 
 require_once '../app/config/database.php';

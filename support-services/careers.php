@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Careers Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Career opportunities and job listings at the University of Perpetual Help System Laguna
+ */
+
 // Set base path for subdirectory
 $base_path = '../';
 // Include header

@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Website Header
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Common header template for all pages on the UPHSL website
+ */
+
 // Get current page for active navigation highlighting
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>

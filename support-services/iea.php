@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL International & External Affairs Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Information about international programs and external affairs at UPHSL
+ */
+
 $base_path = '../';
 $page_title = "International & External Affairs";
 include '../app/includes/header.php';

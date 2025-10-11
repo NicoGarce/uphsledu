@@ -1,4 +1,12 @@
 <?php
+/**
+ * Utility Functions for UPHSL Website
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Core utility functions for the UPHSL website including database operations, user management, and content handling
+ */
+
 // Utility functions for the blog
 
 // Get recent posts

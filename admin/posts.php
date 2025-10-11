@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Admin Posts Management
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Administrative interface for managing blog posts and news articles
+ */
+
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';

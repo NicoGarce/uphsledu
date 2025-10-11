@@ -1,4 +1,12 @@
 <?php
+/**
+ * Database Configuration
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Database configuration and initialization for UPHSL website
+ */
+
 // Database configuration
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'uphsledu');

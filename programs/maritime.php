@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Maritime Program Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Information about the Maritime program at UPHSL
+ */
+
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';

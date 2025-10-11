@@ -1,3 +1,11 @@
+/**
+ * UPHSL Website JavaScript
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Main JavaScript functionality for the UPHSL website
+ */
+
 // Dropdown functionality
 document.addEventListener('DOMContentLoaded', function() {
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');

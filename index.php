@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Homepage
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Main homepage for the University of Perpetual Help System Laguna website
+ */
+
 session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';

@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Research Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Information about research programs and initiatives at UPHSL
+ */
+
 $base_path = '../';
 $page_title = "Research & Publication";
 include '../app/includes/header.php';

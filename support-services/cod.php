@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Community Outreach Department Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Information about the Community Outreach Department and its programs
+ */
+
 // Set base path for subdirectory
 $base_path = '../';
 // Include header
