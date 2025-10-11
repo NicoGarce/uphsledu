@@ -1736,6 +1736,11 @@ h2, h3, h4, h5, h6 {
     
     .hero-tagline {
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
     }
     
     .latest-post-card {
@@ -3590,6 +3595,15 @@ h2, h3, h4, h5, h6 {
     .hero-content {
         max-width: 95%;
         padding: 15px;
+    }
+    
+    .hero-tagline {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
     }
     
     .tagline {
