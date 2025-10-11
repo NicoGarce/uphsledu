@@ -62,7 +62,7 @@ $base_path = '';
         <div class="nav-container">
             <!-- First Column: Logo -->
             <div class="nav-logo">
-                <a href="index.php">
+                <a href="">
                     <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
@@ -87,7 +87,7 @@ $base_path = '';
                 <!-- Second Row: Main Menu -->
                 <div class="nav-menu" id="nav-menu">
                     <div class="nav-item">
-                        <a href="index.php" class="nav-link">Home</a>
+                        <a href="" class="nav-link">Home</a>
                     </div>
                     
                     
@@ -320,7 +320,7 @@ $base_path = '';
                 <h3 class="sidebar-title">University Info</h3>
                 <div class="university-info">
                     <p>Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna.</p>
-                    <a href="index.php" class="btn btn-primary">Visit Homepage</a>
+                    <a href="" class="btn btn-primary">Visit Homepage</a>
                 </div>
             </div>
         </aside>
@@ -341,7 +341,7 @@ $base_path = '';
                 <div class="footer-section">
                     <h4 class="footer-heading">Quick Links</h4>
                     <ul class="footer-links">
-                        <li><a href="index.php">Home</a></li>
+                        <li><a href="">Home</a></li>
                         <li><a href="posts.php">All Posts</a></li>
                         <li><a href="about">About</a></li>
                         <li><a href="about/contact.php">Contact</a></li>

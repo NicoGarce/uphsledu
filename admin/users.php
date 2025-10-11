@@ -73,12 +73,12 @@ $users = $stmt->fetchAll();
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="../index.php">
+                <a href="../">
                     <img src="../assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             <div class="nav-menu">
-                <a href="../index.php" class="nav-link">Home</a>
+                <a href="../" class="nav-link">Home</a>
                 <a href="dashboard.php" class="nav-link">Dashboard</a>
                 <?php if (isAuthor() || isSuperAdmin()): ?>
                     <a href="create-post.php" class="nav-link">Create Post</a>
