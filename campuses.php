@@ -1,7 +1,7 @@
 <?php
 $page_title = "JONELTA Campuses";
 $base_path = '';
-include 'includes/header.php';
+include 'app/includes/header.php';
 ?>
 
 <style>
@@ -445,4 +445,4 @@ include 'includes/header.php';
     </section>
 </main>
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'app/includes/footer.php'; ?>

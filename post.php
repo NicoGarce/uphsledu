@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
 
 // Get post slug from URL
 $slug = $_GET['slug'] ?? '';
@@ -29,6 +29,9 @@ $images = getPostImages($post['id']);
 
 // Get recent posts for sidebar
 $recentPosts = getRecentPosts(5);
+
+// Set base path for assets
+$base_path = '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,9 +42,9 @@ $recentPosts = getRecentPosts(5);
     <meta name="description" content="<?php echo htmlspecialchars($post['excerpt'] ?? getExcerpt($post['content'], 160)); ?>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="assets/images/logo.png">
-    <link rel="shortcut icon" type="image/png" href="assets/images/logo.png">
-    <link rel="apple-touch-icon" href="assets/images/logo.png">
+    <link rel="icon" type="image/png" href="assets/images/logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="assets/images/logos/logo.png">
+    <link rel="apple-touch-icon" href="assets/images/logos/logo.png">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/post.css">
 </head>
@@ -168,19 +171,19 @@ $recentPosts = getRecentPosts(5);
                     
                     <?php if (isLoggedIn()): ?>
                         <div class="nav-item">
-                            <a href="dashboard.php" class="nav-link">Dashboard</a>
+                            <a href="admin/dashboard.php" class="nav-link">Dashboard</a>
                         </div>
                         <?php if (isAuthor() || isSuperAdmin()): ?>
                             <div class="nav-item">
-                                <a href="create-post.php" class="nav-link">Create Post</a>
+                                <a href="admin/create-post.php" class="nav-link">Create Post</a>
                             </div>
                         <?php endif; ?>
                         <div class="nav-item">
-                            <a href="logout.php" class="nav-link">Logout</a>
+                            <a href="auth/logout.php" class="nav-link">Logout</a>
                         </div>
                     <?php else: ?>
                         <div class="nav-item">
-                            <a href="login.php" class="nav-link">Login</a>
+                            <a href="auth/login.php" class="nav-link">Login</a>
                         </div>
                     <?php endif; ?>
                 </div>

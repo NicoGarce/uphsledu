@@ -1,7 +1,7 @@
 <?php
 $base_path = '../';
 $page_title = "University Library";
-include '../includes/header.php';
+include '../app/includes/header.php';
 ?>
 
 <style>
@@ -446,4 +446,4 @@ body {
     </section>
 </main>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../app/includes/footer.php'; ?>

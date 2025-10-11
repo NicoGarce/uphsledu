@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once '../config/database.php';
-require_once '../includes/functions.php';
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 
 // Check if user is logged in and is super admin
 if (!isLoggedIn() || !isSuperAdmin()) {
-    redirect('../login.php');
+    redirect('../auth/login.php');
 }
 
 $user = getUserById($_SESSION['user_id']);
@@ -91,9 +91,9 @@ $users = $stmt->fetchAll();
             </div>
             <div class="nav-menu">
                 <a href="../index.php" class="nav-link">Home</a>
-                <a href="../dashboard.php" class="nav-link">Dashboard</a>
+                <a href="dashboard.php" class="nav-link">Dashboard</a>
                 <?php if (isAuthor() || isSuperAdmin()): ?>
-                    <a href="../create-post.php" class="nav-link">Create Post</a>
+                    <a href="create-post.php" class="nav-link">Create Post</a>
                 <?php endif; ?>
                 <?php if (isAdmin()): ?>
                     <a href="users.php" class="nav-link">Users</a>
@@ -102,7 +102,7 @@ $users = $stmt->fetchAll();
             </div>
             <div class="user-menu">
                 <span class="user-name"><?php echo htmlspecialchars($user['first_name']); ?></span>
-                <a href="../logout.php" class="nav-link">Logout</a>
+                <a href="../auth/logout.php" class="nav-link">Logout</a>
             </div>
         </div>
     </nav>

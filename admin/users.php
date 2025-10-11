@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once '../config/database.php';
-require_once '../includes/functions.php';
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 
 // Check if user is logged in and is admin
 if (!isLoggedIn() || !isAdmin()) {
-    redirect('../login.php');
+    redirect('../auth/login.php');
 }
 
 $pdo = getDBConnection();
@@ -71,9 +71,9 @@ $users = $stmt->fetchAll();
             </div>
             <div class="nav-menu">
                 <a href="../index.php" class="nav-link">Home</a>
-                <a href="../dashboard.php" class="nav-link">Dashboard</a>
+                <a href="dashboard.php" class="nav-link">Dashboard</a>
                 <?php if (isAuthor() || isSuperAdmin()): ?>
-                    <a href="../create-post.php" class="nav-link">Create Post</a>
+                    <a href="create-post.php" class="nav-link">Create Post</a>
                 <?php endif; ?>
                 <a href="users.php" class="nav-link active">Users</a>
                 <?php if (isSuperAdmin()): ?>
@@ -82,7 +82,7 @@ $users = $stmt->fetchAll();
             </div>
             <div class="user-menu">
                 <span class="user-name"><?php echo htmlspecialchars($_SESSION['first_name'] ?? ''); ?></span>
-                <a href="../logout.php" class="nav-link">Logout</a>
+                <a href="../auth/logout.php" class="nav-link">Logout</a>
             </div>
         </div>
     </nav>

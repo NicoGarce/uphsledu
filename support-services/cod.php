@@ -2,7 +2,7 @@
 // Set base path for subdirectory
 $base_path = '../';
 // Include header
-include '../includes/header.php';
+include '../app/includes/header.php';
 ?>
 
 
@@ -806,5 +806,5 @@ include '../includes/header.php';
 
 <?php
 // Include footer
-include '../includes/footer.php';
+include '../app/includes/footer.php';
 ?>

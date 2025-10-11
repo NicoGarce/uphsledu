@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
 
 // Get current page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -14,6 +14,9 @@ $totalPages = ceil($totalPosts / 10);
 
 // Get recent posts for sidebar
 $recentPosts = getRecentPosts(5);
+
+// Set base path for assets
+$base_path = '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,9 +27,9 @@ $recentPosts = getRecentPosts(5);
     <meta name="description" content="Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="assets/images/logo.png">
-    <link rel="shortcut icon" type="image/png" href="assets/images/logo.png">
-    <link rel="apple-touch-icon" href="assets/images/logo.png">
+    <link rel="icon" type="image/png" href="assets/images/logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="assets/images/logos/logo.png">
+    <link rel="apple-touch-icon" href="assets/images/logos/logo.png">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/posts.css">
 </head>
@@ -37,7 +40,7 @@ $recentPosts = getRecentPosts(5);
             <!-- First Column: Logo -->
             <div class="nav-logo">
                 <a href="index.php">
-                    <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                        <img src="assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             
@@ -375,7 +378,7 @@ $recentPosts = getRecentPosts(5);
             <div class="footer-content">
                 <div class="footer-section">
                     <h3 class="footer-title">
-                        <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="footer-logo">
+                        <img src="assets/images/logos/logo.png" alt="University of Perpetual Help System" class="footer-logo">
                     </h3>
                     <p class="footer-description">
                         Character Building is Nation Building. Excellence in education, character formation, and nation building.
@@ -414,6 +417,6 @@ $recentPosts = getRecentPosts(5);
         </div>
     </footer>
 
-    <script src="assets/js/script.js"></script>
+        <script src="assets/js/script.js"></script>
 </body>
 </html>

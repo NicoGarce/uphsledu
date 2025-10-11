@@ -8,9 +8,9 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo (isset($page_title) && $page_title !== 'Home') ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
-    <link rel="icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
-    <link rel="shortcut icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
-    <link rel="apple-touch-icon" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logos/logo.png">
+    <link rel="apple-touch-icon" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logos/logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo isset($base_path) ? $base_path : ''; ?>assets/css/style.css">
     <?php if (isset($additional_css)): ?>
@@ -26,7 +26,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <!-- First Column: Logo -->
             <div class="nav-logo">
                 <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php">
-                    <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                    <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             
@@ -170,7 +170,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <div class="nav-item">
-                            <a href="dashboard.php" class="nav-link">Dashboard</a>
+                            <a href="admin/dashboard.php" class="nav-link">Dashboard</a>
                         </div>
                         <div class="nav-item">
                             <a href="logout.php" class="nav-link">Logout</a>
@@ -188,7 +188,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <div class="mobile-sidebar" id="mobile-sidebar">
         <div class="mobile-sidebar-header">
             <div class="mobile-sidebar-logo">
-                <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logo.png" alt="University of Perpetual Help System" class="mobile-logo-img">
+                <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logos/logo.png" alt="University of Perpetual Help System" class="mobile-logo-img">
                 <h2 class="mobile-site-name">UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h2>
             </div>
             <button class="mobile-sidebar-close" id="mobile-sidebar-close">
@@ -310,7 +310,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             
             <?php if (isset($_SESSION['user_id'])): ?>
                 <div class="mobile-nav-item">
-                    <a href="dashboard.php" class="mobile-nav-link">Dashboard</a>
+                    <a href="admin/dashboard.php" class="mobile-nav-link">Dashboard</a>
                 </div>
                 <div class="mobile-nav-item">
                     <a href="logout.php" class="mobile-nav-link">Logout</a>

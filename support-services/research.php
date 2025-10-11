@@ -1,7 +1,7 @@
 <?php
 $base_path = '../';
 $page_title = "Research & Publication";
-include '../includes/header.php';
+include '../app/includes/header.php';
 ?>
 
 <style>
@@ -1073,4 +1073,4 @@ function showDepartmentMobile(departmentId) {
 }
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../app/includes/footer.php'; ?>
