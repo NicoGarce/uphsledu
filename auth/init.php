@@ -4,7 +4,7 @@
  * Run this script once to set up the database and create default user accounts
  */
 
-require_once 'config/database.php';
+require_once '../app/config/database.php';
 
 echo "<h1>UPHSL Website Initialization</h1>";
 echo "<p>Setting up database and creating default user accounts...</p>";
@@ -36,7 +36,7 @@ try {
         echo "</ul>";
         
         echo "<p><strong>Important:</strong> Please change these passwords immediately after first login!</p>";
-        echo "<p><a href='setup.php'>View detailed setup information</a> | <a href='login.php'>Go to Login</a> | <a href='index.php'>View Website</a></p>";
+        echo "<p><a href='setup.php'>View detailed setup information</a> | <a href='login.php'>Go to Login</a> | <a href='../index.php'>View Website</a></p>";
         
     } else {
         echo "<h2 style='color: red;'>✗ Database initialization failed!</h2>";

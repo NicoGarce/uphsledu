@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once '../config/database.php';
-require_once '../includes/functions.php';
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 
 // Set page title
 $page_title = "Law/Juris Doctor";
@@ -10,7 +10,7 @@ $page_title = "Law/Juris Doctor";
 $base_path = '../';
 
 // Include header
-include '../includes/header.php';
+include '../app/includes/header.php';
 ?>
 
     <!-- Page Header -->
@@ -28,10 +28,10 @@ include '../includes/header.php';
 
     <!-- Main Content -->
     <main class="main-content">
-        <?php include '../includes/coming-soon.php'; ?>
+        <?php include '../app/includes/coming-soon.php'; ?>
     </main>
 
 <?php
 // Include footer
-include '../includes/footer.php';
+include '../app/includes/footer.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $base_path = '../';
 $page_title = "International & External Affairs";
-include '../includes/header.php';
+include '../app/includes/header.php';
 ?>
 
 <style>
@@ -100,7 +100,6 @@ body {
     border-radius: 25px;
     font-weight: 600;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     font-size: 0.85rem;
 }
 
@@ -765,4 +764,4 @@ body {
     </section>
 </main>
 
-<?php include '../includes/footer.php'; ?>
+<?php include '../app/includes/footer.php'; ?>

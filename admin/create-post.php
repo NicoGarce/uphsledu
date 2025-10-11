@@ -1,15 +1,18 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 
 // Check if user is logged in and is author or admin
 if (!isLoggedIn() || !isAuthor()) {
-    redirect('login.php');
+    redirect('../auth/login.php');
 }
 
 $error = '';
 $success = '';
+
+// Set base path for assets
+$base_path = '../';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = sanitizeInput($_POST['title']);
@@ -113,9 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Create Post - My Blog</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/dashboard.css">
-    <link rel="stylesheet" href="assets/css/editor.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/editor.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -123,23 +126,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="index.php">
-                    <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                        <img src="../assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             <div class="nav-menu">
-                <a href="index.php" class="nav-link">Home</a>
+                <a href="../index.php" class="nav-link">Home</a>
                 <a href="dashboard.php" class="nav-link">Dashboard</a>
                 <a href="create-post.php" class="nav-link active">Create Post</a>
                 <?php if (isAdmin()): ?>
-                    <a href="admin/users.php" class="nav-link">Users</a>
+                    <a href="users.php" class="nav-link">Users</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>
-                    <a href="admin/accounts.php" class="nav-link">Account Management</a>
+                    <a href="accounts.php" class="nav-link">Account Management</a>
                 <?php endif; ?>
             </div>
             <div class="user-menu">
                 <span class="user-name"><?php echo htmlspecialchars($_SESSION['first_name'] ?? ''); ?></span>
-                <a href="logout.php" class="nav-link">Logout</a>
+                <a href="../auth/logout.php" class="nav-link">Logout</a>
             </div>
         </div>
     </nav>
@@ -233,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </div>
 
-    <script src="assets/js/script.js"></script>
+        <script src="../assets/js/script.js"></script>
     <script>
         // Image upload and preview functionality
         document.getElementById('images').addEventListener('change', function(e) {

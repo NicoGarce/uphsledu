@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
 
 // Set page title
 $page_title = "Academic Programs";
@@ -10,7 +10,7 @@ $page_title = "Academic Programs";
 $base_path = '';
 
 // Include header
-include 'includes/header.php';
+include 'app/includes/header.php';
 ?>
 
     <!-- Page Header -->
@@ -179,5 +179,5 @@ include 'includes/header.php';
 
 <?php
 // Include footer
-include 'includes/footer.php';
+include 'app/includes/footer.php';
 ?>

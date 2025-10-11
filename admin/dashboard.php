@@ -1,15 +1,18 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 
 // Check if user is logged in
 if (!isLoggedIn()) {
-    redirect('login.php');
+    redirect('../auth/login.php');
 }
 
 $user = getUserById($_SESSION['user_id']);
 $userRole = $_SESSION['user_role'];
+
+// Set base path for assets
+$base_path = '../';
 
 // Get dashboard data based on user role
 $stats = [];
@@ -69,11 +72,11 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
     <title>Dashboard - University of Perpetual Help System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="assets/images/logo.png">
-    <link rel="shortcut icon" type="image/png" href="assets/images/logo.png">
-    <link rel="apple-touch-icon" href="assets/images/logo.png">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="icon" type="image/png" href="../assets/images/logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logos/logo.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -81,25 +84,25 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="index.php">
-                    <img src="assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                        <img src="../assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             <div class="nav-menu">
-                <a href="index.php" class="nav-link">Home</a>
+                        <a href="../index.php" class="nav-link">Home</a>
                 <a href="dashboard.php" class="nav-link active">Dashboard</a>
                 <?php if (isAuthor() || isSuperAdmin()): ?>
                     <a href="create-post.php" class="nav-link">Create Post</a>
                 <?php endif; ?>
                 <?php if (isAdmin()): ?>
-                    <a href="admin/users.php" class="nav-link">Users</a>
+                    <a href="users.php" class="nav-link">Users</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>
-                    <a href="admin/accounts.php" class="nav-link">Account Management</a>
+                    <a href="accounts.php" class="nav-link">Account Management</a>
                 <?php endif; ?>
             </div>
             <div class="user-menu">
                 <span class="user-name"><?php echo htmlspecialchars($user['first_name']); ?></span>
-                <a href="logout.php" class="nav-link">Logout</a>
+                <a href="../auth/logout.php" class="nav-link">Logout</a>
             </div>
         </div>
     </nav>
@@ -180,35 +183,35 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                     </a>
                 <?php endif; ?>
                 
-                <a href="my-posts.php" class="action-card">
+                <a href="posts.php" class="action-card">
                     <i class="fas fa-list"></i>
                     <span>My Posts</span>
                 </a>
                 
                 <?php if (isAdmin()): ?>
-                    <a href="admin/users.php" class="action-card">
+                    <a href="users.php" class="action-card">
                         <i class="fas fa-users-cog"></i>
                         <span>Manage Users</span>
                     </a>
                     
-                    <a href="admin/settings.php" class="action-card">
+                    <a href="settings.php" class="action-card">
                         <i class="fas fa-cog"></i>
                         <span>Settings</span>
                     </a>
                 <?php endif; ?>
                 
                 <?php if (isSuperAdmin()): ?>
-                    <a href="admin/accounts.php" class="action-card">
+                    <a href="accounts.php" class="action-card">
                         <i class="fas fa-user-plus"></i>
                         <span>Create Accounts</span>
                     </a>
                     
-                    <a href="admin/posts.php" class="action-card">
+                    <a href="posts.php" class="action-card">
                         <i class="fas fa-edit"></i>
                         <span>Edit Posts</span>
                     </a>
                     
-                    <a href="admin/role-management.php" class="action-card">
+                    <a href="role-management.php" class="action-card">
                         <i class="fas fa-shield-alt"></i>
                         <span>Role Management</span>
                     </a>
@@ -274,7 +277,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
         </div>
     </div>
 
-    <script src="assets/js/script.js"></script>
+        <script src="../assets/js/script.js"></script>
 </body>
 </html>
 

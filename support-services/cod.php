@@ -2,7 +2,7 @@
 // Set base path for subdirectory
 $base_path = '../';
 // Include header
-include '../includes/header.php';
+include '../app/includes/header.php';
 ?>
 
 
@@ -345,7 +345,6 @@ include '../includes/header.php';
         border-radius: 25px;
         font-weight: 600;
         transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
         font-size: 0.85rem;
     }
 
@@ -551,7 +550,6 @@ include '../includes/header.php';
         background: rgba(255, 255, 255, 0.1);
         padding: 2rem;
         border-radius: 12px;
-        backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         transition: all 0.3s ease;
     }
@@ -806,5 +804,5 @@ include '../includes/header.php';
 
 <?php
 // Include footer
-include '../includes/footer.php';
+include '../app/includes/footer.php';
 ?>

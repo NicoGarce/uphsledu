@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
 
 // Get search query
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
@@ -203,8 +203,11 @@ if (!empty($query)) {
 // Set page title
 $page_title = "Search Results";
 
+// Set base path for assets
+$base_path = '';
+
 // Include header
-include 'includes/header.php';
+include 'app/includes/header.php';
 ?>
 
 <main class="main-content">
@@ -233,7 +236,7 @@ include 'includes/header.php';
                 <div class="results-list">
                     <?php foreach ($results as $result): ?>
                         <?php 
-                        $base_path = '';
+                        $base_path = '../';
                         $result_url = ($result['type'] === 'post') ? $base_path . 'post.php?slug=' . $result['slug'] : $base_path . $result['url'];
                         ?>
                         <a href="<?php echo $result_url; ?>" class="result-item-link">
@@ -411,4 +414,4 @@ include 'includes/header.php';
 }
 </style>
 
-<?php include 'includes/footer.php'; ?>
+<?php include 'app/includes/footer.php'; ?>
