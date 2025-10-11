@@ -17,15 +17,18 @@ $page_title = "Senior High School";
 // Set base path for assets
 $base_path = '../';
 
+// Set background image path
+$bg_image = 'img/banner/SHS.jpg';
+
 // Include header
 include '../app/includes/header.php';
 ?>
 
     <!-- Page Header -->
-    <section class="page-header" style="background-image: url('img/banner/SHS.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <section class="page-header" style="background-image: url('<?php echo $bg_image; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
             <div class="banner-logo">
-                <img src="img/logo/uphsl-shs-logo.png" alt="Senior High School Logo">
+                <img src="<?php echo `$base_path; ?>img/logo/uphsl-shs-logo.png" alt="Senior High School Logo">
             </div>
             <div class="banner-content">
                 <h1>Senior High School</h1>
@@ -150,7 +153,7 @@ include '../app/includes/header.php';
                             <h2>Official SHS Department Logo</h2>
                             <div class="logo-description">
                                 <div class="logo-image-container">
-                                    <img src="img/logo/uphsl-shs-logo.png" alt="Official SHS Department Logo" class="department-logo">
+                                    <img src="<?php echo `$base_path; ?>img/logo/uphsl-shs-logo.png" alt="Official SHS Department Logo" class="department-logo">
                                 </div>
                                 <p><strong>"Soar High, Senior High."</strong> The logo signifies the true spirit and identity of the department and its multiple elements that symbolize the characteristics of Senior High School living as Perpetualites. The logo was created by Ms. Ma. Mimar F. Arceo, Ms. Joselle Anne G. Barredo, Mr. Cyrus Jade Barilea, and Ms. Keanna Aissen L. Belmonte last 2019.</p>
                                 
@@ -350,3 +353,6 @@ include '../app/includes/header.php';
 // Include footer
 include '../app/includes/footer.php';
 ?>
+
+
+

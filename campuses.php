@@ -8,7 +8,10 @@
  */
 
 $page_title = "JONELTA Campuses";
+
+// Set base path for assets
 $base_path = '';
+
 include 'app/includes/header.php';
 ?>
 

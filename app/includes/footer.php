@@ -11,26 +11,26 @@
                 <!-- University Info Column -->
                 <div class="footer-section university-info">
                     <div class="footer-logo-section">
-                        <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logos/logo.png" alt="University of Perpetual Help System" class="footer-logo">
+                        <img src="<?php echo $base_path; ?>assets/images/logos/logo.png" alt="University of Perpetual Help System" class="footer-logo">
                         <div class="university-details">
                             <h3 class="university-name">University of Perpetual Help System Laguna</h3>
                             <p class="university-tagline">Character Building is Nation Building</p>
                         </div>
                     </div>
                     <div class="social-links">
-                        <a href="#" class="social-link facebook" title="Follow us on Facebook">
+                        <a href="<?php echo $base_path; ?>#" class="social-link facebook" title="Follow us on Facebook">
                             <i class="fab fa-facebook"></i>
                         </a>
-                        <a href="#" class="social-link twitter" title="Follow us on Twitter">
+                        <a href="<?php echo $base_path; ?>#" class="social-link twitter" title="Follow us on Twitter">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="social-link instagram" title="Follow us on Instagram">
+                        <a href="<?php echo $base_path; ?>#" class="social-link instagram" title="Follow us on Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="social-link youtube" title="Subscribe to our YouTube">
+                        <a href="<?php echo $base_path; ?>#" class="social-link youtube" title="Subscribe to our YouTube">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="#" class="social-link linkedin" title="Connect with us on LinkedIn">
+                        <a href="<?php echo $base_path; ?>#" class="social-link linkedin" title="Connect with us on LinkedIn">
                             <i class="fab fa-linkedin"></i>
                         </a>
                     </div>
@@ -71,14 +71,14 @@
                 <div class="footer-section">
                     <h4 class="footer-subtitle">Quick Links</h4>
                     <ul class="footer-links">
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>">Home</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about">About</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/contact.php">Contact</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php">Programs</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php">Careers</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/clinic.php">University Clinic</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/iea.php">International & External Affairs</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/sps.php">Guidance & Admission</a></li>
+                        <li><a href="<?php echo $base_path; ?>index.php">Home</a></li>
+                        <li><a href="<?php echo $base_path; ?>about/about.php">About</a></li>
+                        <li><a href="<?php echo $base_path; ?>about/contact.php">Contact</a></li>
+                        <li><a href="<?php echo $base_path; ?>programs.php">Programs</a></li>
+                        <li><a href="<?php echo $base_path; ?>support-services/careers.php">Careers</a></li>
+                        <li><a href="<?php echo $base_path; ?>support-services/clinic.php">University Clinic</a></li>
+                        <li><a href="<?php echo $base_path; ?>support-services/iea.php">International & External Affairs</a></li>
+                        <li><a href="<?php echo $base_path; ?>support-services/sps.php">Guidance & Admission</a></li>
                     </ul>
                 </div>
                 
@@ -113,16 +113,16 @@
                 <div class="footer-bottom-content">
                     <p class="copyright">&copy; <?php echo date('Y'); ?> University of Perpetual Help System Laguna. All rights reserved.</p>
                     <div class="footer-bottom-links">
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>privacy-policy" class="footer-bottom-link">Privacy Policy</a>
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>terms-of-service" class="footer-bottom-link">Terms of Service</a>
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>accessibility" class="footer-bottom-link">Accessibility</a>
+                        <a href="<?php echo $base_path; ?>privacy-policy.php" class="footer-bottom-link">Privacy Policy</a>
+                        <a href="<?php echo $base_path; ?>terms-of-service.php" class="footer-bottom-link">Terms of Service</a>
+                        <a href="<?php echo $base_path; ?>accessibility.php" class="footer-bottom-link">Accessibility</a>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/js/script.js"></script>
+    <script src="<?php echo $base_path; ?>assets/js/script.js"></script>
     
     <?php if (isset($additional_js)): ?>
         <?php foreach ($additional_js as $js): ?>

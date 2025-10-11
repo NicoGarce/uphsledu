@@ -17,15 +17,18 @@ $page_title = "Engineering & Architecture";
 // Set base path for assets
 $base_path = '../';
 
+// Set background image path
+$bg_image = 'img/banner/ENGINEERING.jpg';
+
 // Include header
 include '../app/includes/header.php';
 ?>
 
     <!-- Page Header -->
-    <section class="page-header" style="background-image: url('img/banner/ENGINEERING.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <section class="page-header" style="background-image: url('<?php echo $bg_image; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
             <div class="banner-logo">
-                <img src="img/logo/logo.png" alt="Engineering and Architecture Logo">
+                <img src="<?php echo `$base_path; ?>img/logo/logo.png" alt="Engineering and Architecture Logo">
             </div>
             <div class="banner-content">
                 <h1>College of Engineering, Architecture and Aviation</h1>
@@ -445,3 +448,6 @@ include '../app/includes/header.php';
 // Include footer
 include '../app/includes/footer.php';
 ?>
+
+
+

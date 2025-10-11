@@ -80,11 +80,11 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
     <title>Dashboard - University of Perpetual Help System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../assets/images/logos/logo.png">
-    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/logo.png">
-    <link rel="apple-touch-icon" href="../assets/images/logos/logo.png">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/logos/logo.png">
+    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/logos/logo.png">
+    <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/dashboard.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -92,7 +92,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="../">
-                        <img src="../assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                        <img src="<?php echo $base_path; ?>assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             <div class="nav-menu">

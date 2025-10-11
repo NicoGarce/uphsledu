@@ -14,7 +14,7 @@ require_once 'app/includes/functions.php';
 // Set page title
 $page_title = "Accessibility Statement";
 
-// Set base path for assets (empty for root directory)
+// Set base path for assets
 $base_path = '';
 
 // Include header
