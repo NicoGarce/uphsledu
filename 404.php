@@ -135,7 +135,7 @@
                 Please check the URL or return to our homepage.
             </p>
             <div class="error-actions">
-                <a href="index.php" class="btn">
+                <a href="" class="btn">
                     <i class="fas fa-home"></i>
                     Go Home
                 </a>

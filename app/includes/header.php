@@ -33,7 +33,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         <div class="nav-container">
             <!-- First Column: Logo -->
             <div class="nav-logo">
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php">
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>">
                     <img src="<?php echo isset($base_path) ? $base_path : ''; ?>assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
@@ -75,7 +75,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                 <!-- Second Row: Main Menu -->
                 <div class="nav-menu" id="nav-menu">
                     <div class="nav-item">
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
                     </div>
                     
                     <div class="nav-item dropdown">
@@ -215,7 +215,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         
         <nav class="mobile-sidebar-menu">
             <div class="mobile-nav-item">
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php" class="mobile-nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>" class="mobile-nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
