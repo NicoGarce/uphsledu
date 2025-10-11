@@ -7,8 +7,14 @@
  * @description Information about Student Personnel Services and guidance programs at UPHSL
  */
 
-$base_path = '../';
 $page_title = "Student Personnel Services";
+$base_path = '../';
+
+// Add base tag for clean URLs to fix asset paths
+if (strpos($_SERVER['REQUEST_URI'], '.php') === false) {
+    echo '<base href="../">';
+}
+
 include '../app/includes/header.php';
 ?>
 

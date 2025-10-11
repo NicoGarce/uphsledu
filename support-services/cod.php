@@ -7,8 +7,13 @@
  * @description Information about the Community Outreach Department and its programs
  */
 
-// Set base path for subdirectory
 $base_path = '../';
+
+// Add base tag for clean URLs to fix asset paths
+if (strpos($_SERVER['REQUEST_URI'], '.php') === false) {
+    echo '<base href="../">';
+}
+
 // Include header
 include '../app/includes/header.php';
 ?>
