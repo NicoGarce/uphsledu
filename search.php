@@ -11,6 +11,179 @@ session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';
 
+/**
+ * Dynamically discover all PHP pages on the website
+ * @return array Array of page information for search indexing
+ */
+function getDynamicPages() {
+    $pages = [];
+    $base_dir = __DIR__;
+    
+    // Define directories to scan for pages
+    $scan_dirs = [
+        '' => '', // Root directory
+        'programs' => 'programs',
+        'about' => 'about',
+        'support-services' => 'support-services'
+        // Admin folder excluded - not for public use
+    ];
+    
+    // Define excluded files and directories
+    $excluded_files = [
+        'search.php', '404.php', 'test-rewrite.php',
+        'privacy-policy.php', 'terms-of-service.php', 'accessibility.php'
+    ];
+    
+    $excluded_dirs = [
+        'app', 'assets', 'uploads', 'auth'
+    ];
+    
+    foreach ($scan_dirs as $dir => $url_prefix) {
+        $full_path = $base_dir . ($dir ? '/' . $dir : '');
+        
+        if (!is_dir($full_path)) continue;
+        
+        $files = scandir($full_path);
+        
+        foreach ($files as $file) {
+            // Skip hidden files, directories, and excluded files
+            if ($file[0] === '.' || is_dir($full_path . '/' . $file) || 
+                !preg_match('/\.php$/', $file) || in_array($file, $excluded_files)) {
+                continue;
+            }
+            
+            $file_path = $full_path . '/' . $file;
+            $page_info = extractPageInfo($file_path, $file, $url_prefix);
+            
+            if ($page_info) {
+                $pages[] = $page_info;
+            }
+        }
+    }
+    
+    return $pages;
+}
+
+/**
+ * Extract page information from a PHP file
+ * @param string $file_path Full path to the PHP file
+ * @param string $filename Just the filename
+ * @param string $url_prefix URL prefix for the page
+ * @return array|false Page information array or false if extraction fails
+ */
+function extractPageInfo($file_path, $filename, $url_prefix) {
+    $content = file_get_contents($file_path);
+    
+    if (!$content) return false;
+    
+    // Extract title from various sources
+    $title = '';
+    $description = '';
+    
+    // Try to get title from page_title variable
+    if (preg_match('/\$page_title\s*=\s*["\']([^"\']+)["\']/', $content, $matches)) {
+        $title = $matches[1];
+    }
+    // Try to get title from <title> tag
+    elseif (preg_match('/<title[^>]*>([^<]+)<\/title>/i', $content, $matches)) {
+        $title = trim(strip_tags($matches[1]));
+    }
+    // Try to get title from h1 tag
+    elseif (preg_match('/<h1[^>]*>([^<]+)<\/h1>/i', $content, $matches)) {
+        $title = trim(strip_tags($matches[1]));
+    }
+    // Fallback to filename
+    else {
+        $title = ucwords(str_replace(['-', '_'], ' ', pathinfo($filename, PATHINFO_FILENAME)));
+    }
+    
+    // Try to get description from meta description
+    if (preg_match('/<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"\']+)["\']/', $content, $matches)) {
+        $description = $matches[1];
+    }
+    // Try to get description from page description variable
+    elseif (preg_match('/\$page_description\s*=\s*["\']([^"\']+)["\']/', $content, $matches)) {
+        $description = $matches[1];
+    }
+    // Fallback description
+    else {
+        $description = "Page: " . $title;
+    }
+    
+    // Generate clean URL
+    $clean_url = generateCleanUrl($filename, $url_prefix);
+    
+    // Calculate relevance based on content
+    $content_text = strip_tags($content);
+    $content_text = preg_replace('/\s+/', ' ', $content_text);
+    
+    return [
+        'type' => 'page',
+        'title' => $title,
+        'description' => $description,
+        'url' => $clean_url,
+        'relevance' => 999, // Will be calculated during search
+        'content' => $content_text
+    ];
+}
+
+/**
+ * Generate clean URL for a page
+ * @param string $filename PHP filename
+ * @param string $url_prefix URL prefix
+ * @return string Clean URL
+ */
+function generateCleanUrl($filename, $url_prefix) {
+    $name = pathinfo($filename, PATHINFO_FILENAME);
+    
+    // Special cases for root files
+    if ($name === 'index') {
+        return '';
+    }
+    
+    // Build clean URL
+    $clean_url = $url_prefix ? $url_prefix . '/' . $name : $name;
+    
+    return $clean_url;
+}
+
+/**
+ * Calculate relevance score for a page based on search query
+ * @param array $page Page information array
+ * @param string $query Search query
+ * @return int Relevance score (lower is more relevant)
+ */
+function calculateRelevance($page, $query) {
+    $score = 999;
+    $query_lower = strtolower($query);
+    $title_lower = strtolower($page['title']);
+    $description_lower = strtolower($page['description']);
+    $content_lower = strtolower($page['content']);
+    
+    // Exact title match
+    if ($title_lower === $query_lower) {
+        $score = 1;
+    }
+    // Title starts with query
+    elseif (strpos($title_lower, $query_lower) === 0) {
+        $score = 2;
+    }
+    // Title contains query
+    elseif (strpos($title_lower, $query_lower) !== false) {
+        $score = 3;
+    }
+    // Description contains query
+    elseif (strpos($description_lower, $query_lower) !== false) {
+        $score = 4;
+    }
+    // Content contains query
+    elseif (strpos($content_lower, $query_lower) !== false) {
+        $score = 5;
+    }
+    
+    return $score;
+}
+
 // Get search query
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
 $results = [];
@@ -49,154 +222,19 @@ if (!empty($query)) {
     $stmt->execute();
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Search in pages (static pages)
-    $pages = [
-        [
-            'type' => 'page',
-            'title' => 'Home',
-            'description' => 'University of Perpetual Help System Laguna - Homepage',
-            'url' => 'index.php',
-            'relevance' => (stripos('home university perpetual help system laguna', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Programs',
-            'description' => 'Academic programs and courses offered by UPHSL',
-            'url' => 'programs.php',
-            'relevance' => (stripos('programs courses academic degrees', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Aviation',
-            'description' => 'Aviation program and courses',
-            'url' => 'programs/aviation.php',
-            'relevance' => (stripos('aviation pilot flight', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Arts & Sciences',
-            'description' => 'College of Arts and Sciences programs',
-            'url' => 'programs/arts-sciences.php',
-            'relevance' => (stripos('arts sciences liberal arts', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Business & Accountancy',
-            'description' => 'Business and Accountancy programs',
-            'url' => 'programs/business-accountancy.php',
-            'relevance' => (stripos('business accountancy commerce', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Computer Studies',
-            'description' => 'Computer Science and Information Technology programs',
-            'url' => 'programs/computer-studies.php',
-            'relevance' => (stripos('computer technology IT programming', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Criminology',
-            'description' => 'Criminology and Criminal Justice programs',
-            'url' => 'programs/criminology.php',
-            'relevance' => (stripos('criminology criminal justice law enforcement', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Education',
-            'description' => 'Education and Teaching programs',
-            'url' => 'programs/education.php',
-            'relevance' => (stripos('education teaching teacher', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Engineering & Architecture',
-            'description' => 'Engineering and Architecture programs',
-            'url' => 'programs/engineering-architecture.php',
-            'relevance' => (stripos('engineering architecture civil mechanical', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Hospitality Management',
-            'description' => 'International Hospitality Management program',
-            'url' => 'programs/hospitality-management.php',
-            'relevance' => (stripos('hospitality hotel management tourism', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Maritime',
-            'description' => 'Maritime programs and courses',
-            'url' => 'programs/maritime.php',
-            'relevance' => (stripos('maritime shipping marine', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Law',
-            'description' => 'Law and Juris Doctor programs',
-            'url' => 'programs/law.php',
-            'relevance' => (stripos('law legal juris doctor', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Graduate School',
-            'description' => 'Graduate School programs',
-            'url' => 'programs/graduate-school.php',
-            'relevance' => (stripos('graduate school masters doctorate', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Senior High School',
-            'description' => 'Senior High School programs',
-            'url' => 'programs/senior-high-school.php',
-            'relevance' => (stripos('senior high school SHS', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Junior High School',
-            'description' => 'Junior High School programs',
-            'url' => 'programs/junior-high-school.php',
-            'relevance' => (stripos('junior high school JHS', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Grade School',
-            'description' => 'Grade School programs',
-            'url' => 'programs/grade-school.php',
-            'relevance' => (stripos('grade school elementary', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Online Services',
-            'description' => 'Online services and student portal',
-            'url' => 'ols_instructions.php',
-            'relevance' => (stripos('online services portal GTI moodle', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Community Outreach Department',
-            'description' => 'Community Outreach Department programs and services',
-            'url' => 'support-services/cod.php',
-            'relevance' => (stripos('community outreach COD', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'Careers',
-            'description' => 'Career opportunities and job listings',
-            'url' => 'support-services/careers.php',
-            'relevance' => (stripos('careers jobs employment', $query) !== false) ? 1 : 999
-        ],
-        [
-            'type' => 'page',
-            'title' => 'University Clinic',
-            'description' => 'University Clinic services and information',
-            'url' => 'support-services/clinic.php',
-            'relevance' => (stripos('clinic health medical', $query) !== false) ? 1 : 999
-        ]
-    ];
+    // Dynamic page discovery - scan for all PHP pages
+    $pages = getDynamicPages();
     
-    // Filter pages based on search query
+    // Filter pages based on search query with improved matching
     $filtered_pages = array_filter($pages, function($page) use ($query) {
-        return stripos($page['title'] . ' ' . $page['description'], $query) !== false;
+        $search_text = $page['title'] . ' ' . $page['description'] . ' ' . $page['content'];
+        return stripos($search_text, $query) !== false;
     });
+    
+    // Calculate relevance scores for filtered pages
+    foreach ($filtered_pages as &$page) {
+        $page['relevance'] = calculateRelevance($page, $query);
+    }
     
     // Sort pages by relevance
     usort($filtered_pages, function($a, $b) {
@@ -211,7 +249,7 @@ if (!empty($query)) {
 // Set page title
 $page_title = "Search Results";
 
-// Set base path for assets
+// Set base path for assets (search.php is in root, so no base path needed)
 $base_path = '';
 
 // Include header
@@ -244,8 +282,12 @@ include 'app/includes/header.php';
                 <div class="results-list">
                     <?php foreach ($results as $result): ?>
                         <?php 
-                        $base_path = '../';
-                        $result_url = ($result['type'] === 'post') ? $base_path . 'post.php?slug=' . $result['slug'] : $base_path . $result['url'];
+                        if ($result['type'] === 'post') {
+                            $result_url = 'post.php?slug=' . $result['slug'];
+                        } else {
+                            // Handle empty URL for home page - use index.php for root
+                            $result_url = $result['url'] === '' ? 'index.php' : $result['url'];
+                        }
                         ?>
                         <a href="<?php echo $result_url; ?>" class="result-item-link">
                             <div class="result-item">

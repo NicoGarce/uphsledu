@@ -10,10 +10,7 @@
 $page_title = "Student Personnel Services";
 $base_path = '../';
 
-// Add base tag for clean URLs to fix asset paths
-if (strpos($_SERVER['REQUEST_URI'], '.php') === false) {
-    echo '<base href="../">';
-}
+// Base path for assets
 
 include '../app/includes/header.php';
 ?>

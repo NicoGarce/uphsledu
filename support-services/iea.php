@@ -10,10 +10,7 @@
 $base_path = '../';
 $page_title = "International & External Affairs";
 
-// Add base tag for clean URLs to fix asset paths
-if (strpos($_SERVER['REQUEST_URI'], '.php') === false) {
-    echo '<base href="../">';
-}
+// Base path for assets
 
 include '../app/includes/header.php';
 ?>

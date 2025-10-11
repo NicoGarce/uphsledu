@@ -30,8 +30,8 @@
                 </div>
             </div>
             <div class="coming-soon-actions">
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php" class="btn btn-primary">Return to Home</a>
-                <a href="<?php echo isset($base_path) ? $base_path : ''; ?>about.php" class="btn btn-outline">Learn More</a>
+                <a href="index.php" class="btn btn-primary">Return to Home</a>
+                <a href="about/about.php" class="btn btn-outline">Learn More</a>
             </div>
         </div>
     </div>

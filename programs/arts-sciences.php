@@ -17,12 +17,15 @@ $page_title = "Arts & Sciences";
 // Set base path for assets
 $base_path = '../';
 
+// Set background image path
+$bg_image = 'img/banner/CAS.jpg';
+
 // Include header
 include '../app/includes/header.php';
 ?>
 
     <!-- Page Header -->
-    <section class="page-header" style="background-image: url('img/banner/CAS.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <section class="page-header" style="background-image: url('<?php echo $bg_image; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
             <div class="banner-logo">
                 <img src="img/logo/uphsl-cas-logo.png" alt="Arts and Sciences Logo">
@@ -265,3 +268,6 @@ include '../app/includes/header.php';
 // Include footer
 include '../app/includes/footer.php';
 ?>
+
+
+
