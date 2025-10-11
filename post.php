@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Individual Post Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Displays individual blog posts and news articles for the UPHSL website
+ */
+
 session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';

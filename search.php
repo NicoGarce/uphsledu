@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Search Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Search functionality for posts and content on the UPHSL website
+ */
+
 session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';

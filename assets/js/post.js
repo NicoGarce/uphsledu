@@ -1,3 +1,11 @@
+/**
+ * UPHSL Post JavaScript
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description JavaScript functionality for individual post pages
+ */
+
 // Post Page JavaScript - University of Perpetual Help System
 
 document.addEventListener('DOMContentLoaded', function() {

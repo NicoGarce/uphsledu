@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Quality Assurance Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Information about Quality Assurance programs and initiatives at UPHSL
+ */
+
 $base_path = '../';
 $page_title = "Quality Assurance";
 include '../app/includes/header.php';

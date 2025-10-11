@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Campuses Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Displays information about all UPHSL campus locations and facilities
+ */
+
 $page_title = "JONELTA Campuses";
 $base_path = '';
 include 'app/includes/header.php';

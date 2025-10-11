@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Programs Overview Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Displays all academic programs offered by the University of Perpetual Help System Laguna
+ */
+
 session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';

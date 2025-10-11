@@ -1,3 +1,9 @@
+    <!-- 
+    Footer - UPHSL Website
+    @author Nico Roell D. Garce
+    @title UPHSL Web Administrator 2025
+    -->
+    
     <!-- Footer -->
     <footer class="footer">
         <div class="container">

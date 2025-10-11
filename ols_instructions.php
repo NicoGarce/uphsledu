@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Online Learning System Instructions Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Instructions and information about the Online Learning System at UPHSL
+ */
+
 session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';

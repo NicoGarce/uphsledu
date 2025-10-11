@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Student Personnel Services Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Information about Student Personnel Services and guidance programs at UPHSL
+ */
+
 $base_path = '../';
 $page_title = "Student Personnel Services";
 include '../app/includes/header.php';

@@ -1,3 +1,12 @@
+<?php
+/**
+ * UPHSL 404 Error Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Custom 404 error page for the UPHSL website
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

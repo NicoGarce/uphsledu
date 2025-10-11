@@ -1,4 +1,12 @@
 <?php
+/**
+ * UPHSL Admin Dashboard
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Main administrative dashboard for managing the UPHSL website content and users
+ */
+
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
