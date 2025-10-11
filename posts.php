@@ -360,7 +360,7 @@ $base_path = '';
                             <i class="fas fa-home"></i>
                             Homepage
                         </a>
-                        <a href="about/about.php" class="quick-link">
+                        <a href="about" class="quick-link">
                             <i class="fas fa-info-circle"></i>
                             About Us
                         </a>
@@ -397,7 +397,7 @@ $base_path = '';
                     <ul class="footer-links">
                         <li><a href="index.php">Home</a></li>
                         <li><a href="posts.php">All Posts</a></li>
-                        <li><a href="about/about.php">About</a></li>
+                        <li><a href="about">About</a></li>
                         <li><a href="about/contact.php">Contact</a></li>
                     </ul>
                 </div>

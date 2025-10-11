@@ -1,6 +1,40 @@
 # Prevent directory browsing
 Options -Indexes
 
+# Enable URL rewriting
+RewriteEngine On
+
+# Test rule
+RewriteRule ^test-rewrite/?$ test-rewrite.php [L]
+
+# Specific rules for policy pages
+RewriteRule ^privacy-policy/?$ privacy-policy.php [L]
+RewriteRule ^terms-of-service/?$ terms-of-service.php [L]
+RewriteRule ^accessibility/?$ accessibility.php [L]
+
+# Rules for about subdirectory
+RewriteRule ^about/?$ about/about.php [L]
+RewriteRule ^about/contact/?$ about/contact.php [L]
+
+# Rules for support services - use internal rewrite with proper base
+RewriteRule ^support-services/sps/?$ support-services/sps.php [L]
+RewriteRule ^support-services/careers/?$ support-services/careers.php [L]
+RewriteRule ^support-services/clinic/?$ support-services/clinic.php [L]
+RewriteRule ^support-services/cod/?$ support-services/cod.php [L]
+RewriteRule ^support-services/iea/?$ support-services/iea.php [L]
+RewriteRule ^support-services/library/?$ support-services/library.php [L]
+RewriteRule ^support-services/quality-assurance/?$ support-services/quality-assurance.php [L]
+RewriteRule ^support-services/research/?$ support-services/research.php [L]
+
+# Add base tag for support services
+RewriteCond %{REQUEST_URI} ^/support-services/
+RewriteRule ^(.*)$ - [E=BASE_PATH:../]
+
+# General rule to remove .php extension from other URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)/?$ $1.php [NC,L]
+
 # Deny access to sensitive files
 <Files "*.log">
     Order allow,deny

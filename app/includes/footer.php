@@ -72,7 +72,7 @@
                     <h4 class="footer-subtitle">Quick Links</h4>
                     <ul class="footer-links">
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>index.php">Home</a></li>
-                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/about.php">About</a></li>
+                        <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about">About</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>about/contact.php">Contact</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>programs.php">Programs</a></li>
                         <li><a href="<?php echo isset($base_path) ? $base_path : ''; ?>support-services/careers.php">Careers</a></li>
@@ -113,9 +113,9 @@
                 <div class="footer-bottom-content">
                     <p class="copyright">&copy; <?php echo date('Y'); ?> University of Perpetual Help System Laguna. All rights reserved.</p>
                     <div class="footer-bottom-links">
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>privacy-policy.php" class="footer-bottom-link">Privacy Policy</a>
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>terms-of-service.php" class="footer-bottom-link">Terms of Service</a>
-                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>accessibility.php" class="footer-bottom-link">Accessibility</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>privacy-policy" class="footer-bottom-link">Privacy Policy</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>terms-of-service" class="footer-bottom-link">Terms of Service</a>
+                        <a href="<?php echo isset($base_path) ? $base_path : ''; ?>accessibility" class="footer-bottom-link">Accessibility</a>
                     </div>
                 </div>
             </div>
