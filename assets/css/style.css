@@ -1869,7 +1869,6 @@ h2, h3, h4, h5, h6 {
     border-radius: 20px;
     font-weight: 600;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     font-family: 'Barlow Semi Condensed', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -3044,7 +3043,6 @@ h2, h3, h4, h5, h6 {
     color: #ffffff;
     text-decoration: none;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 

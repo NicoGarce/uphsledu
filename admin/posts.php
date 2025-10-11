@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once '../config/database.php';
-require_once '../includes/functions.php';
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 
 // Check if user is logged in and is super admin
 if (!isLoggedIn() || !isSuperAdmin()) {
-    header('Location: ../login.php');
+    header('Location: ../auth/login.php');
     exit;
 }
 
@@ -68,9 +68,9 @@ $posts = $stmt->fetchAll();
     <title>Edit Posts - University of Perpetual Help System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../assets/images/logo.png">
-    <link rel="shortcut icon" type="image/png" href="../assets/images/logo.png">
-    <link rel="apple-touch-icon" href="../assets/images/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/logos/logo.png">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/dashboard.css">
 </head>
@@ -80,14 +80,14 @@ $posts = $stmt->fetchAll();
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="../index.php">
-                    <img src="../assets/images/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                    <img src="../assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             <div class="nav-menu">
-                <a href="../index.php" class="nav-link">Home</a>
-                <a href="../dashboard.php" class="nav-link">Dashboard</a>
+                <a href="../public/index.php" class="nav-link">Home</a>
+                <a href="../public/dashboard.php" class="nav-link">Dashboard</a>
                 <?php if (isAuthor() || isSuperAdmin()): ?>
-                    <a href="../create-post.php" class="nav-link">Create Post</a>
+                    <a href="../public/create-post.php" class="nav-link">Create Post</a>
                 <?php endif; ?>
                 <?php if (isAdmin()): ?>
                     <a href="users.php" class="nav-link">Users</a>
@@ -99,7 +99,7 @@ $posts = $stmt->fetchAll();
             </div>
             <div class="user-menu">
                 <span class="user-name"><?php echo htmlspecialchars($user['first_name']); ?></span>
-                <a href="../logout.php" class="nav-link">Logout</a>
+                <a href="../auth/logout.php" class="nav-link">Logout</a>
             </div>
         </div>
     </nav>
@@ -132,7 +132,7 @@ $posts = $stmt->fetchAll();
         <div class="dashboard-section">
             <div class="section-header">
                 <h2 class="section-title">All Posts</h2>
-                <a href="../create-post.php" class="btn btn-primary">
+                <a href="create-post.php" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     Create New Post
                 </a>

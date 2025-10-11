@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
 
 // Check if this is the first time setup
 $pdo = getDBConnection();
@@ -10,7 +10,7 @@ $result = $stmt->fetch();
 
 // If no users exist, redirect to setup page
 if ($result['count'] == 0) {
-    header('Location: init.php');
+    header('Location: auth/init.php');
     exit();
 }
 
@@ -20,8 +20,11 @@ $recent_posts = getRecentPosts(6);
 // Set page title
 $page_title = "Home";
 
+// Set base path for assets
+$base_path = ''; // Empty for root directory
+
 // Include header
-include 'includes/header.php';
+include 'app/includes/header.php';
 ?>
 
     <style>
@@ -89,7 +92,7 @@ include 'includes/header.php';
     <section class="hero">
         <div class="hero-background">
             <img 
-                src="assets/images/UPHSL Facade.png" 
+                src="assets/images/banners/UPHSL Facade.png" 
                 alt="University of Perpetual Help System Laguna" 
                 class="hero-image">
         </div>
@@ -411,7 +414,7 @@ include 'includes/header.php';
 
 <?php
 // Include footer
-include 'includes/footer.php';
+include 'app/includes/footer.php';
 ?>
     
 

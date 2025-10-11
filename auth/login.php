@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once 'config/database.php';
-require_once 'includes/functions.php';
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 
 // Redirect if already logged in
 if (isLoggedIn()) {
-    redirect('dashboard.php');
+    redirect('../admin/dashboard.php');
 }
 
 $error = '';
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['first_name'] = $user['first_name'];
             
             setFlashMessage('success', 'Welcome back, ' . $user['first_name'] . '!');
-            redirect('dashboard.php');
+            redirect('../admin/dashboard.php');
         } else {
             $error = 'Invalid email or password';
         }
