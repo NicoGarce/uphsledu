@@ -7,11 +7,14 @@
  * @description Common header for all admin pages with sidebar navigation
  */
 
+// Include path configuration
+require_once __DIR__ . '/../config/paths.php';
+
 // Get current page name for active state detection
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
-// Set base path for assets
-$base_path = '../';
+// Use the automatically detected base path
+$base_path = $GLOBALS['base_path'];
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -7,8 +7,14 @@
  * @description Common header template for all pages on the UPHSL website
  */
 
+// Include path configuration
+require_once __DIR__ . '/../config/paths.php';
+
 // Get current page for active navigation highlighting
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
+
+// Use the automatically detected base path
+$base_path = $GLOBALS['base_path'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
