@@ -398,6 +398,10 @@ include 'app/includes/header.php';
                                                 <i class="fas fa-calendar"></i>
                                                 <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
                                             </span>
+                                            <a href="post.php?slug=<?php echo $post['slug']; ?>" class="news-slide-read-more">
+                                                <i class="fas fa-arrow-right"></i>
+                                                Read More
+                                            </a>
                                         </div>
                                         <div class="news-slide-title-overlay">
                                             <h3 class="news-slide-title">

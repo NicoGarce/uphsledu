@@ -3215,6 +3215,36 @@ h2, h3, h4, h5, h6 {
     color: var(--alt-color-1);
 }
 
+.news-slide-read-more {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    background: var(--primary-color);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.news-slide-read-more:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(28, 77, 161, 0.3);
+}
+
+.news-slide-read-more i {
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.news-slide-read-more:hover i {
+    transform: translateX(2px);
+}
+
 .news-slide-title-overlay {
     position: absolute;
     bottom: 15px;
