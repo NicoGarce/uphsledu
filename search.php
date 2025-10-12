@@ -141,8 +141,8 @@ function generateCleanUrl($filename, $url_prefix) {
         return '';
     }
     
-    // Build clean URL
-    $clean_url = $url_prefix ? $url_prefix . '/' . $name : $name;
+    // Build clean URL with .php extension
+    $clean_url = $url_prefix ? $url_prefix . '/' . $name . '.php' : $name . '.php';
     
     return $clean_url;
 }

@@ -136,13 +136,12 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['about', 'contact', 'environmental-policy', 'university-policy', 'map', 'sdg-initiatives'])) ? 'active' : ''; ?>">About <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['about', 'contact', 'environmental-policy', 'university-policy', 'map'])) ? 'active' : ''; ?>">About <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="<?php echo $base_path; ?>about/about.php" class="dropdown-link <?php echo ($current_page == 'about') ? 'active' : ''; ?>">About Us</a>
                             <a href="<?php echo $base_path; ?>about/contact.php" class="dropdown-link <?php echo ($current_page == 'contact') ? 'active' : ''; ?>">Contact Us</a>
                             <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="dropdown-link <?php echo ($current_page == 'environmental-policy') ? 'active' : ''; ?>">Environmental Policy</a>
                             <a href="<?php echo $base_path; ?>about/university-policy.php" class="dropdown-link <?php echo ($current_page == 'university-policy') ? 'active' : ''; ?>">University Policy</a>
-                            <a href="<?php echo $base_path; ?>about/sdg-initiatives.php" class="dropdown-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
                             <a href="<?php echo $base_path; ?>about/map.php" class="dropdown-link <?php echo ($current_page == 'map') ? 'active' : ''; ?>">Map</a>
                         </div>
                     </div>
@@ -173,7 +172,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                     
                     <div class="nav-item">
-                        <a href="<?php echo $base_path; ?>about/sdg-initiatives.php" class="nav-link">SDG Initiatives</a>
+                        <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
                     </div>
                     
                     <?php if (isset($_SESSION['user_id'])): ?>
@@ -290,7 +289,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <a href="<?php echo $base_path; ?>about/contact.php" class="mobile-dropdown-link">Contact Us</a>
                     <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="mobile-dropdown-link">Environmental Policy</a>
                     <a href="<?php echo $base_path; ?>about/university-policy.php" class="mobile-dropdown-link">University Policy</a>
-                    <a href="<?php echo $base_path; ?>about/sdg-initiatives.php" class="mobile-dropdown-link">SDG Initiatives</a>
                     <a href="<?php echo $base_path; ?>about/map.php" class="mobile-dropdown-link">Map</a>
                 </div>
             </div>
@@ -321,7 +319,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             </div>
             
             <div class="mobile-nav-item">
-                <a href="<?php echo $base_path; ?>about/sdg-initiatives.php" class="mobile-nav-link">SDG Initiatives</a>
+                <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="mobile-nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
             </div>
             
             <?php if (isset($_SESSION['user_id'])): ?>
