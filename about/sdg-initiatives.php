@@ -1,0 +1,805 @@
+<?php
+/**
+ * UPHSL SDG Initiatives Page
+ * 
+ * @author Nico Roell D. Garce
+ * @title UPHSL Web Administrator 2025
+ * @description Sustainable Development Goals Initiatives and Programs
+ */
+
+session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
+
+// Set page title
+$page_title = "SDG Initiatives";
+$base_path = '../';
+
+// Include header
+include '../app/includes/header.php';
+?>
+
+<style>
+/* SDG Initiatives Page Colors - UPHSL Branding */
+:root {
+    --primary-blue: #1e40af;
+    --secondary-blue: #3b82f6;
+    --accent-green: #059669;
+    --text-dark: #1f2937;
+    --text-gray: #6b7280;
+    --border-light: #e5e7eb;
+    --bg-light: #f8fafc;
+    --bg-accent: #f1f5f9;
+    --white: #ffffff;
+    
+    /* SDG Colors */
+    --sdg-1: #e5243b; /* No Poverty */
+    --sdg-2: #dda63a; /* Zero Hunger */
+    --sdg-3: #4c9f38; /* Good Health */
+    --sdg-4: #c5192d; /* Quality Education */
+    --sdg-5: #ff3a21; /* Gender Equality */
+    --sdg-6: #26bde2; /* Clean Water */
+    --sdg-7: #fcc30b; /* Clean Energy */
+    --sdg-8: #a21942; /* Decent Work */
+    --sdg-9: #fd6925; /* Industry Innovation */
+    --sdg-10: #dd1367; /* Reduced Inequalities */
+    --sdg-11: #fd9d24; /* Sustainable Cities */
+    --sdg-12: #bf8b2e; /* Responsible Consumption */
+    --sdg-13: #3f7e44; /* Climate Action */
+    --sdg-14: #0a97d9; /* Life Below Water */
+    --sdg-15: #56c02b; /* Life on Land */
+    --sdg-16: #00689d; /* Peace Justice */
+    --sdg-17: #19486a; /* Partnerships */
+}
+
+.sdg-hero {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: white;
+    padding: 4rem 0 3rem;
+    position: relative;
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+}
+
+.sdg-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    width: 100%;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    color: #ffffff;
+}
+
+.hero-content .subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    color: #ffffff;
+}
+
+.sdg-content {
+    padding: 3rem 0;
+    background: var(--bg-light);
+    position: relative;
+    width: 100%;
+}
+
+.sdg-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.sdg-intro {
+    background: white;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-left: 5px solid var(--primary-blue);
+    text-align: center;
+}
+
+.sdg-intro h2 {
+    color: var(--primary-blue);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.sdg-intro h2::before {
+    content: '🌍';
+    font-size: 1.8rem;
+}
+
+.sdg-intro p {
+    font-size: 1.1rem;
+    color: var(--text-gray);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.sdg-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.sdg-goal {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sdg-goal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    transition: all 0.3s ease;
+}
+
+.sdg-goal:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.sdg-goal:hover::before {
+    height: 8px;
+}
+
+.sdg-goal-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.sdg-goal-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    margin-bottom: 0.5rem;
+}
+
+.sdg-goal-icon {
+    font-size: 1.2rem;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Individual SDG Colors */
+.sdg-goal-1 { background: var(--sdg-1); }
+.sdg-goal-1::before { background: var(--sdg-1); }
+
+.sdg-goal-2 { background: var(--sdg-2); }
+.sdg-goal-2::before { background: var(--sdg-2); }
+
+.sdg-goal-3 { background: var(--sdg-3); }
+.sdg-goal-3::before { background: var(--sdg-3); }
+
+.sdg-goal-4 { background: var(--sdg-4); }
+.sdg-goal-4::before { background: var(--sdg-4); }
+
+.sdg-goal-5 { background: var(--sdg-5); }
+.sdg-goal-5::before { background: var(--sdg-5); }
+
+.sdg-goal-6 { background: var(--sdg-6); }
+.sdg-goal-6::before { background: var(--sdg-6); }
+
+.sdg-goal-7 { background: var(--sdg-7); }
+.sdg-goal-7::before { background: var(--sdg-7); }
+
+.sdg-goal-8 { background: var(--sdg-8); }
+.sdg-goal-8::before { background: var(--sdg-8); }
+
+.sdg-goal-9 { background: var(--sdg-9); }
+.sdg-goal-9::before { background: var(--sdg-9); }
+
+.sdg-goal-10 { background: var(--sdg-10); }
+.sdg-goal-10::before { background: var(--sdg-10); }
+
+.sdg-goal-11 { background: var(--sdg-11); }
+.sdg-goal-11::before { background: var(--sdg-11); }
+
+.sdg-goal-12 { background: var(--sdg-12); }
+.sdg-goal-12::before { background: var(--sdg-12); }
+
+.sdg-goal-13 { background: var(--sdg-13); }
+.sdg-goal-13::before { background: var(--sdg-13); }
+
+.sdg-goal-14 { background: var(--sdg-14); }
+.sdg-goal-14::before { background: var(--sdg-14); }
+
+.sdg-goal-15 { background: var(--sdg-15); }
+.sdg-goal-15::before { background: var(--sdg-15); }
+
+.sdg-goal-16 { background: var(--sdg-16); }
+.sdg-goal-16::before { background: var(--sdg-16); }
+
+.sdg-goal-17 { background: var(--sdg-17); }
+.sdg-goal-17::before { background: var(--sdg-17); }
+
+/* Modal Styles */
+.sdg-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+.sdg-modal-content {
+    background-color: var(--white);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sdg-modal-header {
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-light);
+    position: relative;
+}
+
+.sdg-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-gray);
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.sdg-modal-close:hover {
+    background: var(--bg-accent);
+    color: var(--text-dark);
+}
+
+.sdg-modal-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sdg-modal-number {
+    background: var(--primary-blue);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.sdg-modal-body {
+    padding: 2rem;
+}
+
+.sdg-modal-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-gray);
+    margin-bottom: 2rem;
+}
+
+.sdg-programs-section {
+    background: var(--bg-accent);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+.sdg-programs-section h4 {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sdg-programs-section h4::before {
+    content: '🎓';
+    font-size: 1.1rem;
+}
+
+.sdg-programs-placeholder {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-gray);
+    font-style: italic;
+}
+
+.sdg-programs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sdg-program-item {
+    background: white;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    border-left: 4px solid var(--primary-blue);
+    transition: all 0.3s ease;
+}
+
+.sdg-program-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.sdg-program-title {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+}
+
+.sdg-program-description {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .sdg-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .sdg-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .sdg-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
+    }
+    
+    .sdg-goal {
+        padding: 1rem 0.5rem;
+        min-height: 120px;
+    }
+    
+    .sdg-goal-number {
+        font-size: 1.5rem;
+    }
+    
+    .sdg-goal-title {
+        font-size: 0.7rem;
+    }
+    
+    .sdg-modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    .sdg-modal-header,
+    .sdg-modal-body {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sdg-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+    
+    .hero-content .subtitle {
+        font-size: 1rem;
+    }
+}
+</style>
+
+<!-- SDG Initiatives Hero Section -->
+<section class="sdg-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Sustainable Development Goals</h1>
+            <p class="subtitle">UPHSL's Commitment to Global Impact and Sustainable Development</p>
+        </div>
+    </div>
+</section>
+
+<!-- SDG Content -->
+<section class="sdg-content">
+    <div class="sdg-container">
+        <!-- Introduction -->
+        <div class="sdg-intro">
+            <h2>Sustainable Development Goals Initiatives</h2>
+            <p>The University of Perpetual Help System Laguna is committed to advancing the United Nations Sustainable Development Goals through innovative programs, research, and community engagement. Click on any goal below to learn more about our initiatives and programs.</p>
+        </div>
+
+        <!-- SDG Goals Grid -->
+        <div class="sdg-grid">
+            <!-- Goal 1: No Poverty -->
+            <div class="sdg-goal sdg-goal-1" data-goal="1">
+                <div class="sdg-goal-number">1</div>
+                <div class="sdg-goal-icon">👨‍👩‍👧‍👦</div>
+                <div class="sdg-goal-title">NO POVERTY</div>
+            </div>
+
+            <!-- Goal 2: Zero Hunger -->
+            <div class="sdg-goal sdg-goal-2" data-goal="2">
+                <div class="sdg-goal-number">2</div>
+                <div class="sdg-goal-icon">🍲</div>
+                <div class="sdg-goal-title">ZERO HUNGER</div>
+            </div>
+
+            <!-- Goal 3: Good Health -->
+            <div class="sdg-goal sdg-goal-3" data-goal="3">
+                <div class="sdg-goal-number">3</div>
+                <div class="sdg-goal-icon">💗</div>
+                <div class="sdg-goal-title">GOOD HEALTH AND WELL-BEING</div>
+            </div>
+
+            <!-- Goal 4: Quality Education -->
+            <div class="sdg-goal sdg-goal-4" data-goal="4">
+                <div class="sdg-goal-number">4</div>
+                <div class="sdg-goal-icon">📚</div>
+                <div class="sdg-goal-title">QUALITY EDUCATION</div>
+            </div>
+
+            <!-- Goal 5: Gender Equality -->
+            <div class="sdg-goal sdg-goal-5" data-goal="5">
+                <div class="sdg-goal-number">5</div>
+                <div class="sdg-goal-icon">⚖️</div>
+                <div class="sdg-goal-title">GENDER EQUALITY</div>
+            </div>
+
+            <!-- Goal 6: Clean Water -->
+            <div class="sdg-goal sdg-goal-6" data-goal="6">
+                <div class="sdg-goal-number">6</div>
+                <div class="sdg-goal-icon">💧</div>
+                <div class="sdg-goal-title">CLEAN WATER AND SANITATION</div>
+            </div>
+
+            <!-- Goal 7: Clean Energy -->
+            <div class="sdg-goal sdg-goal-7" data-goal="7">
+                <div class="sdg-goal-number">7</div>
+                <div class="sdg-goal-icon">⚡</div>
+                <div class="sdg-goal-title">AFFORDABLE AND CLEAN ENERGY</div>
+            </div>
+
+            <!-- Goal 8: Decent Work -->
+            <div class="sdg-goal sdg-goal-8" data-goal="8">
+                <div class="sdg-goal-number">8</div>
+                <div class="sdg-goal-icon">📈</div>
+                <div class="sdg-goal-title">DECENT WORK AND ECONOMIC GROWTH</div>
+            </div>
+
+            <!-- Goal 9: Industry Innovation -->
+            <div class="sdg-goal sdg-goal-9" data-goal="9">
+                <div class="sdg-goal-number">9</div>
+                <div class="sdg-goal-icon">🏗️</div>
+                <div class="sdg-goal-title">INDUSTRY, INNOVATION AND INFRASTRUCTURE</div>
+            </div>
+
+            <!-- Goal 10: Reduced Inequalities -->
+            <div class="sdg-goal sdg-goal-10" data-goal="10">
+                <div class="sdg-goal-number">10</div>
+                <div class="sdg-goal-icon">⚖️</div>
+                <div class="sdg-goal-title">REDUCED INEQUALITIES</div>
+            </div>
+
+            <!-- Goal 11: Sustainable Cities -->
+            <div class="sdg-goal sdg-goal-11" data-goal="11">
+                <div class="sdg-goal-number">11</div>
+                <div class="sdg-goal-icon">🏙️</div>
+                <div class="sdg-goal-title">SUSTAINABLE CITIES AND COMMUNITIES</div>
+            </div>
+
+            <!-- Goal 12: Responsible Consumption -->
+            <div class="sdg-goal sdg-goal-12" data-goal="12">
+                <div class="sdg-goal-number">12</div>
+                <div class="sdg-goal-icon">♻️</div>
+                <div class="sdg-goal-title">RESPONSIBLE CONSUMPTION AND PRODUCTION</div>
+            </div>
+
+            <!-- Goal 13: Climate Action -->
+            <div class="sdg-goal sdg-goal-13" data-goal="13">
+                <div class="sdg-goal-number">13</div>
+                <div class="sdg-goal-icon">🌍</div>
+                <div class="sdg-goal-title">CLIMATE ACTION</div>
+            </div>
+
+            <!-- Goal 14: Life Below Water -->
+            <div class="sdg-goal sdg-goal-14" data-goal="14">
+                <div class="sdg-goal-number">14</div>
+                <div class="sdg-goal-icon">🐟</div>
+                <div class="sdg-goal-title">LIFE BELOW WATER</div>
+            </div>
+
+            <!-- Goal 15: Life on Land -->
+            <div class="sdg-goal sdg-goal-15" data-goal="15">
+                <div class="sdg-goal-number">15</div>
+                <div class="sdg-goal-icon">🌳</div>
+                <div class="sdg-goal-title">LIFE ON LAND</div>
+            </div>
+
+            <!-- Goal 16: Peace Justice -->
+            <div class="sdg-goal sdg-goal-16" data-goal="16">
+                <div class="sdg-goal-number">16</div>
+                <div class="sdg-goal-icon">🕊️</div>
+                <div class="sdg-goal-title">PEACE, JUSTICE AND STRONG INSTITUTIONS</div>
+            </div>
+
+            <!-- Goal 17: Partnerships -->
+            <div class="sdg-goal sdg-goal-17" data-goal="17">
+                <div class="sdg-goal-number">17</div>
+                <div class="sdg-goal-icon">🤝</div>
+                <div class="sdg-goal-title">PARTNERSHIPS FOR THE GOALS</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SDG Modal -->
+<div id="sdgModal" class="sdg-modal">
+    <div class="sdg-modal-content">
+        <div class="sdg-modal-header">
+            <button class="sdg-modal-close" id="sdgModalClose">&times;</button>
+            <div class="sdg-modal-title">
+                <span class="sdg-modal-number" id="modalGoalNumber">1</span>
+                <span id="modalGoalTitle">NO POVERTY</span>
+            </div>
+        </div>
+        <div class="sdg-modal-body">
+            <div class="sdg-modal-description" id="modalGoalDescription">
+                <!-- Goal description will be loaded here -->
+            </div>
+            
+            <div class="sdg-programs-section">
+                <h4>UPHSL Programs & Initiatives</h4>
+                <div class="sdg-programs-placeholder" id="programsPlaceholder">
+                    Programs and initiatives for this SDG will be displayed here in the future.
+                </div>
+                <ul class="sdg-programs-list" id="programsList" style="display: none;">
+                    <!-- Programs will be loaded here dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// SDG Goals Data
+const sdgGoals = {
+    1: {
+        title: "NO POVERTY",
+        description: "End poverty in all its forms everywhere. UPHSL addresses poverty through scholarship programs, community outreach, and economic development initiatives that provide opportunities for underprivileged students and families.",
+        icon: "👨‍👩‍👧‍👦"
+    },
+    2: {
+        title: "ZERO HUNGER",
+        description: "End hunger, achieve food security and improved nutrition, and promote sustainable agriculture. UPHSL supports food security through nutrition programs, community gardens, and partnerships with local food organizations.",
+        icon: "🍲"
+    },
+    3: {
+        title: "GOOD HEALTH AND WELL-BEING",
+        description: "Ensure healthy lives and promote well-being for all at all ages. UPHSL's medical programs, health clinics, and wellness initiatives contribute to better health outcomes in our communities.",
+        icon: "💗"
+    },
+    4: {
+        title: "QUALITY EDUCATION",
+        description: "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all. UPHSL provides accessible, high-quality education across all levels from basic education to graduate studies.",
+        icon: "📚"
+    },
+    5: {
+        title: "GENDER EQUALITY",
+        description: "Achieve gender equality and empower all women and girls. UPHSL promotes gender equality through inclusive policies, women's leadership programs, and equal opportunities for all students.",
+        icon: "⚖️"
+    },
+    6: {
+        title: "CLEAN WATER AND SANITATION",
+        description: "Ensure availability and sustainable management of water and sanitation for all. UPHSL implements water conservation programs and promotes clean water initiatives in our communities.",
+        icon: "💧"
+    },
+    7: {
+        title: "AFFORDABLE AND CLEAN ENERGY",
+        description: "Ensure access to affordable, reliable, sustainable and modern energy for all. UPHSL invests in renewable energy solutions and promotes energy efficiency across campus facilities.",
+        icon: "⚡"
+    },
+    8: {
+        title: "DECENT WORK AND ECONOMIC GROWTH",
+        description: "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all. UPHSL prepares students for meaningful careers and supports entrepreneurship programs.",
+        icon: "📈"
+    },
+    9: {
+        title: "INDUSTRY, INNOVATION AND INFRASTRUCTURE",
+        description: "Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation. UPHSL's engineering and technology programs drive innovation and infrastructure development.",
+        icon: "🏗️"
+    },
+    10: {
+        title: "REDUCED INEQUALITIES",
+        description: "Reduce inequality within and among countries. UPHSL promotes social inclusion through diverse programs, accessibility initiatives, and equal opportunities for all students regardless of background.",
+        icon: "⚖️"
+    },
+    11: {
+        title: "SUSTAINABLE CITIES AND COMMUNITIES",
+        description: "Make cities and human settlements inclusive, safe, resilient and sustainable. UPHSL contributes to sustainable urban development through research, community planning, and environmental initiatives.",
+        icon: "🏙️"
+    },
+    12: {
+        title: "RESPONSIBLE CONSUMPTION AND PRODUCTION",
+        description: "Ensure sustainable consumption and production patterns. UPHSL promotes sustainable practices through waste reduction programs, recycling initiatives, and responsible resource management.",
+        icon: "♻️"
+    },
+    13: {
+        title: "CLIMATE ACTION",
+        description: "Take urgent action to combat climate change and its impacts. UPHSL addresses climate change through environmental research, sustainability programs, and climate education initiatives.",
+        icon: "🌍"
+    },
+    14: {
+        title: "LIFE BELOW WATER",
+        description: "Conserve and sustainably use the oceans, seas and marine resources for sustainable development. UPHSL supports marine conservation through research programs and environmental awareness campaigns.",
+        icon: "🐟"
+    },
+    15: {
+        title: "LIFE ON LAND",
+        description: "Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss. UPHSL promotes biodiversity conservation and sustainable land use practices.",
+        icon: "🌳"
+    },
+    16: {
+        title: "PEACE, JUSTICE AND STRONG INSTITUTIONS",
+        description: "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels. UPHSL fosters peace and justice through law programs, conflict resolution, and civic engagement.",
+        icon: "🕊️"
+    },
+    17: {
+        title: "PARTNERSHIPS FOR THE GOALS",
+        description: "Strengthen the means of implementation and revitalize the global partnership for sustainable development. UPHSL builds partnerships with local and international organizations to advance all SDGs through collaborative initiatives.",
+        icon: "🤝"
+    }
+};
+
+// Modal functionality
+const modal = document.getElementById('sdgModal');
+const modalClose = document.getElementById('sdgModalClose');
+const modalGoalNumber = document.getElementById('modalGoalNumber');
+const modalGoalTitle = document.getElementById('modalGoalTitle');
+const modalGoalDescription = document.getElementById('modalGoalDescription');
+const programsPlaceholder = document.getElementById('programsPlaceholder');
+const programsList = document.getElementById('programsList');
+
+// Open modal when SDG goal is clicked
+document.querySelectorAll('.sdg-goal').forEach(goal => {
+    goal.addEventListener('click', function() {
+        const goalNumber = parseInt(this.dataset.goal);
+        const goalData = sdgGoals[goalNumber];
+        
+        modalGoalNumber.textContent = goalNumber;
+        modalGoalTitle.textContent = goalData.title;
+        modalGoalDescription.textContent = goalData.description;
+        
+        // Show placeholder for now (programs will be added in the future)
+        programsPlaceholder.style.display = 'block';
+        programsList.style.display = 'none';
+        
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
+});
+
+// Close modal
+modalClose.addEventListener('click', function() {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+});
+
+// Close modal when clicking outside
+modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.style.display === 'block') {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+});
+
+// Add hover effects for better interactivity
+document.querySelectorAll('.sdg-goal').forEach(goal => {
+    goal.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-4px) scale(1.02)';
+    });
+    
+    goal.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+</script>
+
+<?php
+// Include footer
+include '../app/includes/footer.php';
+?>
