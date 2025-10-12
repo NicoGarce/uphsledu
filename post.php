@@ -218,7 +218,7 @@ $base_path = '';
                     </div>
                     <div class="post-date">
                         <i class="fas fa-calendar"></i>
-                        <span><?php echo formatDate($post['created_at']); ?></span>
+                        <span><?php echo formatDate($post['published_at'] ?: $post['created_at']); ?></span>
                     </div>
                     <div class="post-views">
                         <i class="fas fa-eye"></i>
@@ -308,7 +308,7 @@ $base_path = '';
                             <div class="recent-post-item">
                                 <a href="post.php?slug=<?php echo $recentPost['slug']; ?>" class="recent-post-link">
                                     <h4 class="recent-post-title"><?php echo htmlspecialchars($recentPost['title']); ?></h4>
-                                    <span class="recent-post-date"><?php echo formatDate($recentPost['created_at']); ?></span>
+                                    <span class="recent-post-date"><?php echo formatDate($recentPost['published_at'] ?: $recentPost['created_at']); ?></span>
                                 </a>
                             </div>
                         <?php endif; ?>

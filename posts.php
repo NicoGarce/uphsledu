@@ -75,7 +75,7 @@ include 'app/includes/header.php';
                                     <div class="post-card-meta">
                                         <span class="post-date">
                                             <i class="fas fa-calendar"></i>
-                                            <?php echo formatDate($post['created_at']); ?>
+                                            <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
                                         </span>
                                         <span class="post-author">
                                             <i class="fas fa-user"></i>
@@ -184,7 +184,7 @@ include 'app/includes/header.php';
                             <div class="recent-post-item">
                                 <a href="post.php?slug=<?php echo $recentPost['slug']; ?>" class="recent-post-link">
                                     <h4 class="recent-post-title"><?php echo htmlspecialchars($recentPost['title']); ?></h4>
-                                    <span class="recent-post-date"><?php echo formatDate($recentPost['created_at']); ?></span>
+                                    <span class="recent-post-date"><?php echo formatDate($recentPost['published_at'] ?: $recentPost['created_at']); ?></span>
                                 </a>
                             </div>
                         <?php endforeach; ?>

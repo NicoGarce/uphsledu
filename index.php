@@ -313,7 +313,7 @@ include 'app/includes/header.php';
                                 <span class="latest-label">Latest</span>
                                 <span class="post-date">
                                     <i class="fas fa-calendar"></i>
-                                    <?php echo formatDate($latest_post['created_at']); ?>
+                                    <?php echo formatDate($latest_post['published_at'] ?: $latest_post['created_at']); ?>
                                 </span>
                             </div>
                             <h2 class="latest-post-title">
@@ -396,7 +396,7 @@ include 'app/includes/header.php';
                                         <div class="news-slide-meta">
                                             <span class="news-slide-date">
                                                 <i class="fas fa-calendar"></i>
-                                                <?php echo formatDate($post['created_at']); ?>
+                                                <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
                                             </span>
                                         </div>
                                         <div class="news-slide-title-overlay">

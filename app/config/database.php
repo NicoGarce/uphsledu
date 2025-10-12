@@ -60,6 +60,7 @@ function initializeDatabase() {
             status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
             author_id INT NOT NULL,
             views INT DEFAULT 0,
+            published_at TIMESTAMP NULL DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
@@ -126,13 +127,16 @@ function initializeDatabase() {
         $pdo->exec($postCategoriesTable);
         $pdo->exec($commentsTable);
         
+        // Add published_at column if it doesn't exist
+        $pdo->exec("ALTER TABLE posts ADD COLUMN IF NOT EXISTS published_at TIMESTAMP NULL DEFAULT NULL AFTER views");
+        
         // Create default users if no users exist
         $stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
         $result = $stmt->fetch();
         
         if ($result['count'] == 0) {
             // Create super admin account
-            $superAdminPassword = password_hash('SuperAdmin@2024', PASSWORD_DEFAULT);
+            $superAdminPassword = password_hash('SuperAdmin@123', PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("
                 INSERT INTO users (username, email, password, first_name, last_name, role) 
                 VALUES (?, ?, ?, ?, ?, ?)
@@ -140,7 +144,7 @@ function initializeDatabase() {
             $stmt->execute(['web-admin', 'web-admin@uphsl.edu.ph', $superAdminPassword, 'Web', 'Administrator', 'super_admin']);
             
             // Create marketing staff as author
-            $authorPassword = password_hash('Marketing@2024', PASSWORD_DEFAULT);
+            $authorPassword = password_hash('Marketing@123', PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("
                 INSERT INTO users (username, email, password, first_name, last_name, role) 
                 VALUES (?, ?, ?, ?, ?, ?)
@@ -148,7 +152,7 @@ function initializeDatabase() {
             $stmt->execute(['marketing-author', 'marketing.author@uphsl.edu.ph', $authorPassword, 'Marketing', 'Author', 'author']);
             
             // Create marketing staff as admin
-            $adminPassword = password_hash('MarketingAdmin@2024', PASSWORD_DEFAULT);
+            $adminPassword = password_hash('MarketingAdmin@123', PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("
                 INSERT INTO users (username, email, password, first_name, last_name, role) 
                 VALUES (?, ?, ?, ?, ?, ?)

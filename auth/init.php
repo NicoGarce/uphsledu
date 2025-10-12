@@ -34,9 +34,9 @@ try {
         
         echo "<h3>Default Passwords:</h3>";
         echo "<ul>";
-        echo "<li><strong>Super Admin:</strong> SuperAdmin@2024</li>";
-        echo "<li><strong>Marketing Admin:</strong> MarketingAdmin@2024</li>";
-        echo "<li><strong>Marketing Author:</strong> Marketing@2024</li>";
+        echo "<li><strong>Super Admin:</strong> SuperAdmin@123</li>";
+        echo "<li><strong>Marketing Admin:</strong> MarketingAdmin@123</li>";
+        echo "<li><strong>Marketing Author:</strong> Marketing@123</li>";
         echo "</ul>";
         
         echo "<p><strong>Important:</strong> Please change these passwords immediately after first login!</p>";

@@ -20,7 +20,7 @@ function getRecentPosts($limit = 10) {
         FROM posts p 
         JOIN users u ON p.author_id = u.id 
         WHERE p.status = 'published' 
-        ORDER BY p.created_at DESC 
+        ORDER BY p.published_at DESC, p.created_at DESC 
         LIMIT :limit
     ");
     $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
@@ -68,7 +68,7 @@ function getAllPosts($authorId = null, $status = null) {
         $sql .= " WHERE " . implode(" AND ", $conditions);
     }
     
-    $sql .= " ORDER BY p.created_at DESC";
+    $sql .= " ORDER BY p.published_at DESC, p.created_at DESC";
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
@@ -153,9 +153,9 @@ function isAdmin() {
     return isset($_SESSION['user_role']) && in_array($_SESSION['user_role'], ['admin', 'super_admin']);
 }
 
-// Check if user is author, admin, or super admin
+// Check if user is author only
 function isAuthor() {
-    return isset($_SESSION['user_role']) && in_array($_SESSION['user_role'], ['super_admin', 'admin', 'author']);
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'author';
 }
 
 // Redirect function
@@ -280,7 +280,7 @@ function getPublishedPosts($page = 1, $limit = 10) {
         FROM posts p 
         JOIN users u ON p.author_id = u.id 
         WHERE p.status = 'published' 
-        ORDER BY p.created_at DESC 
+        ORDER BY p.published_at DESC, p.created_at DESC 
         LIMIT :limit OFFSET :offset
     ");
     $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
