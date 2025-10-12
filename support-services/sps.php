@@ -633,7 +633,7 @@ body {
         <div class="container">
             <div class="admission-discipline-container">
                 <!-- Admission Notice -->
-                <div class="admission-section">
+                <div class="admission-section" id="admission">
                     <h2 class="section-title">Admission</h2>
                     <div class="admission-notice">
                         <h3>Important Notice</h3>
