@@ -138,7 +138,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['about', 'contact', 'environmental-policy', 'university-policy', 'map'])) ? 'active' : ''; ?>">About <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="<?php echo $base_path; ?>about/about.php" class="dropdown-link <?php echo ($current_page == 'about') ? 'active' : ''; ?>">About Us</a>
+                            <a href="<?php echo $base_path; ?>about" class="dropdown-link <?php echo ($current_page == 'about') ? 'active' : ''; ?>">About Us</a>
                             <a href="<?php echo $base_path; ?>about/contact.php" class="dropdown-link <?php echo ($current_page == 'contact') ? 'active' : ''; ?>">Contact Us</a>
                             <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="dropdown-link <?php echo ($current_page == 'environmental-policy') ? 'active' : ''; ?>">Environmental Policy</a>
                             <a href="<?php echo $base_path; ?>about/university-policy.php" class="dropdown-link <?php echo ($current_page == 'university-policy') ? 'active' : ''; ?>">University Policy</a>
@@ -285,7 +285,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <div class="mobile-nav-item mobile-dropdown">
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">About <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="<?php echo $base_path; ?>about/about.php" class="mobile-dropdown-link">About Us</a>
+                    <a href="<?php echo $base_path; ?>about" class="mobile-dropdown-link">About Us</a>
                     <a href="<?php echo $base_path; ?>about/contact.php" class="mobile-dropdown-link">Contact Us</a>
                     <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="mobile-dropdown-link">Environmental Policy</a>
                     <a href="<?php echo $base_path; ?>about/university-policy.php" class="mobile-dropdown-link">University Policy</a>
