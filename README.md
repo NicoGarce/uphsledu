@@ -3,6 +3,77 @@
 ## Overview
 This is a comprehensive educational website for the University of Perpetual Help System Laguna (UPHSL) featuring a complete content management system with posting capabilities. The website includes both public-facing pages and an administrative panel for content management.
 
+## Prerequisites
+
+Before installing the UPHSL Education Website, ensure you have the following installed on your system:
+
+### **Required Software**
+- **Web Server**: Apache 2.4+ or Nginx
+- **PHP**: Version 7.4 or higher (8.0+ recommended)
+- **Database**: MySQL 5.7+ or MariaDB 10.3+
+- **Operating System**: Windows, Linux, or macOS
+
+### **PHP Extensions**
+- PDO MySQL
+- GD (for image processing)
+- OpenSSL
+- Mbstring
+- Fileinfo
+- JSON
+
+### **Recommended Development Environment**
+- **XAMPP** (Windows/Mac/Linux) - Includes Apache, PHP, and MySQL
+- **WAMP** (Windows)
+- **MAMP** (Mac)
+- **LAMP** (Linux)
+
+## Installation Instructions
+
+### **Step 1: Download and Setup**
+1. Clone or download the project files to your web server directory
+2. For XAMPP: Place files in `C:\xampp\htdocs\uphsledu\` (Windows) or `/Applications/XAMPP/htdocs/uphsledu/` (Mac)
+3. Ensure your web server is running (Apache and MySQL)
+
+### **Step 2: Database Configuration**
+1. Open phpMyAdmin or your preferred MySQL client
+2. Create a new database named `uphsledu`
+3. Import the database schema (if provided) or let the system auto-create tables
+
+### **Step 3: Configure Database Connection**
+1. Open `app/config/database.php`
+2. Update the database credentials if needed:
+   ```php
+   $host = 'localhost';
+   $dbname = 'uphsledu';
+   $username = 'root';        // Default XAMPP username
+   $password = '';            // Default XAMPP password (empty)
+   ```
+
+### **Step 4: Set Permissions**
+1. Ensure the `uploads/` directory is writable:
+   - **Windows**: Right-click → Properties → Security → Full Control
+   - **Linux/Mac**: `chmod 755 uploads/`
+
+### **Step 5: Initialize the System**
+1. Navigate to `http://localhost/uphsledu/auth/setup.php`
+2. Follow the setup instructions
+3. Note the default login credentials provided
+
+### **Step 6: Default Login Credentials**
+After setup, you can log in with these default accounts:
+
+| Role | Username | Password | Access Level |
+|------|----------|----------|--------------|
+| Super Admin | superadmin | 123 | Full access to all features |
+| Admin | web-admin | 123 | Dashboard and post management |
+| Marketing Admin | marketing-admin | 123 | Dashboard and post management |
+| Author | author | 123 | Post creation and management only |
+
+### **Step 7: Verify Installation**
+1. Visit `http://localhost/uphsledu/` to see the homepage
+2. Test the admin panel at `http://localhost/uphsledu/auth/login.php`
+3. Create a test post to verify the posting system works
+
 ## Key Features
 - **Content Management System**: Full CRUD operations for posts and pages
 - **User Authentication**: Role-based access control (Super Admin, Admin, Author)
@@ -221,6 +292,66 @@ uphsledu/
 - Session management and cleanup
 - Role-based access control
 - Input validation and sanitization
+
+## Troubleshooting
+
+### **Common Issues and Solutions**
+
+#### **1. Database Connection Error**
+- **Problem**: "Connection failed" or database errors
+- **Solution**: 
+  - Verify MySQL is running
+  - Check database credentials in `app/config/database.php`
+  - Ensure database `uphsledu` exists
+
+#### **2. Image Upload Not Working**
+- **Problem**: Images not uploading or displaying
+- **Solution**:
+  - Check `uploads/` directory permissions (must be writable)
+  - Verify PHP GD extension is enabled
+  - Check file size limits in `php.ini`
+
+#### **3. Clean URLs Not Working**
+- **Problem**: URLs showing `.php` extensions or 404 errors
+- **Solution**:
+  - Ensure Apache mod_rewrite is enabled
+  - Check `.htaccess` file is present and readable
+  - Verify Apache configuration allows .htaccess overrides
+
+#### **4. Login Issues**
+- **Problem**: Cannot log in or session errors
+- **Solution**:
+  - Clear browser cookies and cache
+  - Check PHP session configuration
+  - Verify user exists in database
+
+#### **5. Permission Denied Errors**
+- **Problem**: File permission errors
+- **Solution**:
+  - Set proper permissions on `uploads/` directory
+  - Ensure web server has read/write access
+  - Check file ownership
+
+### **Development Tips**
+
+#### **Enabling Error Reporting (Development Only)**
+Add to the top of PHP files for debugging:
+```php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+```
+
+#### **Checking PHP Extensions**
+Create a `phpinfo.php` file to verify all required extensions:
+```php
+<?php phpinfo(); ?>
+```
+
+#### **Database Debugging**
+Enable PDO error mode in `app/config/database.php`:
+```php
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+```
 
 ## Migration Notes
 
