@@ -8,15 +8,15 @@
  */
 
 session_start();
-require_once '../app/config/database.php';
-require_once '../app/includes/functions.php';
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
 
 // Set page title
 $page_title = "SDG Initiatives";
-$base_path = '../';
+$base_path = '';
 
 // Include header
-include '../app/includes/header.php';
+include 'app/includes/header.php';
 ?>
 
 <style>
@@ -801,5 +801,5 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
 
 <?php
 // Include footer
-include '../app/includes/footer.php';
+include 'app/includes/footer.php';
 ?>
