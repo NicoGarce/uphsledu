@@ -8,15 +8,15 @@
  */
 
 session_start();
-require_once '../app/config/database.php';
-require_once '../app/includes/functions.php';
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
 
 // Set page title
 $page_title = "About UPHSL";
-$base_path = '../';
+$base_path = '/uphsledu/';
 
 // Include header
-include '../app/includes/header.php';
+include 'app/includes/header.php';
 ?>
 
 <style>
@@ -920,5 +920,5 @@ include '../app/includes/header.php';
 
 <?php
 // Include footer
-include '../app/includes/footer.php';
+include 'app/includes/footer.php';
 ?>
