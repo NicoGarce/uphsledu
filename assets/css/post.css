@@ -10,6 +10,23 @@
     --text-light: #94a3b8;
 }
 
+/* Post Content Paragraphs */
+.post-text p {
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    color: var(--text-dark);
+    font-size: 1.1rem;
+    text-align: justify;
+}
+
+.post-text p:first-child {
+    margin-top: 0;
+}
+
+.post-text p:last-child {
+    margin-bottom: 0;
+}
+
 .post-container {
     max-width: 1200px;
     margin: 0 auto;
