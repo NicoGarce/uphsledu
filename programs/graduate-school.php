@@ -28,7 +28,7 @@ include '../app/includes/header.php';
     <section class="page-header" style="background-image: url('<?php echo $bg_image; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
             <div class="banner-logo">
-                <img src="<?php echo `$base_path; ?>img/logo/graduate-school-logo.png" alt="Graduate School Logo">
+                <img src="<?php echo $base_path; ?>programs/img/logo/graduate-school-logo.png" alt="Graduate School Logo">
             </div>
             <div class="banner-content">
                 <h1>Graduate School</h1>

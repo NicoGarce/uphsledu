@@ -28,7 +28,7 @@ include '../app/includes/header.php';
     <section class="page-header" style="background-image: url('<?php echo $bg_image; ?>'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="container">
             <div class="banner-logo">
-                <img src="<?php echo `$base_path; ?>img/logo/logo-cmt.png" alt="Maritime Logo">
+                <img src="<?php echo $base_path; ?>programs/img/logo/logo-cmt.png" alt="Maritime Logo">
             </div>
             <div class="banner-content">
                 <h1>Maritime</h1>
