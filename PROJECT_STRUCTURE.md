@@ -1,58 +1,74 @@
-# UPHSL Education Website - Project Structure
+# UPHSL Education Website with Posting System - Project Structure
+
+## Overview
+This is a comprehensive educational website for the University of Perpetual Help System Laguna (UPHSL) featuring a complete content management system with posting capabilities. The website includes both public-facing pages and an administrative panel for content management.
+
+## Key Features
+- **Content Management System**: Full CRUD operations for posts and pages
+- **User Authentication**: Role-based access control (Super Admin, Admin, Author)
+- **Posting System**: Create, edit, delete, and publish posts with images
+- **Responsive Design**: Mobile-first approach with modern UI/UX
+- **Clean URLs**: SEO-friendly URLs without .php extensions
+- **Multi-role Dashboard**: Different interfaces for different user roles
 
 ## New Organized Structure
 
 ```
 uphsledu/
-├── index.php                    # Root redirect to public/index.php
+├── index.php                    # Main homepage with news slider
+├── about.php                    # About page (moved from about/about.php)
+├── post.php                     # Individual post view page
+├── posts.php                    # All posts listing page
+├── search.php                   # Search functionality
+├── campuses.php                 # Campus information
+├── programs.php                 # Programs overview
+├── sdg-initiatives.php          # SDG Initiatives page
+├── ols_instructions.php         # Online services instructions
+├── privacy-policy.php           # Privacy policy page
+├── terms-of-service.php         # Terms of service page
+├── accessibility.php            # Accessibility page
 ├── 404.php                      # Error page
 ├── PROJECT_STRUCTURE.md         # This documentation
+├── .htaccess                    # URL rewriting rules
 │
-├── public/                      # Public-facing files
-│   ├── index.php               # Main homepage
-│   ├── post.php                # Individual post view
-│   ├── posts.php               # Posts listing
-│   ├── search.php              # Search functionality
-│   ├── campuses.php            # Campus information
-│   ├── programs.php            # Programs overview
-│   ├── ols_instructions.php    # Online services instructions
-│   ├── create-post.php         # Post creation (auth required)
-│   └── dashboard.php           # User dashboard (auth required)
+├── auth/                        # Authentication system
+│   ├── login.php                # User login with role-based redirect
+│   ├── logout.php               # User logout with session cleanup
+│   ├── setup.php                # Initial setup with default credentials
+│   └── init.php                 # Database initialization
 │
-├── auth/                       # Authentication files
-│   ├── login.php               # User login
-│   ├── logout.php              # User logout
-│   ├── setup.php               # Initial setup
-│   └── init.php                # Database initialization
+├── admin/                       # Administrative panel
+│   ├── dashboard.php            # Main admin dashboard (Super Admin/Admin)
+│   ├── author-dashboard.php     # Author-specific dashboard
+│   ├── create-post.php          # Post creation and editing
+│   ├── posts.php                # Post management (all roles)
+│   └── accounts.php             # User account management (Super Admin/Admin)
 │
-├── admin/                      # Admin panel
-│   ├── posts.php               # Post management
-│   ├── users.php               # User management
-│   └── accounts.php            # Account management
-│
-├── app/                        # Application logic
+├── app/                        # Application core
 │   ├── config/
-│   │   └── database.php        # Database configuration
+│   │   └── database.php        # Database configuration and schema
 │   ├── includes/
-│   │   ├── header.php          # Site header
-│   │   ├── footer.php          # Site footer
-│   │   ├── functions.php       # Utility functions
+│   │   ├── header.php          # Public site header with navigation
+│   │   ├── footer.php          # Public site footer
+│   │   ├── admin-header.php    # Admin panel header with sidebar
+│   │   ├── admin-footer.php    # Admin panel footer
+│   │   ├── functions.php       # Core utility functions
 │   │   ├── coming-soon.php     # Coming soon template
 │   │   └── general-coming-soon.php
 │   └── functions/              # Additional function files (future)
 │
 ├── assets/                     # Static assets
 │   ├── css/                    # Stylesheets
-│   │   ├── style.css
-│   │   ├── admin.css
-│   │   ├── auth.css
-│   │   ├── dashboard.css
-│   │   ├── editor.css
-│   │   ├── post.css
-│   │   └── posts.css
+│   │   ├── style.css           # Main public site styles
+│   │   ├── admin.css           # Admin panel styles
+│   │   ├── auth.css            # Authentication page styles
+│   │   ├── dashboard.css       # Dashboard and sidebar styles
+│   │   ├── editor.css          # Post editor styles
+│   │   ├── post.css            # Individual post page styles
+│   │   └── posts.css           # Posts listing styles
 │   ├── js/                     # JavaScript files
-│   │   ├── script.js
-│   │   └── post.js
+│   │   ├── script.js           # Main site JavaScript
+│   │   └── post.js             # Post-specific JavaScript
 │   ├── images/                 # Images (reorganized)
 │   │   ├── logos/              # Logo files
 │   │   ├── banners/            # Banner images
@@ -75,8 +91,8 @@ uphsledu/
 │       ├── pdfs/               # PDF documents
 │       └── handbooks/          # Handbook files
 │
-├── uploads/                    # User uploads
-│   └── [uploaded files]
+├── uploads/                    # User uploads and post images
+│   └── [uploaded files]        # Post featured images and attachments
 │
 ├── programs/                   # Program pages
 │   ├── index.php
@@ -106,11 +122,42 @@ uphsledu/
 │   ├── research.php
 │   └── sps/
 │
-└── about/                      # About pages
-    ├── about.php
-    ├── contact.php
-    └── index.php
+├── about/                      # About section pages
+│   ├── index.php               # Redirects to about.php
+│   ├── contact.php             # Contact information
+│   ├── environmental-policy.php # Environmental policy
+│   ├── university-policy.php   # University policies
+│   └── map.php                 # Campus map
+│
+├── calendar/                   # Academic calendar pages
+│   ├── college-academic-calendar.php
+│   └── bed-shs-academic-calendar.php
 ```
+
+## Posting System Features
+
+### **Content Management**
+- **Post Creation**: Rich text editor with image upload capabilities
+- **Post Editing**: Full CRUD operations for all user roles
+- **Image Management**: Upload, display, and delete post images
+- **Publishing Control**: Draft/Published status with date scheduling
+- **SEO-Friendly**: Clean URLs and meta descriptions
+
+### **User Roles & Permissions**
+- **Super Admin**: Full access to all features (Dashboard, Posts, Accounts)
+- **Admin**: Content management access (Dashboard, Posts)
+- **Author**: Post creation and management only
+
+### **Database Schema**
+- **Users Table**: User authentication and role management
+- **Posts Table**: Content storage with published_at timestamps
+- **Images Table**: Post image associations and metadata
+
+### **Frontend Features**
+- **News Slider**: Homepage carousel with recent posts
+- **Post Listing**: Paginated posts with search functionality
+- **Individual Posts**: Full post view with image galleries
+- **Responsive Design**: Mobile-first approach across all devices
 
 ## Key Improvements
 
@@ -139,17 +186,47 @@ uphsledu/
 
 ## Benefits
 
-1. **Cleaner Structure**: Logical separation of different types of files
-2. **Better Maintainability**: Easier to find and modify specific functionality
-3. **Improved Security**: Clear separation between public and private areas
-4. **Scalability**: Structure supports future growth and additions
-5. **Developer Experience**: More intuitive file organization
+1. **Complete CMS**: Full content management system with posting capabilities
+2. **Role-Based Access**: Secure multi-user system with different permission levels
+3. **Modern UI/UX**: Responsive design with intuitive admin interface
+4. **SEO Optimized**: Clean URLs and proper meta tags for better search visibility
+5. **Image Management**: Built-in image upload and management system
+6. **Cleaner Structure**: Logical separation of different types of files
+7. **Better Maintainability**: Easier to find and modify specific functionality
+8. **Improved Security**: Clear separation between public and private areas
+9. **Scalability**: Structure supports future growth and additions
+10. **Developer Experience**: More intuitive file organization
+
+## Technical Implementation
+
+### **URL Rewriting**
+- Clean URLs without .php extensions using Apache .htaccess
+- Automatic redirects from .php to clean URLs
+- SEO-friendly URL structure
+
+### **Database Integration**
+- MySQL database with PDO connections
+- User authentication and session management
+- Post storage with image associations
+- Role-based access control
+
+### **File Structure**
+- Root-level pages for main functionality
+- Organized asset structure with logical categorization
+- Modular include system for headers and footers
+- Separate admin and public interfaces
+
+### **Security Features**
+- Password hashing and verification
+- Session management and cleanup
+- Role-based access control
+- Input validation and sanitization
 
 ## Migration Notes
 
-- Root `index.php` now redirects to `public/index.php`
-- All path references have been updated to work with new structure
+- All path references have been updated to work with current structure
 - Asset paths updated to reflect new organization
-- Database configuration moved to `app/config/database.php`
+- Database configuration centralized in `app/config/database.php`
 - All include/require statements updated to new paths
+- Clean URL implementation with .htaccess rewrite rules
 
