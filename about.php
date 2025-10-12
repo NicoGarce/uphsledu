@@ -9,11 +9,14 @@
 
 session_start();
 require_once 'app/config/database.php';
+require_once 'app/config/paths.php';
 require_once 'app/includes/functions.php';
 
 // Set page title
 $page_title = "About UPHSL";
-$base_path = '/uphsledu/';
+
+// Use the automatically detected base path
+$base_path = $GLOBALS['base_path'];
 
 // Include header
 include 'app/includes/header.php';

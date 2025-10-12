@@ -74,6 +74,52 @@ After setup, you can log in with these default accounts:
 2. Test the admin panel at `http://localhost/uphsledu/auth/login.php`
 3. Create a test post to verify the posting system works
 
+## Production Deployment (cPanel)
+
+### **Pre-Deployment Checklist**
+✅ **Automatic Path Detection**: The system automatically detects development vs production environment
+✅ **No Manual Path Changes**: All paths are automatically configured
+✅ **Database Ready**: Uses the same database configuration
+✅ **Clean URLs**: .htaccess rules work in production
+✅ **File Permissions**: Uploads directory will be automatically writable
+
+### **Deployment Steps**
+
+#### **Step 1: Upload Files**
+1. Upload all files to your cPanel `public_html` directory
+2. Ensure the file structure is maintained exactly as in development
+
+#### **Step 2: Database Setup**
+1. Create a MySQL database in cPanel
+2. Update `app/config/database.php` with your production database credentials:
+   ```php
+   $host = 'localhost';  // Usually localhost in cPanel
+   $dbname = 'your_database_name';
+   $username = 'your_database_username';
+   $password = 'your_database_password';
+   ```
+
+#### **Step 3: Set Permissions**
+1. Set `uploads/` directory permissions to 755 or 777
+2. Ensure all PHP files have 644 permissions
+
+#### **Step 4: Initialize System**
+1. Visit `https://yourdomain.com/auth/setup.php`
+2. Follow the setup instructions
+3. The system will automatically detect it's in production mode
+
+#### **Step 5: Test Everything**
+1. Visit your domain to see the homepage
+2. Test admin login at `https://yourdomain.com/auth/login.php`
+3. Create a test post to verify functionality
+
+### **Production Features**
+- **Automatic Path Detection**: No manual configuration needed
+- **Clean URLs**: Works automatically with cPanel
+- **SSL Ready**: Works with HTTPS
+- **Mobile Responsive**: Optimized for all devices
+- **SEO Friendly**: Clean URLs and proper meta tags
+
 ## Key Features
 - **Content Management System**: Full CRUD operations for posts and pages
 - **User Authentication**: Role-based access control (Super Admin, Admin, Author)
