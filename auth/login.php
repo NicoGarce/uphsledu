@@ -19,14 +19,22 @@ if (isLoggedIn()) {
 $error = '';
 $success = '';
 
+// Check for flash messages
+if (hasFlashMessage('success')) {
+    $success = getFlashMessage('success');
+}
+if (hasFlashMessage('error')) {
+    $error = getFlashMessage('error');
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = sanitizeInput($_POST['email']);
+    $username = sanitizeInput($_POST['username']);
     $password = $_POST['password'];
     
-    if (empty($email) || empty($password)) {
+    if (empty($username) || empty($password)) {
         $error = 'Please fill in all fields';
     } else {
-        $user = getUserByEmail($email);
+        $user = getUserByUsername($username);
         
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
@@ -35,9 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['first_name'] = $user['first_name'];
             
             setFlashMessage('success', 'Welcome back, ' . $user['first_name'] . '!');
-            redirect('../admin/dashboard.php');
+            
+            // Redirect based on user role
+            if ($user['role'] === 'author') {
+                redirect('../admin/author-dashboard.php');
+            } else {
+                redirect('../admin/dashboard.php');
+            }
         } else {
-            $error = 'Invalid email or password';
+            $error = 'Invalid username or password';
         }
     }
 }
@@ -85,12 +99,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <form method="POST" class="auth-form">
                 <div class="form-group">
-                    <label for="email" class="form-label">
-                        <i class="fas fa-envelope"></i>
-                        Email Address
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i>
+                        Username
                     </label>
-                    <input type="email" id="email" name="email" class="form-input" 
-                           value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" 
+                    <input type="text" id="username" name="username" class="form-input" 
+                           value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>" 
                            required>
                 </div>
 
@@ -108,7 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="checkmark"></span>
                         Remember me
                     </label>
-                    <a href="forgot-password.php" class="forgot-link">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-full">
@@ -121,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <!-- Website Access Button -->
         <div class="website-access">
-            <a href="index.php" class="btn btn-secondary">
+            <a href="../" class="btn btn-secondary">
                 <i class="fas fa-home"></i>
                 Visit Website
             </a>

@@ -10,6 +10,18 @@
     --text-light: #94a3b8;
 }
 
+/* Override main CSS body background for auth pages */
+body {
+    background-color: transparent !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* Hide navbar on auth pages */
+.navbar {
+    display: none !important;
+}
+
 .auth-container {
     min-height: 100vh;
     display: flex;

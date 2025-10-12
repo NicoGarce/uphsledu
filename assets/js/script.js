@@ -118,16 +118,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Toggle mobile sidebar
     function toggleMobileSidebar() {
-        mobileSidebar.classList.toggle('active');
-        mobileSidebarOverlay.classList.toggle('active');
-        document.body.classList.toggle('sidebar-open');
+        if (mobileSidebar) {
+            mobileSidebar.classList.toggle('active');
+            mobileSidebarOverlay.classList.toggle('active');
+            document.body.classList.toggle('sidebar-open');
+        }
     }
 
     // Close mobile sidebar
     function closeMobileSidebar() {
-        mobileSidebar.classList.remove('active');
-        mobileSidebarOverlay.classList.remove('active');
-        document.body.classList.remove('sidebar-open');
+        if (mobileSidebar) {
+            mobileSidebar.classList.remove('active');
+            mobileSidebarOverlay.classList.remove('active');
+            document.body.classList.remove('sidebar-open');
+        }
     }
 
     // Event listeners for mobile menu

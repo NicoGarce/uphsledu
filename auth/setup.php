@@ -261,13 +261,13 @@ if ($usersExist) {
                                 <?php 
                                 switch($user['role']) {
                                     case 'super_admin':
-                                        echo 'SuperAdmin@2024';
+                                        echo 'SuperAdmin@123';
                                         break;
                                     case 'admin':
-                                        echo 'MarketingAdmin@2024';
+                                        echo 'MarketingAdmin@123';
                                         break;
                                     case 'author':
-                                        echo 'Marketing@2024';
+                                        echo 'Marketing@123';
                                         break;
                                     default:
                                         echo 'N/A';

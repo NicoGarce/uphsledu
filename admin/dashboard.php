@@ -16,11 +16,50 @@ if (!isLoggedIn()) {
     redirect('../auth/login.php');
 }
 
+// Redirect Author users to author dashboard
+if (isAuthor()) {
+    redirect('author-dashboard.php');
+}
+
 $user = getUserById($_SESSION['user_id']);
 $userRole = $_SESSION['user_role'];
 
-// Set base path for assets
-$base_path = '../';
+// Handle post deletion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_post') {
+    $postId = (int)$_POST['post_id'];
+    
+    if ($postId > 0) {
+        try {
+            $pdo = getDBConnection();
+            
+            // Check if user has permission to delete this post
+            if ($userRole === 'super_admin') {
+                // Super admin can delete any post
+                $stmt = $pdo->prepare("DELETE FROM posts WHERE id = ?");
+                $stmt->execute([$postId]);
+            } elseif ($userRole === 'admin') {
+                // Admin can delete any post
+                $stmt = $pdo->prepare("DELETE FROM posts WHERE id = ?");
+                $stmt->execute([$postId]);
+            }
+            
+            if ($stmt->rowCount() > 0) {
+                $success = 'Post deleted successfully';
+            } else {
+                $error = 'Post not found or you do not have permission to delete it';
+            }
+        } catch (PDOException $e) {
+            $error = 'Failed to delete post';
+        }
+    }
+}
+
+// Set page title for header
+$page_title = 'Dashboard';
+
+// Initialize messages
+$error = '';
+$success = '';
 
 // Get dashboard data based on user role
 $stats = [];
@@ -72,48 +111,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
     $recentPosts = getAllPosts($_SESSION['user_id']);
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - University of Perpetual Help System</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/logos/logo.png">
-    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/logos/logo.png">
-    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/logos/logo.png">
-    <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/dashboard.css">
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../">
-                        <img src="<?php echo $base_path; ?>assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
-                </a>
-            </div>
-            <div class="nav-menu">
-                        <a href="../" class="nav-link">Home</a>
-                <a href="dashboard.php" class="nav-link active">Dashboard</a>
-                <?php if (isAuthor() || isSuperAdmin()): ?>
-                    <a href="create-post.php" class="nav-link">Create Post</a>
-                <?php endif; ?>
-                <?php if (isAdmin()): ?>
-                    <a href="users.php" class="nav-link">Users</a>
-                <?php endif; ?>
-                <?php if (isSuperAdmin()): ?>
-                    <a href="accounts.php" class="nav-link">Account Management</a>
-                <?php endif; ?>
-            </div>
-            <div class="user-menu">
-                <span class="user-name"><?php echo htmlspecialchars($user['first_name']); ?></span>
-                <a href="../auth/logout.php" class="nav-link">Logout</a>
-            </div>
-        </div>
-    </nav>
+<?php include '../app/includes/admin-header.php'; ?>
 
     <!-- Dashboard Content -->
     <div class="dashboard-container">
@@ -180,55 +178,38 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
             </div>
         </div>
 
+        <!-- Messages -->
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <?php echo htmlspecialchars($error); ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($success)): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <?php echo htmlspecialchars($success); ?>
+            </div>
+        <?php endif; ?>
+
         <!-- Quick Actions -->
         <div class="dashboard-section">
             <h2 class="section-title">Quick Actions</h2>
             <div class="quick-actions">
-                <?php if (isAuthor() || isSuperAdmin()): ?>
-                    <a href="create-post.php" class="action-card">
-                        <i class="fas fa-plus"></i>
-                        <span>Create New Post</span>
-                    </a>
-                <?php endif; ?>
-                
-                <a href="posts.php" class="action-card">
-                    <i class="fas fa-list"></i>
-                    <span>My Posts</span>
-                </a>
-                
-                <?php if (isAdmin()): ?>
-                    <a href="users.php" class="action-card">
-                        <i class="fas fa-users-cog"></i>
-                        <span>Manage Users</span>
-                    </a>
-                    
-                    <a href="settings.php" class="action-card">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                <?php endif; ?>
-                
-                <?php if (isSuperAdmin()): ?>
-                    <a href="accounts.php" class="action-card">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Create Accounts</span>
-                    </a>
-                    
+                <?php if (isAuthor() || isAdmin() || isSuperAdmin()): ?>
                     <a href="posts.php" class="action-card">
                         <i class="fas fa-edit"></i>
-                        <span>Edit Posts</span>
-                    </a>
-                    
-                    <a href="role-management.php" class="action-card">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Role Management</span>
+                        <span>Post Management</span>
                     </a>
                 <?php endif; ?>
                 
-                <a href="profile.php" class="action-card">
-                    <i class="fas fa-user-edit"></i>
-                    <span>Edit Profile</span>
-                </a>
+                <?php if (isAdmin() || isSuperAdmin()): ?>
+                    <a href="accounts.php" class="action-card">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Account Management</span>
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -250,7 +231,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                                         <?php echo ucfirst($post['status']); ?>
                                     </span>
                                     <span class="post-date">
-                                        <?php echo formatDate($post['created_at']); ?>
+                                        <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
                                     </span>
                                     <?php if ($userRole === 'super_admin' || $userRole === 'admin'): ?>
                                         <span class="post-author">
@@ -260,14 +241,16 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                                 </div>
                             </div>
                             <div class="post-actions">
-                                <a href="edit-post.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-secondary">
+                                <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-secondary">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="delete-post.php?id=<?php echo $post['id']; ?>" 
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Are you sure you want to delete this post?')">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                    <input type="hidden" name="action" value="delete_post">
+                                    <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -286,6 +269,6 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
     </div>
 
         <script src="../assets/js/script.js"></script>
-</body>
-</html>
+
+<?php include '../app/includes/admin-footer.php'; ?>
 

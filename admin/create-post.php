@@ -11,52 +11,145 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
-// Check if user is logged in and is author or admin
-if (!isLoggedIn() || !isAuthor()) {
+// Check if user is logged in and has appropriate role
+if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
     redirect('../auth/login.php');
 }
 
+$user = getUserById($_SESSION['user_id']);
+$userRole = $_SESSION['user_role'];
+
+// Set page title for header
+$page_title = 'Create Post';
+
 $error = '';
 $success = '';
+$isEdit = false;
+$post = null;
 
-// Set base path for assets
-$base_path = '../';
+// Check if this is an edit request
+if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
+    $isEdit = true;
+    $postId = (int)$_GET['edit'];
+    
+    // Get the post data
+    $pdo = getDBConnection();
+    
+    // Different query based on user role
+    if (isAuthor()) {
+        // Authors can only edit their own posts
+        $stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ? AND author_id = ?");
+        $stmt->execute([$postId, $_SESSION['user_id']]);
+    } else {
+        // Admins and Super Admins can edit any post
+        $stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ?");
+        $stmt->execute([$postId]);
+    }
+    
+    $post = $stmt->fetch();
+    
+    if (!$post) {
+        $error = 'Post not found or you do not have permission to edit it';
+        $isEdit = false;
+    } else {
+        $page_title = 'Edit Post';
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    error_log("Form submitted - POST data: " . print_r($_POST, true));
+    error_log("Form submitted - FILES data: " . print_r($_FILES, true));
+    
     $title = sanitizeInput($_POST['title']);
     $content = $_POST['content'];
     $status = $_POST['status'];
     $excerpt = sanitizeInput($_POST['excerpt'] ?? '');
+    $publishedDate = $_POST['published_date'] ?? null;
+    $isEdit = isset($_POST['is_edit']) && $_POST['is_edit'] === '1';
+    $postId = isset($_POST['post_id']) ? (int)$_POST['post_id'] : 0;
     
     if (empty($title) || empty($content)) {
         $error = 'Please fill in all required fields';
     } else {
         $pdo = getDBConnection();
-        $slug = generateUniqueSlug($title);
         
         try {
             // Start transaction
             $pdo->beginTransaction();
+            error_log("Transaction started");
             
-            // Insert the post
-            $stmt = $pdo->prepare("
-                INSERT INTO posts (title, slug, content, excerpt, status, author_id) 
-                VALUES (?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->execute([$title, $slug, $content, $excerpt, $status, $_SESSION['user_id']]);
-            $postId = $pdo->lastInsertId();
+            if ($isEdit && $postId > 0) {
+                // Update existing post - different query based on user role
+                if (isAuthor()) {
+                    // Authors can only update their own posts
+                    $stmt = $pdo->prepare("
+                        UPDATE posts 
+                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, updated_at = CURRENT_TIMESTAMP 
+                        WHERE id = ? AND author_id = ?
+                    ");
+                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $postId, $_SESSION['user_id']]);
+                } else {
+                    // Admins and Super Admins can update any post
+                    $stmt = $pdo->prepare("
+                        UPDATE posts 
+                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, updated_at = CURRENT_TIMESTAMP 
+                        WHERE id = ?
+                    ");
+                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $postId]);
+                }
+                
+                if ($stmt->rowCount() === 0) {
+                    throw new Exception('Post not found or you do not have permission to edit it');
+                }
+            } else {
+                // Create new post
+                $slug = generateUniqueSlug($title);
+                $stmt = $pdo->prepare("
+                    INSERT INTO posts (title, slug, content, excerpt, status, published_at, author_id) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                ");
+                $stmt->execute([$title, $slug, $content, $excerpt, $status, $publishedDate, $_SESSION['user_id']]);
+                $postId = $pdo->lastInsertId();
+            }
+            
+            // Handle deletion of existing images
+            if (isset($_POST['delete_images']) && is_array($_POST['delete_images'])) {
+                foreach ($_POST['delete_images'] as $imageId) {
+                    // Get image path before deleting
+                    $stmt = $pdo->prepare("SELECT image_path FROM post_images WHERE id = ? AND post_id = ?");
+                    $stmt->execute([$imageId, $postId]);
+                    $image = $stmt->fetch();
+                    
+                    if ($image) {
+                        // Delete from database
+                        $stmt = $pdo->prepare("DELETE FROM post_images WHERE id = ?");
+                        $stmt->execute([$imageId]);
+                        
+                        // Delete file from server
+                        if (file_exists($image['image_path'])) {
+                            unlink($image['image_path']);
+                        }
+                    }
+                }
+            }
             
             // Handle image uploads
+            error_log("Image upload debug - FILES array: " . print_r($_FILES, true));
             if (!empty($_FILES['images']['name'][0])) {
-                $uploadDir = 'uploads/';
+                error_log("Image upload: Processing " . count($_FILES['images']['name']) . " files");
+                $uploadDir = dirname(__DIR__) . '/uploads/';
+                error_log("Current working directory: " . getcwd());
+                error_log("Upload directory path: " . $uploadDir);
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
+                    error_log("Created upload directory: $uploadDir");
                 }
                 
                 $uploadedImages = [];
                 $imageCount = count($_FILES['images']['name']);
                 
                 for ($i = 0; $i < $imageCount; $i++) {
+                    error_log("Processing image $i: " . $_FILES['images']['name'][$i] . " (error: " . $_FILES['images']['error'][$i] . ")");
                     if ($_FILES['images']['error'][$i] === UPLOAD_ERR_OK) {
                         $fileName = $_FILES['images']['name'][$i];
                         $fileTmpName = $_FILES['images']['tmp_name'][$i];
@@ -80,13 +173,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $uploadPath = $uploadDir . $uniqueFileName;
                         
                         if (move_uploaded_file($fileTmpName, $uploadPath)) {
+                            error_log("Image uploaded successfully: $uploadPath");
+                            // Store relative path in database (from root directory)
+                            $relativePath = 'uploads/' . $uniqueFileName;
                             // Insert image record
                             $imageStmt = $pdo->prepare("
                                 INSERT INTO post_images (post_id, image_path, sort_order) 
                                 VALUES (?, ?, ?)
                             ");
-                            $imageStmt->execute([$postId, $uploadPath, $i]);
-                            $uploadedImages[] = $uploadPath;
+                            $imageStmt->execute([$postId, $relativePath, $i]);
+                            $uploadedImages[] = $relativePath;
+                            error_log("Image record inserted into database with path: $relativePath");
+                        } else {
+                            error_log("Failed to move uploaded file: $fileTmpName to $uploadPath");
                         }
                     }
                 }
@@ -102,67 +201,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Commit transaction
             $pdo->commit();
+            error_log("Transaction committed successfully");
             
-            setFlashMessage('success', 'Post created successfully!');
-            redirect('dashboard.php');
+            if ($isEdit) {
+                setFlashMessage('success', 'Post updated successfully!');
+            } else {
+                setFlashMessage('success', 'Post created successfully!');
+            }
+            
+            // Redirect based on user role
+            if (isAuthor()) {
+                redirect('author-dashboard.php');
+            } else {
+                redirect('dashboard.php');
+            }
             
         } catch (Exception $e) {
             $pdo->rollBack();
+            error_log("Exception in post creation: " . $e->getMessage());
             $error = $e->getMessage();
         } catch (PDOException $e) {
             $pdo->rollBack();
+            error_log("PDO Exception in post creation: " . $e->getMessage());
             $error = 'Failed to create post. Please try again.';
         }
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Post - My Blog</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
-    <link rel="stylesheet" href="../assets/css/editor.css">
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../">
-                        <img src="../assets/images/logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
-                </a>
-            </div>
-            <div class="nav-menu">
-                <a href="../" class="nav-link">Home</a>
-                <a href="dashboard.php" class="nav-link">Dashboard</a>
-                <a href="create-post.php" class="nav-link active">Create Post</a>
-                <?php if (isAdmin()): ?>
-                    <a href="users.php" class="nav-link">Users</a>
-                <?php endif; ?>
-                <?php if (isSuperAdmin()): ?>
-                    <a href="accounts.php" class="nav-link">Account Management</a>
-                <?php endif; ?>
-            </div>
-            <div class="user-menu">
-                <span class="user-name"><?php echo htmlspecialchars($_SESSION['first_name'] ?? ''); ?></span>
-                <a href="../auth/logout.php" class="nav-link">Logout</a>
-            </div>
-        </div>
-    </nav>
+
+<?php 
+// For create-post, we need to include editor.css as well
+$additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
+?>
+<?php include '../app/includes/admin-header.php'; ?>
 
     <!-- Editor Content -->
     <div class="editor-container">
         <div class="editor-header">
             <h1 class="editor-title">
                 <i class="fas fa-edit"></i>
-                Create New Post
+                <?php echo $isEdit ? 'Edit Post' : 'Create New Post'; ?>
             </h1>
-            <p class="editor-subtitle">Share your thoughts with the world</p>
+            <p class="editor-subtitle"><?php echo $isEdit ? 'Update your post content' : 'Share your thoughts with the world'; ?></p>
         </div>
 
         <?php if ($error): ?>
@@ -173,13 +253,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" class="editor-form" enctype="multipart/form-data">
+            <?php if ($isEdit): ?>
+                <input type="hidden" name="is_edit" value="1">
+                <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
+            <?php endif; ?>
+            
             <div class="form-group">
                 <label for="title" class="form-label">
                     <i class="fas fa-heading"></i>
                     Post Title
                 </label>
                 <input type="text" id="title" name="title" class="form-input" 
-                       value="<?php echo isset($_POST['title']) ? htmlspecialchars($_POST['title']) : ''; ?>" 
+                       value="<?php echo $isEdit ? htmlspecialchars($post['title']) : (isset($_POST['title']) ? htmlspecialchars($_POST['title']) : ''); ?>" 
                        placeholder="Enter your post title..." required>
             </div>
 
@@ -189,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Excerpt (Optional)
                 </label>
                 <textarea id="excerpt" name="excerpt" class="form-textarea" rows="3"
-                          placeholder="Write a brief summary of your post..."><?php echo isset($_POST['excerpt']) ? htmlspecialchars($_POST['excerpt']) : ''; ?></textarea>
+                          placeholder="Write a brief summary of your post..."><?php echo $isEdit ? htmlspecialchars($post['excerpt']) : (isset($_POST['excerpt']) ? htmlspecialchars($_POST['excerpt']) : ''); ?></textarea>
             </div>
 
             <div class="form-group">
@@ -198,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Content
                 </label>
                 <textarea id="content" name="content" class="form-textarea" 
-                          placeholder="Write your post content here..." required><?php echo isset($_POST['content']) ? htmlspecialchars($_POST['content']) : ''; ?></textarea>
+                          placeholder="Write your post content here..." required><?php echo $isEdit ? htmlspecialchars($post['content']) : (isset($_POST['content']) ? htmlspecialchars($_POST['content']) : ''); ?></textarea>
             </div>
 
             <div class="form-group">
@@ -214,7 +299,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p>Click to select images or drag and drop</p>
                         <small>Supported formats: JPEG, PNG, GIF, WebP (Max 5MB each)</small>
                     </div>
-                    <div id="image-preview" class="image-preview"></div>
+                    <div id="image-preview" class="image-preview">
+                        <?php if ($isEdit && $post): ?>
+                            <?php
+                            // Get existing images for this post
+                            $stmt = $pdo->prepare("SELECT * FROM post_images WHERE post_id = ?");
+                            $stmt->execute([$post['id']]);
+                            $existingImages = $stmt->fetchAll();
+                            ?>
+                            <?php foreach ($existingImages as $image): ?>
+                                <div class="image-preview-item existing-image">
+                                    <img src="../<?php echo htmlspecialchars($image['image_path']); ?>" alt="Existing image">
+                                    <button type="button" class="remove-image" onclick="removeExistingImage(<?php echo $image['id']; ?>)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <div class="image-info">
+                                        <?php echo htmlspecialchars(basename($image['image_path'])); ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
@@ -225,20 +330,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Status
                     </label>
                     <select id="status" name="status" class="form-input">
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
+                        <option value="draft" <?php echo ($isEdit && $post['status'] === 'draft') || (isset($_POST['status']) && $_POST['status'] === 'draft') ? 'selected' : ''; ?>>Draft</option>
+                        <option value="published" <?php echo ($isEdit && $post['status'] === 'published') || (isset($_POST['status']) && $_POST['status'] === 'published') ? 'selected' : ''; ?>>Published</option>
                     </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="published_date" class="form-label">
+                        <i class="fas fa-calendar"></i>
+                        Publish Date
+                    </label>
+                    <input type="datetime-local" id="published_date" name="published_date" class="form-input"
+                           value="<?php 
+                               if ($isEdit && $post['published_at']) {
+                                   echo date('Y-m-d\TH:i', strtotime($post['published_at']));
+                               } elseif (isset($_POST['published_date'])) {
+                                   echo htmlspecialchars($_POST['published_date']);
+                               } else {
+                                   echo date('Y-m-d\TH:i');
+                               }
+                           ?>">
                 </div>
             </div>
 
             <div class="form-actions">
-                <a href="dashboard.php" class="btn btn-secondary">
+                <a href="<?php echo isAuthor() ? 'author-dashboard.php' : 'dashboard.php'; ?>" class="btn btn-secondary">
                     <i class="fas fa-times"></i>
                     Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i>
-                    Create Post
+                    <?php echo $isEdit ? 'Update Post' : 'Create Post'; ?>
                 </button>
             </div>
         </form>
@@ -247,65 +369,105 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <script src="../assets/js/script.js"></script>
     <script>
         // Image upload and preview functionality
-        document.getElementById('images').addEventListener('change', function(e) {
-            const files = Array.from(e.target.files);
+        function initImageUpload() {
+            const imageInput = document.getElementById('images');
             const previewContainer = document.getElementById('image-preview');
             
-            // Clear existing previews
-            previewContainer.innerHTML = '';
+            if (!imageInput) {
+                console.error('Image input not found');
+                return;
+            }
             
-            files.forEach((file, index) => {
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const previewItem = document.createElement('div');
-                        previewItem.className = 'image-preview-item';
-                        previewItem.innerHTML = `
-                            <img src="${e.target.result}" alt="Preview">
-                            <button type="button" class="remove-image" onclick="removeImage(${index})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <div class="image-info">
-                                ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
-                            </div>
-                        `;
-                        previewContainer.appendChild(previewItem);
-                    };
-                    reader.readAsDataURL(file);
+            if (!previewContainer) {
+                console.error('Preview container not found');
+                return;
+            }
+            
+            imageInput.addEventListener('change', function(e) {
+                console.log('Image input changed');
+                const files = Array.from(e.target.files);
+                console.log('Files selected:', files.length);
+                
+                // Clear existing previews (but keep existing images)
+                const existingImages = previewContainer.querySelectorAll('.existing-image');
+                previewContainer.innerHTML = '';
+                
+                // Re-add existing images
+                existingImages.forEach(img => previewContainer.appendChild(img));
+                
+                if (files.length === 0) {
+                    return;
                 }
+                
+                files.forEach((file, index) => {
+                    console.log('Processing file:', file.name, file.type);
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            console.log('File read successfully:', file.name);
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'image-preview-item';
+                            previewItem.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview">
+                                <button type="button" class="remove-image" onclick="removeImage(${index})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <div class="image-info">
+                                    ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                                </div>
+                            `;
+                            previewContainer.appendChild(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        console.log('File is not an image:', file.name);
+                    }
+                });
             });
-        });
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initImageUpload);
+        } else {
+            initImageUpload();
+        }
         
         // Drag and drop functionality
-        const uploadArea = document.querySelector('.image-upload-area');
-        
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#2563eb';
-            uploadArea.style.background = '#eff6ff';
-        });
-        
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#cbd5e1';
-            uploadArea.style.background = '#f8fafc';
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#cbd5e1';
-            uploadArea.style.background = '#f8fafc';
-            
-            const files = Array.from(e.dataTransfer.files);
-            const fileInput = document.getElementById('images');
-            
-            // Create a new FileList
-            const dt = new DataTransfer();
-            files.forEach(file => dt.items.add(file));
-            fileInput.files = dt.files;
-            
-            // Trigger change event
-            fileInput.dispatchEvent(new Event('change'));
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.querySelector('.image-upload-area');
+            if (uploadArea) {
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#2563eb';
+                    uploadArea.style.background = '#eff6ff';
+                });
+                
+                uploadArea.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#cbd5e1';
+                    uploadArea.style.background = '#f8fafc';
+                });
+                
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = '#cbd5e1';
+                    uploadArea.style.background = '#f8fafc';
+                    
+                    const files = Array.from(e.dataTransfer.files);
+                    const fileInput = document.getElementById('images');
+                    
+                    if (fileInput) {
+                        // Create a new FileList
+                        const dt = new DataTransfer();
+                        files.forEach(file => dt.items.add(file));
+                        fileInput.files = dt.files;
+                        
+                        // Trigger change event
+                        fileInput.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
         });
         
         function removeImage(index) {
@@ -324,7 +486,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Refresh preview
             fileInput.dispatchEvent(new Event('change'));
         }
+        
+        function removeExistingImage(imageId) {
+            if (confirm('Are you sure you want to remove this image?')) {
+                // Create a hidden input to mark this image for deletion
+                const deleteInput = document.createElement('input');
+                deleteInput.type = 'hidden';
+                deleteInput.name = 'delete_images[]';
+                deleteInput.value = imageId;
+                document.querySelector('form').appendChild(deleteInput);
+                
+                // Remove the preview item
+                const previewItem = event.target.closest('.image-preview-item');
+                previewItem.remove();
+            }
+        }
     </script>
-</body>
-</html>
+
+<?php include '../app/includes/admin-footer.php'; ?>
 

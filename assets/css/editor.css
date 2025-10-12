@@ -113,6 +113,24 @@
     text-overflow: ellipsis;
 }
 
+.image-preview-item.existing-image {
+    border: 2px solid #10b981;
+    position: relative;
+}
+
+.image-preview-item.existing-image::before {
+    content: "Existing";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background: #10b981;
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    border-radius: 3px 0 3px 0;
+    z-index: 1;
+}
+
 .editor-header {
     margin-bottom: 40px;
 }
