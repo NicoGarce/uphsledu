@@ -18,20 +18,17 @@
                         </div>
                     </div>
                     <div class="social-links">
-                        <a href="<?php echo $base_path; ?>#" class="social-link facebook" title="Follow us on Facebook">
+                        <a href="https://www.facebook.com/uphsl.info.ph" target="_blank" rel="noopener" class="social-link facebook" title="Follow us on Facebook">
                             <i class="fab fa-facebook"></i>
                         </a>
-                        <a href="<?php echo $base_path; ?>#" class="social-link twitter" title="Follow us on Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="<?php echo $base_path; ?>#" class="social-link instagram" title="Follow us on Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="<?php echo $base_path; ?>#" class="social-link youtube" title="Subscribe to our YouTube">
+                        <a href="https://www.youtube.com/@uphsltv1397" target="_blank" rel="noopener" class="social-link youtube" title="Subscribe to our YouTube">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="<?php echo $base_path; ?>#" class="social-link linkedin" title="Connect with us on LinkedIn">
-                            <i class="fab fa-linkedin"></i>
+                        <a href="https://www.instagram.com/uphs.laguna" target="_blank" rel="noopener" class="social-link instagram" title="Follow us on Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://tiktok.com/@uphs.laguna" target="_blank" rel="noopener" class="social-link tiktok" title="Follow us on TikTok">
+                            <i class="fab fa-tiktok"></i>
                         </a>
                     </div>
                 </div>
