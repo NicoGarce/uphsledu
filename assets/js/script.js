@@ -207,6 +207,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Back to Top Button
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+        const toggleBackToTop = () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        };
+        toggleBackToTop();
+        window.addEventListener('scroll', toggleBackToTop);
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
     // Hero Clock & Ticker
     const heroClockEl = document.getElementById('heroClock');
     const heroDateEl = document.getElementById('heroDate');
