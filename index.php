@@ -453,13 +453,16 @@ include 'app/includes/header.php';
                         <div class="news-actions">
                             <a href="posts.php" class="btn btn-primary">View All Posts</a>
                             <div class="social-media-icons">
-                                <a href="#" class="social-icon instagram" title="Follow us on Instagram">
-                                    <i class="fab fa-instagram"></i>
+                                <a href="https://www.facebook.com/uphsl.info.ph" target="_blank" rel="noopener" class="social-icon facebook" title="Follow us on Facebook">
+                                    <i class="fab fa-facebook"></i>
                                 </a>
-                                <a href="#" class="social-icon youtube" title="Subscribe to our YouTube">
+                                <a href="https://www.youtube.com/@uphsltv1397" target="_blank" rel="noopener" class="social-icon youtube" title="Subscribe to our YouTube">
                                     <i class="fab fa-youtube"></i>
                                 </a>
-                                <a href="#" class="social-icon tiktok" title="Follow us on TikTok">
+                                <a href="https://www.instagram.com/uphs.laguna" target="_blank" rel="noopener" class="social-icon instagram" title="Follow us on Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="https://tiktok.com/@uphs.laguna" target="_blank" rel="noopener" class="social-icon tiktok" title="Follow us on TikTok">
                                     <i class="fab fa-tiktok"></i>
                                 </a>
                             </div>
