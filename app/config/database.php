@@ -7,27 +7,17 @@
  * @description Database configuration and initialization for UPHSL website
  */
 
-// Environment detection - check if running on production
-$isProduction = (strpos($_SERVER['HTTP_HOST'], 'uphsl.edu.ph') !== false || 
-                 strpos($_SERVER['HTTP_HOST'], 'www.uphsl.edu.ph') !== false ||
-                 (isset($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], 'uphsl.edu.ph') !== false));
-
-// Load environment-specific database configuration
-if ($isProduction) {
-    // Load production configuration
-    if (file_exists(__DIR__ . '/database.prod.php')) {
-        require_once __DIR__ . '/database.prod.php';
-    } else {
-        die('Production database configuration file not found. Please create app/config/database.prod.php');
-    }
-} else {
-    // Load local development configuration
-    if (file_exists(__DIR__ . '/database.local.php')) {
-        require_once __DIR__ . '/database.local.php';
-    } else {
-        die('Local database configuration file not found. Please create app/config/database.local.php');
-    }
-}
+// Database configuration
+define('DB_HOST', 'localhost');
+define('DB_CHARSET', 'utf8mb4');
+    // Production database credentials
+    //define('DB_NAME', 'uphsledu_main');
+    //define('DB_USER', 'uphsledu_main');
+    //define('DB_PASS', 'uphsledu_main');
+    // Local development database credentials
+    define('DB_NAME', 'uphsledu_main');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
 
 // Create database connection
 function getDBConnection() {
@@ -38,23 +28,6 @@ function getDBConnection() {
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         return $pdo;
     } catch (PDOException $e) {
-        // If database doesn't exist, try to create it (only for local development)
-        if (!$isProduction && $e->getCode() == 1049) {
-            try {
-                $pdo = new PDO("mysql:host=" . DB_HOST . ";charset=" . DB_CHARSET, DB_USER, DB_PASS);
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $pdo->exec("CREATE DATABASE IF NOT EXISTS " . DB_NAME . " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-                
-                // Now try to connect again
-                $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
-                $pdo = new PDO($dsn, DB_USER, DB_PASS);
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-                return $pdo;
-            } catch (PDOException $createError) {
-                die("Database creation failed: " . $createError->getMessage());
-            }
-        }
         die("Database connection failed: " . $e->getMessage());
     }
 }

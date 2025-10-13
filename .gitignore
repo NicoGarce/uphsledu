@@ -1,16 +1,11 @@
-# Database configuration files
-app/config/database.prod.php
+# Database Configuration
+# Exclude database config to allow manual production configuration
+app/config/database.php
 
-# Environment-specific files
-.env
-.env.local
-.env.production
-
-# Logs
+# Common files to ignore
+.DS_Store
+Thumbs.db
 *.log
-logs/
-
-# Temporary files
 *.tmp
 *.temp
 
@@ -29,12 +24,12 @@ logs/
 ehthumbs.db
 Thumbs.db
 
-# Node modules (if any)
-node_modules/
+# Backup files
+*.bak
+*.backup
+*~
 
-# Composer
-vendor/
-
-# Cache
+# Cache files
 cache/
-*.cache
+tmp/
+temp/
