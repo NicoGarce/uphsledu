@@ -9,10 +9,24 @@
 
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'uphsledu');
-define('DB_USER', 'root');
-define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
+
+// Environment detection - check if running on production
+$isProduction = (strpos($_SERVER['HTTP_HOST'], 'uphsl.edu.ph') !== false || 
+                 strpos($_SERVER['HTTP_HOST'], 'www.uphsl.edu.ph') !== false ||
+                 (isset($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], 'uphsl.edu.ph') !== false));
+
+if ($isProduction) {
+    // Production database credentials
+    define('DB_NAME', 'uphsledu_main');
+    define('DB_USER', 'uphsledu_main');
+    define('DB_PASS', 'uphsledu_main');
+} else {
+    // Local development database credentials
+    define('DB_NAME', 'uphsledu');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+}
 
 // Create database connection
 function getDBConnection() {
