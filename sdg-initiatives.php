@@ -86,7 +86,7 @@ include 'app/includes/header.php';
 }
 
 .hero-content h1 {
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 2.5vw + 1.2rem, 3rem);
     font-weight: 700;
     margin-bottom: 1rem;
     line-height: 1.2;
@@ -94,7 +94,7 @@ include 'app/includes/header.php';
 }
 
 .hero-content .subtitle {
-    font-size: 1.2rem;
+    font-size: clamp(0.95rem, 0.8vw + 0.8rem, 1.2rem);
     font-weight: 400;
     margin-bottom: 2rem;
     opacity: 0.9;
@@ -116,7 +116,7 @@ include 'app/includes/header.php';
 
 .sdg-intro {
     background: white;
-    padding: 2.5rem;
+    padding: clamp(1.25rem, 2vw + 1rem, 2.5rem);
     margin-bottom: 3rem;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -126,9 +126,9 @@ include 'app/includes/header.php';
 
 .sdg-intro h2 {
     color: var(--primary-blue);
-    font-size: 2rem;
+    font-size: clamp(1.25rem, 1.4vw + 1rem, 2rem);
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -141,9 +141,9 @@ include 'app/includes/header.php';
 }
 
 .sdg-intro p {
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 0.7vw + 0.8rem, 1.1rem);
     color: var(--text-gray);
-    line-height: 1.6;
+    line-height: 1.7;
     margin: 0;
 }
 
@@ -436,6 +436,9 @@ include 'app/includes/header.php';
         grid-template-columns: repeat(3, 1fr);
         gap: 0.8rem;
     }
+    .sdg-intro { padding: 1.25rem; }
+    .sdg-intro h2 { margin-bottom: 0.5rem; }
+    .sdg-intro p { line-height: 1.6; }
     
     .sdg-goal {
         padding: 1rem 0.5rem;
@@ -465,14 +468,7 @@ include 'app/includes/header.php';
     .sdg-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
-    .hero-content h1 {
-        font-size: 2.2rem;
-    }
-    
-    .hero-content .subtitle {
-        font-size: 1rem;
-    }
+    .sdg-intro { padding: 1rem; }
 }
 </style>
 
