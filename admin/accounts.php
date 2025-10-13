@@ -11,8 +11,8 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
-// Check if user is logged in and is admin or super admin
-if (!isLoggedIn() || (!isAdmin() && !isSuperAdmin())) {
+// Check if user is logged in and is super admin only
+if (!isLoggedIn() || !isSuperAdmin()) {
     redirect('../auth/login.php');
 }
 
