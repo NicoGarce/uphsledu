@@ -23,7 +23,7 @@ if ($isProduction) {
     define('DB_PASS', 'uphsledu_main');
 } else {
     // Local development database credentials
-    define('DB_NAME', 'uphsledu');
+    define('DB_NAME', 'uphsledu_main');
     define('DB_USER', 'root');
     define('DB_PASS', '');
 }
