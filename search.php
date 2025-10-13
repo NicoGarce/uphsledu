@@ -309,7 +309,7 @@ include 'app/includes/header.php';
                                     <div class="result-meta">
                                         <span class="result-date">
                                             <i class="fas fa-calendar"></i>
-                                            <?php echo formatDate($result['published_at'] ?: $result['created_at']); ?>
+                                            <?php echo formatDate(isset($result['published_at']) && $result['published_at'] ? $result['published_at'] : $result['created_at']); ?>
                                         </span>
                                     </div>
                                 <?php else: ?>
