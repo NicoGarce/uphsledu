@@ -235,7 +235,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                                     </span>
                                     <?php if ($userRole === 'super_admin' || $userRole === 'admin'): ?>
                                         <span class="post-author">
-                                            by <?php echo htmlspecialchars($post['author_name']); ?>
+                                            by University of Perpetual Help System Laguna
                                         </span>
                                     <?php endif; ?>
                                 </div>

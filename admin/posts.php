@@ -131,7 +131,7 @@ $posts = $stmt->fetchAll();
                                         <?php endif; ?>
                                     </div>
                                 </td>
-                                <td><?php echo htmlspecialchars($post['author_name']); ?></td>
+                                <td>University of Perpetual Help System Laguna</td>
                                 <td>
                                     <span class="status-badge status-<?php echo $post['status']; ?>">
                                         <?php echo ucfirst($post['status']); ?>

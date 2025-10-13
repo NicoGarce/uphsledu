@@ -57,7 +57,7 @@ include 'app/includes/header.php';
                 <div class="post-meta">
                     <div class="post-author">
                         <i class="fas fa-user"></i>
-                        <span>By <?php echo htmlspecialchars($post['author_name']); ?></span>
+                        <span>By University of Perpetual Help System Laguna</span>
                     </div>
                     <div class="post-date">
                         <i class="fas fa-calendar"></i>
