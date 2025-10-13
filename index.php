@@ -71,28 +71,43 @@ include 'app/includes/header.php';
         .hero-ticker-track {
             overflow: hidden;
             flex: 1;
+            position: relative;
+            min-height: 30px;
         }
         .hero-ticker-content {
-            display: inline-block;
-            white-space: nowrap;
-            will-change: transform;
-            animation: heroTickerScroll 30s linear infinite;
+            position: relative;
+            overflow: hidden;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .hero-ticker-content a {
+        .ticker-item {
             color: #fff;
             text-decoration: none;
-            margin: 0 18px;
+            font-weight: 500;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            visibility: hidden;
+            top: 0;
+            left: 0;
         }
-        .hero-ticker-content a:hover { text-decoration: underline; }
-        .hero-ticker-content .sep { opacity: 0.6; margin: 0 6px; }
-        @keyframes heroTickerScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        .ticker-item.active {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+        .ticker-item:hover { 
+            text-decoration: underline; 
         }
         @media (max-width: 768px) {
             .hero-ticker-inner { gap: 12px; padding: 8px 12px; }
             .hero-clock { font-size: 14px; }
-            .hero-ticker-content a { margin: 0 14px; }
+            .ticker-item { font-size: 14px; }
         }
         
         /* Interactive Education Level Buttons */
@@ -328,7 +343,6 @@ include 'app/includes/header.php';
                                 echo htmlspecialchars($excerpt) . '...';
                                 ?>
                             </p>
-                            <a href="post.php?slug=<?php echo $latest_post['slug']; ?>" class="btn btn-outline">Read More</a>
                         </div>
                     <?php else: ?>
                         <div class="latest-post-card">
@@ -367,10 +381,11 @@ include 'app/includes/header.php';
                 </div>
                 <div class="hero-ticker-track">
                     <div class="hero-ticker-content" id="heroTickerContent">
-                        <?php foreach ($recent_posts as $post): ?>
-                            <a href="post.php?slug=<?php echo $post['slug']; ?>"><?php echo htmlspecialchars($post['title']); ?></a>
-                            <span class="sep">•</span>
-                        <?php endforeach; ?>
+                        <?php if (!empty($recent_posts)): ?>
+                            <?php foreach ($recent_posts as $index => $post): ?>
+                                <a href="post.php?slug=<?php echo $post['slug']; ?>" class="ticker-item <?php echo $index === 0 ? 'active' : ''; ?>" data-index="<?php echo $index; ?>"><?php echo htmlspecialchars($post['title']); ?></a>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -398,10 +413,6 @@ include 'app/includes/header.php';
                                                 <i class="fas fa-calendar"></i>
                                                 <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
                                             </span>
-                                            <a href="post.php?slug=<?php echo $post['slug']; ?>" class="news-slide-read-more">
-                                                <i class="fas fa-arrow-right"></i>
-                                                Read More
-                                            </a>
                                         </div>
                                         <div class="news-slide-title-overlay">
                                             <h3 class="news-slide-title">
@@ -743,6 +754,33 @@ include 'app/includes/footer.php';
                     }
                 });
             });
+
+            // News Ticker Cycling
+            const tickerItems = document.querySelectorAll('.ticker-item');
+            if (tickerItems.length > 0) {
+                let currentIndex = 0;
+                
+                // Ensure first item is visible immediately
+                tickerItems[0].classList.add('active');
+                
+                if (tickerItems.length > 1) {
+                    function cycleTicker() {
+                        // Remove active class from current item
+                        tickerItems[currentIndex].classList.remove('active');
+                        
+                        // Move to next item
+                        currentIndex = (currentIndex + 1) % tickerItems.length;
+                        
+                        // Add active class to new item
+                        tickerItems[currentIndex].classList.add('active');
+                    }
+                    
+                    // Start cycling after 3 seconds, then every 4 seconds
+                    setTimeout(() => {
+                        setInterval(cycleTicker, 4000);
+                    }, 3000);
+                }
+            }
         });
     </script>
 
