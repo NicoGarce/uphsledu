@@ -136,6 +136,11 @@
         </script>
     <?php endif; ?>
     
+    <!-- Back to Top Button -->
+    <button id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
     
     <!-- Facebook SDK -->
     <div id="fb-root"></div>
