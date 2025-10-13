@@ -242,19 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateClock();
         setInterval(updateClock, 1000);
     }
-    if (tickerContentEl) {
-        // Duplicate content once to enable seamless scroll (animation translates -50%).
-        const originalHTML = tickerContentEl.innerHTML.trim();
-        tickerContentEl.innerHTML = originalHTML + originalHTML;
-        // Pause on hover
-        const tickerTrack = tickerContentEl.closest('.hero-ticker-track');
-        if (tickerTrack) {
-            tickerTrack.addEventListener('mouseenter', () => {
-                tickerContentEl.style.animationPlayState = 'paused';
-            });
-            tickerTrack.addEventListener('mouseleave', () => {
-                tickerContentEl.style.animationPlayState = 'running';
-            });
-        }
-    }
+    // Note: The hero ticker cycles items via inline script in index.php using
+    // absolute-positioned .ticker-item elements. Avoid duplicating content here
+    // to prevent stacking/overlap.
 });
