@@ -93,14 +93,14 @@ include 'app/includes/header.php';
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
-.intro-visual img {
+.intro-visual img, .intro-visual video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
 }
 
-.intro-visual:hover img {
+.intro-visual:hover img, .intro-visual:hover video {
     transform: scale(1.05);
 }
 
@@ -598,7 +598,9 @@ include 'app/includes/header.php';
                     </div>
                 </div>
                 <div class="intro-visual">
-                    <img src="<?php echo $base_path; ?>assets/images/FACADE.jpg" alt="UPHSL Main Campus">
+                    <video class="about-video" autoplay muted loop playsinline poster="<?php echo $base_path; ?>assets/images/FACADE.jpg">
+                        <source src="<?php echo $base_path; ?>assets/video/AD2025.mp4" type="video/mp4">
+                    </video>
                 </div>
             </div>
             
