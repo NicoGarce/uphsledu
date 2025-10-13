@@ -315,21 +315,6 @@ include '../app/includes/header.php';
                     </div>
                     
                     <div class="sidebar-widget">
-                        <h3>Contact Information</h3>
-                        <p><strong>Senior High School Director:</strong><br>
-                        Veronica C. Samson, MAEd<br>
-                        shsdirector@uphsl.edu.ph</p>
-                        
-                        <p><strong>Senior High School:</strong><br>
-                        shs@uphsl.edu.ph</p>
-                        
-                        <p><strong>Business Office:</strong><br>
-                        UPH Compound, National Highway<br>
-                        Sto. Niño, City of Biñan, Laguna<br>
-                        02-779-5310</p>
-                    </div>
-                    
-                    <div class="sidebar-widget">
                         <h3>Business Hours</h3>
                         <p><strong>Weekdays:</strong> 8am to 5pm<br>
                         <strong>Saturday:</strong> 8am to 5pm<br>

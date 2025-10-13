@@ -144,15 +144,6 @@ include '../app/includes/header.php';
                     </div>
                     
                     <div class="sidebar-widget">
-                        <h3>Contact Information</h3>
-                        <p><strong>Email:</strong><br>
-                        <a href="mailto:basiced@uphsl.edu.ph">basiced@uphsl.edu.ph</a></p>
-                        
-                        <p><strong>Phone:</strong><br>
-                        02-779-5310</p>
-                    </div>
-                    
-                    <div class="sidebar-widget">
                         <h3>Business Hours</h3>
                         <ul>
                             <li><strong>Weekdays:</strong> 8am to 5pm</li>
