@@ -204,7 +204,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                     </a>
                 <?php endif; ?>
                 
-                <?php if (isAdmin() || isSuperAdmin()): ?>
+                <?php if (isSuperAdmin()): ?>
                     <a href="accounts.php" class="action-card">
                         <i class="fas fa-users-cog"></i>
                         <span>Account Management</span>
