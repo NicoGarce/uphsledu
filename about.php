@@ -598,9 +598,7 @@ include 'app/includes/header.php';
                     </div>
                 </div>
                 <div class="intro-visual">
-                    <video class="about-video" autoplay muted loop playsinline poster="<?php echo $base_path; ?>assets/images/FACADE.jpg">
-                        <source src="<?php echo $base_path; ?>assets/video/AD2025.mp4" type="video/mp4">
-                    </video>
+                    <img src="<?php echo $base_path; ?>assets/images/FACADE.jpg" alt="UPHSL Main Campus" class="about-poster" data-about-video="<?php echo $base_path; ?>assets/video/AD2025.mp4" data-about-poster="<?php echo $base_path; ?>assets/images/FACADE.jpg">
                 </div>
             </div>
             

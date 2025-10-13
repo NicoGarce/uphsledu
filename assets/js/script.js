@@ -109,6 +109,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Progressive hero video injection (avoid FOUC on hard refresh)
+    const heroBg = document.querySelector('.hero-background .hero-image');
+    if (heroBg && heroBg.dataset.bgVideo) {
+        // Defer injection until after load to let CSS settle
+        window.requestAnimationFrame(() => {
+            const video = document.createElement('video');
+            video.className = 'hero-video';
+            video.autoplay = true;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.poster = heroBg.dataset.bgPoster || '';
+            const source = document.createElement('source');
+            source.src = heroBg.dataset.bgVideo;
+            source.type = 'video/mp4';
+            video.appendChild(source);
+            // Replace image once metadata is ready to minimize flash
+            video.addEventListener('loadeddata', () => {
+                heroBg.replaceWith(video);
+            }, { once: true });
+        });
+    }
+
+    // Progressive about video injection
+    const aboutPoster = document.querySelector('.intro-visual .about-poster');
+    if (aboutPoster && aboutPoster.dataset.aboutVideo) {
+        window.requestAnimationFrame(() => {
+            const video = document.createElement('video');
+            video.className = 'about-video';
+            video.autoplay = true;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.poster = aboutPoster.dataset.aboutPoster || '';
+            const source = document.createElement('source');
+            source.src = aboutPoster.dataset.aboutVideo;
+            source.type = 'video/mp4';
+            video.appendChild(source);
+            video.addEventListener('loadeddata', () => {
+                aboutPoster.replaceWith(video);
+            }, { once: true });
+        });
+    }
     // Mobile Menu functionality
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const mobileSidebar = document.getElementById('mobile-sidebar');
