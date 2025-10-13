@@ -79,7 +79,7 @@ include 'app/includes/header.php';
                                         </span>
                                         <span class="post-author">
                                             <i class="fas fa-user"></i>
-                                            <?php echo htmlspecialchars($post['author_name']); ?>
+                                            University of Perpetual Help System Laguna
                                         </span>
                                     </div>
                                     
