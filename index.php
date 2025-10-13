@@ -478,7 +478,6 @@ include 'app/includes/header.php';
                         <div class="fb-page" 
                              data-href="https://www.facebook.com/uphsl.info.ph" 
                              data-tabs="timeline" 
-                             data-width="400" 
                              data-height="600" 
                              data-small-header="true" 
                              data-adapt-container-width="true" 

@@ -3410,6 +3410,14 @@ h2, h3, h4, h5, h6 {
     border-radius: 20px 20px 0 0;
 }
 
+/* Ensure FB widget doesn't overflow container */
+.facebook-embed .fb-page,
+.facebook-embed .fb-page > span,
+.facebook-embed .fb-page iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
 /* News Actions */
 .news-actions {
     text-align: center;
