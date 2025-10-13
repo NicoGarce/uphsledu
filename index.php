@@ -309,13 +309,12 @@ include 'app/includes/header.php';
         }
     </style>
 
-    <!-- Hero Section with Image Background -->
+    <!-- Hero Section with Video Background -->
     <section class="hero">
         <div class="hero-background">
-            <img 
-                src="assets/images/banners/UPHSL Facade.png" 
-                alt="University of Perpetual Help System Laguna" 
-                class="hero-image">
+            <video class="hero-video" autoplay muted loop playsinline poster="assets/images/banners/UPHSL Facade.png">
+                <source src="assets/video/AD2025.mp4" type="video/mp4">
+            </video>
         </div>
         <div class="video-overlay">
             <div class="hero-layout">

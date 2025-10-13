@@ -2456,6 +2456,15 @@ h2, h3, h4, h5, h6 {
     min-width: 100%;
 }
 
+.hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    min-height: 100%;
+    min-width: 100%;
+}
+
 /* Hero Layout - Two Column Design */
 .hero-layout {
     display: grid;
@@ -2718,7 +2727,7 @@ h2, h3, h4, h5, h6 {
         max-height: 500px;
     }
     
-    .hero-image {
+    .hero-image, .hero-video {
         object-position: center center;
     }
     
@@ -2744,7 +2753,7 @@ h2, h3, h4, h5, h6 {
         max-height: 550px;
     }
     
-    .hero-image {
+    .hero-image, .hero-video {
         object-position: center center;
     }
     
@@ -2764,7 +2773,7 @@ h2, h3, h4, h5, h6 {
 }
 
 @media (min-width: 1025px) {
-    .hero-image {
+    .hero-image, .hero-video {
         object-position: center center;
     }
 }
