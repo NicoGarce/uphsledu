@@ -56,7 +56,7 @@ include 'app/includes/header.php';
                             <article class="post-card">
                                 <div class="post-card-image">
                                     <?php if ($post['featured_image']): ?>
-                                        <img src="uploads/<?php echo htmlspecialchars($post['featured_image']); ?>" 
+                                        <img src="<?php echo htmlspecialchars($post['featured_image']); ?>" 
                                              alt="<?php echo htmlspecialchars($post['title']); ?>"
                                              class="card-image">
                                     <?php else: ?>

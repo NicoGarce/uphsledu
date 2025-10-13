@@ -510,52 +510,42 @@ include 'app/includes/header.php';
                 <!-- Interactive Education Level Buttons -->
                 <div class="education-levels">
                     <div class="level-buttons">
-                        <button class="level-btn active" data-level="bachelor">
+                        <button class="level-btn active" data-level="academic">
                             <div class="btn-icon">
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
                             <div class="btn-content">
-                                <h4>Bachelor's</h4>
+                                <h4>Academic Programs</h4>
                                 <p>Undergraduate Programs</p>
                             </div>
                         </button>
                         
-                        <button class="level-btn" data-level="master">
+                        <button class="level-btn" data-level="graduate">
                             <div class="btn-icon">
                                 <i class="fas fa-user-graduate"></i>
                             </div>
                             <div class="btn-content">
-                                <h4>Master's</h4>
-                                <p>Graduate Programs</p>
+                                <h4>Graduate Programs</h4>
+                                <p>Master's & Doctoral</p>
                             </div>
                         </button>
                         
-                        <button class="level-btn" data-level="doctorate">
-                            <div class="btn-icon">
-                                <i class="fas fa-medal"></i>
-                            </div>
-                            <div class="btn-content">
-                                <h4>Doctorate</h4>
-                                <p>Doctoral Programs</p>
-                            </div>
-                        </button>
-                        
-                        <button class="level-btn" data-level="k12">
+                        <button class="level-btn" data-level="basic">
                             <div class="btn-icon">
                                 <i class="fas fa-school"></i>
                             </div>
                             <div class="btn-content">
-                                <h4>K-12</h4>
-                                <p>Basic Education</p>
+                                <h4>Basic Education</h4>
+                                <p>K-12 Programs</p>
                             </div>
                         </button>
                     </div>
                     
                     <!-- Dynamic Content Area -->
                     <div class="level-content">
-                        <div class="content-panel active" id="bachelor-content">
+                        <div class="content-panel active" id="academic-content">
                             <div class="panel-header">
-                                <h3>Bachelor's Degree Programs</h3>
+                                <h3>Academic Programs</h3>
                                 <p>Comprehensive undergraduate programs across multiple disciplines</p>
                             </div>
                             <div class="programs-preview">
@@ -585,14 +575,14 @@ include 'app/includes/header.php';
                                 </a>
                             </div>
                             <a href="programs.php" class="view-all-btn">
-                                View All Bachelor's Programs <i class="fas fa-arrow-right"></i>
+                                View All Academic Programs <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                         
-                        <div class="content-panel" id="master-content">
+                        <div class="content-panel" id="graduate-content">
                             <div class="panel-header">
-                                <h3>Master's Degree Programs</h3>
-                                <p>Advanced graduate programs for professional development</p>
+                                <h3>Graduate Programs</h3>
+                                <p>Master's and Doctoral programs for advanced professional development</p>
                             </div>
                             <div class="programs-preview">
                                 <a href="programs/graduate-school.php" class="program-item">
@@ -608,22 +598,6 @@ include 'app/includes/header.php';
                                     <span>Master in Information Technology</span>
                                 </a>
                                 <a href="programs/graduate-school.php" class="program-item">
-                                    <i class="fas fa-heart"></i>
-                                    <span>Master in Nursing</span>
-                                </a>
-                            </div>
-                            <a href="programs/graduate-school.php" class="view-all-btn">
-                                View All Master's Programs <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
-                        
-                        <div class="content-panel" id="doctorate-content">
-                            <div class="panel-header">
-                                <h3>Doctoral Programs</h3>
-                                <p>Highest level of academic achievement and research</p>
-                            </div>
-                            <div class="programs-preview">
-                                <a href="programs/graduate-school.php" class="program-item">
                                     <i class="fas fa-gavel"></i>
                                     <span>Doctor of Philosophy (Ph.D.)</span>
                                 </a>
@@ -635,20 +609,16 @@ include 'app/includes/header.php';
                                     <i class="fas fa-chalkboard-teacher"></i>
                                     <span>Doctor of Education</span>
                                 </a>
-                                <a href="programs/graduate-school.php" class="program-item">
-                                    <i class="fas fa-laptop-code"></i>
-                                    <span>Doctor of Information Technology</span>
-                                </a>
                             </div>
                             <a href="programs/graduate-school.php" class="view-all-btn">
-                                View All Doctoral Programs <i class="fas fa-arrow-right"></i>
+                                View All Graduate Programs <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                         
-                        <div class="content-panel" id="k12-content">
+                        <div class="content-panel" id="basic-content">
                             <div class="panel-header">
-                                <h3>K-12 Basic Education</h3>
-                                <p>Complete basic education from Kindergarten to Senior High School</p>
+                                <h3>Basic Education</h3>
+                                <p>Complete K-12 basic education from Kindergarten to Senior High School</p>
                             </div>
                             <div class="programs-preview">
                                 <a href="programs/grade-school.php" class="program-item">
@@ -669,7 +639,7 @@ include 'app/includes/header.php';
                                 </a>
                             </div>
                             <a href="programs.php" class="view-all-btn">
-                                View All K-12 Programs <i class="fas fa-arrow-right"></i>
+                                View All Basic Education Programs <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
