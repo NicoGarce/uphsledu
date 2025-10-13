@@ -53,6 +53,27 @@ $shareLinkedIn = 'https://www.linkedin.com/sharing/share-offsite/?url=' . $encod
 // Set additional CSS for post page
 $additional_css = ['assets/css/post.css'];
 
+// Open Graph data for social sharing (use featured image if available)
+$absoluteBase = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+$featuredImagePath = $post['featured_image'] ?? '';
+if ($featuredImagePath) {
+    // Normalize to absolute URL
+    $ogImage = (strpos($featuredImagePath, 'http') === 0)
+        ? $featuredImagePath
+        : $absoluteBase . '/' . ltrim($featuredImagePath, '/');
+} else {
+    $ogImage = $absoluteBase . '/assets/images/Logos/logo.png';
+}
+
+$og = [
+    'title' => $post['title'],
+    'description' => substr(strip_tags($post['content']), 0, 160),
+    'url' => $currentUrl,
+    'image' => $ogImage,
+    'type' => 'article',
+    'site_name' => 'University of Perpetual Help System Laguna',
+];
+
 // Include header
 include 'app/includes/header.php';
 ?>

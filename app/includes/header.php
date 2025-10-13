@@ -22,6 +22,23 @@ $base_path = $GLOBALS['base_path'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo (isset($page_title) && $page_title !== 'Home') ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
+    <?php if (!empty($og) && is_array($og)): ?>
+        <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
+        <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
+        <meta property="og:url" content="<?php echo htmlspecialchars($og['url'] ?? ''); ?>">
+        <?php if (!empty($og['image'])): ?>
+            <meta property="og:image" content="<?php echo htmlspecialchars($og['image']); ?>">
+        <?php endif; ?>
+        <meta property="og:type" content="<?php echo htmlspecialchars($og['type'] ?? 'website'); ?>">
+        <meta property="og:site_name" content="<?php echo htmlspecialchars($og['site_name'] ?? 'University of Perpetual Help System Laguna'); ?>">
+        <!-- Optional Twitter card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
+        <meta name="twitter:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
+        <?php if (!empty($og['image'])): ?>
+            <meta name="twitter:image" content="<?php echo htmlspecialchars($og['image']); ?>">
+        <?php endif; ?>
+    <?php endif; ?>
     <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
     <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
     <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
