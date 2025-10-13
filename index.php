@@ -453,9 +453,6 @@ include 'app/includes/header.php';
                         <div class="news-actions">
                             <a href="posts.php" class="btn btn-primary">View All Posts</a>
                             <div class="social-media-icons">
-                                <a href="https://www.facebook.com/uphsl.info.ph" target="_blank" rel="noopener" class="social-icon facebook" title="Follow us on Facebook">
-                                    <i class="fab fa-facebook"></i>
-                                </a>
                                 <a href="https://www.youtube.com/@uphsltv1397" target="_blank" rel="noopener" class="social-icon youtube" title="Subscribe to our YouTube">
                                     <i class="fab fa-youtube"></i>
                                 </a>
