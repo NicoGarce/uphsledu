@@ -52,7 +52,7 @@ $base_path = $GLOBALS['base_path'];
                         <h1>UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h1>
                     </div>
                     <div class="nav-search">
-                        <form class="search-form" action="search.php" method="GET">
+                        <form class="search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
                             <input type="text" name="q" placeholder="Search..." class="search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
                             <button type="submit" class="search-btn">
                                 <i class="fas fa-search"></i>
@@ -210,7 +210,7 @@ $base_path = $GLOBALS['base_path'];
         </div>
         
         <div class="mobile-sidebar-search">
-            <form class="mobile-search-form" action="search.php" method="GET">
+            <form class="mobile-search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
                 <input type="text" name="q" placeholder="Search..." class="mobile-search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
                 <button type="submit" class="mobile-search-btn">
                     <i class="fas fa-search"></i>
