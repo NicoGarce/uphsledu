@@ -41,6 +41,15 @@ $recentPosts = getRecentPosts(5);
 // Set base path for assets
 $base_path = '';
 
+// Build current post absolute URL for social sharing
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+$currentUrl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$encodedUrl = urlencode($currentUrl);
+$encodedTitle = urlencode($post['title']);
+$shareFacebook = 'https://www.facebook.com/sharer/sharer.php?u=' . $encodedUrl;
+$shareTwitter = 'https://twitter.com/intent/tweet?url=' . $encodedUrl . '&text=' . $encodedTitle;
+$shareLinkedIn = 'https://www.linkedin.com/sharing/share-offsite/?url=' . $encodedUrl;
+
 // Set additional CSS for post page
 $additional_css = ['assets/css/post.css'];
 
@@ -139,13 +148,13 @@ include 'app/includes/header.php';
                 </div>
                 <div class="post-share">
                     <span>Share:</span>
-                    <a href="#" class="share-btn facebook">
+                    <a href="<?php echo $shareFacebook; ?>" target="_blank" rel="noopener" class="share-btn facebook" aria-label="Share on Facebook">
                         <i class="fab fa-facebook"></i>
                     </a>
-                    <a href="#" class="share-btn twitter">
+                    <a href="<?php echo $shareTwitter; ?>" target="_blank" rel="noopener" class="share-btn twitter" aria-label="Share on X (Twitter)">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a href="#" class="share-btn linkedin">
+                    <a href="<?php echo $shareLinkedIn; ?>" target="_blank" rel="noopener" class="share-btn linkedin" aria-label="Share on LinkedIn">
                         <i class="fab fa-linkedin"></i>
                     </a>
                 </div>
