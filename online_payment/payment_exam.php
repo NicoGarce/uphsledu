@@ -179,6 +179,8 @@ if (isset($_POST['submit'])) {
             }
         }
     </script> 
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="images/logo.png">
 </head>
 
 <body style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, 'sans-serif'; margin: 0px">

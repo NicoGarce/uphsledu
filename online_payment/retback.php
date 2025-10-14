@@ -31,6 +31,8 @@ $result = mysqli_query($con, $sql)
 <head>
 <meta charset="utf-8">
 <title>UPHSL Online Payment</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="shortcut icon" type="image/png" href="images/logo.png">
 </head>
 
 <body style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, 'sans-serif'">

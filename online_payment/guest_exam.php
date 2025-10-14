@@ -18,6 +18,8 @@ if (isset($_POST["btnsubmit"])) {
 <head>
 <meta charset="utf-8">
 <title>UPHSL Online Payment - Entrance Exam</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="shortcut icon" type="image/png" href="images/logo.png">
 <script>
 <?php echo getCourseAmountsJS(); ?>
 

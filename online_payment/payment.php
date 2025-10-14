@@ -352,6 +352,8 @@ if (isset($_GET["transid"])) {
 	}
 
 	</script>	
+	<link rel="icon" type="image/png" href="images/logo.png">
+	<link rel="shortcut icon" type="image/png" href="images/logo.png">
 
 </head>
 
