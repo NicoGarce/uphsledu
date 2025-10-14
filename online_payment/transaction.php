@@ -28,6 +28,8 @@ if (isset($_GET["refno"])) {
 <head>
 <meta charset="utf-8">
 <title>UPHSL Online Payment</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="shortcut icon" type="image/png" href="images/logo.png">
 	
 <script>
 	function getor(refno) {
