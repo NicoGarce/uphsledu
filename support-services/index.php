@@ -122,7 +122,7 @@ include '../app/includes/header.php';
             </div>
             <h3>Guidance & Admission</h3>
             <p>Student Personnel Services providing comprehensive guidance and admission support for all students.</p>
-            <a href="sps" class="service-link">
+            <a href="sps.php" class="service-link">
                 <i class="fas fa-arrow-right"></i>
                 Learn More
             </a>

@@ -24,9 +24,9 @@ include '../app/includes/header.php';
 .page-hero { position: relative; padding: 80px 0; color: #fff; text-align: center; isolation: isolate; overflow: hidden; background: url('../assets/images/banners/UPHSL%20Facade.png') center/cover no-repeat; }
 .page-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(28,77,161,.85), rgba(82,123,189,.85)); z-index: 1; }
 .page-hero .content { position: relative; z-index: 2; display: inline-block; padding: 24px 28px; border-radius: 16px; background: rgba(0,0,0,.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 16px 40px rgba(0,0,0,.35); }
-.page-hero .title { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
-.page-hero .subtitle { font-size: 1.3rem; margin: 0; }
-@media (max-width: 1024px){ .page-hero{ padding:60px 0; } .page-hero .content{ padding:16px 18px; border-radius:12px; } .page-hero .title{ font-size:2.5rem; } .page-hero .subtitle{ font-size:1.1rem; } }
+.page-hero .title { font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 18px; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
+.page-hero .subtitle { font-size: 1.05rem; margin: 0; }
+@media (max-width: 1024px){ .page-hero{ padding:60px 0; } .page-hero .content{ padding:16px 18px; border-radius:12px; } .page-hero .title{ font-size:2.2rem; } .page-hero .subtitle{ font-size:1rem; } }
 /* BED & SHS Calendar Page Colors - inherit site branding */
 :root {
     --primary-blue: var(--primary-color);
@@ -120,26 +120,49 @@ include '../app/includes/header.php';
 .year-highlight {
     background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
     color: white;
-    padding: 2rem;
-    border-radius: 12px;
+    padding: 2.25rem 2rem;
+    border-radius: 16px;
     text-align: center;
-    margin-bottom: 2rem;
+    margin: 0 auto 2rem;
+    max-width: 780px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 18px 45px rgba(30, 64, 175, 0.35);
+}
+
+.year-highlight::before {
+    content: 'Academic Year';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+    backdrop-filter: blur(2px);
 }
 
 .year-highlight h4 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    font-size: 2.6rem;
+    font-weight: 800;
+    margin: 10px 0 6px;
+    letter-spacing: 0.4px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
 
 .year-highlight p {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     opacity: 0.9;
     margin: 0;
 }
 
 .school-days-info {
-    background: linear-gradient(135deg, var(--accent-purple) 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
     padding: 1.5rem;
     border-radius: 12px;
@@ -351,14 +374,6 @@ include '../app/includes/header.php';
 }
 
 @media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    
-    .hero-content .subtitle {
-        font-size: 1.2rem;
-    }
-    
     .calendar-months {
         grid-template-columns: 1fr;
         gap: 1.5rem;
