@@ -188,6 +188,95 @@ function getExcerpt($content, $length = 150) {
     return $excerpt;
 }
 
+// Optimize image for better performance
+function optimizeImage($filePath, $mimeType) {
+    try {
+        $maxWidth = 1920; // Max width for web display
+        $maxHeight = 1080; // Max height for web display
+        $quality = 85; // JPEG quality (0-100)
+        
+        // Get image info
+        $imageInfo = getimagesize($filePath);
+        if (!$imageInfo) {
+            return false;
+        }
+        
+        $originalWidth = $imageInfo[0];
+        $originalHeight = $imageInfo[1];
+        
+        // Calculate new dimensions maintaining aspect ratio
+        $ratio = min($maxWidth / $originalWidth, $maxHeight / $originalHeight);
+        $newWidth = (int)($originalWidth * $ratio);
+        $newHeight = (int)($originalHeight * $ratio);
+        
+        // Only resize if image is larger than max dimensions
+        if ($originalWidth <= $maxWidth && $originalHeight <= $maxHeight) {
+            return true; // No need to resize
+        }
+        
+        // Create image resource based on type
+        switch ($mimeType) {
+            case 'image/jpeg':
+                $source = imagecreatefromjpeg($filePath);
+                break;
+            case 'image/png':
+                $source = imagecreatefrompng($filePath);
+                break;
+            case 'image/gif':
+                $source = imagecreatefromgif($filePath);
+                break;
+            case 'image/webp':
+                $source = imagecreatefromwebp($filePath);
+                break;
+            default:
+                return false;
+        }
+        
+        if (!$source) {
+            return false;
+        }
+        
+        // Create new image with calculated dimensions
+        $resized = imagecreatetruecolor($newWidth, $newHeight);
+        
+        // Preserve transparency for PNG and GIF
+        if ($mimeType === 'image/png' || $mimeType === 'image/gif') {
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+            $transparent = imagecolorallocatealpha($resized, 255, 255, 255, 127);
+            imagefilledrectangle($resized, 0, 0, $newWidth, $newHeight, $transparent);
+        }
+        
+        // Resize image
+        imagecopyresampled($resized, $source, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+        
+        // Save optimized image
+        switch ($mimeType) {
+            case 'image/jpeg':
+                imagejpeg($resized, $filePath, $quality);
+                break;
+            case 'image/png':
+                imagepng($resized, $filePath, 9); // PNG compression level 0-9
+                break;
+            case 'image/gif':
+                imagegif($resized, $filePath);
+                break;
+            case 'image/webp':
+                imagewebp($resized, $filePath, $quality);
+                break;
+        }
+        
+        // Clean up memory
+        imagedestroy($source);
+        imagedestroy($resized);
+        
+        return true;
+    } catch (Exception $e) {
+        error_log("Image optimization failed: " . $e->getMessage());
+        return false;
+    }
+}
+
 // Upload file
 function uploadFile($file, $uploadDir = 'uploads/') {
     if (!file_exists($uploadDir)) {
@@ -195,7 +284,7 @@ function uploadFile($file, $uploadDir = 'uploads/') {
     }
     
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
+    $maxSize = 10 * 1024 * 1024; // 10MB
     
     if (!in_array($file['type'], $allowedTypes)) {
         return ['success' => false, 'message' => 'Invalid file type'];
@@ -210,6 +299,8 @@ function uploadFile($file, $uploadDir = 'uploads/') {
     $filepath = $uploadDir . $filename;
     
     if (move_uploaded_file($file['tmp_name'], $filepath)) {
+        // Optimize the uploaded image
+        optimizeImage($filepath, $file['type']);
         return ['success' => true, 'filename' => $filename, 'filepath' => $filepath];
     } else {
         return ['success' => false, 'message' => 'Upload failed'];
