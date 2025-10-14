@@ -2540,6 +2540,9 @@ img {
     /* Smooth loading transition */
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
+    /* Force hardware acceleration */
+    transform: translateZ(0);
+    will-change: opacity;
 }
 
 img[loading="lazy"] {
@@ -2555,6 +2558,16 @@ img.loaded {
 /* Preload critical images */
 .hero-image {
     opacity: 1; /* Hero image should be visible immediately */
+}
+
+/* Specific optimizations for post images */
+.slide-image, .featured-image, .card-image {
+    /* Smooth scaling */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    /* Better image quality */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .hero-tagline {
