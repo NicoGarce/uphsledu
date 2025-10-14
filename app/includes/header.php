@@ -55,6 +55,9 @@ $base_path = $GLOBALS['base_path'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo (isset($page_title) && $page_title !== 'Home') ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
+    <!-- Performance: speed up icon/font loading to prevent flash of text -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <?php if (!empty($og) && is_array($og)): ?>
         <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
@@ -75,7 +78,14 @@ $base_path = $GLOBALS['base_path'];
     <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
     <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
     <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Preload Font Awesome to reduce icon flash on navigation -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"></noscript>
+    <style>
+        /* Hide icon glyphs until webfont is ready to avoid brief text/fallback flash */
+        .fa, .fas, .far, .fal, .fab { visibility: hidden; }
+        .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
+    </style>
     <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/style.css">
     <?php if (isset($additional_css)): ?>
         <?php foreach ($additional_css as $css): ?>
@@ -84,6 +94,17 @@ $base_path = $GLOBALS['base_path'];
     <?php endif; ?>
 </head>
 <body>
+    <script>
+        (function() {
+            try {
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(function(){ document.documentElement.classList.add('icons-ready'); });
+                } else {
+                    window.addEventListener('load', function(){ document.documentElement.classList.add('icons-ready'); });
+                }
+            } catch (e) { document.documentElement.classList.add('icons-ready'); }
+        })();
+    </script>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
