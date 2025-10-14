@@ -35,7 +35,7 @@ include '../app/includes/header.php';
 }
 
 .policy-hero {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
     padding: 5rem 0 3rem;
     position: relative;

@@ -15,31 +15,13 @@ include '../app/includes/header.php';
 ?>
 
 <style>
-.services-hero {
-    background: linear-gradient(135deg, rgba(28, 77, 161, 0.9), rgba(20, 57, 128, 0.9)), url('<?php echo $base_path; ?>assets/images/FACADE.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    color: white;
-    padding: 5rem 0 3rem;
-    text-align: center;
-}
-
-.services-hero h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.services-hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
+/* New page hero */
+.page-hero { position: relative; padding: 80px 0; color: #fff; text-align: center; isolation: isolate; overflow: hidden; background: url('../assets/images/banners/UPHSL%20Facade.png') center/cover no-repeat; }
+.page-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(28,77,161,.85), rgba(82,123,189,.85)); z-index: 1; }
+.page-hero .content { position: relative; z-index: 2; display: inline-block; padding: 24px 28px; border-radius: 16px; background: rgba(0,0,0,.35); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.page-hero .title { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
+.page-hero .subtitle { font-size: 1.3rem; margin: 0; }
+@media (max-width: 1024px) { .page-hero{ padding:60px 0; } .page-hero .content{ padding:16px 18px; border-radius:12px; } .page-hero .title{ font-size:2.5rem; } .page-hero .subtitle{ font-size:1.1rem; } }
 
 .services-grid {
     display: grid;
@@ -122,11 +104,13 @@ include '../app/includes/header.php';
 </style>
 
 <main>
-    <!-- Support Services Hero Section -->
-    <section class="services-hero">
+    <!-- New Banner -->
+    <section class="page-hero">
         <div class="container">
-            <h1>Support Services</h1>
-            <p>Comprehensive support services to enhance your academic journey and campus experience at UPHSL</p>
+            <div class="content">
+                <h1 class="title">Support Services</h1>
+                <p class="subtitle">Comprehensive services that support every Perpetualite’s journey</p>
+            </div>
         </div>
     </section>
 

@@ -20,6 +20,13 @@ include '../app/includes/header.php';
 ?>
 
 <style>
+/* New page hero */
+.page-hero { position: relative; padding: 80px 0; color: #fff; text-align: center; isolation: isolate; overflow: hidden; background: url('../assets/images/banners/UPHSL%20Facade.png') center/cover no-repeat; }
+.page-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(28,77,161,.85), rgba(82,123,189,.85)); z-index: 1; }
+.page-hero .content { position: relative; z-index: 2; display: inline-block; padding: 24px 28px; border-radius: 16px; background: rgba(0,0,0,.35); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.page-hero .title { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
+.page-hero .subtitle { font-size: 1.3rem; margin: 0; }
+@media (max-width: 1024px){ .page-hero{ padding:60px 0; } .page-hero .content{ padding:16px 18px; border-radius:12px; } .page-hero .title{ font-size:2.5rem; } .page-hero .subtitle{ font-size:1.1rem; } }
 /* Calendar Page Colors */
 :root {
     --primary-blue: #1e40af;
@@ -35,77 +42,7 @@ include '../app/includes/header.php';
     --calendar-purple: #7c3aed;
 }
 
-.calendar-hero {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
-    color: white;
-    padding: 5rem 0 3rem;
-    position: relative;
-    min-height: 50vh;
-    display: flex;
-    align-items: center;
-}
-
-.calendar-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
-    z-index: 0;
-}
-
-.calendar-hero::after {
-    content: '📅 📆 🎓 📚 📅 📆 🎓 📚 📅 📆 🎓 📚';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    font-size: 1.2rem;
-    opacity: 0.08;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    overflow: hidden;
-    animation: float 30s linear infinite;
-    z-index: 0;
-}
-
-@keyframes float {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    width: 100%;
-}
-
-.hero-content h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-    color: #ffffff;
-}
-
-.hero-content .subtitle {
-    font-size: 1.4rem;
-    font-weight: 400;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-    color: #ffffff;
-}
+/* Use global Programs banner styles (no page-specific overrides) */
 
 .calendar-content {
     padding: 3rem 0;
@@ -400,11 +337,11 @@ include '../app/includes/header.php';
 }
 </style>
 
-<!-- College Academic Calendar Hero Section -->
-<section class="calendar-hero">
+<!-- New Banner -->
+<section class="page-hero">
     <div class="container">
-        <div class="hero-content">
-            <h1>College Academic Calendar</h1>
+        <div class="content">
+            <h1 class="title">College Academic Calendar</h1>
             <p class="subtitle">Academic Year 2024-2025</p>
         </div>
     </div>
