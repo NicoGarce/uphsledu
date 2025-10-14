@@ -11,10 +11,40 @@
 require_once __DIR__ . '/../config/paths.php';
 
 // Get current page for active navigation highlighting
+// Handle both local and production environments
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
-// Debug: Show what page is detected
-echo "<!-- DEBUG: current_page = '$current_page' -->";
+// Get the request URI for more reliable detection
+$request_uri = $_SERVER['REQUEST_URI'];
+$script_name = $_SERVER['SCRIPT_NAME'];
+
+// Remove query string from REQUEST_URI
+$request_uri = strtok($request_uri, '?');
+
+// Special handling for index.php files in subdirectories
+// Check both SCRIPT_NAME and REQUEST_URI for better production compatibility
+if ($current_page === 'index' && (strpos($script_name, '/') !== false || strpos($request_uri, '/') !== false)) {
+    // Try SCRIPT_NAME first
+    if (strpos($script_name, '/') !== false) {
+        $path_parts = explode('/', trim($script_name, '/'));
+        array_pop($path_parts); // Remove index.php
+        if (!empty($path_parts)) {
+            $current_page = end($path_parts);
+        }
+    }
+    
+    // If still 'index', try REQUEST_URI
+    if ($current_page === 'index' && strpos($request_uri, '/') !== false) {
+        $path_parts = explode('/', trim($request_uri, '/'));
+        $last_part = end($path_parts);
+        
+        // If the last part is not empty and not a file extension, use it
+        if (!empty($last_part) && !strpos($last_part, '.')) {
+            $current_page = $last_part;
+        }
+    }
+}
+
 
 // Use the automatically detected base path
 $base_path = $GLOBALS['base_path'];
@@ -148,7 +178,7 @@ $base_path = $GLOBALS['base_path'];
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance', 'research'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="#" class="nav-link dropdown-toggle <?php echo (in_array($current_page, ['support-services', 'careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance', 'research'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="dropdown-link">Alumni</a>
                             <a href="<?php echo $base_path; ?>support-services/careers.php" class="dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
@@ -279,7 +309,7 @@ $base_path = $GLOBALS['base_path'];
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance', 'research'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['support-services', 'careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance', 'research'])) ? 'active' : ''; ?>">Support Services <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="mobile-dropdown-link">Alumni</a>
                     <a href="<?php echo $base_path; ?>support-services/careers.php" class="mobile-dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
