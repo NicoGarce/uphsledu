@@ -253,6 +253,7 @@ function optimizeImage($filePath, $mimeType) {
         // Save optimized image
         switch ($mimeType) {
             case 'image/jpeg':
+                // Create non-progressive JPEG for smoother loading
                 imagejpeg($resized, $filePath, $quality);
                 break;
             case 'image/png':

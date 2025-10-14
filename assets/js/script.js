@@ -296,8 +296,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const img = entry.target;
+                        // Wait for image to fully load before showing
                         img.addEventListener('load', () => {
-                            img.classList.add('loaded');
+                            // Small delay to ensure image is fully rendered
+                            setTimeout(() => {
+                                img.classList.add('loaded');
+                            }, 50);
                         });
                         observer.unobserve(img);
                     }
@@ -309,7 +313,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fallback for older browsers
             lazyImages.forEach(img => {
                 img.addEventListener('load', () => {
-                    img.classList.add('loaded');
+                    setTimeout(() => {
+                        img.classList.add('loaded');
+                    }, 50);
                 });
             });
         }
@@ -317,6 +323,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Handle regular images
         const regularImages = document.querySelectorAll('img:not([loading="lazy"]):not(.hero-image)');
         regularImages.forEach(img => {
+            if (img.complete) {
+                setTimeout(() => {
+                    img.classList.add('loaded');
+                }, 50);
+            } else {
+                img.addEventListener('load', () => {
+                    setTimeout(() => {
+                        img.classList.add('loaded');
+                    }, 50);
+                });
+            }
+        });
+        
+        // Preload critical images to prevent progressive loading
+        const criticalImages = document.querySelectorAll('.hero-image, .slide-image:first-child');
+        criticalImages.forEach(img => {
             if (img.complete) {
                 img.classList.add('loaded');
             } else {
