@@ -285,6 +285,50 @@ document.addEventListener('DOMContentLoaded', function() {
         updateClock();
         setInterval(updateClock, 1000);
     }
+    
+    // Image loading optimization
+    function initializeImageLoading() {
+        // Handle lazy loaded images
+        const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+        
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.addEventListener('load', () => {
+                            img.classList.add('loaded');
+                        });
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            
+            lazyImages.forEach(img => imageObserver.observe(img));
+        } else {
+            // Fallback for older browsers
+            lazyImages.forEach(img => {
+                img.addEventListener('load', () => {
+                    img.classList.add('loaded');
+                });
+            });
+        }
+        
+        // Handle regular images
+        const regularImages = document.querySelectorAll('img:not([loading="lazy"]):not(.hero-image)');
+        regularImages.forEach(img => {
+            if (img.complete) {
+                img.classList.add('loaded');
+            } else {
+                img.addEventListener('load', () => {
+                    img.classList.add('loaded');
+                });
+            }
+        });
+    }
+    
+    initializeImageLoading();
+    
     // Note: The hero ticker cycles items via inline script in index.php using
     // absolute-positioned .ticker-item elements. Avoid duplicating content here
     // to prevent stacking/overlap.

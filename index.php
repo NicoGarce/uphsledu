@@ -453,7 +453,10 @@ include 'app/includes/header.php';
                                                     $img = $post['featured_image'];
                                                     $imgSrc = (strpos($img, 'uploads/') === 0) ? $img : 'uploads/' . $img;
                                                 ?>
-                                                <img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
+                                                <img src="<?php echo htmlspecialchars($imgSrc); ?>" 
+                                                     alt="<?php echo htmlspecialchars($post['title']); ?>"
+                                                     loading="lazy"
+                                                     decoding="async">
                                             <?php else: ?>
                                                 <div class="news-slide-placeholder">
                                                     <i class="fas fa-newspaper"></i>

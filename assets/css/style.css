@@ -2532,6 +2532,31 @@ h2, h3, h4, h5, h6 {
 }
 
 /* Right Column: Tagline */
+/* Image loading optimizations */
+img {
+    /* Prevent layout shift during image loading */
+    max-width: 100%;
+    height: auto;
+    /* Smooth loading transition */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+img[loading="lazy"] {
+    /* Lazy loaded images start invisible */
+    opacity: 0;
+}
+
+img.loaded {
+    /* Show image when loaded */
+    opacity: 1;
+}
+
+/* Preload critical images */
+.hero-image {
+    opacity: 1; /* Hero image should be visible immediately */
+}
+
 .hero-tagline {
     display: flex;
     flex-direction: column;

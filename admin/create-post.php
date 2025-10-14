@@ -162,9 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             throw new Exception("Invalid file type for $fileName. Only JPEG, PNG, GIF, and WebP are allowed.");
                         }
                         
-                        // Validate file size (5MB max)
-                        if ($fileSize > 5 * 1024 * 1024) {
-                            throw new Exception("File $fileName is too large. Maximum size is 5MB.");
+                        // Validate file size (10MB max)
+                        if ($fileSize > 10 * 1024 * 1024) {
+                            throw new Exception("File $fileName is too large. Maximum size is 10MB.");
                         }
                         
                         // Generate unique filename
@@ -174,6 +174,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         
                         if (move_uploaded_file($fileTmpName, $uploadPath)) {
                             error_log("Image uploaded successfully: $uploadPath");
+                            // Optimize image for better performance
+                            optimizeImage($uploadPath, $fileType);
                             // Store relative path in database (from root directory)
                             $relativePath = 'uploads/' . $uniqueFileName;
                             // Insert image record
@@ -297,7 +299,7 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                     <div class="image-upload-area" onclick="document.getElementById('images').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Click to select images or drag and drop</p>
-                        <small>Supported formats: JPEG, PNG, GIF, WebP (Max 5MB each)</small>
+                        <small>Supported formats: JPEG, PNG, GIF, WebP (Max 10MB each)</small>
                     </div>
                     <div id="image-preview" class="image-preview">
                         <?php if ($isEdit && $post): ?>
