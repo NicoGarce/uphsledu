@@ -58,6 +58,8 @@ $base_path = $GLOBALS['base_path'];
     <!-- Performance: speed up icon/font loading to prevent flash of text -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <!-- Preload critical logo image to prevent text flash -->
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/logo.png" as="image" type="image/png">
     <?php if (!empty($og) && is_array($og)): ?>
         <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
@@ -85,6 +87,15 @@ $base_path = $GLOBALS['base_path'];
         /* Hide icon glyphs until webfont is ready to avoid brief text/fallback flash */
         .fa, .fas, .far, .fal, .fab { visibility: hidden; }
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
+        
+        /* Prevent logo text flash by hiding until image loads */
+        .nav-logo, .mobile-sidebar-logo { 
+            opacity: 0; 
+            transition: opacity 0.2s ease-in-out;
+        }
+        .logo-loaded .nav-logo, .logo-loaded .mobile-sidebar-logo { 
+            opacity: 1; 
+        }
     </style>
     <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/style.css">
     <?php if (isset($additional_css)): ?>
@@ -103,6 +114,13 @@ $base_path = $GLOBALS['base_path'];
                     window.addEventListener('load', function(){ document.documentElement.classList.add('icons-ready'); });
                 }
             } catch (e) { document.documentElement.classList.add('icons-ready'); }
+            
+            // Prevent logo text flash by showing logo only when image loads
+            const logoImg = new Image();
+            logoImg.onload = function() {
+                document.documentElement.classList.add('logo-loaded');
+            };
+            logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/logo.png';
         })();
     </script>
     <!-- Navigation -->
