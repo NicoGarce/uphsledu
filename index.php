@@ -107,7 +107,31 @@ include 'app/includes/header.php';
         @media (max-width: 768px) {
             .hero-ticker-inner { gap: 12px; padding: 8px 12px; }
             .hero-clock { font-size: 14px; }
-            .ticker-item { font-size: 14px; }
+            .ticker-item { 
+                font-size: 14px; 
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-ticker-inner { gap: 8px; padding: 6px 10px; }
+            .hero-clock { font-size: 12px; }
+            .ticker-item { 
+                font-size: 12px; 
+                line-height: 1.2;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .hero-ticker-inner { gap: 6px; padding: 5px 8px; }
+            .hero-clock { font-size: 11px; }
+            .ticker-item { 
+                font-size: 11px; 
+                line-height: 1.1;
+            }
         }
         
         /* Interactive Education Level Buttons */
