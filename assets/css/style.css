@@ -120,12 +120,16 @@ h2, h3, h4, h5, h6 {
 .nav-logo {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
+    min-width: fit-content;
 }
 
 .logo-img {
     height: 80px;
     width: auto;
     object-fit: contain;
+    flex-shrink: 0;
+    min-width: 80px;
 }
 
 .nav-content {
@@ -4989,6 +4993,78 @@ section, .section {
     overflow-x: hidden;
 }
 
+/* Large Desktop Navigation Styles */
+@media (min-width: 1200px) {
+    .nav-menu {
+        gap: 6px;
+    }
+    
+    .nav-link {
+        font-size: 13px;
+        padding: 10px 8px;
+    }
+}
+
+/* Desktop Navigation Styles */
+@media (max-width: 1199px) and (min-width: 1100px) {
+    .nav-menu {
+        gap: 5px;
+    }
+    
+    .nav-link {
+        font-size: 12px;
+        padding: 9px 7px;
+    }
+}
+
+/* Medium Desktop Navigation Styles */
+@media (max-width: 1099px) and (min-width: 1000px) {
+    .nav-menu {
+        gap: 4px;
+    }
+    
+    .nav-link {
+        font-size: 11px;
+        padding: 8px 6px;
+    }
+}
+
+/* Small Desktop Navigation Styles */
+@media (max-width: 999px) and (min-width: 900px) {
+    .nav-menu {
+        gap: 3px;
+    }
+    
+    .nav-link {
+        font-size: 10px;
+        padding: 7px 5px;
+    }
+}
+
+/* Extra Small Desktop Navigation Styles */
+@media (max-width: 899px) and (min-width: 800px) {
+    .nav-menu {
+        gap: 2px;
+    }
+    
+    .nav-link {
+        font-size: 9px;
+        padding: 6px 4px;
+    }
+}
+
+/* Very Small Desktop Navigation Styles */
+@media (max-width: 799px) and (min-width: 769px) {
+    .nav-menu {
+        gap: 1px;
+    }
+    
+    .nav-link {
+        font-size: 8px;
+        padding: 5px 3px;
+    }
+}
+
 /* Tablet Navigation Styles */
 @media (max-width: 1024px) and (min-width: 769px) {
     .nav-container {
@@ -4998,12 +5074,26 @@ section, .section {
         align-items: center;
     }
     
+    .nav-logo .logo-img {
+        height: 80px;
+        min-width: 80px;
+    }
+    
     .nav-content {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         gap: 15px;
+    }
+    
+    .nav-menu {
+        gap: 2px;
+    }
+    
+    .nav-link {
+        font-size: 7px;
+        padding: 4px 2px;
     }
     
     .nav-header {
@@ -5043,7 +5133,7 @@ section, .section {
     }
     
     .nav-logo .logo-img {
-        height: 50px;
+        height: 80px;
     }
     
     .nav-content {
@@ -5110,7 +5200,7 @@ section, .section {
     }
     
     .nav-logo .logo-img {
-        height: 45px;
+        height: 80px;
     }
     
     .mobile-search {
@@ -6877,4 +6967,84 @@ section, .section {
 @media (max-width: 768px) {
 	.news-ticker { gap: 10px; }
 	.ticker-content { gap: 30px; }
+}
+
+/* Floating User Actions */
+.floating-user-actions {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.floating-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1c4da1 0%, #527bbd 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    font-size: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.floating-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #527bbd 0%, #1c4da1 100%);
+    color: white;
+    text-decoration: none;
+}
+
+.floating-dashboard {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.floating-dashboard:hover {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+}
+
+.floating-logout {
+    background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+}
+
+.floating-logout:hover {
+    background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
+}
+
+/* Mobile responsiveness for floating buttons */
+@media (max-width: 768px) {
+    .floating-user-actions {
+        left: 15px;
+        bottom: 20px;
+        flex-direction: row;
+        gap: 8px;
+    }
+    
+    .floating-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-user-actions {
+        left: 10px;
+        bottom: 15px;
+    }
+    
+    .floating-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 11px;
+    }
 }
