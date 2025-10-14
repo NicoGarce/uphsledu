@@ -360,6 +360,11 @@
     .post-meta {
         flex-direction: column;
         gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .post-meta > div {
+        justify-content: flex-start;
     }
     
     .image-slider,
@@ -399,6 +404,15 @@
     
     .post-title {
         font-size: 1.5rem;
+    }
+    
+    .post-meta {
+        align-items: flex-start;
+    }
+    
+    .post-meta > div {
+        justify-content: flex-start;
+        text-align: left;
     }
     
     .image-slider,
