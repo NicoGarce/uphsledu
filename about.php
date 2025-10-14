@@ -13,7 +13,7 @@ require_once 'app/config/paths.php';
 require_once 'app/includes/functions.php';
 
 // Set page title
-$page_title = "About UPHSL";
+$page_title = "About University of Perpetual Help System Laguna";
 
 // Use the automatically detected base path
 $base_path = $GLOBALS['base_path'];
@@ -76,6 +76,10 @@ include 'app/includes/header.php';
     font-weight: 600;
     margin-bottom: 2rem;
     font-style: italic;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+    text-transform: none;
+    opacity: 0.95;
 }
 
 .intro-text .description {
@@ -416,25 +420,69 @@ include 'app/includes/header.php';
 }
 
 .philosophy-box {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
+    background: white;
+    color: var(--primary-color);
     padding: 3rem;
     border-radius: 15px;
     text-align: center;
     margin: 2rem 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(28, 77, 161, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.philosophy-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 15px 15px 0 0;
 }
 
 .philosophy-quote {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.8rem;
+    font-weight: 700;
     font-style: italic;
-    margin-bottom: 1rem;
-    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+    color: var(--primary-color);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.philosophy-quote::before {
+    content: '"';
+    font-size: 3rem;
+    color: var(--secondary-color);
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    opacity: 0.3;
+    font-family: serif;
+}
+
+.philosophy-quote::after {
+    content: '"';
+    font-size: 3rem;
+    color: var(--secondary-color);
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    opacity: 0.3;
+    font-family: serif;
 }
 
 .philosophy-author {
     font-size: 1.1rem;
-    opacity: 0.9;
+    color: var(--secondary-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
 }
 
 .quality-objectives {
@@ -492,6 +540,7 @@ include 'app/includes/header.php';
     
     .intro-text .tagline {
         font-size: 1.2rem;
+        letter-spacing: 0.2px;
     }
     
     .intro-text .description {
@@ -591,7 +640,7 @@ include 'app/includes/header.php';
         <div class="container">
             <div class="intro-content">
                 <div class="intro-text">
-                    <h1>About UPHSL</h1>
+                    <h1>About<br>University of Perpetual Help System Laguna</h1>
                     <div class="tagline">Character Building is Nation Building</div>
                     <div class="description">
                         The University of Perpetual Help System is a premier educational institution committed to developing Filipino leaders through quality education, character formation, and community service. With multiple campuses across the Philippines, we continue to uphold our founding principles of excellence and service.
