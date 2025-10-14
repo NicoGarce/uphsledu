@@ -13,6 +13,9 @@ require_once __DIR__ . '/../config/paths.php';
 // Get current page for active navigation highlighting
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
+// Debug: Show what page is detected
+echo "<!-- DEBUG: current_page = '$current_page' -->";
+
 // Use the automatically detected base path
 $base_path = $GLOBALS['base_path'];
 ?>
@@ -98,11 +101,16 @@ $base_path = $GLOBALS['base_path'];
                 <!-- Second Row: Main Menu -->
                 <div class="nav-menu" id="nav-menu">
                     <div class="nav-item">
-                        <a href="<?php echo $base_path; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+                        <a href="<?php echo $base_path; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>" style="<?php echo ($current_page != 'index') ? 'background: none !important; color: #ffffff !important;' : ''; ?>">Home</a>
+                        <!-- DEBUG: Home - current_page='<?php echo $current_page; ?>', is_index=<?php echo ($current_page == 'index') ? 'true' : 'false'; ?>, classes="<?php echo ($current_page == 'index') ? 'active' : ''; ?>" -->
                     </div>
                     
                     <div class="nav-item dropdown">
-                        <a href="<?php echo $base_path; ?>programs.php" class="nav-link dropdown-toggle <?php echo (strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school'])) ? 'active' : ''; ?>">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="<?php echo $base_path; ?>programs.php" class="nav-link dropdown-toggle <?php 
+                            $is_programs_active = ($current_page == 'programs' || strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school']));
+                            echo $is_programs_active ? 'active' : '';
+                        ?>" style="<?php echo $is_programs_active ? 'background: rgba(255, 198, 62, 0.2) !important; color: #ffc63e !important;' : ''; ?>">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <!-- DEBUG: Programs - current_page='<?php echo $current_page; ?>', is_programs_active=<?php echo $is_programs_active ? 'true' : 'false'; ?>, classes="<?php echo $is_programs_active ? 'active' : ''; ?>" -->
                         <div class="dropdown-menu">
                             <div class="dropdown-item-with-submenu">
                                 <a href="#" class="dropdown-link dropdown-parent">Basic Education <i class="fas fa-chevron-right submenu-chevron"></i></a>
@@ -155,7 +163,7 @@ $base_path = $GLOBALS['base_path'];
                     </div>
                     
                     <div class="nav-item">
-                        <a href="<?php echo $base_path; ?>campuses.php" class="nav-link">Campuses</a>
+                        <a href="<?php echo $base_path; ?>campuses.php" class="nav-link <?php echo ($current_page == 'campuses') ? 'active' : ''; ?>">Campuses</a>
                     </div>
                     
                     <div class="nav-item dropdown">
@@ -198,14 +206,6 @@ $base_path = $GLOBALS['base_path'];
                         <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
                     </div>
                     
-                    <?php if (isset($_SESSION['user_id'])): ?>
-                        <div class="nav-item">
-                            <a href="<?php echo $base_path; ?>admin/dashboard.php" class="nav-link">Dashboard</a>
-                        </div>
-                        <div class="nav-item">
-                            <a href="<?php echo $base_path; ?>auth/logout.php" class="nav-link">Logout</a>
-                        </div>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -241,7 +241,7 @@ $base_path = $GLOBALS['base_path'];
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="<?php echo $base_path; ?>programs.php" class="mobile-nav-link mobile-dropdown-toggle <?php echo (strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school'])) ? 'active' : ''; ?>">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="<?php echo $base_path; ?>programs.php" class="mobile-nav-link mobile-dropdown-toggle <?php echo ($current_page == 'programs' || strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school'])) ? 'active' : ''; ?>">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <div class="mobile-dropdown-item-with-submenu">
                         <a href="#" class="mobile-dropdown-link mobile-dropdown-parent">Basic Education <i class="fas fa-chevron-right mobile-submenu-chevron"></i></a>
@@ -302,7 +302,7 @@ $base_path = $GLOBALS['base_path'];
             </div>
             
             <div class="mobile-nav-item">
-                <a href="<?php echo $base_path; ?>campuses.php" class="mobile-nav-link">Campuses</a>
+                <a href="<?php echo $base_path; ?>campuses.php" class="mobile-nav-link <?php echo ($current_page == 'campuses') ? 'active' : ''; ?>">Campuses</a>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
@@ -345,15 +345,19 @@ $base_path = $GLOBALS['base_path'];
                 <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="mobile-nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
             </div>
             
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <div class="mobile-nav-item">
-                    <a href="<?php echo $base_path; ?>admin/dashboard.php" class="mobile-nav-link">Dashboard</a>
-                </div>
-                <div class="mobile-nav-item">
-                    <a href="<?php echo $base_path; ?>auth/logout.php" class="mobile-nav-link">Logout</a>
-                </div>
-            <?php endif; ?>
         </nav>
     </div>
+
+    <!-- Floating User Actions (only for logged-in users on main website) -->
+    <?php if (isset($_SESSION['user_id']) && !strpos($_SERVER['REQUEST_URI'], '/admin/')): ?>
+    <div class="floating-user-actions">
+        <a href="<?php echo $base_path; ?>admin/dashboard.php" class="floating-btn floating-dashboard" title="Dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+        </a>
+        <a href="<?php echo $base_path; ?>auth/logout.php" class="floating-btn floating-logout" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </div>
+    <?php endif; ?>
 
     </div>
