@@ -214,7 +214,7 @@ h2, h3, h4, h5, h6 {
     font-family: 'Barlow Semi Condensed', sans-serif;
     font-weight: 600;
     font-size: 12px;
-    padding: 8px 12px;
+    padding: 6px 8px;
     border-radius: 5px;
     transition: all 0.3s ease;
     display: flex;
@@ -222,6 +222,7 @@ h2, h3, h4, h5, h6 {
     gap: 5px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -5001,7 +5002,7 @@ section, .section {
     
     .nav-link {
         font-size: 13px;
-        padding: 10px 8px;
+        padding: 8px 6px;
     }
 }
 
@@ -5013,7 +5014,7 @@ section, .section {
     
     .nav-link {
         font-size: 12px;
-        padding: 9px 7px;
+        padding: 7px 5px;
     }
 }
 
@@ -5025,7 +5026,7 @@ section, .section {
     
     .nav-link {
         font-size: 11px;
-        padding: 8px 6px;
+        padding: 6px 4px;
     }
 }
 
@@ -5037,7 +5038,7 @@ section, .section {
     
     .nav-link {
         font-size: 10px;
-        padding: 7px 5px;
+        padding: 5px 3px;
     }
 }
 
@@ -5049,7 +5050,7 @@ section, .section {
     
     .nav-link {
         font-size: 9px;
-        padding: 6px 4px;
+        padding: 4px 2px;
     }
 }
 
@@ -5061,7 +5062,7 @@ section, .section {
     
     .nav-link {
         font-size: 8px;
-        padding: 5px 3px;
+        padding: 3px 1px;
     }
 }
 
@@ -5093,7 +5094,7 @@ section, .section {
     
     .nav-link {
         font-size: 7px;
-        padding: 4px 2px;
+        padding: 2px 1px;
     }
     
     .nav-header {
