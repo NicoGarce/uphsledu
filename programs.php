@@ -21,12 +21,22 @@ $base_path = '';
 include 'app/includes/header.php';
 ?>
 
-    <!-- Hero Section -->
-    <section class="programs-hero">
+    <style>
+    /* New page banner (clean namespace) */
+    .page-hero { position: relative; padding: 80px 0; color: #fff; text-align: center; isolation: isolate; overflow: hidden; background: url('assets/images/banners/UPHSL%20Facade.png') center/cover no-repeat; }
+    .page-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(28,77,161,.85), rgba(82,123,189,.85)); z-index: 1; }
+    .page-hero .content { position: relative; z-index: 2; display: inline-block; padding: 24px 28px; border-radius: 16px; background: rgba(0,0,0,.35); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .page-hero .title { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
+    .page-hero .subtitle { font-size: 1.3rem; margin: 0; }
+    @media (max-width: 1024px){ .page-hero{ padding:60px 0; } .page-hero .content{ padding:16px 18px; border-radius:12px; } .page-hero .title{ font-size:2.5rem; } .page-hero .subtitle{ font-size:1.1rem; } }
+    </style>
+
+    <!-- New Banner -->
+    <section class="page-hero">
         <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Academic Programs</h1>
-                <p class="hero-subtitle">Discover our comprehensive range of academic programs designed to shape future leaders and innovators</p>
+            <div class="content">
+                <h1 class="title">Academic Programs</h1>
+                <p class="subtitle">Discover our comprehensive range of academic programs designed to shape future leaders and innovators</p>
             </div>
         </div>
     </section>

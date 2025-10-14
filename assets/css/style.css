@@ -1083,31 +1083,7 @@ h2, h3, h4, h5, h6 {
     background: var(--secondary-color);
 }
 
-/* Programs Page Styles */
-.programs-hero {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    padding: 100px 0;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.programs-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-    opacity: 0.3;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
+/* Programs hero removed per request – use page-specific banners instead */
 
 .hero-title {
     font-size: 3.5rem;
@@ -1802,7 +1778,18 @@ h2, h3, h4, h5, h6 {
     
     /* Programs Page Responsive */
     .programs-hero {
-        padding: 80px 0;
+        padding: 60px 0; /* consistent smaller height on mobile/tablet */
+    }
+    .programs-hero .hero-content {
+        padding: 16px 18px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22) !important;
+    }
+    .programs-hero .hero-title {
+        font-size: 2.5rem !important;
+    }
+    .programs-hero .hero-subtitle {
+        font-size: 1.1rem !important;
     }
     
     .hero-title {
@@ -2566,9 +2553,6 @@ h2, h3, h4, h5, h6 {
     color: rgba(255, 255, 255, 0.9);
 }
 
-    transform: translateY(-2px);
-}
-
 /* Right Column: Tagline */
 .hero-tagline {
     display: flex;
@@ -2799,11 +2783,7 @@ h2, h3, h4, h5, h6 {
 
 .hero-content {
     max-width: 100%;
-    padding: 30px;
-    background: rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(8px);
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0; /* remove glass panel to match Programs banner */
 }
 
 .tagline {
@@ -6933,7 +6913,6 @@ section, .section {
     .sidebar-contact-details p {
         font-size: 0.8rem;
     }
-}
 
 /* Safe ticker layout (label + scrolling titles) */
 .news-ticker {
@@ -7049,3 +7028,5 @@ section, .section {
         font-size: 11px;
     }
 }
+
+/* Removed per-page unification; banners will be copied into pages */
