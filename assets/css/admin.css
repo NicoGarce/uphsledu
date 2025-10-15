@@ -214,10 +214,396 @@
     flex-wrap: wrap;
 }
 
-.action-buttons .btn {
-    padding: 6px 10px;
-    font-size: 0.8rem;
-    min-width: auto;
+/* Ensure icons are perfectly centered inside action buttons */
+.action-buttons .btn,
+.post-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    line-height: 1;
+    gap: 0; /* no inner spacing so single icon centers perfectly */
+}
+
+/* Container for dashboard-style action buttons in lists */
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Mobile: keep icon buttons square and centered */
+@media (max-width: 768px) {
+    .post-actions,
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center; /* center the whole group */
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .post-actions .btn,
+    .action-buttons .btn {
+        width: 36px !important;
+        height: 36px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+    .post-actions .btn i,
+    .action-buttons .btn i {
+        margin: 0 !important;
+        line-height: 1 !important;
+        display: inline-block !important;
+        font-size: 16px;
+    }
+}
+
+/* Responsive Tables */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 0 -20px; /* Extend to edges on mobile */
+    padding: 0 20px; /* Add padding back */
+}
+
+.responsive-table {
+    width: 100%;
+    min-width: 800px; /* Increased minimum width to show all columns */
+    border-collapse: collapse;
+    background: white;
+    table-layout: fixed; /* Fixed layout for better control */
+}
+
+.responsive-table th,
+.responsive-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Column width distribution */
+.responsive-table th:nth-child(1),
+.responsive-table td:nth-child(1) {
+    width: 30%; /* Title/Name column */
+}
+
+.responsive-table th:nth-child(2),
+.responsive-table td:nth-child(2) {
+    width: 15%; /* Author/Username column */
+}
+
+.responsive-table th:nth-child(3),
+.responsive-table td:nth-child(3) {
+    width: 20%; /* Status/Email column */
+}
+
+.responsive-table th:nth-child(4),
+.responsive-table td:nth-child(4) {
+    width: 10%; /* Published/Role column */
+}
+
+.responsive-table th:nth-child(5),
+.responsive-table td:nth-child(5) {
+    width: 15%; /* Date column */
+}
+
+.responsive-table th:nth-child(6),
+.responsive-table td:nth-child(6) {
+    width: 10%; /* Actions column */
+    white-space: nowrap;
+}
+
+.responsive-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #374151;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.responsive-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* Convert tables to vertical cards on tablets and below */
+@media (max-width: 992px) {
+    .mobile-cards thead {
+        display: none !important;
+    }
+    
+    .mobile-cards tbody {
+        display: block;
+    }
+    
+    .mobile-cards tr {
+        display: block !important;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin: 0 0 16px 0;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 16px;
+    }
+    
+    .mobile-cards td {
+        display: block !important;
+        padding: 8px 0;
+        border: none;
+        white-space: normal;
+    }
+    
+    .mobile-cards td::before {
+        content: attr(data-label) ":";
+        font-weight: 600;
+        color: #374151;
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .mobile-cards td[data-label="Title"] {
+        border-bottom: 1px solid #f3f4f6;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+    }
+    
+    .mobile-cards td[data-label="Title"] .post-title strong {
+        font-size: 1.1rem;
+        line-height: 1.4;
+        color: #1f2937;
+    }
+    
+    .mobile-cards td[data-label="Status"] {
+        margin-bottom: 8px;
+    }
+    
+    .mobile-cards td[data-label="Actions"] {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f3f4f6;
+    }
+    
+    .mobile-cards td[data-label="Actions"] .action-buttons {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    .mobile-cards td[data-label="Actions"] .btn {
+        flex: 1;
+        max-width: 120px;
+    }
+}
+
+/* Mobile-specific responsive adjustments */
+@media (max-width: 768px) {
+    .table-responsive {
+        margin: 0 -15px;
+        padding: 0 15px;
+        overflow-x: visible !important;
+    }
+    
+    .responsive-table {
+        min-width: 100% !important;
+        table-layout: auto !important;
+    }
+    
+    /* Convert ALL responsive tables to cards on mobile */
+    .responsive-table thead {
+        display: none !important;
+    }
+    
+    .responsive-table tbody {
+        display: block;
+    }
+    
+    .responsive-table tr {
+        display: block !important;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        margin: 0 0 16px 0;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 16px;
+    }
+    
+    .responsive-table td {
+        display: block !important;
+        padding: 8px 0;
+        border: none;
+        white-space: normal;
+        width: 100% !important;
+    }
+    
+    .responsive-table td::before {
+        content: attr(data-label) ":";
+        font-weight: 600;
+        color: #374151;
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Specific styling for different columns */
+    .responsive-table td:first-child {
+        padding-top: 0;
+    }
+    
+    .responsive-table td:last-child {
+        padding-bottom: 0;
+    }
+    
+    /* Status badge styling in mobile cards */
+    .responsive-table .status-badge {
+        display: inline-block;
+        margin-top: 4px;
+    }
+    
+    /* Action buttons in mobile cards */
+    .responsive-table .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .responsive-table .action-buttons .btn {
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+    }
+    
+    /* User info styling for accounts table */
+    .responsive-table .user-info {
+        margin-top: 4px;
+    }
+    
+    /* Title styling for posts table */
+    .responsive-table td[data-label="Title"] {
+        border-bottom: 1px solid #f3f4f6;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+    }
+    
+    .responsive-table td[data-label="Title"] .post-title strong {
+        font-size: 1.1rem;
+        line-height: 1.4;
+        color: #1f2937;
+    }
+    
+    .responsive-table td[data-label="Status"] {
+        margin-bottom: 8px;
+    }
+    
+    .responsive-table td[data-label="Actions"] {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f3f4f6;
+    }
+    
+    .responsive-table td[data-label="Actions"] .action-buttons {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    .responsive-table td[data-label="Actions"] .btn {
+        flex: 1;
+        max-width: 120px;
+    }
+}
+    
+    /* Adjust column widths for mobile */
+    .responsive-table th:nth-child(1),
+    .responsive-table td:nth-child(1) {
+        width: 25%; /* Slightly smaller title */
+    }
+    
+    .responsive-table th:nth-child(2),
+    .responsive-table td:nth-child(2) {
+        width: 12%; /* Smaller author */
+    }
+    
+    .responsive-table th:nth-child(3),
+    .responsive-table td:nth-child(3) {
+        width: 18%; /* Smaller status/email */
+    }
+    
+    .responsive-table th:nth-child(4),
+    .responsive-table td:nth-child(4) {
+        width: 8%; /* Smaller published/role */
+    }
+    
+    .responsive-table th:nth-child(5),
+    .responsive-table td:nth-child(5) {
+        width: 12%; /* Smaller date */
+    }
+    
+    .responsive-table th:nth-child(6),
+    .responsive-table td:nth-child(6) {
+        width: 25%; /* Larger actions for mobile */
+    }
+    
+    .action-buttons {
+        gap: 3px;
+        flex-wrap: wrap;
+    }
+    
+    .action-buttons .btn {
+        padding: 4px 6px;
+        font-size: 0.7rem;
+        min-width: 28px;
+    }
+}
+
+/* Very small screens - stack some content */
+@media (max-width: 480px) {
+    .responsive-table {
+        min-width: 600px;
+    }
+    
+    .responsive-table th,
+    .responsive-table td {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.65rem;
+        padding: 3px 4px;
+    }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .responsive-table th,
+    .responsive-table td {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
 }
 
 
