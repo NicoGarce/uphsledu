@@ -161,7 +161,7 @@ include '../app/includes/header.php';
                                 </a>
                                 <a href="../support-services/sps.php" class="quick-link">
                                     <i class="fas fa-user-graduate"></i>
-                                    <span>Admissions</span>
+                                    <span>Student Personnel Services</span>
                                 </a>
                                 <a href="../support-services/careers.php" class="quick-link">
                                     <i class="fas fa-briefcase"></i>
