@@ -11,7 +11,7 @@
                 <!-- University Info Column -->
                 <div class="footer-section university-info">
                     <div class="footer-logo-section">
-                        <img src="<?php echo $base_path; ?>assets/images/Logos/logo.png" alt="University of Perpetual Help System" class="footer-logo">
+                        <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="footer-logo">
                         <div class="university-details">
                             <h3 class="university-name">University of Perpetual Help System Laguna</h3>
                             <p class="university-tagline">Character Building is Nation Building</p>

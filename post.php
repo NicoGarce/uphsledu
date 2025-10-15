@@ -62,7 +62,7 @@ if ($featuredImagePath) {
         ? $featuredImagePath
         : $absoluteBase . '/' . ltrim($featuredImagePath, '/');
 } else {
-    $ogImage = $absoluteBase . '/assets/images/Logos/logo.png';
+    $ogImage = $absoluteBase . '/assets/images/Logos/Logo2025.png';
 }
 
 $og = [

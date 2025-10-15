@@ -59,7 +59,7 @@ $base_path = $GLOBALS['base_path'];
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <!-- Preload critical logo image to prevent text flash -->
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" as="image" type="image/png">
     <?php if (!empty($og) && is_array($og)): ?>
         <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
@@ -77,9 +77,9 @@ $base_path = $GLOBALS['base_path'];
             <meta name="twitter:image" content="<?php echo htmlspecialchars($og['image']); ?>">
         <?php endif; ?>
     <?php endif; ?>
-    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
-    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
-    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
+    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
     <!-- Preload Font Awesome to reduce icon flash on navigation -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
     <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"></noscript>
@@ -120,7 +120,7 @@ $base_path = $GLOBALS['base_path'];
             logoImg.onload = function() {
                 document.documentElement.classList.add('logo-loaded');
             };
-            logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/logo.png';
+            logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png';
         })();
     </script>
     <!-- Navigation -->
@@ -129,7 +129,7 @@ $base_path = $GLOBALS['base_path'];
             <!-- First Column: Logo -->
             <div class="nav-logo">
         <a href="<?php echo $base_path; ?>index.php">
-            <img src="<?php echo $base_path; ?>assets/images/Logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
+            <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="logo-img">
         </a>
             </div>
             
@@ -287,7 +287,7 @@ $base_path = $GLOBALS['base_path'];
     <div class="mobile-sidebar" id="mobile-sidebar">
         <div class="mobile-sidebar-header">
             <div class="mobile-sidebar-logo">
-                <img src="<?php echo $base_path; ?>assets/images/Logos/logo.png" alt="University of Perpetual Help System" class="mobile-logo-img">
+                <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="mobile-logo-img">
                 <h2 class="mobile-site-name">UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h2>
             </div>
             <button class="mobile-sidebar-close" id="mobile-sidebar-close">
