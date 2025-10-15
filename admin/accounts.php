@@ -253,54 +253,44 @@ $users = $stmt->fetchAll();
         <!-- Existing Accounts -->
         <div class="dashboard-section">
             <h2 class="section-title">Existing Staff Accounts</h2>
-            <div class="accounts-table">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Created</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($users as $account): ?>
-                            <tr>
-                                <td>
-                                    <div class="user-info">
-                                        <strong><?php echo htmlspecialchars($account['first_name'] . ' ' . $account['last_name']); ?></strong>
-                                    </div>
-                                </td>
-                                <td><?php echo htmlspecialchars($account['username']); ?></td>
-                                <td><?php echo htmlspecialchars($account['email']); ?></td>
-                                <td>
-                                    <span class="role-badge role-<?php echo $account['role']; ?>">
-                                        <?php echo ucfirst(str_replace('_', ' ', $account['role'])); ?>
-                                    </span>
-                                </td>
-                                <td><?php echo formatDate($account['created_at']); ?></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button type="button" class="btn btn-sm btn-secondary" onclick="openEditModal(<?php echo $account['id']; ?>)">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <?php if (isSuperAdmin() && $account['id'] != $_SESSION['user_id']): ?>
-                                            <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account?')">
-                                                <input type="hidden" name="action" value="delete_user">
-                                                <input type="hidden" name="user_id" value="<?php echo $account['id']; ?>">
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <div class="posts-list">
+                <?php foreach ($users as $account): ?>
+                    <div class="post-item">
+                        <div class="post-info">
+                            <h3 class="post-title">
+                                <strong><?php echo htmlspecialchars($account['first_name'] . ' ' . $account['last_name']); ?></strong>
+                            </h3>
+                            <div class="post-meta">
+                                <span class="post-status status-<?php echo $account['role']; ?>">
+                                    <?php echo ucfirst(str_replace('_', ' ', $account['role'])); ?>
+                                </span>
+                                <span class="post-date">
+                                    Username: <?php echo htmlspecialchars($account['username']); ?>
+                                </span>
+                                <span class="post-date">
+                                    Email: <?php echo htmlspecialchars($account['email']); ?>
+                                </span>
+                                <span class="post-date">
+                                    Created: <?php echo formatDate($account['created_at']); ?>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="openEditModal(<?php echo $account['id']; ?>)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <?php if (isSuperAdmin() && $account['id'] != $_SESSION['user_id']): ?>
+                                <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account?')">
+                                    <input type="hidden" name="action" value="delete_user">
+                                    <input type="hidden" name="user_id" value="<?php echo $account['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

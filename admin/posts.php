@@ -109,63 +109,52 @@ $posts = $stmt->fetchAll();
                 </a>
             </div>
             
-            <div class="posts-table">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Published</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($posts as $post): ?>
-                            <tr>
-                                <td>
-                                    <div class="post-title">
-                                        <strong><?php echo htmlspecialchars($post['title']); ?></strong>
-                                        <?php if ($post['excerpt']): ?>
-                                            <br><small class="text-muted"><?php echo htmlspecialchars($post['excerpt']); ?></small>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                                <td>University of Perpetual Help System Laguna</td>
-                                <td>
-                                    <span class="status-badge status-<?php echo $post['status']; ?>">
-                                        <?php echo ucfirst($post['status']); ?>
-                                    </span>
-                                </td>
-                                <td><?php echo date('M j, Y', strtotime($post['published_at'] ?: $post['created_at'])); ?></td>
-                                <td>
-                                    <?php if ($post['published_at']): ?>
-                                        <?php echo date('M j, Y', strtotime($post['published_at'])); ?>
-                                    <?php else: ?>
-                                        <span class="text-muted">Not published</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary" title="Edit Post">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <?php if ($post['status'] === 'published'): ?>
-                                        <button class="btn btn-sm btn-info" onclick="copyPostLink('<?php echo $post['slug']; ?>')" title="Copy Post Link">
-                                            <i class="fas fa-copy"></i>
-                                        </button>
-                                        <?php endif; ?>
-                                        <button class="btn btn-sm btn-danger" onclick="deletePost(<?php echo $post['id']; ?>)" title="Delete Post">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+        <div class="posts-list">
+            <?php foreach ($posts as $post): ?>
+                <div class="post-item">
+                    <div class="post-info">
+                        <h3 class="post-title">
+                            <a href="create-post.php?edit=<?php echo $post['id']; ?>">
+                                <?php echo htmlspecialchars($post['title']); ?>
+                            </a>
+                        </h3>
+                        <div class="post-meta">
+                            <span class="post-status status-<?php echo $post['status']; ?>">
+                                <?php echo ucfirst($post['status']); ?>
+                            </span>
+                            <span class="post-date">
+                                Created: <?php echo date('M j, Y', strtotime($post['created_at'])); ?>
+                            </span>
+                            <?php if ($post['published_at']): ?>
+                                <span class="post-date">
+                                    Published: <?php echo date('M j, Y', strtotime($post['published_at'])); ?>
+                                </span>
+                            <?php else: ?>
+                                <span class="post-date text-muted">
+                                    Not published
+                                </span>
+                            <?php endif; ?>
+                            <span class="post-author">
+                                by University of Perpetual Help System Laguna
+                            </span>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary" title="Edit Post">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <?php if ($post['status'] === 'published'): ?>
+                        <button class="btn btn-sm btn-info" onclick="copyPostLink('<?php echo $post['slug']; ?>')" title="Copy Post Link">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <?php endif; ?>
+                        <button class="btn btn-sm btn-danger" onclick="deletePost(<?php echo $post['id']; ?>)" title="Delete Post">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
         </div>
     </div>
 
@@ -205,11 +194,11 @@ $posts = $stmt->fetchAll();
         
         // Copy post link function
         function copyPostLink(slug) {
-            // Build site base URL (root of app, not /admin)
+            // Build site base URL (root of app, not /admin) and ensure no trailing slash
             const baseUrl = '<?php 
                 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
                 $appRoot = $protocol . $_SERVER['HTTP_HOST'] . dirname(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'));
-                echo $appRoot;
+                echo rtrim($appRoot, '/');
             ?>';
             const postUrl = `${baseUrl}/post?slug=${slug}`;
             
@@ -253,18 +242,21 @@ $posts = $stmt->fetchAll();
             // Style the notification
             notification.style.cssText = `
                 position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 12px 20px;
-                border-radius: 4px;
+                top: 50%;
+                left: 50%;
+                padding: 14px 22px;
+                border-radius: 8px;
                 color: white;
-                font-weight: 500;
-                z-index: 1000;
+                font-weight: 600;
+                z-index: 2000;
                 opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-                max-width: 300px;
+                transform: translate(-50%, -60%);
+                transition: all 0.25s ease;
+                max-width: 80vw;
                 word-wrap: break-word;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                pointer-events: none;
             `;
             
             // Set background color based on type
@@ -282,19 +274,19 @@ $posts = $stmt->fetchAll();
             // Animate in
             setTimeout(() => {
                 notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 100);
+                notification.style.transform = 'translate(-50%, -50%)';
+            }, 50);
             
             // Remove after 3 seconds
             setTimeout(() => {
                 notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
+                notification.style.transform = 'translate(-50%, -60%)';
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
                     }
                 }, 300);
-            }, 3000);
+            }, 1500);
         }
         
         // Close modals when clicking outside
