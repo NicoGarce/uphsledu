@@ -151,6 +151,11 @@ $posts = $stmt->fetchAll();
                                         <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary" title="Edit Post">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <?php if ($post['status'] === 'published'): ?>
+                                        <button class="btn btn-sm btn-info" onclick="copyPostLink('<?php echo $post['slug']; ?>')" title="Copy Post Link">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <?php endif; ?>
                                         <button class="btn btn-sm btn-danger" onclick="deletePost(<?php echo $post['id']; ?>)" title="Delete Post">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -196,6 +201,100 @@ $posts = $stmt->fetchAll();
         
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
+        }
+        
+        // Copy post link function
+        function copyPostLink(slug) {
+            // Build site base URL (root of app, not /admin)
+            const baseUrl = '<?php 
+                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+                $appRoot = $protocol . $_SERVER['HTTP_HOST'] . dirname(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'));
+                echo $appRoot;
+            ?>';
+            const postUrl = `${baseUrl}/post?slug=${slug}`;
+            
+            // Create a temporary textarea element
+            const textarea = document.createElement('textarea');
+            textarea.value = postUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                // Copy the text
+                document.execCommand('copy');
+                
+                // Show success message
+                showNotification('Post link copied to clipboard!', 'success');
+            } catch (err) {
+                // Fallback for modern browsers
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(postUrl).then(function() {
+                        showNotification('Post link copied to clipboard!', 'success');
+                    }).catch(function() {
+                        showNotification('Failed to copy link', 'error');
+                    });
+                } else {
+                    showNotification('Failed to copy link', 'error');
+                }
+            }
+            
+            // Remove the temporary textarea
+            document.body.removeChild(textarea);
+        }
+        
+        // Show notification function
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            // Style the notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 4px;
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+            
+            // Set background color based on type
+            if (type === 'success') {
+                notification.style.backgroundColor = '#28a745';
+            } else if (type === 'error') {
+                notification.style.backgroundColor = '#dc3545';
+            } else {
+                notification.style.backgroundColor = '#007bff';
+            }
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
         }
         
         // Close modals when clicking outside
