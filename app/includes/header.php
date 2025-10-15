@@ -74,9 +74,32 @@ $base_path = $GLOBALS['base_path'];
         <meta property="og:url" content="<?php echo htmlspecialchars($og['url'] ?? ''); ?>">
         <?php if (!empty($og['image'])): ?>
             <meta property="og:image" content="<?php echo htmlspecialchars($og['image']); ?>">
+            <meta property="og:image:width" content="1200">
+            <meta property="og:image:height" content="630">
+            <meta property="og:image:alt" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <?php endif; ?>
         <meta property="og:type" content="<?php echo htmlspecialchars($og['type'] ?? 'website'); ?>">
         <meta property="og:site_name" content="<?php echo htmlspecialchars($og['site_name'] ?? 'University of Perpetual Help System Laguna'); ?>">
+        
+        <?php if (!empty($og['article_author'])): ?>
+            <meta property="article:author" content="<?php echo htmlspecialchars($og['article_author']); ?>">
+        <?php endif; ?>
+        
+        <?php if (!empty($og['article_publisher'])): ?>
+            <meta property="article:publisher" content="<?php echo htmlspecialchars($og['article_publisher']); ?>">
+        <?php endif; ?>
+        
+        <?php if (!empty($og['article_published_time'])): ?>
+            <meta property="article:published_time" content="<?php echo htmlspecialchars($og['article_published_time']); ?>">
+        <?php endif; ?>
+        
+        <?php if (!empty($og['article_modified_time'])): ?>
+            <meta property="article:modified_time" content="<?php echo htmlspecialchars($og['article_modified_time']); ?>">
+        <?php endif; ?>
+        
+        <!-- Facebook App ID for better page sharing -->
+        <meta property="fb:app_id" content="">
+        
         <!-- Optional Twitter card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
