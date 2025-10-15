@@ -23,24 +23,32 @@ $request_uri = strtok($request_uri, '?');
 
 // Special handling for index.php files in subdirectories
 // Check both SCRIPT_NAME and REQUEST_URI for better production compatibility
+// Only apply this logic if we're NOT on the root index.php
 if ($current_page === 'index' && (strpos($script_name, '/') !== false || strpos($request_uri, '/') !== false)) {
-    // Try SCRIPT_NAME first
-    if (strpos($script_name, '/') !== false) {
-        $path_parts = explode('/', trim($script_name, '/'));
-        array_pop($path_parts); // Remove index.php
-        if (!empty($path_parts)) {
-            $current_page = end($path_parts);
-        }
-    }
+    // Check if we're on the root index.php (not in a subdirectory)
+    $is_root_index = ($script_name === '/index.php' || $script_name === '/uphsledu/index.php' || 
+                     $request_uri === '/' || $request_uri === '/uphsledu/' || 
+                     $request_uri === '/index.php' || $request_uri === '/uphsledu/index.php');
     
-    // If still 'index', try REQUEST_URI
-    if ($current_page === 'index' && strpos($request_uri, '/') !== false) {
-        $path_parts = explode('/', trim($request_uri, '/'));
-        $last_part = end($path_parts);
+    if (!$is_root_index) {
+        // Try SCRIPT_NAME first
+        if (strpos($script_name, '/') !== false) {
+            $path_parts = explode('/', trim($script_name, '/'));
+            array_pop($path_parts); // Remove index.php
+            if (!empty($path_parts)) {
+                $current_page = end($path_parts);
+            }
+        }
         
-        // If the last part is not empty and not a file extension, use it
-        if (!empty($last_part) && !strpos($last_part, '.')) {
-            $current_page = $last_part;
+        // If still 'index', try REQUEST_URI
+        if ($current_page === 'index' && strpos($request_uri, '/') !== false) {
+            $path_parts = explode('/', trim($request_uri, '/'));
+            $last_part = end($path_parts);
+            
+            // If the last part is not empty and not a file extension, use it
+            if (!empty($last_part) && !strpos($last_part, '.')) {
+                $current_page = $last_part;
+            }
         }
     }
 }
@@ -77,9 +85,9 @@ $base_path = $GLOBALS['base_path'];
             <meta name="twitter:image" content="<?php echo htmlspecialchars($og['image']); ?>">
         <?php endif; ?>
     <?php endif; ?>
-    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
-    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
-    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
+    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
+    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
     <!-- Preload Font Awesome to reduce icon flash on navigation -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
     <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"></noscript>
@@ -171,7 +179,7 @@ $base_path = $GLOBALS['base_path'];
                 <div class="nav-menu" id="nav-menu">
                     <div class="nav-item">
                         <a href="<?php echo $base_path; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>" style="<?php echo ($current_page != 'index') ? 'background: none !important; color: #ffffff !important;' : ''; ?>">Home</a>
-                        <!-- DEBUG: Home - current_page='<?php echo $current_page; ?>', is_index=<?php echo ($current_page == 'index') ? 'true' : 'false'; ?>, classes="<?php echo ($current_page == 'index') ? 'active' : ''; ?>" -->
+                        <!-- DEBUG: Home - current_page='<?php echo $current_page; ?>', script_name='<?php echo $script_name; ?>', request_uri='<?php echo $request_uri; ?>', is_index=<?php echo ($current_page == 'index') ? 'true' : 'false'; ?>, classes="<?php echo ($current_page == 'index') ? 'active' : ''; ?>" -->
                     </div>
                     
                     <div class="nav-item dropdown">

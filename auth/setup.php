@@ -30,7 +30,7 @@ if ($usersExist) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UPHSL - System Setup</title>
-    <link rel="icon" type="image/png" href="../assets/images/Logos/Logo2025.png">
+    <link rel="icon" type="image/png" href="../assets/images/Logos/logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>

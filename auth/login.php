@@ -64,9 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login - University of Perpetual Help System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../assets/images/Logos/Logo2025.png">
-    <link rel="shortcut icon" type="image/png" href="../assets/images/Logos/Logo2025.png">
-    <link rel="apple-touch-icon" href="../assets/images/Logos/Logo2025.png">
+    <link rel="icon" type="image/png" href="../assets/images/Logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/images/Logos/logo.png">
+    <link rel="apple-touch-icon" href="../assets/images/Logos/logo.png">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
 </head>
