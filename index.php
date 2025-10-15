@@ -333,6 +333,42 @@ include 'app/includes/header.php';
         }
     </style>
 
+    <script>
+        // Hero Slider Auto-Rotation
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('heroSlider');
+            const slides = slider.querySelectorAll('.hero-slide');
+            
+            let currentSlide = 0;
+            let autoSlideInterval;
+            
+            // Function to show specific slide
+            function showSlide(index) {
+                // Remove active class from all slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                
+                // Add active class to current slide
+                slides[index].classList.add('active');
+                
+                currentSlide = index;
+            }
+            
+            // Function to go to next slide
+            function nextSlide() {
+                const nextIndex = (currentSlide + 1) % slides.length;
+                showSlide(nextIndex);
+            }
+            
+            // Function to start auto-slide
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(nextSlide, 20000); // Change slide every 20 seconds
+            }
+            
+            // Start auto-slide
+            startAutoSlide();
+        });
+    </script>
+
     <!-- Hero Section with Image Background (video injected via JS after load) -->
     <section class="hero">
         <div class="hero-background">
@@ -344,61 +380,65 @@ include 'app/includes/header.php';
                 data-bg-poster="assets/images/banners/UPHSL Facade.png">
         </div>
         <div class="video-overlay">
-            <div class="hero-layout">
-                <!-- Left Column: Latest Post -->
-                <div class="hero-latest-post">
-                    <?php if (!empty($recent_posts)): ?>
-                        <?php $latest_post = $recent_posts[0]; ?>
-                        <div class="latest-post-card">
-                            <div class="post-meta">
-                                <span class="latest-label">Latest</span>
-                                <span class="post-date">
-                                    <i class="fas fa-calendar"></i>
-                                    <?php echo formatDate($latest_post['published_at'] ?: $latest_post['created_at']); ?>
-                                </span>
+            <div class="hero-slider-container">
+                <div class="hero-slider" id="heroSlider">
+                    <!-- Slide 1: Latest News -->
+                    <div class="hero-slide active">
+                        <div class="hero-slide-content">
+                            <?php if (!empty($recent_posts)): ?>
+                                <?php $latest_post = $recent_posts[0]; ?>
+                                <div class="latest-post-card">
+                                    <div class="post-meta">
+                                        <span class="latest-label">Latest</span>
+                                        <span class="post-date">
+                                            <i class="fas fa-calendar"></i>
+                                            <?php echo formatDate($latest_post['published_at'] ?: $latest_post['created_at']); ?>
+                                        </span>
+                                    </div>
+                                    <h2 class="latest-post-title">
+                                        <a href="post.php?slug=<?php echo $latest_post['slug']; ?>">
+                                            <?php echo htmlspecialchars($latest_post['title']); ?>
+                                        </a>
+                                    </h2>
+                                    <div class="hero-buttons">
+                                        <a href="#news" class="btn btn-primary">View News</a>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="latest-post-card">
+                                    <h2 class="latest-post-title">Stay Updated</h2>
+                                    <p class="latest-post-excerpt">
+                                        Check back soon for the latest news and announcements from the University of Perpetual Help System Laguna.
+                                    </p>
+                                    <a href="#news" class="btn btn-outline">View News</a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 2: Tagline -->
+                    <div class="hero-slide">
+                        <div class="hero-slide-content">
+                            <div class="hero-tagline">
+                                <div class="hero-content">
+                                    <div class="tagline-container">
+                                        <h1 class="tagline">Character Building is Nation Building</h1>
+                                    </div>
+                                    <p class="hero-description">
+                                        Excellence in education, character formation, and nation building. Join our community of learners and discover endless opportunities for academic and personal growth.
+                                    </p>
+                                    <div class="hero-buttons">
+                                        <a href="#programs" class="btn btn-primary">Explore Programs</a>
+                                    </div>
+                                </div>
                             </div>
-                            <h2 class="latest-post-title">
-                                <a href="post.php?slug=<?php echo $latest_post['slug']; ?>">
-                                    <?php echo htmlspecialchars($latest_post['title']); ?>
-                                </a>
-                            </h2>
-                            <p class="latest-post-excerpt">
-                                <?php 
-                                $words = explode(' ', strip_tags($latest_post['content']));
-                                $excerpt = implode(' ', array_slice($words, 0, 10));
-                                echo htmlspecialchars($excerpt) . '...';
-                                ?>
-                            </p>
-                        </div>
-                    <?php else: ?>
-                        <div class="latest-post-card">
-                            <h2 class="latest-post-title">Stay Updated</h2>
-                            <p class="latest-post-excerpt">
-                                Check back soon for the latest news and announcements from the University of Perpetual Help System Laguna.
-                            </p>
-                            <a href="#news" class="btn btn-outline">View News</a>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                
-                <!-- Right Column: Tagline -->
-                <div class="hero-tagline">
-            <div class="hero-content">
-                <div class="tagline-container">
-                    <h1 class="tagline">Character Building is Nation Building</h1>
-                </div>
-                <p class="hero-description">
-                    Excellence in education, character formation, and nation building. Join our community of learners and discover endless opportunities for academic and personal growth.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#programs" class="btn btn-primary">Explore Programs</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <?php if (!empty($recent_posts)): ?>
+        <?php if (!empty($recent_posts) && count($recent_posts) > 1): ?>
         <div class="hero-ticker">
             <div class="hero-ticker-inner">
                 <div class="hero-clock">
@@ -407,8 +447,8 @@ include 'app/includes/header.php';
                 </div>
                 <div class="hero-ticker-track">
                     <div class="hero-ticker-content" id="heroTickerContent">
-                        <?php if (!empty($recent_posts)): ?>
-                            <?php foreach ($recent_posts as $index => $post): ?>
+                        <?php if (!empty($recent_posts) && count($recent_posts) > 1): ?>
+                            <?php foreach (array_slice($recent_posts, 1) as $index => $post): ?>
                                 <a href="post.php?slug=<?php echo $post['slug']; ?>" class="ticker-item <?php echo $index === 0 ? 'active' : ''; ?>" data-index="<?php echo $index; ?>"><?php echo htmlspecialchars($post['title']); ?></a>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -420,7 +460,7 @@ include 'app/includes/header.php';
     </section>
 
     <!-- News Section -->
-    <section class="news-section">
+    <section class="news-section" id="news">
         <div class="container">
             <div class="news-layout">
                 <div class="news-content">
