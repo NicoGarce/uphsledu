@@ -56,14 +56,29 @@ $additional_css = ['assets/css/post.css'];
 // Open Graph data for social sharing (use featured image if available)
 $absoluteBase = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 $featuredImagePath = $post['featured_image'] ?? '';
+
+// Check for featured image first, then post images
 if ($featuredImagePath) {
     // Normalize to absolute URL
     $ogImage = (strpos($featuredImagePath, 'http') === 0)
         ? $featuredImagePath
         : $absoluteBase . '/' . ltrim($featuredImagePath, '/');
+} elseif (!empty($images) && isset($images[0]['image_path'])) {
+    // Use first post image if no featured image
+    $ogImage = (strpos($images[0]['image_path'], 'http') === 0)
+        ? $images[0]['image_path']
+        : $absoluteBase . '/' . ltrim($images[0]['image_path'], '/');
 } else {
+    // Default logo
     $ogImage = $absoluteBase . '/assets/images/Logos/logo.png';
 }
+
+// Ensure the image URL is properly formatted
+$ogImage = str_replace('//', '/', $ogImage);
+$ogImage = str_replace(':/', '://', $ogImage);
+
+// Debug: Uncomment the line below to see what image URL is being generated
+// echo "<!-- Debug: Open Graph Image URL: " . $ogImage . " -->";
 
 // Create a better description for social sharing
 $description = $post['excerpt'] ?: substr(strip_tags($post['content']), 0, 160);
