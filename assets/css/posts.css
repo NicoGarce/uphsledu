@@ -438,11 +438,11 @@
     color: var(--text-light);
 }
 
-.university-info {
+.posts-sidebar .university-info {
     text-align: center;
 }
 
-.university-info p {
+.posts-sidebar .university-info p {
     color: var(--text-light);
     margin-bottom: 20px;
     line-height: 1.6;

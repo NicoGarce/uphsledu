@@ -345,11 +345,11 @@
     color: var(--text-light);
 }
 
-.university-info {
+.post-sidebar .university-info {
     text-align: center;
 }
 
-.university-info p {
+.post-sidebar .university-info p {
     color: var(--text-light);
     margin-bottom: 20px;
     line-height: 1.6;
