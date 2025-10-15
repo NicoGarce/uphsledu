@@ -59,74 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
     
-    if ($_POST['action'] === 'share_to_facebook') {
-        $postId = $_POST['post_id'];
-        
-        // Get Facebook credentials from database
-        $stmt = $pdo->prepare("SELECT * FROM facebook_tokens WHERE id = 1");
-        $stmt->execute();
-        $facebookData = $stmt->fetch();
-        
-        if (!$facebookData) {
-            $error = "Facebook integration not configured. Please run setup_facebook_once.php first.";
-        } else {
-            $appId = $facebookData['app_id'];
-            $appSecret = $facebookData['app_secret'];
-            $pageAccessToken = $facebookData['page_access_token'];
-            $pageId = $facebookData['page_id'];
-            
-            try {
-            // Get post data
-            $stmt = $pdo->prepare("SELECT * FROM posts WHERE id = ?");
-            $stmt->execute([$postId]);
-            $post = $stmt->fetch();
-            
-            if ($post) {
-                // Build post URL
-                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-                $baseUrl = $protocol . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-                $postUrl = $baseUrl . '/post.php?slug=' . $post['slug'];
-                
-                // Build message
-                $message = $post['title'] . "\n\n";
-                $excerpt = $post['excerpt'] ?: substr(strip_tags($post['content']), 0, 200) . '...';
-                $message .= $excerpt . "\n\n";
-                $message .= "Read more: " . $postUrl . "\n\n";
-                $message .= "#UPHSL #UniversityNews";
-                
-                // Post to Facebook
-                $url = "https://graph.facebook.com/v18.0/{$pageId}/feed";
-                $data = [
-                    'message' => $message,
-                    'link' => $postUrl,
-                    'access_token' => $pageAccessToken
-                ];
-                
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                $response = curl_exec($ch);
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close($ch);
-                
-                $result = json_decode($response, true);
-                
-                if ($httpCode == 200 && isset($result['id'])) {
-                    $success = "Post shared to Facebook successfully! <a href='https://facebook.com/{$result['id']}' target='_blank'>View on Facebook</a>";
-                } else {
-                    $error = "Failed to share to Facebook: " . ($result['error']['message'] ?? 'Unknown error');
-                }
-            } else {
-                $error = "Post not found";
-            }
-            } catch (Exception $e) {
-                $error = "Error sharing to Facebook: " . $e->getMessage();
-            }
-        }
-    }
 }
 
 // Get all posts with author information
@@ -219,15 +151,6 @@ $posts = $stmt->fetchAll();
                                         <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary" title="Edit Post">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <?php if ($post['status'] === 'published'): ?>
-                                        <form method="POST" style="display: inline-block;" onsubmit="return confirm('Share this post to Facebook?')">
-                                            <input type="hidden" name="action" value="share_to_facebook">
-                                            <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
-                                            <button type="submit" class="btn btn-sm btn-facebook" title="Share to Facebook">
-                                                <i class="fab fa-facebook"></i>
-                                            </button>
-                                        </form>
-                                        <?php endif; ?>
                                         <button class="btn btn-sm btn-danger" onclick="deletePost(<?php echo $post['id']; ?>)" title="Delete Post">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -284,5 +207,6 @@ $posts = $stmt->fetchAll();
             }
         }
     </script>
+
 
 <?php include '../app/includes/admin-footer.php'; ?>

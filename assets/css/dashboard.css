@@ -177,9 +177,17 @@
     color: var(--primary-color);
 }
 
+.action-card span,
+.action-card .btn-text {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Ensure consistent styling for all action cards */
 .action-card span {
     font-weight: 600;
     font-size: 0.9rem;
+    color: #374151;
 }
 
 /* Posts List */
