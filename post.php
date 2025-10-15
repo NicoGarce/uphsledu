@@ -10,6 +10,7 @@
 session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';
+require_once 'app/includes/facebook-api.php';
 
 // Get post slug from URL
 $slug = $_GET['slug'] ?? '';
@@ -38,6 +39,22 @@ $images = getPostImages($post['id']);
 // Get recent posts for sidebar
 $recentPosts = getRecentPosts(5);
 
+// Check if this is a Facebook share request
+if (isset($_POST['share_to_facebook']) && isLoggedIn() && isAdmin()) {
+    $shareResult = sharePostToFacebook($post['id']);
+    if ($shareResult['success']) {
+        setFlashMessage('success', 'Post successfully shared to Facebook!');
+    } else {
+        setFlashMessage('error', 'Failed to share to Facebook: ' . $shareResult['error']);
+    }
+    // Redirect to prevent form resubmission
+    header('Location: ' . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+// Get Facebook share status
+$facebookShareStatus = getFacebookShareStatus($post['id']);
+
 // Set base path for assets
 $base_path = '';
 
@@ -46,7 +63,7 @@ $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https:
 $currentUrl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $encodedUrl = urlencode($currentUrl);
 $encodedTitle = urlencode($post['title']);
-$shareFacebook = 'https://www.facebook.com/sharer/sharer.php?u=' . $encodedUrl;
+$shareFacebook = 'https://www.facebook.com/sharer/sharer.php?u=' . $encodedUrl . '&quote=' . $encodedTitle . '&hashtag=UPHSL';
 $shareTwitter = 'https://twitter.com/intent/tweet?url=' . $encodedUrl . '&text=' . $encodedTitle;
 $shareLinkedIn = 'https://www.linkedin.com/sharing/share-offsite/?url=' . $encodedUrl;
 
@@ -72,6 +89,10 @@ $og = [
     'image' => $ogImage,
     'type' => 'article',
     'site_name' => 'University of Perpetual Help System Laguna',
+    'article_author' => 'UPHSL',
+    'article_publisher' => 'University of Perpetual Help System Laguna',
+    'article_published_time' => $post['published_at'] ?: $post['created_at'],
+    'article_modified_time' => $post['updated_at'] ?: $post['created_at']
 ];
 
 // Include header
@@ -174,12 +195,37 @@ include 'app/includes/header.php';
                     <a href="<?php echo $shareFacebook; ?>" target="_blank" rel="noopener" class="share-btn facebook" aria-label="Share on Facebook">
                         <i class="fab fa-facebook"></i>
                     </a>
+                    <!-- Facebook Debug Link (for troubleshooting) -->
+                    <a href="https://developers.facebook.com/tools/debug/?q=<?php echo urlencode($currentUrl); ?>" target="_blank" rel="noopener" class="share-btn debug" aria-label="Debug Facebook Sharing" style="background: #666; font-size: 0.8rem; padding: 8px 12px;" title="Debug Facebook Sharing">
+                        <i class="fas fa-bug"></i>
+                    </a>
                     <a href="<?php echo $shareTwitter; ?>" target="_blank" rel="noopener" class="share-btn twitter" aria-label="Share on X (Twitter)">
                         <i class="fab fa-twitter"></i>
                     </a>
                     <a href="<?php echo $shareLinkedIn; ?>" target="_blank" rel="noopener" class="share-btn linkedin" aria-label="Share on LinkedIn">
                         <i class="fab fa-linkedin"></i>
                     </a>
+                    
+                    <?php if (isLoggedIn() && isAdmin()): ?>
+                        <!-- Admin Facebook Share Button -->
+                        <div class="admin-share-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                            <span style="font-size: 0.9rem; color: #666;">Admin Share:</span>
+                            <?php if ($facebookShareStatus): ?>
+                                <span class="facebook-share-status" style="color: #28a745; font-size: 0.9rem;">
+                                    <i class="fas fa-check-circle"></i> 
+                                    Shared to Facebook on <?php echo formatDate($facebookShareStatus['shared_at']); ?>
+                                </span>
+                            <?php else: ?>
+                                <form method="POST" style="display: inline-block; margin-left: 10px;">
+                                    <button type="submit" name="share_to_facebook" class="share-btn facebook-admin" 
+                                            style="background: #1877f2; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9rem;"
+                                            onclick="return confirm('Share this post to the UPHSL Facebook page?')">
+                                        <i class="fab fa-facebook"></i> Share to Page
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </footer>
         </div>

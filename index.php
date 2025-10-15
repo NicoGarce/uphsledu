@@ -503,15 +503,7 @@ include 'app/includes/header.php';
                 
                 <div class="facebook-feed">
                     <div class="facebook-embed">
-                        <div class="fb-page" 
-                             data-href="https://www.facebook.com/uphsl.info.ph" 
-                             data-tabs="timeline" 
-                             data-height="600" 
-                             data-small-header="true" 
-                             data-adapt-container-width="true" 
-                             data-hide-cover="false" 
-                             data-show-facepile="false">
-                        </div>
+                        <div class="fb-page" data-href="https://www.facebook.com/uphsl.info.ph" data-tabs="timeline" data-width="" data-height="" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
                     </div>
                     <div class="facebook-header">
                         <h3 class="facebook-title">
