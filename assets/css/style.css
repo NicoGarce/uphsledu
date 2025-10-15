@@ -3222,7 +3222,7 @@ img.loaded {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 40px;
-    align-items: start;
+    align-items: stretch;
 }
 
 /* News Carousel */
@@ -3442,7 +3442,9 @@ img.loaded {
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    height: fit-content;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .facebook-header {
@@ -3480,6 +3482,7 @@ img.loaded {
     align-items: center;
     justify-content: center;
     border-radius: 20px 20px 0 0;
+    flex: 1;
 }
 
 /* Ensure FB widget doesn't overflow container */
@@ -7171,3 +7174,25 @@ section, .section {
 }
 
 /* Removed per-page unification; banners will be copied into pages */
+
+/* Footer brand consistency */
+.footer .footer-logo-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer .university-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer .university-name {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.footer .university-tagline {
+    color: #ffc63e;
+    font-style: italic;
+}
