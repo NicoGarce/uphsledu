@@ -24,9 +24,9 @@ $base_path = $GLOBALS['base_path'];
     <title><?php echo isset($page_title) ? $page_title . ' - ' : ''; ?>University of Perpetual Help System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
-    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
-    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png">
+    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
+    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png">
     <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/style.css">
     <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/dashboard.css">
     <?php if (isset($additional_css)) echo $additional_css; ?>
