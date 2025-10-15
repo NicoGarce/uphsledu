@@ -90,10 +90,6 @@ include 'app/includes/header.php';
                                         </a>
                                     </h2>
                                     
-                                    <p class="post-card-excerpt">
-                                        <?php echo htmlspecialchars($post['excerpt'] ?? getExcerpt($post['content'], 120)); ?>
-                                    </p>
-                                    
                                     <div class="post-card-footer">
                                         <div class="post-stats">
                                             <span class="post-views">
