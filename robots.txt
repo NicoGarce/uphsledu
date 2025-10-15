@@ -1,0 +1,40 @@
+User-agent: *
+Allow: /
+
+# Disallow admin directories and files
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /uploads/
+Disallow: /online_payment/
+Disallow: /deploy-to-production.php
+Disallow: /ols_instructions.php
+
+# Allow main pages
+Allow: /
+Allow: /index.php
+Allow: /about.php
+Allow: /programs.php
+Allow: /posts.php
+Allow: /post.php
+Allow: /search.php
+Allow: /campuses.php
+Allow: /accessibility.php
+Allow: /privacy-policy.php
+Allow: /terms-of-service.php
+Allow: /sdg-initiatives.php
+
+# Allow assets
+Allow: /assets/
+Allow: /assets/css/
+Allow: /assets/js/
+Allow: /assets/images/
+Allow: /assets/documents/
+Allow: /assets/video/
+
+# Allow specific directories
+Allow: /about/
+Allow: /programs/
+Allow: /support-services/
+Allow: /calendar/
+
+Sitemap: https://uphsledu.com/sitemap.xml
