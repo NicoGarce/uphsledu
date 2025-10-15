@@ -422,13 +422,13 @@ include 'app/includes/header.php';
     <!-- News Section -->
     <section class="news-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Latest News & Announcements</h2>
-                <p class="section-description">Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna</p>
-            </div>
-            
             <div class="news-layout">
                 <div class="news-content">
+                    <div class="section-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
+                        <h2 class="section-title" style="color: white; margin-bottom: 0.5rem; font-size: 1.4rem;">Latest News & Announcements</h2>
+                        <p class="section-description" style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 0.9rem;">Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna</p>
+                    </div>
+                    
                     <?php if (!empty($recent_posts)): ?>
                         <div class="news-carousel-container">
                             <div class="news-carousel" id="newsCarousel">
