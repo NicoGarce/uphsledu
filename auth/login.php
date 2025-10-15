@@ -64,9 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login - University of Perpetual Help System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../assets/images/Logos/logo.png">
-    <link rel="shortcut icon" type="image/png" href="../assets/images/Logos/logo.png">
-    <link rel="apple-touch-icon" href="../assets/images/Logos/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/Logos/Logo2025.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/images/Logos/Logo2025.png">
+    <link rel="apple-touch-icon" href="../assets/images/Logos/Logo2025.png">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/auth.css">
 </head>
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="auth-card">
             <div class="auth-header">
                 <div class="auth-logo">
-                    <img src="../assets/images/Logos/logo.png" alt="University of Perpetual Help System" class="logo-img">
+                    <img src="../assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="logo-img">
                 </div>
                 <h1 class="auth-title">Welcome Back</h1>
                 <p class="auth-subtitle">Sign in to your account</p>
