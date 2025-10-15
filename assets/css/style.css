@@ -2574,8 +2574,8 @@ img.loaded {
 }
 
 /* Preload critical images */
-.hero-image {
-    opacity: 1; /* Hero image should be visible immediately */
+.hero-image, .news-slide-image img {
+    opacity: 1 !important; /* Hero and news slider images should be visible immediately */
 }
 
 /* Specific optimizations for post images */
