@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $facebookData = $stmt->fetch();
         
         if (!$facebookData) {
-            $error = "Facebook integration not configured. Please run setup_facebook_auto_renewal.php first.";
+            $error = "Facebook integration not configured. Please run setup_facebook_once.php first.";
         } else {
             $appId = $facebookData['app_id'];
             $appSecret = $facebookData['app_secret'];

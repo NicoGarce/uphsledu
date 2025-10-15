@@ -98,7 +98,7 @@ $base_path = $GLOBALS['base_path'];
         <?php endif; ?>
         
         <!-- Facebook App ID for better page sharing -->
-        <meta property="fb:app_id" content="">
+        <meta property="fb:app_id" content="1179084790748948">
         
         <!-- Optional Twitter card -->
         <meta name="twitter:card" content="summary_large_image">
