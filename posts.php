@@ -59,7 +59,6 @@ include 'app/includes/header.php';
                                         <img src="<?php echo htmlspecialchars($post['featured_image']); ?>" 
                                              alt="<?php echo htmlspecialchars($post['title']); ?>"
                                              class="card-image"
-                                             loading="lazy"
                                              decoding="async">
                                     <?php else: ?>
                                         <div class="card-image-placeholder">

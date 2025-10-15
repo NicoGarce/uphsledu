@@ -112,7 +112,6 @@ include 'app/includes/header.php';
                                         <img src="<?php echo htmlspecialchars($image['image_path']); ?>" 
                                              alt="<?php echo htmlspecialchars($image['image_alt'] ?? $post['title']); ?>"
                                              class="slide-image"
-                                             loading="lazy"
                                              decoding="async">
                                     </div>
                                 <?php endforeach; ?>
@@ -140,7 +139,6 @@ include 'app/includes/header.php';
                             <img src="<?php echo htmlspecialchars($images[0]['image_path']); ?>" 
                                  alt="<?php echo htmlspecialchars($images[0]['image_alt'] ?? $post['title']); ?>"
                                  class="featured-image"
-                                 loading="lazy"
                                  decoding="async">
                         </div>
                     <?php endif; ?>
