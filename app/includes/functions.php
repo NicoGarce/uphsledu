@@ -191,6 +191,12 @@ function getExcerpt($content, $length = 150) {
 // Optimize image for better performance
 function optimizeImage($filePath, $mimeType) {
     try {
+        // Check if GD extension is available
+        if (!extension_loaded('gd')) {
+            error_log("GD extension not available - skipping image optimization");
+            return true; // Return true to continue upload process
+        }
+        
         $maxWidth = 1920; // Max width for web display
         $maxHeight = 1080; // Max height for web display
         $quality = 85; // JPEG quality (0-100)
@@ -217,15 +223,31 @@ function optimizeImage($filePath, $mimeType) {
         // Create image resource based on type
         switch ($mimeType) {
             case 'image/jpeg':
+                if (!function_exists('imagecreatefromjpeg')) {
+                    error_log("imagecreatefromjpeg function not available");
+                    return true; // Skip optimization but continue
+                }
                 $source = imagecreatefromjpeg($filePath);
                 break;
             case 'image/png':
+                if (!function_exists('imagecreatefrompng')) {
+                    error_log("imagecreatefrompng function not available");
+                    return true; // Skip optimization but continue
+                }
                 $source = imagecreatefrompng($filePath);
                 break;
             case 'image/gif':
+                if (!function_exists('imagecreatefromgif')) {
+                    error_log("imagecreatefromgif function not available");
+                    return true; // Skip optimization but continue
+                }
                 $source = imagecreatefromgif($filePath);
                 break;
             case 'image/webp':
+                if (!function_exists('imagecreatefromwebp')) {
+                    error_log("imagecreatefromwebp function not available");
+                    return true; // Skip optimization but continue
+                }
                 $source = imagecreatefromwebp($filePath);
                 break;
             default:
@@ -253,17 +275,24 @@ function optimizeImage($filePath, $mimeType) {
         // Save optimized image
         switch ($mimeType) {
             case 'image/jpeg':
-                // Create non-progressive JPEG for smoother loading
-                imagejpeg($resized, $filePath, $quality);
+                if (function_exists('imagejpeg')) {
+                    imagejpeg($resized, $filePath, $quality);
+                }
                 break;
             case 'image/png':
-                imagepng($resized, $filePath, 9); // PNG compression level 0-9
+                if (function_exists('imagepng')) {
+                    imagepng($resized, $filePath, 9); // PNG compression level 0-9
+                }
                 break;
             case 'image/gif':
-                imagegif($resized, $filePath);
+                if (function_exists('imagegif')) {
+                    imagegif($resized, $filePath);
+                }
                 break;
             case 'image/webp':
-                imagewebp($resized, $filePath, $quality);
+                if (function_exists('imagewebp')) {
+                    imagewebp($resized, $filePath, $quality);
+                }
                 break;
         }
         
@@ -274,7 +303,7 @@ function optimizeImage($filePath, $mimeType) {
         return true;
     } catch (Exception $e) {
         error_log("Image optimization failed: " . $e->getMessage());
-        return false;
+        return true; // Return true to continue upload process even if optimization fails
     }
 }
 
