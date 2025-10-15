@@ -2574,8 +2574,10 @@ img.loaded {
 }
 
 /* Preload critical images */
-.hero-image, .news-slide-image img {
-    opacity: 1 !important; /* Hero and news slider images should be visible immediately */
+.hero-image, .news-slide-image img, .slide-image, .featured-image, .card-image, 
+.map-image, .floor-plan-image, .hospital-plan-image, .about-poster, .logo-img, 
+.mobile-logo-img, .footer-logo {
+    opacity: 1 !important; /* Critical images should be visible immediately */
 }
 
 /* Specific optimizations for post images */

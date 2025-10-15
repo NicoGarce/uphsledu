@@ -133,14 +133,11 @@
     /* Clean image rendering */
     transform: translateZ(0);
     backface-visibility: hidden;
-    /* Force smooth loading */
-    opacity: 0;
+    /* Force smooth loading - removed opacity 0 to prevent white images */
     transition: opacity 0.4s ease-in-out;
 }
 
-.slide-image.loaded {
-    opacity: 1;
-}
+/* Removed .loaded class - images are now visible by default */
 
 .slider-btn {
     position: absolute;

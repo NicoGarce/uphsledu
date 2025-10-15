@@ -108,14 +108,11 @@
     /* Clean image rendering */
     transform: translateZ(0);
     backface-visibility: hidden;
-    /* Force smooth loading */
-    opacity: 0;
-    transition: opacity 0.4s ease-in-out, transform 0.3s ease;
+    /* Force smooth loading - removed opacity 0 to prevent white images */
+    transition: transform 0.3s ease;
 }
 
-.card-image.loaded {
-    opacity: 1;
-}
+/* Removed .loaded class - images are now visible by default */
 
 .post-card:hover .card-image {
     transform: scale(1.05);
