@@ -615,8 +615,7 @@ body {
                 <div class="intro-logo">
                     <img src="<?php echo $base_path; ?>assets/images/sps/Picture1.png" alt="Student Personnel Services Logo">
                 </div>
-                <h2>Guidance & Admission</h2>
-                <h3 style="font-size: 1.2rem; font-weight: 500; margin-bottom: 1rem; opacity: 0.9;">Student Personnel Services</h3>
+                <h2>Student Personnel Services</h2>
                 <p class="intro-description">The Student Personnel Services (SPS) department is dedicated to providing comprehensive guidance and admission services to all students. We ensure proper admission procedures, maintain campus discipline, and support student activities while upholding the highest standards of academic integrity and moral conduct.</p>
                 <div class="intro-actions">
                     <a href="#admission" class="btn btn-primary">

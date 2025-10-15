@@ -120,7 +120,7 @@ include '../app/includes/header.php';
             <div class="service-icon">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <h3>Guidance & Admission</h3>
+            <h3>Student Personnel Services</h3>
             <p>Student Personnel Services providing comprehensive guidance and admission support for all students.</p>
             <a href="sps.php" class="service-link">
                 <i class="fas fa-arrow-right"></i>
