@@ -693,6 +693,27 @@ h2, h3, h4, h5, h6 {
     box-shadow: 0 20px 40px rgba(28, 77, 161, 0.15);
 }
 
+/* Smaller cards for Call Us, Email Us, and Office Hours */
+.contact-card:not(.visit-card) {
+    padding: 25px 20px;
+}
+
+.contact-card:not(.visit-card) .card-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.4rem;
+}
+
+.contact-card:not(.visit-card) .card-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+}
+
+.contact-card:not(.visit-card) .card-content p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
 .card-icon {
     width: 80px;
     height: 80px;

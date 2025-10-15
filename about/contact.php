@@ -88,29 +88,6 @@ include '../app/includes/header.php';
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Quick Links in Left Column -->
-                    <div class="quick-links-section">
-                        <h3 class="quick-links-title">Quick Links</h3>
-                        <div class="quick-links-grid">
-                            <a href="../programs.php" class="quick-link">
-                                <i class="fas fa-graduation-cap"></i>
-                                <span>Academic Programs</span>
-                            </a>
-                            <a href="../support-services/sps.php" class="quick-link">
-                                <i class="fas fa-user-graduate"></i>
-                                <span>Admissions</span>
-                            </a>
-                            <a href="../support-services/careers.php" class="quick-link">
-                                <i class="fas fa-briefcase"></i>
-                                <span>Careers</span>
-                            </a>
-                            <a href="../support-services/library.php" class="quick-link">
-                                <i class="fas fa-book"></i>
-                                <span>Library</span>
-                            </a>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Right Column: Additional Information -->
@@ -170,6 +147,29 @@ include '../app/includes/header.php';
                                 <a href="../programs.php" class="btn-secondary">
                                     <i class="fas fa-graduation-cap"></i>
                                     View Programs
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Links moved to Right Column -->
+                        <div class="quick-links-section">
+                            <h3 class="quick-links-title">Quick Links</h3>
+                            <div class="quick-links-grid">
+                                <a href="../programs.php" class="quick-link">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>Academic Programs</span>
+                                </a>
+                                <a href="../support-services/sps.php" class="quick-link">
+                                    <i class="fas fa-user-graduate"></i>
+                                    <span>Admissions</span>
+                                </a>
+                                <a href="../support-services/careers.php" class="quick-link">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Careers</span>
+                                </a>
+                                <a href="../support-services/library.php" class="quick-link">
+                                    <i class="fas fa-book"></i>
+                                    <span>Library</span>
                                 </a>
                             </div>
                         </div>
