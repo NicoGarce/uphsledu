@@ -2558,21 +2558,18 @@ img {
     /* Prevent layout shift during image loading */
     max-width: 100%;
     height: auto;
-    /* Smooth loading transition */
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
     /* Force hardware acceleration */
     transform: translateZ(0);
     will-change: opacity;
 }
 
+/* Only apply opacity transition to lazy loaded images */
 img[loading="lazy"] {
-    /* Lazy loaded images start invisible */
     opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
 img.loaded {
-    /* Show image when loaded */
     opacity: 1;
 }
 

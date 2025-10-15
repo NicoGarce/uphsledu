@@ -320,18 +320,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Handle regular images
+        // Handle regular images - make them visible immediately
         const regularImages = document.querySelectorAll('img:not([loading="lazy"]):not(.hero-image)');
         regularImages.forEach(img => {
+            img.style.opacity = '1'; // Make visible immediately
             if (img.complete) {
-                setTimeout(() => {
-                    img.classList.add('loaded');
-                }, 50);
+                img.classList.add('loaded');
             } else {
                 img.addEventListener('load', () => {
-                    setTimeout(() => {
-                        img.classList.add('loaded');
-                    }, 50);
+                    img.classList.add('loaded');
                 });
             }
         });
