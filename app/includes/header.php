@@ -147,13 +147,15 @@ $base_path = $GLOBALS['base_path'];
         .fa, .fas, .far, .fal, .fab { visibility: hidden; }
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
-        /* Prevent alt text flash for logos */
+        /* Prevent alt text flash for logos - hide immediately */
         .intro-logo img, .banner-logo img, .service-image img {
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded {
-            opacity: 1;
+            opacity: 1 !important;
+            visibility: visible !important;
         }
         
         /* Prevent logo text flash by hiding until image loads */
