@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (newsCarousel && newsPrev && newsNext && newsDots) {
         const slides = newsCarousel.querySelectorAll('.news-slide');
         let currentSlide = 0;
+        let autoPlayInterval;
         
         // Create dots
         slides.forEach((_, index) => {
@@ -80,12 +81,31 @@ document.addEventListener('DOMContentLoaded', function() {
             goToSlide(prev);
         }
         
+        // Function to start auto-play
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(nextSlide, 5000);
+        }
+        
+        // Function to stop auto-play
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+        
         // Event listeners
         newsNext.addEventListener('click', nextSlide);
         newsPrev.addEventListener('click', prevSlide);
         
-        // Auto-play carousel
-        setInterval(nextSlide, 5000);
+        // Start auto-play carousel
+        startAutoPlay();
+        
+        // Pause auto-play on hover
+        newsCarousel.addEventListener('mouseenter', stopAutoPlay);
+        
+        // Resume auto-play when mouse leaves
+        newsCarousel.addEventListener('mouseleave', startAutoPlay);
         
         // Touch/swipe support
         let startX = 0;

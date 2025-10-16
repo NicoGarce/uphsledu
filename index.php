@@ -364,8 +364,22 @@ include 'app/includes/header.php';
                 autoSlideInterval = setInterval(nextSlide, 20000); // Change slide every 20 seconds
             }
             
+            // Function to stop auto-slide
+            function stopAutoSlide() {
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                    autoSlideInterval = null;
+                }
+            }
+            
             // Start auto-slide
             startAutoSlide();
+            
+            // Pause auto-slide on hover
+            slider.addEventListener('mouseenter', stopAutoSlide);
+            
+            // Resume auto-slide when mouse leaves
+            slider.addEventListener('mouseleave', startAutoSlide);
         });
     </script>
 
