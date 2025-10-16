@@ -362,7 +362,8 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .dashboard-container {
-        padding: 20px 15px;
+        padding: 80px 15px 20px 15px;
+        margin-top: 0;
     }
 
     .dashboard-title {
@@ -911,7 +912,7 @@ body.sidebar-open {
     }
     
     .dashboard-container {
-        margin-top: 80px;
+        margin-top: 0;
     }
     
     .mobile-header {
