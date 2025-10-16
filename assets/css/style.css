@@ -5229,7 +5229,7 @@ img.loaded {
 
 .mobile-site-name {
     color: #ffffff;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     margin: 0;
     line-height: 1.2;
@@ -5374,7 +5374,7 @@ img.loaded {
 
 .mobile-dropdown-section h4 {
     color: #ffc63e;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     margin: 0 0 4px 0;
     padding: 0 20px;
@@ -5387,7 +5387,7 @@ img.loaded {
     display: block;
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    font-size: 11px;
+    font-size: 14px;
     font-family: 'Barlow Semi Condensed', sans-serif;
     font-weight: 700;
     padding: 4px 40px;
@@ -5457,7 +5457,7 @@ img.loaded {
     display: block;
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    font-size: 10px;
+    font-size: 13px;
     font-family: 'Barlow Semi Condensed', sans-serif;
     font-weight: 700;
     padding: 3px 20px;

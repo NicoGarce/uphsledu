@@ -392,26 +392,18 @@ $base_path = $GLOBALS['base_path'];
                 </div>
             </div>
             
-            <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['college-academic-calendar', 'bed-shs-academic-calendar'])) ? 'active' : ''; ?>">Calendar <i class="fas fa-chevron-down mobile-chevron"></i></a>
-                <div class="mobile-dropdown-menu">
-                    <a href="<?php echo $base_path; ?>calendar/college-academic-calendar.php" class="mobile-dropdown-link <?php echo ($current_page == 'college-academic-calendar') ? 'active' : ''; ?>">College Academic Calendar</a>
-                    <a href="<?php echo $base_path; ?>calendar/bed-shs-academic-calendar.php" class="mobile-dropdown-link <?php echo ($current_page == 'bed-shs-academic-calendar') ? 'active' : ''; ?>">BED & SHS Academic Calendar</a>
-                </div>
-            </div>
-            
             <div class="mobile-nav-item">
                 <a href="<?php echo $base_path; ?>campuses.php" class="mobile-nav-link <?php echo ($current_page == 'campuses') ? 'active' : ''; ?>">Campuses</a>
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">About <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['about', 'contact', 'environmental-policy', 'university-policy', 'map'])) ? 'active' : ''; ?>">About <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="<?php echo $base_path; ?>about" class="mobile-dropdown-link">About Us</a>
-                    <a href="<?php echo $base_path; ?>about/contact.php" class="mobile-dropdown-link">Contact Us</a>
-                    <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="mobile-dropdown-link">Environmental Policy</a>
-                    <a href="<?php echo $base_path; ?>about/university-policy.php" class="mobile-dropdown-link">University Policy</a>
-                    <a href="<?php echo $base_path; ?>about/map.php" class="mobile-dropdown-link">Map</a>
+                    <a href="<?php echo $base_path; ?>about" class="mobile-dropdown-link <?php echo ($current_page == 'about') ? 'active' : ''; ?>">About Us</a>
+                    <a href="<?php echo $base_path; ?>about/contact.php" class="mobile-dropdown-link <?php echo ($current_page == 'contact') ? 'active' : ''; ?>">Contact Us</a>
+                    <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="mobile-dropdown-link <?php echo ($current_page == 'environmental-policy') ? 'active' : ''; ?>">Environmental Policy</a>
+                    <a href="<?php echo $base_path; ?>about/university-policy.php" class="mobile-dropdown-link <?php echo ($current_page == 'university-policy') ? 'active' : ''; ?>">University Policy</a>
+                    <a href="<?php echo $base_path; ?>about/map.php" class="mobile-dropdown-link <?php echo ($current_page == 'map') ? 'active' : ''; ?>">Map</a>
                 </div>
             </div>
             
@@ -425,10 +417,10 @@ $base_path = $GLOBALS['base_path'];
             </div>
             
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Calendar <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="#" class="mobile-nav-link mobile-dropdown-toggle <?php echo (in_array($current_page, ['college-academic-calendar', 'bed-shs-academic-calendar'])) ? 'active' : ''; ?>">Calendar <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="<?php echo $base_path; ?>about/about.php" class="mobile-dropdown-link">College Academic Calendar</a>
-                    <a href="<?php echo $base_path; ?>about/about.php" class="mobile-dropdown-link">BED & SHS Academic Calendar</a>
+                    <a href="<?php echo $base_path; ?>calendar/college-academic-calendar.php" class="mobile-dropdown-link <?php echo ($current_page == 'college-academic-calendar') ? 'active' : ''; ?>">College Academic Calendar</a>
+                    <a href="<?php echo $base_path; ?>calendar/bed-shs-academic-calendar.php" class="mobile-dropdown-link <?php echo ($current_page == 'bed-shs-academic-calendar') ? 'active' : ''; ?>">BED & SHS Academic Calendar</a>
                 </div>
             </div>
             
