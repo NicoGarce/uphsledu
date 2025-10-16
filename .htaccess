@@ -1,6 +1,24 @@
 # Enable URL rewriting
 RewriteEngine On
 
+# Security Headers - Essential Protection for entire website
+<IfModule mod_headers.c>
+    # Prevent clickjacking attacks
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevent MIME type sniffing attacks
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Prevent XSS attacks
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Control referrer information
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Enforce HTTPS (uncomment when using SSL)
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
 # Prevent directory browsing
 Options -Indexes
 
