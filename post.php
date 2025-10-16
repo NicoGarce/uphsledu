@@ -174,15 +174,34 @@ include 'app/includes/header.php';
             <div class="post-body">
                 <div class="post-text">
                     <?php 
-                    // Convert content to proper HTML paragraphs
-                    $content = htmlspecialchars($post['content']);
-                    // Split by double line breaks to create paragraphs
-                    $paragraphs = preg_split('/\n\s*\n/', $content);
-                    foreach ($paragraphs as $paragraph) {
-                        $paragraph = trim($paragraph);
-                        if (!empty($paragraph)) {
-                            echo '<p>' . $paragraph . '</p>';
+                    // Display content as HTML (already sanitized in database)
+                    $content = $post['content'];
+                    
+                    // If content doesn't have HTML tags, convert line breaks to paragraphs and URLs to links
+                    if (strip_tags($content) === $content) {
+                        // Split by double line breaks to create paragraphs
+                        $paragraphs = preg_split('/\n\s*\n/', $content);
+                        foreach ($paragraphs as $paragraph) {
+                            $paragraph = trim($paragraph);
+                            if (!empty($paragraph)) {
+                                // First escape HTML to prevent XSS, then convert URLs to links
+                                $paragraph = htmlspecialchars($paragraph);
+                                
+                                // Convert URLs to clickable links (after escaping)
+                                $paragraph = preg_replace(
+                                    '/(https?:\/\/[^\s]+)/',
+                                    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
+                                    $paragraph
+                                );
+                                
+                                // Convert single line breaks to <br> tags within paragraphs
+                                $paragraph = nl2br($paragraph);
+                                echo '<p>' . $paragraph . '</p>';
+                            }
                         }
+                    } else {
+                        // Content already has HTML, display as-is
+                        echo $content;
                     }
                     ?>
                 </div>
