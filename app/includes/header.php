@@ -159,12 +159,23 @@ $base_path = $GLOBALS['base_path'];
         /* Prevent alt text flash for logos - hide immediately */
         .intro-logo img, .banner-logo img, .service-image img, .campus-image {
             opacity: 0 !important;
-            visibility: hidden !important;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded {
             opacity: 1 !important;
-            visibility: visible !important;
+        }
+        
+        /* Enhanced fade-in for specific image types */
+        .campus-image {
+            will-change: opacity;
+        }
+        
+        .intro-logo img {
+            will-change: opacity;
+        }
+        
+        .service-image img {
+            will-change: opacity;
         }
         
         /* Prevent logo text flash by hiding until image loads */
@@ -205,15 +216,29 @@ $base_path = $GLOBALS['base_path'];
         // Handle logo image loading to prevent alt text flash
         document.addEventListener('DOMContentLoaded', function() {
             const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image');
-            logoImages.forEach(function(img) {
+            let loadedCount = 0;
+            
+            logoImages.forEach(function(img, index) {
+                // Add staggered delay for multiple images
+                const delay = index * 100; // 100ms delay between each image
+                
                 if (img.complete) {
-                    img.classList.add('loaded');
+                    setTimeout(() => {
+                        img.classList.add('loaded');
+                        loadedCount++;
+                    }, delay);
                 } else {
                     img.addEventListener('load', function() {
-                        this.classList.add('loaded');
+                        setTimeout(() => {
+                            this.classList.add('loaded');
+                            loadedCount++;
+                        }, delay);
                     });
                     img.addEventListener('error', function() {
-                        this.classList.add('loaded'); // Show alt text if image fails to load
+                        setTimeout(() => {
+                            this.classList.add('loaded'); // Show alt text if image fails to load
+                            loadedCount++;
+                        }, delay);
                     });
                 }
             });
