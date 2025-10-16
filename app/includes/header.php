@@ -119,11 +119,11 @@ $base_path = $GLOBALS['base_path'];
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
         /* Prevent logo text flash by hiding until image loads */
-        .nav-logo, .mobile-sidebar-logo { 
+        .nav-logo, .mobile-sidebar-logo, .banner-logo, .intro-logo { 
             opacity: 0; 
             transition: opacity 0.2s ease-in-out;
         }
-        .logo-loaded .nav-logo, .logo-loaded .mobile-sidebar-logo { 
+        .logo-loaded .nav-logo, .logo-loaded .mobile-sidebar-logo, .logo-loaded .banner-logo, .logo-loaded .intro-logo { 
             opacity: 1; 
         }
     </style>
@@ -145,12 +145,62 @@ $base_path = $GLOBALS['base_path'];
                 }
             } catch (e) { document.documentElement.classList.add('icons-ready'); }
             
-            // Prevent logo text flash by showing logo only when image loads
-            const logoImg = new Image();
-            logoImg.onload = function() {
+            // Prevent logo text flash by showing logos only when images load
+            function preloadLogos() {
+                const logoImages = [
+                    '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png'
+                ];
+                
+                // Find all logo images on the current page
+                const bannerLogos = document.querySelectorAll('.banner-logo img');
+                const introLogos = document.querySelectorAll('.intro-logo img');
+                const pageLogos = [];
+                
+                // Collect all logo sources from the current page
+                bannerLogos.forEach(img => {
+                    if (img.src) pageLogos.push(img.src);
+                });
+                
+                introLogos.forEach(img => {
+                    if (img.src) pageLogos.push(img.src);
+                });
+                
+                // Combine navbar logo with page-specific logos
+                const allLogos = [...logoImages, ...pageLogos];
+                
+                let loadedCount = 0;
+                const totalLogos = allLogos.length;
+                
+                if (totalLogos === 0) {
+                    document.documentElement.classList.add('logo-loaded');
+                    return;
+                }
+                
+                allLogos.forEach(src => {
+                    const img = new Image();
+                    img.onload = function() {
+                        loadedCount++;
+                        if (loadedCount === totalLogos) {
+                            document.documentElement.classList.add('logo-loaded');
+                        }
+                    };
+                    img.onerror = function() {
+                        loadedCount++;
+                        if (loadedCount === totalLogos) {
+                            document.documentElement.classList.add('logo-loaded');
+                        }
+                    };
+                    img.src = src;
+                });
+            }
+            
+            // Run preload function
+            preloadLogos();
+            
+            // Fallback timeout to show logos after 3 seconds even if not all loaded
+            setTimeout(() => {
                 document.documentElement.classList.add('logo-loaded');
-            };
-            logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png';
+            }, 3000);
         })();
     </script>
     <!-- Navigation -->
