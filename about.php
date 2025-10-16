@@ -476,6 +476,8 @@ include 'app/includes/header.php';
     font-family: serif;
 }
 
+
+
 .philosophy-author {
     font-size: 1.1rem;
     color: var(--secondary-color);
@@ -484,6 +486,8 @@ include 'app/includes/header.php';
     letter-spacing: 1px;
     margin-top: 1rem;
 }
+
+
 
 .quality-objectives {
     display: grid;
@@ -527,7 +531,97 @@ include 'app/includes/header.php';
     font-weight: bold;
 }
 
-/* Mobile Responsive */
+/* Simple Wood Frame Styling for Mission and Vision */
+.mission-vision-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.mission-frame, .vision-frame {
+    position: relative;
+    background: #8B4513;
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: 
+        0 0 0 1px #DAA520,
+        0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.mission-frame:hover, .vision-frame:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 0 0 1px #DAA520,
+        0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.mission-content, .vision-content {
+    background: #FFFEF7;
+    padding: 3rem 2.5rem;
+    border-radius: 6px;
+    position: relative;
+    border: 1px solid #F5E6A3;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.mission-title, .vision-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #8B4513;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    letter-spacing: 0.5px;
+}
+
+.mission-title::after, .vision-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: #DAA520;
+    border-radius: 1px;
+}
+
+.mission-text, .vision-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #2F4F4F;
+    text-align: justify;
+    position: relative;
+    font-weight: 400;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.mission-text p, .vision-text p {
+    margin-bottom: 1.5rem;
+    text-indent: 1.5rem;
+    flex: 1;
+}
+
+.mission-text p:last-child, .vision-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* Tablet and Mobile Responsive */
+@media (max-width: 1024px) {
+    .mission-vision-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin: 2.5rem 0;
+    }
+}
+
 @media (max-width: 768px) {
     .intro-content {
         grid-template-columns: 1fr;
@@ -826,6 +920,34 @@ include 'app/includes/header.php';
         font-size: 0.75rem;
         margin-top: 0.6rem;
     }
+    
+    .mission-frame, .vision-frame {
+        padding: 3px;
+        border-radius: 6px;
+    }
+    
+    .mission-content, .vision-content {
+        padding: 2.5rem 2rem;
+        border-radius: 4px;
+        height: auto;
+    }
+    
+    .mission-title, .vision-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .mission-text, .vision-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        flex: none;
+    }
+    
+    .mission-text p, .vision-text p {
+        text-indent: 1.2rem;
+        margin-bottom: 1.2rem;
+        flex: none;
+    }
 }
 </style>
 
@@ -941,31 +1063,39 @@ include 'app/includes/header.php';
                 </div>
             </div>
 
-            <!-- Mission Section -->
+            <!-- Mission and Vision Section -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2 class="section-title">Our Mission</h2>
+                    <h2 class="section-title">Mission & Vision</h2>
                 </div>
-                <div class="section-content">
-                    <p>The University of Perpetual Help System is dedicated to the development of the Filipino as a leader. It aims to graduate dynamic students who are physically, intellectually, socially and spiritually committed to the achievement of the best quality of life.</p>
+                <div class="mission-vision-container">
+                    <!-- Mission Frame -->
+                    <div class="mission-frame">
+                        <div class="mission-content">
+                            <h3 class="mission-title">Mission</h3>
+                            <div class="mission-text">
+                                <p>The University of Perpetual Help System is dedicated to the development of the Filipino as a leader. It aims to graduate dynamic students who are physically, intellectually, socially and spiritually committed to the achievement of the best quality of life.</p>
+                                
+                                <p>As a system of service in health and education, the University of Perpetual Help System is dedicated to the formation of Christian, services and research oriented professionals and leaders in quality education and health care.</p>
+                                
+                                <p>It shall produce Perpetualites who outstandingly value the virtues of reaching out and helping others as vital ingredients to nation building.</p>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <p>As a system of service in health and education, the University of Perpetual Help System is dedicated to the formation of Christian, services and research oriented professionals and leaders in quality education and health care.</p>
-                    
-                    <p>It shall produce Perpetualites who outstandingly value the virtues of reaching out and helping others as vital ingredients to nation building.</p>
-                </div>
-            </div>
-
-            <!-- Vision Section -->
-            <div class="content-section">
-                <div class="section-header">
-                    <h2 class="section-title">Our Vision</h2>
-                </div>
-                <div class="section-content">
-                    <p>The University of Perpetual Help System is a premier University that provides unique and innovative educational processes, contents, end-results for the pursuit of excellence in academics, technology, and research through community partnership and industry linkages.</p>
-                    
-                    <p>The University takes the lead role as a catalyst for human resource development, continues to inculcate values as way of strengthening the moral fiber of the Filipino individuals proud of their race and prepared for exemplary global participation in the realm of arts, sciences, humanities, and business.</p>
-                    
-                    <p>It sees the Filipino people enjoying quality and abundant life, living in peace and building a nation that the next generations shall be nourishing, cherishing and valuing.</p>
+                    <!-- Vision Frame -->
+                    <div class="vision-frame">
+                        <div class="vision-content">
+                            <h3 class="vision-title">Vision</h3>
+                            <div class="vision-text">
+                                <p>The University of Perpetual Help System is a premier University that provides unique and innovative educational processes, contents, end-results for the pursuit of excellence in academics, technology, and research through community partnership and industry linkages.</p>
+                                
+                                <p>The University takes the lead role as a catalyst for human resource development, continues to inculcate values as way of strengthening the moral fiber of the Filipino individuals proud of their race and prepared for exemplary global participation in the realm of arts, sciences, humanities, and business.</p>
+                                
+                                <p>It sees the Filipino people enjoying quality and abundant life, living in peace and building a nation that the next generations shall be nourishing, cherishing and valuing.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1165,9 +1295,8 @@ include 'app/includes/header.php';
     </section>
     </main>
 
+
 <?php
 // Include footer
-include 'app/includes/footer.php';
-?>
 include 'app/includes/footer.php';
 ?>
