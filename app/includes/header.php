@@ -68,6 +68,26 @@ $base_path = $GLOBALS['base_path'];
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <!-- Preload critical logo image to prevent text flash -->
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" as="image" type="image/png">
+    
+    <!-- Preload program logos to prevent alt text flash -->
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-cihm-logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-shs-logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-educ-logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-criminology-logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/CCS-Logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-cba_logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/aviation_logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-cas-logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/logo-cmt.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/logo-law.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/graduate-school-logo.png" as="image" type="image/png">
+    
+    <!-- Preload support service logos to prevent alt text flash -->
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/sps/Picture1.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/library/logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/research/uphsl-research-logo.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/cod/UPHSL-COD.png" as="image" type="image/png">
     <?php if (!empty($og) && is_array($og)): ?>
         <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
@@ -118,16 +138,12 @@ $base_path = $GLOBALS['base_path'];
         .fa, .fas, .far, .fal, .fab { visibility: hidden; }
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
-        /* Prevent logo text flash by hiding until image loads - Specific Logo Loading System */
-        .nav-logo img, .mobile-sidebar-logo img, .banner-logo img, .intro-logo img, 
-        .footer-logo, .auth-logo img, .sidebar-logo img, .department-logo, 
-        .logo-section img, .logo-image-container img, .perpslogo { 
+        /* Prevent logo text flash by hiding until image loads */
+        .nav-logo, .mobile-sidebar-logo { 
             opacity: 0; 
             transition: opacity 0.2s ease-in-out;
         }
-        .logo-loaded .nav-logo img, .logo-loaded .mobile-sidebar-logo img, .logo-loaded .banner-logo img, .logo-loaded .intro-logo img,
-        .logo-loaded .footer-logo, .logo-loaded .auth-logo img, .logo-loaded .sidebar-logo img, .logo-loaded .department-logo,
-        .logo-loaded .logo-section img, .logo-loaded .logo-image-container img, .logo-loaded .perpslogo { 
+        .logo-loaded .nav-logo, .logo-loaded .mobile-sidebar-logo { 
             opacity: 1; 
         }
     </style>
@@ -149,85 +165,12 @@ $base_path = $GLOBALS['base_path'];
                 }
             } catch (e) { document.documentElement.classList.add('icons-ready'); }
             
-            // Universal Logo Loading System - Prevents logo text flash for ALL logos
-            function preloadLogos() {
-                const logoImages = [
-                    '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png'
-                ];
-                
-                // Find specific logo images on the current page
-                const logoSelectors = [
-                    '.banner-logo img',
-                    '.intro-logo img', 
-                    '.nav-logo img',
-                    '.mobile-sidebar-logo img',
-                    '.footer-logo',
-                    '.auth-logo img',
-                    '.sidebar-logo img',
-                    '.department-logo',
-                    '.logo-section img',
-                    '.logo-image-container img',
-                    '.perpslogo'
-                ];
-                
-                const pageLogos = [];
-                const processedSources = new Set(); // Prevent duplicate loading
-                
-                // Collect all logo sources from the current page
-                logoSelectors.forEach(selector => {
-                    try {
-                        const elements = document.querySelectorAll(selector);
-                        elements.forEach(img => {
-                            if (img.src && !processedSources.has(img.src)) {
-                                pageLogos.push(img.src);
-                                processedSources.add(img.src);
-                            }
-                        });
-                    } catch (e) {
-                        // Skip invalid selectors
-                    }
-                });
-                
-                // Combine navbar logo with page-specific logos
-                const allLogos = [...logoImages, ...pageLogos];
-                
-                let loadedCount = 0;
-                const totalLogos = allLogos.length;
-                
-                if (totalLogos === 0) {
-                    document.documentElement.classList.add('logo-loaded');
-                    return;
-                }
-                
-                allLogos.forEach(src => {
-                    const img = new Image();
-                    img.onload = function() {
-                        loadedCount++;
-                        if (loadedCount === totalLogos) {
-                            document.documentElement.classList.add('logo-loaded');
-                        }
-                    };
-                    img.onerror = function() {
-                        loadedCount++;
-                        if (loadedCount === totalLogos) {
-                            document.documentElement.classList.add('logo-loaded');
-                        }
-                    };
-                    img.src = src;
-                });
-            }
-            
-            // Run preload function after DOM is loaded
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', preloadLogos);
-            } else {
-                preloadLogos();
-            }
-            
-            // Fallback timeout to show logos after 3 seconds even if not all loaded
-            setTimeout(() => {
+            // Prevent logo text flash by showing logo only when image loads
+            const logoImg = new Image();
+            logoImg.onload = function() {
                 document.documentElement.classList.add('logo-loaded');
-            }, 3000);
+            };
+            logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png';
         })();
     </script>
     <!-- Navigation -->

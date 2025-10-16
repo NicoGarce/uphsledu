@@ -84,10 +84,6 @@ body {
     transition: transform 0.3s ease;
 }
 
-.intro-logo img:hover {
-    transform: scale(1.05);
-}
-
 .intro-content h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
