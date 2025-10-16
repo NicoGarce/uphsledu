@@ -118,12 +118,16 @@ $base_path = $GLOBALS['base_path'];
         .fa, .fas, .far, .fal, .fab { visibility: hidden; }
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
-        /* Prevent logo text flash by hiding until image loads */
-        .nav-logo, .mobile-sidebar-logo, .banner-logo, .intro-logo { 
+        /* Prevent logo text flash by hiding until image loads - Specific Logo Loading System */
+        .nav-logo img, .mobile-sidebar-logo img, .banner-logo img, .intro-logo img, 
+        .footer-logo, .auth-logo img, .sidebar-logo img, .department-logo, 
+        .logo-section img, .logo-image-container img, .perpslogo { 
             opacity: 0; 
             transition: opacity 0.2s ease-in-out;
         }
-        .logo-loaded .nav-logo, .logo-loaded .mobile-sidebar-logo, .logo-loaded .banner-logo, .logo-loaded .intro-logo { 
+        .logo-loaded .nav-logo img, .logo-loaded .mobile-sidebar-logo img, .logo-loaded .banner-logo img, .logo-loaded .intro-logo img,
+        .logo-loaded .footer-logo, .logo-loaded .auth-logo img, .logo-loaded .sidebar-logo img, .logo-loaded .department-logo,
+        .logo-loaded .logo-section img, .logo-loaded .logo-image-container img, .logo-loaded .perpslogo { 
             opacity: 1; 
         }
     </style>
@@ -145,24 +149,43 @@ $base_path = $GLOBALS['base_path'];
                 }
             } catch (e) { document.documentElement.classList.add('icons-ready'); }
             
-            // Prevent logo text flash by showing logos only when images load
+            // Universal Logo Loading System - Prevents logo text flash for ALL logos
             function preloadLogos() {
                 const logoImages = [
                     '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png'
                 ];
                 
-                // Find all logo images on the current page
-                const bannerLogos = document.querySelectorAll('.banner-logo img');
-                const introLogos = document.querySelectorAll('.intro-logo img');
+                // Find specific logo images on the current page
+                const logoSelectors = [
+                    '.banner-logo img',
+                    '.intro-logo img', 
+                    '.nav-logo img',
+                    '.mobile-sidebar-logo img',
+                    '.footer-logo',
+                    '.auth-logo img',
+                    '.sidebar-logo img',
+                    '.department-logo',
+                    '.logo-section img',
+                    '.logo-image-container img',
+                    '.perpslogo'
+                ];
+                
                 const pageLogos = [];
+                const processedSources = new Set(); // Prevent duplicate loading
                 
                 // Collect all logo sources from the current page
-                bannerLogos.forEach(img => {
-                    if (img.src) pageLogos.push(img.src);
-                });
-                
-                introLogos.forEach(img => {
-                    if (img.src) pageLogos.push(img.src);
+                logoSelectors.forEach(selector => {
+                    try {
+                        const elements = document.querySelectorAll(selector);
+                        elements.forEach(img => {
+                            if (img.src && !processedSources.has(img.src)) {
+                                pageLogos.push(img.src);
+                                processedSources.add(img.src);
+                            }
+                        });
+                    } catch (e) {
+                        // Skip invalid selectors
+                    }
                 });
                 
                 // Combine navbar logo with page-specific logos
@@ -194,8 +217,12 @@ $base_path = $GLOBALS['base_path'];
                 });
             }
             
-            // Run preload function
-            preloadLogos();
+            // Run preload function after DOM is loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', preloadLogos);
+            } else {
+                preloadLogos();
+            }
             
             // Fallback timeout to show logos after 3 seconds even if not all loaded
             setTimeout(() => {
