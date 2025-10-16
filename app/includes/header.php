@@ -97,6 +97,15 @@ $base_path = $GLOBALS['base_path'];
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/starbooks.png" as="image" type="image/png">
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/escra.png" as="image" type="image/png">
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/turnitin.png" as="image" type="image/png">
+    
+    <!-- Preload campus images to prevent alt text flash -->
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/FACADE.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/gma-college.jpeg" as="image" type="image/jpeg">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/sampaloc-college.jpeg" as="image" type="image/jpeg">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/uphs-pangasinan.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/Cauayan-college.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/pueblo-college.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/Allied.png" as="image" type="image/png">
     <?php if (!empty($og) && is_array($og)): ?>
         <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
@@ -148,12 +157,12 @@ $base_path = $GLOBALS['base_path'];
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
         /* Prevent alt text flash for logos - hide immediately */
-        .intro-logo img, .banner-logo img, .service-image img {
+        .intro-logo img, .banner-logo img, .service-image img, .campus-image {
             opacity: 0 !important;
             visibility: hidden !important;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded {
+        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded {
             opacity: 1 !important;
             visibility: visible !important;
         }
@@ -195,7 +204,7 @@ $base_path = $GLOBALS['base_path'];
         
         // Handle logo image loading to prevent alt text flash
         document.addEventListener('DOMContentLoaded', function() {
-            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img');
+            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image');
             logoImages.forEach(function(img) {
                 if (img.complete) {
                     img.classList.add('loaded');
