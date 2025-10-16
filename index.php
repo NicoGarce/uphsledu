@@ -465,7 +465,7 @@ include 'app/includes/header.php';
             <div class="news-layout">
                 <div class="news-content">
                     <div class="section-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center;">
-                        <h2 class="section-title" style="color: white; margin-bottom: 0.5rem; font-size: 1.4rem;">Latest News & Announcements</h2>
+                        <h2 class="section-title" style="color: white; margin-bottom: 0.5rem; font-size: 1.4rem;">News & Announcements</h2>
                         <p class="section-description" style="color: rgba(255, 255, 255, 0.9); margin: 0; font-size: 0.9rem;">Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna</p>
                     </div>
                     
@@ -523,12 +523,15 @@ include 'app/includes/header.php';
                             <div class="social-media-icons">
                                 <a href="https://www.youtube.com/@uphsltv1397" target="_blank" rel="noopener" class="social-icon youtube" title="Subscribe to our YouTube">
                                     <i class="fab fa-youtube"></i>
+                                    <span class="social-label">YouTube</span>
                                 </a>
                                 <a href="https://www.instagram.com/uphs.laguna" target="_blank" rel="noopener" class="social-icon instagram" title="Follow us on Instagram">
                                     <i class="fab fa-instagram"></i>
+                                    <span class="social-label">Instagram</span>
                                 </a>
                                 <a href="https://tiktok.com/@uphs.laguna" target="_blank" rel="noopener" class="social-icon tiktok" title="Follow us on TikTok">
                                     <i class="fab fa-tiktok"></i>
+                                    <span class="social-label">TikTok</span>
                                 </a>
                             </div>
                         </div>
@@ -542,15 +545,15 @@ include 'app/includes/header.php';
                 </div>
                 
                 <div class="facebook-feed">
-                    <div class="facebook-embed">
-                        <div class="fb-page" data-href="https://www.facebook.com/uphsl.info.ph" data-tabs="timeline" data-width="" data-height="650" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
-                    </div>
-                    <div class="facebook-header">
+                    <a href="https://www.facebook.com/uphsl.info.ph" target="_blank" rel="noopener" class="facebook-header">
                         <h3 class="facebook-title">
                             <i class="fab fa-facebook"></i>
                             Follow Us on Facebook
                         </h3>
                         <p class="facebook-subtitle">Stay connected with our latest updates</p>
+                    </a>
+                    <div class="facebook-embed">
+                        <div class="fb-page" data-href="https://www.facebook.com/uphsl.info.ph" data-tabs="timeline" data-width="" data-height="650" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
                     </div>
                 </div>
             </div>
