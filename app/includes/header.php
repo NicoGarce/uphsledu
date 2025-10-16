@@ -85,9 +85,18 @@ $base_path = $GLOBALS['base_path'];
     
     <!-- Preload support service logos to prevent alt text flash -->
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/sps/Picture1.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/sps/Handbook.png" as="image" type="image/png">
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/library/logo.png" as="image" type="image/png">
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/research/uphsl-research-logo.png" as="image" type="image/png">
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/cod/UPHSL-COD.png" as="image" type="image/png">
+    
+    <!-- Preload library service images to prevent alt text flash -->
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-opac.jpg" as="image" type="image/jpeg">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-ebsco.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-pej.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/starbooks.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/escra.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/turnitin.png" as="image" type="image/png">
     <?php if (!empty($og) && is_array($og)): ?>
         <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
@@ -138,6 +147,15 @@ $base_path = $GLOBALS['base_path'];
         .fa, .fas, .far, .fal, .fab { visibility: hidden; }
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
+        /* Prevent alt text flash for logos */
+        .intro-logo img, .banner-logo img, .service-image img {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded {
+            opacity: 1;
+        }
+        
         /* Prevent logo text flash by hiding until image loads */
         .nav-logo, .mobile-sidebar-logo { 
             opacity: 0; 
@@ -172,6 +190,23 @@ $base_path = $GLOBALS['base_path'];
             };
             logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png';
         })();
+        
+        // Handle logo image loading to prevent alt text flash
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img');
+            logoImages.forEach(function(img) {
+                if (img.complete) {
+                    img.classList.add('loaded');
+                } else {
+                    img.addEventListener('load', function() {
+                        this.classList.add('loaded');
+                    });
+                    img.addEventListener('error', function() {
+                        this.classList.add('loaded'); // Show alt text if image fails to load
+                    });
+                }
+            });
+        });
     </script>
     <!-- Navigation -->
     <nav class="navbar">
