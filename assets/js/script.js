@@ -101,11 +101,21 @@ document.addEventListener('DOMContentLoaded', function() {
         // Start auto-play carousel
         startAutoPlay();
         
-        // Pause auto-play on hover
+        // Pause auto-play on hover over carousel
         newsCarousel.addEventListener('mouseenter', stopAutoPlay);
         
-        // Resume auto-play when mouse leaves
+        // Resume auto-play when mouse leaves carousel
         newsCarousel.addEventListener('mouseleave', startAutoPlay);
+        
+        // Pause auto-play on hover over navigation controls
+        newsPrev.addEventListener('mouseenter', stopAutoPlay);
+        newsNext.addEventListener('mouseenter', stopAutoPlay);
+        newsDots.addEventListener('mouseenter', stopAutoPlay);
+        
+        // Resume auto-play when mouse leaves navigation controls
+        newsPrev.addEventListener('mouseleave', startAutoPlay);
+        newsNext.addEventListener('mouseleave', startAutoPlay);
+        newsDots.addEventListener('mouseleave', startAutoPlay);
         
         // Touch/swipe support
         let startX = 0;
