@@ -165,6 +165,32 @@ $base_path = $GLOBALS['base_path'];
             opacity: 1 !important;
         }
         
+        /* Loading placeholder for image containers */
+        .campus-image-container, .intro-logo, .service-image {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .campus-image-container.loading::before, 
+        .intro-logo.loading::before, 
+        .service-image.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading-shimmer 1.5s infinite;
+            z-index: 1;
+        }
+        
+        @keyframes loading-shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
         /* Enhanced fade-in for specific image types */
         .campus-image {
             will-change: opacity;
@@ -219,24 +245,39 @@ $base_path = $GLOBALS['base_path'];
             let loadedCount = 0;
             
             logoImages.forEach(function(img, index) {
+                // Add loading class to container
+                const container = img.closest('.campus-image-container, .intro-logo, .service-image');
+                if (container) {
+                    container.classList.add('loading');
+                }
+                
                 // Add staggered delay for multiple images
                 const delay = index * 100; // 100ms delay between each image
                 
                 if (img.complete) {
                     setTimeout(() => {
                         img.classList.add('loaded');
+                        if (container) {
+                            container.classList.remove('loading');
+                        }
                         loadedCount++;
                     }, delay);
                 } else {
                     img.addEventListener('load', function() {
                         setTimeout(() => {
                             this.classList.add('loaded');
+                            if (container) {
+                                container.classList.remove('loading');
+                            }
                             loadedCount++;
                         }, delay);
                     });
                     img.addEventListener('error', function() {
                         setTimeout(() => {
                             this.classList.add('loaded'); // Show alt text if image fails to load
+                            if (container) {
+                                container.classList.remove('loading');
+                            }
                             loadedCount++;
                         }, delay);
                     });
