@@ -27,6 +27,114 @@
     margin-bottom: 0;
 }
 
+/* Links within post content */
+.post-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.post-text a:hover {
+    color: var(--secondary-color);
+    border-bottom-color: var(--alt-color-1);
+    text-decoration: none;
+}
+
+.post-text a:visited {
+    color: var(--tertiary-color);
+}
+
+.post-text a:focus {
+    outline: 2px solid var(--alt-color-1);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Other HTML elements in post content */
+.post-text h1,
+.post-text h2,
+.post-text h3,
+.post-text h4,
+.post-text h5,
+.post-text h6 {
+    color: var(--text-dark);
+    margin: 2rem 0 1rem 0;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.post-text h1 { font-size: 2rem; }
+.post-text h2 { font-size: 1.75rem; }
+.post-text h3 { font-size: 1.5rem; }
+.post-text h4 { font-size: 1.25rem; }
+.post-text h5 { font-size: 1.1rem; }
+.post-text h6 { font-size: 1rem; }
+
+.post-text ul,
+.post-text ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.post-text li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.post-text blockquote {
+    border-left: 4px solid var(--alt-color-1);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--text-light);
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0 8px 8px 0;
+}
+
+.post-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-text strong {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.post-text em {
+    font-style: italic;
+}
+
+.post-text code {
+    background: #f1f3f4;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: var(--primary-color);
+}
+
+.post-text pre {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid #e5e7eb;
+}
+
+.post-text pre code {
+    background: none;
+    padding: 0;
+    color: var(--text-dark);
+}
+
 .post-container {
     max-width: 1200px;
     margin: 0 auto;
