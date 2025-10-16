@@ -592,101 +592,107 @@ include 'app/includes/header.php';
     
     .history-timeline::before {
         left: 1.5rem;
-        width: 3px;
+        width: 2px;
     }
     
     .timeline-item {
-        padding-left: 3.5rem;
+        padding-left: 3rem;
         margin-bottom: 2.5rem;
     }
     
     .timeline-item::before {
-        left: -1.25rem;
-        width: 18px;
-        height: 18px;
+        left: -1rem;
+        width: 14px;
+        height: 14px;
     }
     
     .timeline-item::after {
-        left: -1.25rem;
-        width: 18px;
-        height: 18px;
+        left: -1rem;
+        width: 14px;
+        height: 14px;
     }
     
     .timeline-card {
-        padding: 2rem;
-    }
-    
-    .timeline-year {
-        font-size: 1.3rem;
+        padding: 1.8rem;
         margin-bottom: 1rem;
     }
     
-    .timeline-title {
+    .timeline-year {
         font-size: 1.2rem;
         margin-bottom: 1rem;
     }
     
+    .timeline-title {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        line-height: 1.3;
+    }
+    
     .timeline-content {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
     }
     
     .timeline-highlight {
         padding: 1rem;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         margin-top: 1rem;
     }
 }
 
 @media (max-width: 600px) {
     .history-timeline {
-        padding-left: 1rem;
+        padding-left: 1.2rem;
         margin-top: 2rem;
     }
     
     .history-timeline::before {
-        left: 1rem;
-        width: 3px;
+        left: 1.2rem;
+        width: 2px;
     }
     
     .timeline-item {
-        padding-left: 3rem;
-        margin-bottom: 2rem;
+        padding-left: 2.5rem;
+        margin-bottom: 2.5rem;
     }
     
     .timeline-item::before {
-        left: -1rem;
-        width: 16px;
-        height: 16px;
+        left: -0.8rem;
+        width: 12px;
+        height: 12px;
     }
     
     .timeline-item::after {
-        left: -1rem;
-        width: 16px;
-        height: 16px;
+        left: -0.8rem;
+        width: 12px;
+        height: 12px;
     }
     
     .timeline-card {
-        padding: 1.8rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
     }
     
     .timeline-year {
-        font-size: 1.2rem;
-        margin-bottom: 0.9rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
     }
     
     .timeline-title {
-        font-size: 1.1rem;
-        margin-bottom: 0.9rem;
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+        line-height: 1.3;
     }
     
     .timeline-content {
-        font-size: 0.98rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
     }
     
     .timeline-highlight {
-        padding: 0.9rem;
-        font-size: 0.92rem;
-        margin-top: 0.9rem;
+        padding: 0.8rem;
+        font-size: 0.85rem;
+        margin-top: 0.8rem;
     }
 }
 
@@ -701,68 +707,124 @@ include 'app/includes/header.php';
     }
     
     .history-timeline {
-        padding-left: 0.5rem;
+        padding-left: 1rem;
         margin-top: 2rem;
     }
     
     .history-timeline::before {
-        left: 0.5rem;
-        width: 3px;
+        left: 1rem;
+        width: 2px;
     }
     
     .timeline-item {
-        padding-left: 2.5rem;
-        margin-bottom: 2rem;
+        padding-left: 2.2rem;
+        margin-bottom: 2.5rem;
     }
     
     .timeline-item::before {
-        left: -0.75rem;
-        width: 16px;
-        height: 16px;
-        border: 3px solid white;
-        box-shadow: 0 0 0 3px var(--primary-color);
+        left: -0.7rem;
+        width: 10px;
+        height: 10px;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px var(--primary-color);
     }
     
     .timeline-item::after {
-        left: -0.75rem;
-        width: 16px;
-        height: 16px;
+        left: -0.7rem;
+        width: 10px;
+        height: 10px;
     }
     
     .timeline-card {
-        padding: 1.5rem;
-        border-radius: 15px;
+        padding: 1.3rem;
+        border-radius: 12px;
         margin-left: 0;
+        margin-bottom: 1rem;
     }
     
     .timeline-year {
-        font-size: 1.1rem;
-        margin-bottom: 0.8rem;
+        font-size: 1rem;
+        margin-bottom: 0.7rem;
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.5rem;
+        gap: 0.3rem;
     }
     
     .timeline-year::before {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     
     .timeline-title {
-        font-size: 1rem;
-        margin-bottom: 0.8rem;
+        font-size: 0.95rem;
+        margin-bottom: 0.7rem;
         line-height: 1.3;
     }
     
     .timeline-content {
-        font-size: 0.95rem;
-        line-height: 1.6;
+        font-size: 0.85rem;
+        line-height: 1.5;
     }
     
     .timeline-highlight {
-        padding: 0.8rem;
+        padding: 0.7rem;
+        font-size: 0.8rem;
+        margin-top: 0.7rem;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 360px) {
+    .history-timeline {
+        padding-left: 0.8rem;
+        margin-top: 2rem;
+    }
+    
+    .history-timeline::before {
+        left: 0.8rem;
+        width: 1.5px;
+    }
+    
+    .timeline-item {
+        padding-left: 1.8rem;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-item::before {
+        left: -0.5rem;
+        width: 8px;
+        height: 8px;
+    }
+    
+    .timeline-item::after {
+        left: -0.5rem;
+        width: 8px;
+        height: 8px;
+    }
+    
+    .timeline-card {
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .timeline-year {
         font-size: 0.9rem;
-        margin-top: 0.8rem;
-        border-radius: 8px;
+        margin-bottom: 0.6rem;
+    }
+    
+    .timeline-title {
+        font-size: 0.85rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .timeline-content {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .timeline-highlight {
+        padding: 0.6rem;
+        font-size: 0.75rem;
+        margin-top: 0.6rem;
     }
 }
 </style>
@@ -1105,5 +1167,7 @@ include 'app/includes/header.php';
 
 <?php
 // Include footer
+include 'app/includes/footer.php';
+?>
 include 'app/includes/footer.php';
 ?>
