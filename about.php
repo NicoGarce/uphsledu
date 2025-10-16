@@ -584,6 +584,110 @@ include 'app/includes/header.php';
     .quality-objectives {
         grid-template-columns: 1fr;
     }
+    
+    .history-timeline {
+        padding-left: 1.5rem;
+        margin-top: 2.5rem;
+    }
+    
+    .history-timeline::before {
+        left: 1.5rem;
+        width: 3px;
+    }
+    
+    .timeline-item {
+        padding-left: 3.5rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .timeline-item::before {
+        left: -1.25rem;
+        width: 18px;
+        height: 18px;
+    }
+    
+    .timeline-item::after {
+        left: -1.25rem;
+        width: 18px;
+        height: 18px;
+    }
+    
+    .timeline-card {
+        padding: 2rem;
+    }
+    
+    .timeline-year {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .timeline-title {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .timeline-content {
+        font-size: 1rem;
+    }
+    
+    .timeline-highlight {
+        padding: 1rem;
+        font-size: 0.95rem;
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .history-timeline {
+        padding-left: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .history-timeline::before {
+        left: 1rem;
+        width: 3px;
+    }
+    
+    .timeline-item {
+        padding-left: 3rem;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-item::before {
+        left: -1rem;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .timeline-item::after {
+        left: -1rem;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .timeline-card {
+        padding: 1.8rem;
+    }
+    
+    .timeline-year {
+        font-size: 1.2rem;
+        margin-bottom: 0.9rem;
+    }
+    
+    .timeline-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.9rem;
+    }
+    
+    .timeline-content {
+        font-size: 0.98rem;
+    }
+    
+    .timeline-highlight {
+        padding: 0.9rem;
+        font-size: 0.92rem;
+        margin-top: 0.9rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -597,39 +701,68 @@ include 'app/includes/header.php';
     }
     
     .history-timeline {
-        padding-left: 1rem;
+        padding-left: 0.5rem;
+        margin-top: 2rem;
     }
     
     .history-timeline::before {
-        left: 1rem;
+        left: 0.5rem;
+        width: 3px;
     }
     
     .timeline-item {
-        padding-left: 3rem;
+        padding-left: 2.5rem;
+        margin-bottom: 2rem;
     }
     
     .timeline-item::before {
-        left: -1rem;
+        left: -0.75rem;
+        width: 16px;
+        height: 16px;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px var(--primary-color);
     }
     
     .timeline-item::after {
-        left: -1rem;
+        left: -0.75rem;
+        width: 16px;
+        height: 16px;
     }
     
     .timeline-card {
-        padding: 2rem;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-left: 0;
     }
     
     .timeline-year {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .timeline-year::before {
+        font-size: 1rem;
     }
     
     .timeline-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+        line-height: 1.3;
     }
     
     .timeline-content {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    .timeline-highlight {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+        margin-top: 0.8rem;
+        border-radius: 8px;
     }
 }
 </style>
