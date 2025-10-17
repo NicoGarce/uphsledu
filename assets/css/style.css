@@ -7748,3 +7748,24 @@ section, .section {
     color: #ffc63e;
     font-style: italic;
 }
+
+/* Hashtag Styling for Post Content */
+.post-text {
+    /* Enable hashtag detection and styling */
+    word-break: break-word;
+}
+
+/* Individual hashtag styling */
+.hashtag {
+    display: inline;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.85em;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.hashtag:hover {
+    color: var(--secondary-color);
+    text-decoration: none;
+}

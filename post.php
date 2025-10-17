@@ -194,14 +194,27 @@ include 'app/includes/header.php';
                                     $paragraph
                                 );
                                 
+                                // Convert hashtags to styled spans
+                                $paragraph = preg_replace(
+                                    '/(?<!\w)#([a-zA-Z0-9_]+)/',
+                                    '<span class="hashtag">#$1</span>',
+                                    $paragraph
+                                );
+                                
                                 // Convert single line breaks to <br> tags within paragraphs
                                 $paragraph = nl2br($paragraph);
                                 echo '<p>' . $paragraph . '</p>';
                             }
                         }
                     } else {
-                        // Content already has HTML, display as-is
-                        echo $content;
+                        // Content already has HTML, but we still want to process hashtags
+                        // Process hashtags in HTML content
+                        $processedContent = preg_replace(
+                            '/(?<!\w)#([a-zA-Z0-9_]+)/',
+                            '<span class="hashtag">#$1</span>',
+                            $content
+                        );
+                        echo $processedContent;
                     }
                     ?>
                 </div>
@@ -256,5 +269,45 @@ include 'app/includes/header.php';
             </div>
         </aside>
     </div>
+
+<script>
+// Hashtag Detection and Styling
+document.addEventListener('DOMContentLoaded', function() {
+    const postText = document.querySelector('.post-text');
+    
+    if (postText) {
+        // Function to process hashtags in text content
+        function processHashtags(element) {
+            if (element.nodeType === Node.TEXT_NODE) {
+                const text = element.textContent;
+                // Regex to match hashtags: # followed by alphanumeric characters and underscores
+                const hashtagRegex = /#([a-zA-Z0-9_]+)/g;
+                
+                if (hashtagRegex.test(text)) {
+                    const parent = element.parentNode;
+                    const newHTML = text.replace(hashtagRegex, '<span class="hashtag">#$1</span>');
+                    
+                    // Create a temporary div to parse the HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = newHTML;
+                    
+                    // Replace the text node with the new content
+                    while (tempDiv.firstChild) {
+                        parent.insertBefore(tempDiv.firstChild, element);
+                    }
+                    parent.removeChild(element);
+                }
+            } else if (element.nodeType === Node.ELEMENT_NODE) {
+                // Process child nodes
+                const children = Array.from(element.childNodes);
+                children.forEach(child => processHashtags(child));
+            }
+        }
+        
+        // Process all text content in the post
+        processHashtags(postText);
+    }
+});
+</script>
 
 <?php include 'app/includes/footer.php'; ?>
