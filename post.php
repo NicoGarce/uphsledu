@@ -271,6 +271,75 @@ include 'app/includes/header.php';
     </div>
 
 <script>
+// Image Slider Functionality
+let currentSlideIndex = 0;
+const slides = document.querySelectorAll('.slide');
+const indicators = document.querySelectorAll('.indicator');
+
+function showSlide(index) {
+    // Hide all slides
+    slides.forEach(slide => slide.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    // Show current slide
+    if (slides[index]) {
+        slides[index].classList.add('active');
+    }
+    if (indicators[index]) {
+        indicators[index].classList.add('active');
+    }
+}
+
+function changeSlide(direction) {
+    currentSlideIndex += direction;
+    
+    // Handle wrap-around
+    if (currentSlideIndex >= slides.length) {
+        currentSlideIndex = 0;
+    } else if (currentSlideIndex < 0) {
+        currentSlideIndex = slides.length - 1;
+    }
+    
+    showSlide(currentSlideIndex);
+}
+
+function currentSlide(index) {
+    currentSlideIndex = index - 1; // Convert to 0-based index
+    showSlide(currentSlideIndex);
+}
+
+// Initialize slider when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize image slider
+    if (slides.length > 0) {
+        showSlide(0);
+    }
+    
+    // Add touch/swipe support for mobile
+    const sliderContainer = document.querySelector('.slider-container');
+    if (sliderContainer) {
+        let startX = 0;
+        let endX = 0;
+        
+        sliderContainer.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+        
+        sliderContainer.addEventListener('touchend', function(e) {
+            endX = e.changedTouches[0].clientX;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > 50) { // Minimum swipe distance
+                if (diff > 0) {
+                    changeSlide(1); // Swipe left - next slide
+                } else {
+                    changeSlide(-1); // Swipe right - previous slide
+                }
+            }
+        });
+    }
+});
+
 // Hashtag Detection and Styling
 document.addEventListener('DOMContentLoaded', function() {
     const postText = document.querySelector('.post-text');
