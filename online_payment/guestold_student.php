@@ -4,7 +4,7 @@
 	function mapCampusToTable($campid) {
 		$map = [
 			"UPHB" => "binan",
-			"UPHMU" => "allied",
+			"UPHMU" => "medical_university",
 			"UPHG" => "gma",
 			"UPHM" => "manila",
 			"PHCP" => "pangasinan"
