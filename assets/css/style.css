@@ -2535,7 +2535,7 @@ h2, h3, h4, h5, h6 {
 .latest-post-card {
     text-align: center;
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     position: relative;
     z-index: 5;
@@ -2561,6 +2561,7 @@ h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     margin-bottom: 15px;
 }
@@ -2748,7 +2749,7 @@ img.loaded {
     .latest-post-card {
         text-align: center;
         width: 100%;
-        max-width: 600px;
+        max-width: 700px;
         margin: 0 auto;
     }
     
