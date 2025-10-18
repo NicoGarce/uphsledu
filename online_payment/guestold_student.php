@@ -12,6 +12,15 @@
 		return isset($map[$campid]) ? $map[$campid] : null;
 	}
 
+	function tableExists($con, $tableName) {
+		if (trim($tableName) === '') { return false; }
+		$t = mysqli_real_escape_string($con, $tableName);
+		$sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name='".$t."' LIMIT 1";
+		$res = @mysqli_query($con, $sql);
+		if ($res && mysqli_fetch_row($res)) { return true; }
+		return false;
+	}
+
 	function findStudentByNumber($con, $studentNumber, $campid) {
 		$studentNumber = trim($studentNumber);
 		if ($studentNumber === '') { return null; }
@@ -30,14 +39,6 @@
 		return null;
 	}
 
-function tableExists($con, $tableName) {
-	if (trim($tableName) === '') { return false; }
-	$t = mysqli_real_escape_string($con, $tableName);
-	$sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name='".$t."' LIMIT 1";
-	$res = @mysqli_query($con, $sql);
-	if ($res && mysqli_fetch_row($res)) { return true; }
-	return false;
-}
 
 	// Handle AJAX verification request
 	if (isset($_POST["verify_student"])) {
