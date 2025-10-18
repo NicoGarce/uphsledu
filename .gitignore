@@ -1,6 +1,7 @@
 # Database Configuration
 # Exclude database config to allow manual production configuration
 app/config/database.php
+online_payment/dbconnect.php
 
 # Common files to ignore
 .DS_Store
