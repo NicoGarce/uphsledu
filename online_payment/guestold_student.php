@@ -92,16 +92,404 @@
 ?>	
 
 <!doctype html>
-
-<html>
-
+<html lang="en">
 <head>
-
-<meta charset="utf-8">
-
-<title>UPHSL Online Payment (Perpetualites)</title>
-<link rel="icon" type="image/png" href="images/logo.png">
-<link rel="shortcut icon" type="image/png" href="images/logo.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPHSL Online Payment - Current Students</title>
+    <link rel="icon" type="image/png" href="../assets/images/Logos/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/images/Logos/logo.png">
+    
+    <!-- Import UPHSL Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #1c4da1;
+            --secondary-color: #527bbd;
+            --tertiary-color: #f8f9fa;
+            --text-dark: #2a2a2a;
+            --text-light: #666;
+            --alt-color-1: #ffc63e;
+            --alt-color-2: #e0b03c;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--alt-color-1), var(--secondary-color));
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: var(--primary-color);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(28, 77, 161, 0.3);
+        }
+        
+        .logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+        
+        .university-name {
+            color: var(--primary-color);
+            font-family: 'Barlow Semi Condensed', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .page-title {
+            color: var(--secondary-color);
+            font-family: 'Barlow Semi Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-text {
+            color: var(--text-light);
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .campus-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .campus-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(28, 77, 161, 0.1);
+        }
+        
+        .verification-section {
+            background: var(--tertiary-color);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+        
+        .verification-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(28, 77, 161, 0.1);
+        }
+        
+        .verify-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .verify-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(28, 77, 161, 0.3);
+        }
+        
+        .verify-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .help-text {
+            color: var(--text-light);
+            font-size: 12px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .verification-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .verification-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .verification-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .verification-loading {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .student-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--primary-color);
+        }
+        
+        .confirmation-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .confirm-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--alt-color-1), var(--alt-color-2));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .confirm-btn:hover {
+            background: linear-gradient(135deg, var(--alt-color-2), var(--alt-color-1));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 198, 62, 0.3);
+        }
+        
+        .reject-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .reject-btn:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(28, 77, 161, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .student-info {
+            background: #e3f2fd;
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .student-info h4 {
+            color: var(--primary-color);
+            font-family: 'Barlow Semi Condensed', sans-serif;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .student-info p {
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .verification-form {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .input-group {
+                min-width: 100%;
+            }
+            
+            .confirmation-buttons {
+                flex-direction: column;
+            }
+            
+            .university-name {
+                font-size: 20px;
+            }
+            
+            .page-title {
+                font-size: 18px;
+            }
+            
+            .welcome-text {
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+            }
+            
+            .verification-section {
+                padding: 20px 15px;
+            }
+        }
+    </style>
 
 <script>
 var isStudentVerified = false;
@@ -122,6 +510,17 @@ function toggleSubmit() {
 }
 
 function resetVerification() {
+	var campid = document.getElementById('campid').value;
+	var verificationSection = document.getElementById('verification-section');
+	
+	// Show verification section only if campus is selected
+	if (campid !== '') {
+		verificationSection.style.display = 'block';
+	} else {
+		verificationSection.style.display = 'none';
+	}
+	
+	// Reset verification state
 	isStudentVerified = false;
 	document.getElementById('verification-result').innerHTML = '';
 	document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
@@ -141,6 +540,10 @@ function rejectStudent() {
 	document.getElementById('verification-result').innerHTML = '';
 	document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
 	toggleSubmit();
+	
+	// Hide verification section and reset campus selection
+	document.getElementById('verification-section').style.display = 'none';
+	document.getElementById('campid').value = '';
 }
 
 function verifyStudent() {
@@ -161,8 +564,8 @@ function verifyStudent() {
 	
 	// Disable button and show loading
 	verifyBtn.disabled = true;
-	verifyBtn.value = 'Verifying...';
-	resultDiv.innerHTML = '<div style="color: #666; font-style: italic;">Verifying student...</div>';
+            verifyBtn.innerHTML = 'Verifying...';
+            resultDiv.innerHTML = '<div class="verification-loading">Verifying student...</div>';
 	
 	// Create form data
 	var formData = new FormData();
@@ -179,19 +582,21 @@ function verifyStudent() {
 	.then(data => {
 		if (data.success) {
 			// Don't set isStudentVerified to true yet - wait for user confirmation
-			resultDiv.innerHTML = '<div style="color: green; font-weight: bold; margin-top: 10px;">✓ ' + data.message + '</div>' +
-								  '<div style="color: #333; font-size: 16px; margin-top: 5px;">Student Name: <strong>' + data.name + '</strong></div>' +
-								  '<div style="color: #666; font-size: 14px; margin-top: 5px;">Please confirm this is your name before proceeding.</div>' +
-								  '<div style="margin-top: 15px;">' +
-								  '<button type="button" onclick="confirmStudent()" style="padding: 8px 20px; margin-right: 10px; border-radius: 5px; background-color: #28a745; color: white; border: none; cursor: pointer; font-size: 14px;" onMouseOver="this.style.backgroundColor = \'#218838\';" onMouseOut="this.style.backgroundColor = \'#28a745\';">Confirm</button>' +
-								  '<button type="button" onclick="rejectStudent()" style="padding: 8px 20px; border-radius: 5px; background-color: #dc3545; color: white; border: none; cursor: pointer; font-size: 14px;" onMouseOver="this.style.backgroundColor = \'#c82333\';" onMouseOut="this.style.backgroundColor = \'#dc3545\';">No</button>' +
+                    resultDiv.innerHTML = '<div class="verification-success">' +
+                                        '<div>✓ ' + data.message + '</div>' +
+                                        '<div class="student-name">' + data.name + '</div>' +
+                                        '<div>Please confirm this is your name before proceeding.</div>' +
+                                        '<div class="confirmation-buttons">' +
+                                        '<button type="button" onclick="confirmStudent()" class="confirm-btn">✓ Confirm</button>' +
+                                        '<button type="button" onclick="rejectStudent()" class="reject-btn">✗ No</button>' +
+                                        '</div>' +
 								  '</div>';
 			document.getElementById('submit-help').innerHTML = 'Please confirm the student name above to proceed';
 			// Keep submit button disabled until user confirms
 			toggleSubmit();
 		} else {
 			isStudentVerified = false;
-			resultDiv.innerHTML = '<div style="color: red; font-weight: bold; margin-top: 10px;">✗ ' + data.message + '</div>';
+                    resultDiv.innerHTML = '<div class="verification-error">✗ ' + data.message + '</div>';
 			document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
 			// Keep submit button disabled on verification failure
 			toggleSubmit();
@@ -199,7 +604,7 @@ function verifyStudent() {
 	})
 	.catch(error => {
 		isStudentVerified = false;
-		resultDiv.innerHTML = '<div style="color: red; font-weight: bold; margin-top: 10px;">✗ Error verifying student. Please try again.</div>';
+                resultDiv.innerHTML = '<div class="verification-error">✗ Error verifying student. Please try again.</div>';
 		document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
 		console.error('Error:', error);
 		toggleSubmit();
@@ -207,73 +612,83 @@ function verifyStudent() {
 	.finally(() => {
 		// Re-enable button
 		verifyBtn.disabled = false;
-		verifyBtn.value = 'Verify';
-	});
-}
+                verifyBtn.innerHTML = 'Verify';
+            });
+        }
+        
+        // Add smooth animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
 </script>
-
 </head>
 
-
-
-<body style="font-family: Cambria, 'Hoefler Text', 'Liberation Serif', Times, 'Times New Roman', 'serif' ">
+<body>
 <?php if (isset($err)) { ?>
-<script>
-alert(<?php echo json_encode($err); ?>);
-</script>
+    <div class="error-message"><?php echo $err; ?></div>
 <?php } ?>
 
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="../assets/images/Logos/Logo2025.png" alt="UPHSL Logo 2025">
+            </div>
+            <div class="university-name">University of Perpetual Help System</div>
+            <div class="page-title">Student Payment Portal</div>
+            <div class="welcome-text">Welcome back, Perpetualites!</div>
+        </div>
+
 	<form method="post">
-
-	<div align="center">
-
-	<h2>University of Perpetual Help System</h2>	
-
-	<h2 style="color: #12199C">ONLINE PAYMENT</h2><br>	
-
-	<h1 style="color: green">Welcome Perpetualites!</h1>	
-
-	<strong>Select the UPHSL Campus to where you will be requesting your documents</strong><br><br>
-
-		<select name="campid" id="campid" style="font-size: 14px; padding: 10px;" onchange="resetVerification()">
-
-			<option value="UPHB">Binan</option>
-
-			<option value="UPHMU">Medical University</option>
-
-			<option value="UPHG">GMA</option>
-
-			<option value="UPHM">Manila</option>
-
-			<option value="PHCP">Pangasinan</option>
-
+            <div class="form-group">
+                <label class="form-label" for="campid">Select Your Campus</label>
+                <select name="campid" id="campid" class="campus-select" onchange="resetVerification()" required>
+                    <option value="">Choose your campus...</option>
+                    <option value="UPHB">🏫 Binan Campus</option>
+                    <option value="UPHMU">🏥 Medical University</option>
+                    <option value="UPHG">🏢 GMA Campus</option>
+                    <option value="UPHM">🏛️ Manila Campus</option>
+                    <option value="PHCP">🏘️ Pangasinan Campus</option>
 		</select>
-
 	</div>
 
-	<div>&nbsp;</div>
-
-	<?php if (isset($err)) { ?>
-	<div align="center" style="color:#FFFFFF; background-color:#FF0000; padding:10px; font-weight:bold"><?php echo $err; ?></div>
-	<div>&nbsp;</div>
-	<?php } ?>
-
-	<div align="center">
-		<div id="submit-help" style="color: #666; font-size: 12px; margin-bottom: 10px;">Please verify your student number before proceeding</div>
-		<strong>Enter Student Number:</strong>
-		<input type="text" value="" maxlength="50" size="20" name="studentno" id="studentno" style="text-align:center; margin-right: 10px;" oninput="resetVerification()" required>
-		<input type="button" value="Verify" id="verifyBtn" onclick="verifyStudent()" style="padding: 8px 15px; border-radius: 5px; background-color: #007bff; color: white; border: none; cursor: pointer; font-size: 14px;" onMouseOver="this.style.backgroundColor = '#0056b3';" onMouseOut="this.style.backgroundColor = '#007bff';">
+            <div id="verification-section" class="verification-section" style="display: none;">
+                <h4 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">🔐 Student Verification</h4>
+                <div id="submit-help" class="help-text" style="text-align: center; margin-bottom: 15px;">Please verify your student number before proceeding</div>
+                
+                <div class="verification-form">
+                    <div class="input-group">
+                        <label class="form-label" for="studentno">Student Number</label>
+                        <input type="text" name="studentno" id="studentno" class="form-input" maxlength="50" placeholder="Enter your student number" oninput="resetVerification()" required>
+                    </div>
+                    <button type="button" id="verifyBtn" onclick="verifyStudent()" class="verify-btn">
+                        🔍 Verify
+                    </button>
+                </div>
+                
+                <div id="verification-result" class="verification-result"></div>
 	</div>
 	
-	<div id="verification-result" align="center" style="margin-top: 15px;"></div>
-
-	<div align="center" style="padding: 20px; display: none;" id="submit-section">
-		<input type="submit" value="Submit" id="btnsubmit" name="btnsubmit" style="padding: 10px; border-radius: 5px; background-color:green; color: white; width: 150px; font-size: 14px;" onMouseOver="this.style.backgroundColor = '#ED822F';" onMouseOut="this.style.backgroundColor = '#008000';">
+            <div class="student-info">
+                <h4>📋 Payment Information</h4>
+                <p><strong>For Current Students:</strong></p>
+                <p>Please select your campus first, then verify your student number to access the payment portal. This ensures that only registered students can make payments for their accounts.</p>
+                <p><strong>Note:</strong> Make sure you have your student number ready and select the correct campus where you are enrolled.</p>
 	</div>
 
+            <div id="submit-section" style="display: none;">
+                <button type="submit" id="btnsubmit" name="btnsubmit" class="submit-btn">
+                    💳 Proceed to Payment
+                </button>
+            </div>
 	</form>	
-
-
+    </div>
 </body>
-
 </html>
