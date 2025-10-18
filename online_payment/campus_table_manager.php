@@ -31,10 +31,10 @@ function createCampusTable($con, $tableName) {
     
     // Create the campus table with essential student information structure
     $sql = "CREATE TABLE IF NOT EXISTS `{$t}` (
-        `stud_num` varchar(50) NOT NULL,
-        `lname` varchar(100) NOT NULL,
-        `fname` varchar(100) NOT NULL,
-        `course` varchar(100) NOT NULL,
+        `stud_num` varchar(255) NOT NULL,
+        `lname` varchar(255) NOT NULL,
+        `fname` varchar(255) NOT NULL,
+        `course` varchar(255) NULL,
         PRIMARY KEY (`stud_num`),
         KEY `idx_name` (`lname`, `fname`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
