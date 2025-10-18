@@ -71,8 +71,13 @@ if (!$is_authenticated) {
 }
 
 include "dbconnect.php";
+include "campus_table_manager.php";
+
+// Ensure campus tables exist on initial load
+$table_result = ensureCampusTablesExist($con);
+logTableCreation($con, $table_result);
+
 // Handle Post/Redirect/Get token to avoid double-submit on refresh
-session_start();
 if (!isset($_SESSION['import_csrf'])) {
     $_SESSION['import_csrf'] = bin2hex(random_bytes(16));
 }
@@ -102,27 +107,6 @@ function cleanImportField($value, $fieldType = 'generic') {
     return $value;
 }
 
-// Function to map campus to table name
-function mapCampusToTable($campid) {
-    $map = [
-        "UPHB" => "binan",
-        "UPHMU" => "medical_university", 
-        "UPHG" => "gma",
-        "UPHM" => "manila",
-        "PHCP" => "pangasinan"
-    ];
-    return isset($map[$campid]) ? $map[$campid] : null;
-}
-
-// Function to check if table exists
-function tableExists($con, $tableName) {
-    if (trim($tableName) === '') { return false; }
-    $t = mysqli_real_escape_string($con, $tableName);
-    $sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name='".$t."' LIMIT 1";
-    $res = @mysqli_query($con, $sql);
-    if ($res && mysqli_fetch_row($res)) { return true; }
-    return false;
-}
 
 // Handle Excel file upload and import
 if (isset($_POST["btnsubmit"]) && isset($_FILES["excel_file"])) {
@@ -210,7 +194,6 @@ if (isset($_POST["btnsubmit"]) && isset($_FILES["excel_file"])) {
 // Function to update progress
 function updateProgress($progress, $status, $details = '') {
     // Store progress in session for now (simpler approach)
-    session_start();
     $_SESSION['import_progress'] = $progress;
     $_SESSION['import_status'] = $status;
     $_SESSION['import_details'] = $details;
@@ -251,15 +234,13 @@ function processExcelFile($con, $filePath, $table) {
     // Create table if it doesn't exist
     updateProgress(10, 'Setting up database...', 'Creating table structure');
     $createTableSQL = "CREATE TABLE IF NOT EXISTS `{$table}` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
         `stud_num` varchar(50) NOT NULL,
-        `lname` varchar(255) NOT NULL,
-        `fname` varchar(255) NOT NULL,
-        `course` varchar(255) DEFAULT NULL,
-        `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (`id`),
-        UNIQUE KEY `stud_num` (`stud_num`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        `lname` varchar(100) NOT NULL,
+        `fname` varchar(100) NOT NULL,
+        `course` varchar(100) NOT NULL,
+        PRIMARY KEY (`stud_num`),
+        KEY `idx_name` (`lname`, `fname`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
     
     if (!mysqli_query($con, $createTableSQL)) {
         fclose($handle);
