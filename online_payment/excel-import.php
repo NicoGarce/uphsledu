@@ -107,6 +107,27 @@ function cleanImportField($value, $fieldType = 'generic') {
     return $value;
 }
 
+// Function to map campus to table name
+function mapCampusToTable($campid) {
+    $map = [
+        "UPHB" => "binan",
+        "UPHMU" => "medical_university", 
+        "UPHG" => "gma",
+        "UPHM" => "manila",
+        "PHCP" => "pangasinan"
+    ];
+    return isset($map[$campid]) ? $map[$campid] : null;
+}
+
+// Function to check if table exists
+function tableExists($con, $tableName) {
+    if (trim($tableName) === '') { return false; }
+    $t = mysqli_real_escape_string($con, $tableName);
+    $sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name='".$t."' LIMIT 1";
+    $res = @mysqli_query($con, $sql);
+    if ($res && mysqli_fetch_row($res)) { return true; }
+    return false;
+}
 
 // Handle Excel file upload and import
 if (isset($_POST["btnsubmit"]) && isset($_FILES["excel_file"])) {
