@@ -21,7 +21,7 @@ if (isset($_POST['admin_login'])) {
 if (isset($_GET['logout'])) {
     unset($_SESSION['admin_authenticated']);
     $is_authenticated = false;
-    header("Location: excel-import.php");
+    header("Location: csv.php");
     exit;
 }
 
@@ -1065,7 +1065,7 @@ function simulateProgress() {
         </div>
 
         <div class="navigation">
-            <a href="excel-import.php" class="active">📊 CSV Import</a>
+            <a href="csv.php" class="active">📊 CSV Import</a>
             <a href="guestold_student.php">💳 Payment Portal</a>
             <a href="?logout=1" class="logout">🚪 Logout</a>
         </div>
