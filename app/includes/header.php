@@ -157,23 +157,50 @@ $base_path = $GLOBALS['base_path'];
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
         /* Prevent alt text flash for logos - hide immediately */
-        .intro-logo img, .banner-logo img, .service-image img, .campus-image, .hero-image {
+        .intro-logo img, .banner-logo img, .service-image img, .campus-image {
             opacity: 0 !important;
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded, .hero-image.loaded {
+        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded {
+            opacity: 1 !important;
+        }
+        
+        /* Banner images with shimmer loading */
+        .hero-image {
+            opacity: 0 !important;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hero-image.loaded {
             opacity: 1 !important;
         }
         
         /* Loading placeholder for image containers */
-        .campus-image-container, .intro-logo, .service-image, .hero-background, .page-hero, .page-header {
+        .campus-image-container, .intro-logo, .service-image {
             position: relative;
             overflow: hidden;
         }
         
         .campus-image-container.loading::before, 
         .intro-logo.loading::before, 
-        .service-image.loading::before,
+        .service-image.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading-shimmer 1.5s infinite;
+            z-index: 1;
+        }
+        
+        /* Banner image containers with shimmer loading */
+        .hero-background, .page-hero, .page-header {
+            position: relative;
+            overflow: hidden;
+        }
+        
         .hero-background.loading::before,
         .page-hero.loading::before,
         .page-header.loading::before {
@@ -242,12 +269,54 @@ $base_path = $GLOBALS['base_path'];
             logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png';
         })();
         
-        // Handle logo image loading to prevent alt text flash
+        // Handle logo image loading to prevent alt text flash (no shimmer)
         document.addEventListener('DOMContentLoaded', function() {
-            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image, .hero-image');
+            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image');
             let loadedCount = 0;
             
-            // Handle background image loading for page-hero and page-header
+            // Handle banner image loading with shimmer effect
+            const bannerImages = document.querySelectorAll('.hero-image');
+            bannerImages.forEach(function(img, index) {
+                // Add loading class to container
+                const container = img.closest('.hero-background');
+                if (container) {
+                    container.classList.add('loading');
+                }
+                
+                // Add staggered delay for multiple images
+                const delay = index * 100; // 100ms delay between each image
+                
+                if (img.complete) {
+                    setTimeout(() => {
+                        img.classList.add('loaded');
+                        if (container) {
+                            container.classList.remove('loading');
+                        }
+                        loadedCount++;
+                    }, delay);
+                } else {
+                    img.addEventListener('load', function() {
+                        setTimeout(() => {
+                            this.classList.add('loaded');
+                            if (container) {
+                                container.classList.remove('loading');
+                            }
+                            loadedCount++;
+                        }, delay);
+                    });
+                    img.addEventListener('error', function() {
+                        setTimeout(() => {
+                            this.classList.add('loaded'); // Show alt text if image fails to load
+                            if (container) {
+                                container.classList.remove('loading');
+                            }
+                            loadedCount++;
+                        }, delay);
+                    });
+                }
+            });
+            
+            // Handle background image loading for page-hero and page-header banners
             const bannerSections = document.querySelectorAll('.page-hero, .page-header');
             bannerSections.forEach(function(section) {
                 const bgImage = window.getComputedStyle(section).backgroundImage;
@@ -272,8 +341,8 @@ $base_path = $GLOBALS['base_path'];
             });
             
             logoImages.forEach(function(img, index) {
-                // Add loading class to container
-                const container = img.closest('.campus-image-container, .intro-logo, .service-image, .hero-background');
+                // Add loading class to container (no shimmer for these)
+                const container = img.closest('.campus-image-container, .intro-logo, .service-image');
                 if (container) {
                     container.classList.add('loading');
                 }
