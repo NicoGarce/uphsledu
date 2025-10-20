@@ -472,7 +472,7 @@ $base_path = $GLOBALS['base_path'];
                             <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">GTI Online Grades</a>
                             <a href="https://uphslms.com/blended/login/index.php" target="_blank" class="dropdown-link">Moodle</a>
                             <a href="https://accounts.google.com/signin" target="_blank" class="dropdown-link">Google Account</a>
-                            <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">Online Payment</a>
+                            <!-- <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">Online Payment</a> -->
                             <a href="https://login.microsoftonline.com/" target="_blank" class="dropdown-link">Microsoft 365</a>
                             <a href="https://saliksikuphsl.org/" target="_blank" class="dropdown-link">Saliksik</a>
                         </div>
@@ -603,7 +603,7 @@ $base_path = $GLOBALS['base_path'];
                     <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">GTI Online Grades</a>
                     <a href="https://uphslms.com/blended/login/index.php" target="_blank" class="mobile-dropdown-link">Moodle</a>
                     <a href="https://accounts.google.com/signin" target="_blank" class="mobile-dropdown-link">Google Account</a>
-                    <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">Online Payment</a>
+                    <!-- <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">Online Payment</a> -->
                     <a href="https://login.microsoftonline.com/" target="_blank" class="mobile-dropdown-link">Microsoft 365</a>
                     <a href="https://saliksikuphsl.org/" target="_blank" class="mobile-dropdown-link">Saliksik</a>
                 </div>
