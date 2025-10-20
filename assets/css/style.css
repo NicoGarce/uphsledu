@@ -6216,6 +6216,19 @@ section, .section {
     white-space: nowrap;
 }
 
+/* Desktop: Make tabs smaller */
+@media (min-width: 769px) {
+    .tab-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        gap: 0.4rem;
+    }
+    
+    .tab-button i {
+        font-size: 0.9rem;
+    }
+}
+
 .tab-button:hover {
     background: rgba(28, 77, 161, 0.1);
     color: var(--primary-color);

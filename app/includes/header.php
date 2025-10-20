@@ -511,9 +511,9 @@ $base_path = $GLOBALS['base_path'];
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle">Online Payment <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu">
-                            <a href="https://uphsl.edu.ph/online_payment/guest_exam.php" target="_blank" class="dropdown-link">Entrance Exam</a>
-                            <a href="https://uphsl.edu.ph/online_payment/guest.php" target="_blank" class="dropdown-link">New Enrollees</a>
-                            <a href="https://uphsl.edu.ph/online_payment/guestold_student.php" target="_blank" class="dropdown-link">Enrolled Students</a>
+                            <a href="https://uphsl.edu.ph/online_payment/guest_exam" target="_blank" class="dropdown-link">Entrance Exam</a>
+                            <a href="https://uphsl.edu.ph/online_payment/guest" target="_blank" class="dropdown-link">New Enrollees</a>
+                            <a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank" class="dropdown-link">Enrolled Students</a>
                         </div>
                     </div>
                     
@@ -642,9 +642,9 @@ $base_path = $GLOBALS['base_path'];
             <div class="mobile-nav-item mobile-dropdown">
                 <a href="#" class="mobile-nav-link mobile-dropdown-toggle">Online Payment <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
-                    <a href="https://uphsl.edu.ph/online_payment/guest_exam.php" target="_blank" class="mobile-dropdown-link">Entrance Exam</a>
-                    <a href="https://uphsl.edu.ph/online_payment/guest.php" target="_blank" class="mobile-dropdown-link">New Enrollees</a>
-                    <a href="https://uphsl.edu.ph/online_payment/guestold_student.php" target="_blank" class="mobile-dropdown-link">Enrolled Students</a>
+                    <a href="https://uphsl.edu.ph/online_payment/guest_exam" target="_blank" class="mobile-dropdown-link">Entrance Exam</a>
+                    <a href="https://uphsl.edu.ph/online_payment/guest" target="_blank" class="mobile-dropdown-link">New Enrollees</a>
+                    <a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank" class="mobile-dropdown-link">Enrolled Students</a>
                 </div>
             </div>
             
