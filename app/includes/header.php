@@ -157,11 +157,11 @@ $base_path = $GLOBALS['base_path'];
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
         /* Prevent alt text flash for logos - hide immediately */
-        .intro-logo img, .banner-logo img, .service-image img, .campus-image, .news-slide-image img {
+        .intro-logo img, .banner-logo img, .service-image img, .campus-image {
             opacity: 0 !important;
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded, .news-slide-image img.loaded {
+        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded {
             opacity: 1 !important;
         }
         
@@ -175,14 +175,13 @@ $base_path = $GLOBALS['base_path'];
         }
         
         /* Loading placeholder for image containers (no shimmer) */
-        .campus-image-container, .service-image, .news-slide-image {
+        .campus-image-container, .service-image {
             position: relative;
             overflow: hidden;
         }
         
         .campus-image-container.loading::before, 
-        .service-image.loading::before,
-        .news-slide-image.loading::before {
+        .service-image.loading::before {
             content: '';
             position: absolute;
             top: 0;
@@ -275,7 +274,7 @@ $base_path = $GLOBALS['base_path'];
         
         // Handle logo image loading to prevent alt text flash (no shimmer)
         document.addEventListener('DOMContentLoaded', function() {
-            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image, .news-slide-image img');
+            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image');
             let loadedCount = 0;
             
             // Handle banner image loading with shimmer effect
@@ -346,7 +345,7 @@ $base_path = $GLOBALS['base_path'];
             
             logoImages.forEach(function(img, index) {
                 // Add loading class to container (no shimmer for these)
-                const container = img.closest('.campus-image-container, .service-image, .news-slide-image');
+                const container = img.closest('.campus-image-container, .service-image');
                 if (container) {
                     container.classList.add('loading');
                 }
