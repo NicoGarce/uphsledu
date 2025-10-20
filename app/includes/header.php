@@ -174,14 +174,13 @@ $base_path = $GLOBALS['base_path'];
             opacity: 1 !important;
         }
         
-        /* Loading placeholder for image containers */
-        .campus-image-container, .intro-logo, .service-image {
+        /* Loading placeholder for image containers (no shimmer) */
+        .campus-image-container, .service-image {
             position: relative;
             overflow: hidden;
         }
         
         .campus-image-container.loading::before, 
-        .intro-logo.loading::before, 
         .service-image.loading::before {
             content: '';
             position: absolute;
@@ -189,10 +188,14 @@ $base_path = $GLOBALS['base_path'];
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading-shimmer 1.5s infinite;
+            background: #f0f0f0;
             z-index: 1;
+        }
+        
+        /* Logo containers - no loading background */
+        .intro-logo {
+            position: relative;
+            overflow: hidden;
         }
         
         /* Banner image containers with shimmer loading */
@@ -342,7 +345,7 @@ $base_path = $GLOBALS['base_path'];
             
             logoImages.forEach(function(img, index) {
                 // Add loading class to container (no shimmer for these)
-                const container = img.closest('.campus-image-container, .intro-logo, .service-image');
+                const container = img.closest('.campus-image-container, .service-image');
                 if (container) {
                     container.classList.add('loading');
                 }
