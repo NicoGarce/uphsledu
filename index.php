@@ -2,7 +2,7 @@
 /**
  * UPHSL Homepage
  * 
- * @author Nico Roell D. Garce
+ * @author Nico Roell D. Garce 2025
  * @title UPHSL Web Administrator 2025
  * @description Main homepage for the University of Perpetual Help System Laguna website
  */
