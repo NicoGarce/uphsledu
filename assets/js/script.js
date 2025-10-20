@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Handle regular images - make them visible immediately
+        // Handle regular images - make them visible immediately (except hero images which have their own loading animation)
         const regularImages = document.querySelectorAll('img:not([loading="lazy"]):not(.hero-image)');
         regularImages.forEach(img => {
             img.style.opacity = '1'; // Make visible immediately
@@ -360,6 +360,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 img.addEventListener('load', () => {
                     img.classList.add('loaded');
                 });
+            }
+        });
+        
+        // Handle hero images with loading animation
+        const heroImages = document.querySelectorAll('.hero-image');
+        heroImages.forEach(img => {
+            const container = img.closest('.hero-background');
+            if (container) {
+                container.classList.add('loading');
+            }
+            
+            if (img.complete) {
+                img.classList.add('loaded');
+                if (container) {
+                    container.classList.remove('loading');
+                }
+            } else {
+                img.addEventListener('load', () => {
+                    img.classList.add('loaded');
+                    if (container) {
+                        container.classList.remove('loading');
+                    }
+                });
+                img.addEventListener('error', () => {
+                    img.classList.add('loaded'); // Show alt text if image fails to load
+                    if (container) {
+                        container.classList.remove('loading');
+                    }
+                });
+            }
+        });
+        
+        // Handle background images for page headers and page heroes
+        const backgroundContainers = document.querySelectorAll('.page-header, .page-hero');
+        backgroundContainers.forEach((container, index) => {
+            const bgImage = getComputedStyle(container).backgroundImage;
+            if (bgImage && bgImage !== 'none') {
+                // Extract URL from background-image CSS property
+                const urlMatch = bgImage.match(/url\(['"]?([^'"]+)['"]?\)/);
+                if (urlMatch) {
+                    const imageUrl = urlMatch[1];
+                    container.classList.add('loading');
+                    
+                    // Preload the background image
+                    const img = new Image();
+                    img.onload = () => {
+                        setTimeout(() => {
+                            container.classList.remove('loading');
+                        }, index * 100); // Staggered delay
+                    };
+                    img.onerror = () => {
+                        setTimeout(() => {
+                            container.classList.remove('loading');
+                        }, index * 100);
+                    };
+                    img.src = imageUrl;
+                }
             }
         });
         

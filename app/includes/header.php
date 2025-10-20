@@ -157,23 +157,26 @@ $base_path = $GLOBALS['base_path'];
         .icons-ready .fa, .icons-ready .fas, .icons-ready .far, .icons-ready .fal, .icons-ready .fab { visibility: visible; }
         
         /* Prevent alt text flash for logos - hide immediately */
-        .intro-logo img, .banner-logo img, .service-image img, .campus-image {
+        .intro-logo img, .banner-logo img, .service-image img, .campus-image, .hero-image {
             opacity: 0 !important;
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded {
+        .intro-logo img.loaded, .banner-logo img.loaded, .service-image img.loaded, .campus-image.loaded, .hero-image.loaded {
             opacity: 1 !important;
         }
         
         /* Loading placeholder for image containers */
-        .campus-image-container, .intro-logo, .service-image {
+        .campus-image-container, .intro-logo, .service-image, .hero-background, .page-header, .page-hero {
             position: relative;
             overflow: hidden;
         }
         
         .campus-image-container.loading::before, 
         .intro-logo.loading::before, 
-        .service-image.loading::before {
+        .service-image.loading::before,
+        .hero-background.loading::before,
+        .page-header.loading::before,
+        .page-hero.loading::before {
             content: '';
             position: absolute;
             top: 0;
@@ -201,6 +204,10 @@ $base_path = $GLOBALS['base_path'];
         }
         
         .service-image img {
+            will-change: opacity;
+        }
+        
+        .hero-image {
             will-change: opacity;
         }
         
@@ -241,12 +248,12 @@ $base_path = $GLOBALS['base_path'];
         
         // Handle logo image loading to prevent alt text flash
         document.addEventListener('DOMContentLoaded', function() {
-            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image');
+            const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image, .hero-image');
             let loadedCount = 0;
             
             logoImages.forEach(function(img, index) {
                 // Add loading class to container
-                const container = img.closest('.campus-image-container, .intro-logo, .service-image');
+                const container = img.closest('.campus-image-container, .intro-logo, .service-image, .hero-background');
                 if (container) {
                     container.classList.add('loading');
                 }
@@ -281,6 +288,34 @@ $base_path = $GLOBALS['base_path'];
                             loadedCount++;
                         }, delay);
                     });
+                }
+            });
+            
+            // Handle background images for page headers and page heroes
+            const backgroundContainers = document.querySelectorAll('.page-header, .page-hero');
+            backgroundContainers.forEach(function(container, index) {
+                const bgImage = getComputedStyle(container).backgroundImage;
+                if (bgImage && bgImage !== 'none') {
+                    // Extract URL from background-image CSS property
+                    const urlMatch = bgImage.match(/url\(['"]?([^'"]+)['"]?\)/);
+                    if (urlMatch) {
+                        const imageUrl = urlMatch[1];
+                        container.classList.add('loading');
+                        
+                        // Preload the background image
+                        const img = new Image();
+                        img.onload = function() {
+                            setTimeout(() => {
+                                container.classList.remove('loading');
+                            }, index * 100); // Staggered delay
+                        };
+                        img.onerror = function() {
+                            setTimeout(() => {
+                                container.classList.remove('loading');
+                            }, index * 100);
+                        };
+                        img.src = imageUrl;
+                    }
                 }
             });
         });
