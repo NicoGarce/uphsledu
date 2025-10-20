@@ -50,6 +50,10 @@ include 'app/includes/header.php';
                                     <i class="fab fa-microsoft"></i>
                                     <span>Microsoft 365</span>
                                 </button>
+                                <button class="tab-button" data-tab="payment">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Online Payment</span>
+                                </button>
                                 <button class="tab-button" data-tab="troubleshooting">
                                     <i class="fas fa-tools"></i>
                                     <span>Troubleshooting</span>
@@ -454,6 +458,40 @@ include 'app/includes/header.php';
                                     </div>
                                 </div>
                         
+                                <!-- Online Payment Tab -->
+                                <div class="tab-pane" id="payment-tab">
+                                    <div class="tab-header">
+                                        <h3><i class="fas fa-credit-card"></i> Online Payment System</h3>
+                                        <p class="tab-subtitle">Pay your tuition fees and other school charges online securely</p>
+                                    </div>
+                                    <div class="instruction-card">
+                                        <h4>What is the Online Payment System?</h4>
+                                        <p>UPHSL's Online Payment System allows students and parents to pay tuition fees, miscellaneous fees, and other school charges conveniently and securely through various payment methods including credit cards, debit cards, and digital wallets.</p>
+                                        
+                                        <h4>Access Methods:</h4>
+                                        <div class="access-methods">
+                                            <div class="method-section">
+                                                <h5><i class="fas fa-mouse-pointer"></i> Method 1: Via Navigation Menu</h5>
+                                                <ol class="instruction-steps">
+                                                    <li>Hover over "Online Services" in the main navigation menu</li>
+                                                    <li>Click on "Online Payment" from the dropdown menu</li>
+                                                    <li>Select the appropriate payment option based on your status</li>
+                                                    <li>Follow the specific instructions for your selected payment type</li>
+                                                </ol>
+                                            </div>
+                                            
+                                            <div class="method-section">
+                                                <h5><i class="fas fa-link"></i> Method 2: Via Direct Links</h5>
+                                                <div class="direct-links">
+                                                    <p><a href="https://uphsl.edu.ph/online_payment/guest_exam" target="_blank"><strong>Entrance Exam Payment</strong></a></p>
+                                                    <p><a href="https://uphsl.edu.ph/online_payment/guest" target="_blank"><strong>New Enrollees Payment</strong></a></p>
+                                                    <p><a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank"><strong>Enrolled Students Payment</strong></a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        
                                 <!-- Troubleshooting Tab -->
                                 <div class="tab-pane" id="troubleshooting-tab">
                                     <div class="tab-header">
@@ -554,6 +592,7 @@ include 'app/includes/header.php';
                             <li><a href="https://uphslms.com/blended/login/index.php" target="_blank">Moodle LMS</a></li>
                             <li><a href="https://accounts.google.com/signin" target="_blank">Google Account</a></li>
                             <li><a href="https://login.microsoftonline.com/" target="_blank">Microsoft 365</a></li>
+                            <li><a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank">Online Payment</a></li>
                         </ul>
                     </div>
                     
