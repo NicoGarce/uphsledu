@@ -166,11 +166,11 @@ $base_path = $GLOBALS['base_path'];
         }
         
         /* Banner images with shimmer loading */
-        .hero-image {
+        .hero-image, .news-slide-image img {
             opacity: 0 !important;
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .hero-image.loaded {
+        .hero-image.loaded, .news-slide-image img.loaded {
             opacity: 1 !important;
         }
         
@@ -199,14 +199,15 @@ $base_path = $GLOBALS['base_path'];
         }
         
         /* Banner image containers with shimmer loading */
-        .hero-background, .page-hero, .page-header {
+        .hero-background, .page-hero, .page-header, .news-slide-image {
             position: relative;
             overflow: hidden;
         }
         
         .hero-background.loading::before,
         .page-hero.loading::before,
-        .page-header.loading::before {
+        .page-header.loading::before,
+        .news-slide-image.loading::before {
             content: '';
             position: absolute;
             top: 0;
@@ -278,10 +279,10 @@ $base_path = $GLOBALS['base_path'];
             let loadedCount = 0;
             
             // Handle banner image loading with shimmer effect
-            const bannerImages = document.querySelectorAll('.hero-image');
+            const bannerImages = document.querySelectorAll('.hero-image, .news-slide-image img');
             bannerImages.forEach(function(img, index) {
                 // Add loading class to container
-                const container = img.closest('.hero-background');
+                const container = img.closest('.hero-background, .news-slide-image');
                 if (container) {
                     container.classList.add('loading');
                 }
