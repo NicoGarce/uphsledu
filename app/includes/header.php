@@ -166,7 +166,7 @@ $base_path = $GLOBALS['base_path'];
         }
         
         /* Loading placeholder for image containers */
-        .campus-image-container, .intro-logo, .service-image, .hero-background, .page-header, .page-hero {
+        .campus-image-container, .intro-logo, .service-image, .hero-background, .page-hero, .page-header {
             position: relative;
             overflow: hidden;
         }
@@ -175,8 +175,8 @@ $base_path = $GLOBALS['base_path'];
         .intro-logo.loading::before, 
         .service-image.loading::before,
         .hero-background.loading::before,
-        .page-header.loading::before,
-        .page-hero.loading::before {
+        .page-hero.loading::before,
+        .page-header.loading::before {
             content: '';
             position: absolute;
             top: 0;
@@ -204,10 +204,6 @@ $base_path = $GLOBALS['base_path'];
         }
         
         .service-image img {
-            will-change: opacity;
-        }
-        
-        .hero-image {
             will-change: opacity;
         }
         
@@ -251,6 +247,30 @@ $base_path = $GLOBALS['base_path'];
             const logoImages = document.querySelectorAll('.intro-logo img, .banner-logo img, .service-image img, .campus-image, .hero-image');
             let loadedCount = 0;
             
+            // Handle background image loading for page-hero and page-header
+            const bannerSections = document.querySelectorAll('.page-hero, .page-header');
+            bannerSections.forEach(function(section) {
+                const bgImage = window.getComputedStyle(section).backgroundImage;
+                if (bgImage && bgImage !== 'none') {
+                    // Extract URL from background-image CSS property
+                    const urlMatch = bgImage.match(/url\(['"]?([^'"]+)['"]?\)/);
+                    if (urlMatch) {
+                        const imageUrl = urlMatch[1];
+                        section.classList.add('loading');
+                        
+                        // Create a new image to preload the background
+                        const img = new Image();
+                        img.onload = function() {
+                            section.classList.remove('loading');
+                        };
+                        img.onerror = function() {
+                            section.classList.remove('loading');
+                        };
+                        img.src = imageUrl;
+                    }
+                }
+            });
+            
             logoImages.forEach(function(img, index) {
                 // Add loading class to container
                 const container = img.closest('.campus-image-container, .intro-logo, .service-image, .hero-background');
@@ -288,34 +308,6 @@ $base_path = $GLOBALS['base_path'];
                             loadedCount++;
                         }, delay);
                     });
-                }
-            });
-            
-            // Handle background images for page headers and page heroes
-            const backgroundContainers = document.querySelectorAll('.page-header, .page-hero');
-            backgroundContainers.forEach(function(container, index) {
-                const bgImage = getComputedStyle(container).backgroundImage;
-                if (bgImage && bgImage !== 'none') {
-                    // Extract URL from background-image CSS property
-                    const urlMatch = bgImage.match(/url\(['"]?([^'"]+)['"]?\)/);
-                    if (urlMatch) {
-                        const imageUrl = urlMatch[1];
-                        container.classList.add('loading');
-                        
-                        // Preload the background image
-                        const img = new Image();
-                        img.onload = function() {
-                            setTimeout(() => {
-                                container.classList.remove('loading');
-                            }, index * 100); // Staggered delay
-                        };
-                        img.onerror = function() {
-                            setTimeout(() => {
-                                container.classList.remove('loading');
-                            }, index * 100);
-                        };
-                        img.src = imageUrl;
-                    }
                 }
             });
         });
