@@ -102,34 +102,34 @@ include 'app/includes/header.php';
 
 .sdg-intro {
     background: white;
-    padding: clamp(1.25rem, 2vw + 1rem, 2.5rem);
-    margin-bottom: 3rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-left: 5px solid var(--primary-blue);
+    padding: clamp(0.5rem, 1vw + 0.25rem, 1rem);
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-left: 2px solid var(--primary-blue);
     text-align: center;
 }
 
 .sdg-intro h2 {
     color: var(--primary-blue);
-    font-size: clamp(1.25rem, 1.4vw + 1rem, 2rem);
+    font-size: clamp(0.85rem, 1vw + 0.6rem, 1.2rem);
     font-weight: 600;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
 }
 
 .sdg-intro h2::before {
     content: '🌍';
-    font-size: 1.8rem;
+    font-size: 1.1rem;
 }
 
 .sdg-intro p {
-    font-size: clamp(0.95rem, 0.7vw + 0.8rem, 1.1rem);
+    font-size: clamp(0.7rem, 0.5vw + 0.6rem, 0.85rem);
     color: var(--text-gray);
-    line-height: 1.7;
+    line-height: 1.4;
     margin: 0;
 }
 
@@ -501,9 +501,9 @@ include 'app/includes/header.php';
         grid-template-columns: repeat(3, 1fr);
         gap: 0.8rem;
     }
-    .sdg-intro { padding: 1.25rem; }
-    .sdg-intro h2 { margin-bottom: 0.5rem; }
-    .sdg-intro p { line-height: 1.6; }
+    .sdg-intro { padding: 0.75rem; }
+    .sdg-intro h2 { margin-bottom: 0.25rem; }
+    .sdg-intro p { line-height: 1.3; }
     
     .sdg-goal {
         padding: 1rem 0.5rem;
@@ -533,7 +533,7 @@ include 'app/includes/header.php';
     .sdg-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    .sdg-intro { padding: 1rem; }
+    .sdg-intro { padding: 0.5rem; }
 }
 </style>
 
