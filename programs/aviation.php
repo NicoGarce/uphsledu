@@ -31,7 +31,7 @@ include '../app/includes/header.php';
                 <img src="<?php echo $base_path; ?>programs/img/logo/aviation_logo.png" alt="Aviation Logo">
             </div>
             <div class="banner-content">
-                <h1>College of Aviation</h1>
+                <h1>School of Aviation</h1>
                 <p>Unlock your wings to limitless possibilities with the School of Aviation, where excellence takes flight.</p>
             </div>
         </div>
@@ -181,7 +181,7 @@ include '../app/includes/header.php';
                     <div class="sidebar-widget">
                         <h3>Program Details</h3>
                         <ul>
-                            <li><strong>College:</strong> College of Aviation</li>
+                            <li><strong>School:</strong> School of Aviation</li>
                             <li><strong>Duration:</strong> 4 years</li>
                             <li><strong>Programs:</strong> 2 Bachelor's Programs</li>
                             <li><strong>Focus:</strong> Aviation Technology & Electronics</li>
