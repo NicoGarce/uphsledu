@@ -27,7 +27,7 @@ $success = '';
 $isEdit = false;
 $post = null;
 
-// SDG Goals data
+// SDG Initiatives data
 $sdgGoals = [
     1 => 'No Poverty',
     2 => 'Zero Hunger',
@@ -296,10 +296,10 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
             <div class="form-group">
                 <label for="sdg_number" class="form-label">
                     <i class="fas fa-globe"></i>
-                    SDG Goal
+                    SDG Initiative
                 </label>
                 <select id="sdg_number" name="sdg_number" class="form-input" required onchange="updateSdgTitle()">
-                    <option value="">Select an SDG Goal</option>
+                    <option value="">Select an SDG Initiative</option>
                     <?php foreach ($sdgGoals as $number => $title): ?>
                         <option value="<?php echo $number; ?>" 
                                 <?php echo ($isEdit && $post['sdg_number'] == $number) || (isset($_POST['sdg_number']) && $_POST['sdg_number'] == $number) ? 'selected' : ''; ?>>
