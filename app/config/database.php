@@ -124,6 +124,40 @@ function initializeDatabase() {
         )
     ";
     
+    // Create sdg_initiatives_posts table
+    $sdgInitiativesPostsTable = "
+        CREATE TABLE IF NOT EXISTS sdg_initiatives_posts (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            slug VARCHAR(255) UNIQUE NOT NULL,
+            content TEXT NOT NULL,
+            excerpt TEXT DEFAULT NULL,
+            featured_image VARCHAR(255) DEFAULT NULL,
+            sdg_number INT NOT NULL,
+            sdg_title VARCHAR(255) NOT NULL,
+            status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
+            author_id INT NOT NULL,
+            views INT DEFAULT 0,
+            published_at TIMESTAMP NULL DEFAULT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    ";
+    
+    // Create sdg_initiatives_images table
+    $sdgInitiativesImagesTable = "
+        CREATE TABLE IF NOT EXISTS sdg_initiatives_images (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            post_id INT NOT NULL,
+            image_path VARCHAR(255) NOT NULL,
+            image_alt VARCHAR(255) DEFAULT NULL,
+            sort_order INT DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (post_id) REFERENCES sdg_initiatives_posts(id) ON DELETE CASCADE
+        )
+    ";
+    
     try {
         $pdo->exec($usersTable);
         $pdo->exec($postsTable);
@@ -131,6 +165,8 @@ function initializeDatabase() {
         $pdo->exec($categoriesTable);
         $pdo->exec($postCategoriesTable);
         $pdo->exec($commentsTable);
+        $pdo->exec($sdgInitiativesPostsTable);
+        $pdo->exec($sdgInitiativesImagesTable);
         
         // Add published_at column if it doesn't exist
         $pdo->exec("ALTER TABLE posts ADD COLUMN IF NOT EXISTS published_at TIMESTAMP NULL DEFAULT NULL AFTER views");

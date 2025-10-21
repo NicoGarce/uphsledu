@@ -204,6 +204,10 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                         <i class="fas fa-edit"></i>
                         <span>Post Management</span>
                     </a>
+                    <a href="sdg-initiatives.php" class="action-card">
+                        <i class="fas fa-globe-americas"></i>
+                        <span>SDG Initiatives</span>
+                    </a>
                 <?php endif; ?>
                 
                 <?php if (isSuperAdmin()): ?>
