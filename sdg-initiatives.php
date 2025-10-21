@@ -15,6 +15,30 @@ require_once 'app/includes/functions.php';
 $page_title = "SDG Initiatives";
 $base_path = '';
 
+// Fetch SDG initiatives posts
+$pdo = getDBConnection();
+$sdgPosts = [];
+
+try {
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.first_name, u.last_name 
+        FROM sdg_initiatives_posts p 
+        JOIN users u ON p.author_id = u.id 
+        WHERE p.status = 'published'
+        ORDER BY p.published_at DESC, p.created_at DESC
+    ");
+    $stmt->execute();
+    $allSdgPosts = $stmt->fetchAll();
+    
+    // Group posts by SDG number
+    foreach ($allSdgPosts as $post) {
+        $sdgPosts[$post['sdg_number']][] = $post;
+    }
+} catch (PDOException $e) {
+    // Handle error silently for now
+    $sdgPosts = [];
+}
+
 // Include header
 include 'app/includes/header.php';
 ?>
@@ -176,6 +200,8 @@ include 'app/includes/header.php';
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
+
+
 /* Individual SDG Colors */
 .sdg-goal-1 { background: var(--sdg-1); }
 .sdg-goal-1::before { background: var(--sdg-1); }
@@ -249,9 +275,11 @@ include 'app/includes/header.php';
     width: 90%;
     max-width: 800px;
     max-height: 80vh;
-    overflow-y: auto;
+    overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     animation: modalSlideIn 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes modalSlideIn {
@@ -310,6 +338,9 @@ include 'app/includes/header.php';
 
 .sdg-modal-body {
     padding: 2rem;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(80vh - 120px);
 }
 
 .sdg-modal-description {
@@ -346,6 +377,78 @@ include 'app/includes/header.php';
     padding: 2rem;
     color: var(--text-gray);
     font-style: italic;
+}
+
+.sdg-posts-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.sdg-post-item {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 4px solid var(--primary-blue);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sdg-post-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.sdg-post-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.sdg-post-image {
+    margin: 1rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sdg-post-image img {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.sdg-post-content {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.sdg-post-content p {
+    margin-bottom: 0.75rem;
+}
+
+.sdg-post-content p:last-child {
+    margin-bottom: 0;
+}
+
+.sdg-post-meta {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-gray);
+    border-top: 1px solid var(--border-light);
+    padding-top: 0.75rem;
+}
+
+.sdg-post-date {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .sdg-programs-list {
@@ -594,16 +697,17 @@ include 'app/includes/header.php';
             
             <div class="sdg-programs-section">
                 <h4>UPHSL Programs & Initiatives</h4>
-                <div class="sdg-programs-placeholder" id="programsPlaceholder">
-                    Programs and initiatives for this SDG will be displayed here in the future.
+                <div class="sdg-programs-placeholder" id="programsPlaceholder" style="display: none;">
+                    No initiatives posted for this SDG yet.
                 </div>
-                <ul class="sdg-programs-list" id="programsList" style="display: none;">
-                    <!-- Programs will be loaded here dynamically -->
-                </ul>
+                <div class="sdg-posts-list" id="programsList">
+                    <!-- SDG posts will be loaded here dynamically -->
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <script>
 // SDG Goals Data
@@ -704,6 +808,9 @@ const modalGoalDescription = document.getElementById('modalGoalDescription');
 const programsPlaceholder = document.getElementById('programsPlaceholder');
 const programsList = document.getElementById('programsList');
 
+// SDG Posts Data (passed from PHP)
+const sdgPostsData = <?php echo json_encode($sdgPosts); ?>;
+
 // Open modal when SDG goal is clicked
 document.querySelectorAll('.sdg-goal').forEach(goal => {
     goal.addEventListener('click', function() {
@@ -714,19 +821,64 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
         modalGoalTitle.textContent = goalData.title;
         modalGoalDescription.textContent = goalData.description;
         
-        // Show placeholder for now (programs will be added in the future)
-        programsPlaceholder.style.display = 'block';
-        programsList.style.display = 'none';
+        // Display SDG posts for this goal
+        displaySdgPosts(goalNumber);
         
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
     });
 });
+
+// Function to display SDG posts
+function displaySdgPosts(goalNumber) {
+    const postsList = document.getElementById('programsList');
+    const placeholder = document.getElementById('programsPlaceholder');
+    
+    if (sdgPostsData[goalNumber] && sdgPostsData[goalNumber].length > 0) {
+        // Hide placeholder and show posts
+        placeholder.style.display = 'none';
+        postsList.style.display = 'block';
+        
+        // Generate HTML for posts
+        let postsHTML = '';
+        sdgPostsData[goalNumber].forEach(post => {
+            const publishedDate = new Date(post.published_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            postsHTML += `
+                <div class="sdg-post-item">
+                    <div class="sdg-post-title">${post.title}</div>
+                    ${post.featured_image ? `<div class="sdg-post-image"><img src="${post.featured_image}" alt="${post.title}" /></div>` : ''}
+                    <div class="sdg-post-content">${post.content}</div>
+                    <div class="sdg-post-meta">
+                        <div class="sdg-post-date">
+                            <i class="fas fa-calendar"></i>
+                            ${publishedDate}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        postsList.innerHTML = postsHTML;
+    } else {
+        // Show placeholder if no posts
+        placeholder.style.display = 'block';
+        postsList.style.display = 'none';
+    }
+}
 
 // Close modal
 modalClose.addEventListener('click', function() {
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+    document.body.style.position = '';
+    document.body.style.width = '';
 });
 
 // Close modal when clicking outside
@@ -734,6 +886,8 @@ modal.addEventListener('click', function(e) {
     if (e.target === modal) {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
+        document.body.style.position = '';
+        document.body.style.width = '';
     }
 });
 
@@ -742,6 +896,8 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && modal.style.display === 'block') {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
+        document.body.style.position = '';
+        document.body.style.width = '';
     }
 });
 
@@ -755,6 +911,7 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
         this.style.transform = 'translateY(0) scale(1)';
     });
 });
+
 </script>
 
 <?php

@@ -85,9 +85,9 @@ function createSlug($title) {
 }
 
 // Check if slug exists
-function slugExists($slug, $excludeId = null) {
+function slugExists($slug, $table = 'posts', $excludeId = null) {
     $pdo = getDBConnection();
-    $sql = "SELECT id FROM posts WHERE slug = ?";
+    $sql = "SELECT id FROM $table WHERE slug = ?";
     $params = [$slug];
     
     if ($excludeId) {
@@ -101,12 +101,12 @@ function slugExists($slug, $excludeId = null) {
 }
 
 // Generate unique slug
-function generateUniqueSlug($title, $excludeId = null) {
+function generateUniqueSlug($title, $table = 'posts', $excludeId = null) {
     $baseSlug = createSlug($title);
     $slug = $baseSlug;
     $counter = 1;
     
-    while (slugExists($slug, $excludeId)) {
+    while (slugExists($slug, $table, $excludeId)) {
         $slug = $baseSlug . '-' . $counter;
         $counter++;
     }
