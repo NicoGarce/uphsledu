@@ -159,11 +159,42 @@ include 'app/includes/header.php';
 
 .about-content {
     padding: 4rem 0;
-    background: #F8F8F8;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-content::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('<?php echo $base_path; ?>assets/images/FACADE.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    z-index: -2;
+    opacity: 0.4;
+}
+
+.about-content::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.8) 100%);
+    z-index: -1;
 }
 
 .content-section {
     margin-bottom: 4rem;
+    position: relative;
+    z-index: 1;
 }
 
 .section-header {
@@ -193,13 +224,16 @@ include 'app/includes/header.php';
 }
 
 .section-content {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     padding: 3rem;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     line-height: 1.8;
     font-size: 1.1rem;
     color: var(--text-dark);
+    backdrop-filter: blur(5px);
+    position: relative;
+    z-index: 2;
 }
 
 .history-timeline {
@@ -260,23 +294,26 @@ include 'app/includes/header.php';
     background: var(--secondary-color);
     border-radius: 50%;
     transform: scale(0);
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
     z-index: 1;
+    will-change: transform;
 }
 
 .timeline-item:hover::after {
-    transform: scale(1.2);
+    transform: scale(1.05);
 }
 
 .timeline-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     padding: 2.5rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(28, 77, 161, 0.1);
-    transition: all 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
     overflow: hidden;
+    z-index: 2;
+    will-change: transform;
 }
 
 .timeline-card::before {
@@ -285,15 +322,16 @@ include 'app/includes/header.php';
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    height: 2px;
+    background: linear-gradient(90deg, rgba(28, 77, 161, 0.6), rgba(82, 123, 189, 0.6));
     transform: scaleX(0);
     transition: transform 0.3s ease;
+    will-change: transform;
 }
 
 .timeline-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .timeline-card:hover::before {
@@ -355,12 +393,15 @@ include 'app/includes/header.php';
 }
 
 .board-member {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.3s ease;
+    backdrop-filter: blur(5px);
+    z-index: 2;
+    position: relative;
 }
 
 .board-member:hover {
@@ -395,12 +436,15 @@ include 'app/includes/header.php';
 }
 
 .campus-item {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     text-align: center;
     transition: transform 0.3s ease;
+    backdrop-filter: blur(5px);
+    z-index: 2;
+    position: relative;
 }
 
 .campus-item:hover {
@@ -420,7 +464,7 @@ include 'app/includes/header.php';
 }
 
 .philosophy-box {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     color: var(--primary-color);
     padding: 3rem;
     border-radius: 15px;
@@ -430,6 +474,8 @@ include 'app/includes/header.php';
     border: 1px solid rgba(28, 77, 161, 0.1);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(5px);
+    z-index: 2;
 }
 
 .philosophy-box::before {
@@ -497,11 +543,14 @@ include 'app/includes/header.php';
 }
 
 .objective-item {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     border-top: 4px solid var(--secondary-color);
+    backdrop-filter: blur(5px);
+    z-index: 2;
+    position: relative;
 }
 
 .objective-title {
@@ -531,6 +580,139 @@ include 'app/includes/header.php';
     font-weight: bold;
 }
 
+/* Perpetual Hymn Styling */
+.hymn-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    z-index: 2;
+    position: relative;
+    border: 2px solid rgba(28, 77, 161, 0.1);
+}
+
+.hymn-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hymn-verse {
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    text-align: left;
+}
+
+.hymn-chorus {
+    margin-bottom: 2.5rem;
+    text-align: left;
+}
+
+.verse-number {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(28, 77, 161, 0.3);
+}
+
+.chorus-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+    box-shadow: 0 4px 12px rgba(28, 77, 161, 0.3);
+}
+
+.verse-text {
+    flex: 1;
+    line-height: 1.8;
+}
+
+.chorus-text {
+    line-height: 1.8;
+    margin-left: 55px;
+}
+
+.verse-text p, .chorus-text p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+
+/* Responsive Hymn Styling */
+@media (max-width: 768px) {
+    .hymn-container {
+        padding: 2rem;
+    }
+    
+    .hymn-verse, .hymn-chorus {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .verse-number {
+        align-self: center;
+    }
+    
+    .chorus-header {
+        text-align: center;
+        font-size: 1rem;
+        padding: 6px 14px;
+    }
+    
+    .verse-text p,
+    .chorus-text p {
+        font-size: 1rem;
+    }
+    
+    .chorus-text {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .hymn-container {
+        padding: 1.5rem;
+    }
+    
+    .verse-number {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .chorus-header {
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        padding: 5px 12px;
+    }
+    
+    .verse-text p,
+    .chorus-text p {
+        font-size: 0.95rem;
+    }
+}
+
 /* Simple Wood Frame Styling for Mission and Vision */
 .mission-vision-container {
     display: grid;
@@ -558,7 +740,7 @@ include 'app/includes/header.php';
 }
 
 .mission-content, .vision-content {
-    background: #FFFEF7;
+    background: rgba(255, 254, 247, 0.95);
     padding: 3rem 2.5rem;
     border-radius: 6px;
     position: relative;
@@ -566,6 +748,8 @@ include 'app/includes/header.php';
     height: 100%;
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(5px);
+    z-index: 2;
 }
 
 .mission-title, .vision-title {
@@ -1245,6 +1429,56 @@ include 'app/includes/header.php';
                         <ul class="objective-list">
                             <li>Deliver quality services to the clientele</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Perpetual Hymn Section -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Perpetual Hymn</h2>
+                </div>
+                <div class="hymn-container">
+                    <div class="hymn-content">
+                        <div class="hymn-verse">
+                            <div class="verse-number">I</div>
+                            <div class="verse-text">
+                                <p>Perpetual Help thy fount of truth</p>
+                                <p>Where knowledge emanates</p>
+                                <p>Where we have learned life will bear fruit</p>
+                                <p>For us success awaits</p>
+                            </div>
+                        </div>
+                        
+                        <div class="hymn-chorus">
+                            <div class="chorus-header">CHORUS</div>
+                            <div class="chorus-text">
+                                <p>Thy children here we sing for thee</p>
+                                <p>We raise our voices clear</p>
+                                <p>We'll shout and cheer in unity</p>
+                                <p>For Alma Mater dear.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="hymn-verse">
+                            <div class="verse-number">II</div>
+                            <div class="verse-text">
+                                <p>Training the mind and the heart and the hands</p>
+                                <p>Ready to serve as best as we can,</p>
+                                <p>Perpetual Help by the banner we stand,</p>
+                                <p>Loyal and true spread thy fame</p>
+                                <p>O'er the land.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="hymn-verse">
+                            <div class="verse-number">R</div>
+                            <div class="verse-text">
+                                <p><em>Repeat I and Chorus</em></p>
+                                <p>We'll shout and cheer in unity</p>
+                                <p>For Alma Mater dear.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
