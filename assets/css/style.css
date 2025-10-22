@@ -18,6 +18,7 @@
     --text-light: #666;
     --alt-color-1: #ffc63e;
     --alt-color-2: #e0b03c;
+    --accent-color: #ffc63e;
 }
 
 /* Reset and Base Styles */
@@ -2374,8 +2375,10 @@ h2, h3, h4, h5, h6 {
 }
 
 .quick-links a:hover {
-    background: var(--accent-color);
+    background: var(--secondary-color);
+    color: white;
     transform: translateX(5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive adjustments for instructions */
