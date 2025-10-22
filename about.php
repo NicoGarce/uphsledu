@@ -583,61 +583,63 @@ include 'app/includes/header.php';
 /* Perpetual Hymn Styling */
 .hymn-container {
     background: rgba(255, 255, 255, 0.95);
-    padding: 3rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     z-index: 2;
     position: relative;
     border: 2px solid rgba(28, 77, 161, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .hymn-content {
-    max-width: 800px;
+    max-width: 100%;
     margin: 0 auto;
     text-align: center;
 }
 
 .hymn-verse {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: flex-start;
-    gap: 1.5rem;
+    gap: 1rem;
     text-align: left;
 }
 
 .hymn-chorus {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     text-align: left;
 }
 
 .verse-number {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 1.2rem;
+    font-size: 1rem;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(28, 77, 161, 0.3);
+    box-shadow: 0 3px 8px rgba(28, 77, 161, 0.3);
 }
 
 .chorus-header {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: white;
     font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    padding: 8px 16px;
-    border-radius: 20px;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 15px;
     display: inline-block;
-    box-shadow: 0 4px 12px rgba(28, 77, 161, 0.3);
+    box-shadow: 0 3px 8px rgba(28, 77, 161, 0.3);
 }
 
 .verse-text {
@@ -646,13 +648,13 @@ include 'app/includes/header.php';
 }
 
 .chorus-text {
-    line-height: 1.8;
-    margin-left: 55px;
+    line-height: 1.6;
+    margin-left: 45px;
 }
 
 .verse-text p, .chorus-text p {
-    margin: 0.5rem 0;
-    font-size: 1.1rem;
+    margin: 0.3rem 0;
+    font-size: 0.95rem;
     color: var(--text-dark);
     font-weight: 500;
 }
@@ -661,12 +663,13 @@ include 'app/includes/header.php';
 /* Responsive Hymn Styling */
 @media (max-width: 768px) {
     .hymn-container {
-        padding: 2rem;
+        padding: 1.2rem 1.5rem;
+        max-width: 450px;
     }
     
     .hymn-verse, .hymn-chorus {
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.8rem;
         text-align: center;
     }
     
@@ -676,13 +679,13 @@ include 'app/includes/header.php';
     
     .chorus-header {
         text-align: center;
-        font-size: 1rem;
-        padding: 6px 14px;
+        font-size: 0.85rem;
+        padding: 5px 10px;
     }
     
     .verse-text p,
     .chorus-text p {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     
     .chorus-text {
@@ -692,24 +695,25 @@ include 'app/includes/header.php';
 
 @media (max-width: 480px) {
     .hymn-container {
-        padding: 1.5rem;
+        padding: 1rem 1.2rem;
+        max-width: 400px;
     }
     
     .verse-number {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
     }
     
     .chorus-header {
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-        padding: 5px 12px;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        padding: 4px 8px;
     }
     
     .verse-text p,
     .chorus-text p {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
 }
 
