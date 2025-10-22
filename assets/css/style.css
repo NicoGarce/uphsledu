@@ -4613,7 +4613,7 @@ img.loaded {
 
 .footer-section .contact-item h5 {
     color: white !important;
-    font-size: 1rem !important;
+    font-size: 0.85rem !important;
     font-weight: 600 !important;
     margin-bottom: 4px !important;
     text-transform: uppercase !important;
@@ -4625,7 +4625,7 @@ img.loaded {
     color: rgba(255, 255, 255, 0.8) !important;
     line-height: 1.5 !important;
     margin: 0 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.8rem !important;
 }
 
 .footer-section .contact-item a {
@@ -4881,11 +4881,11 @@ img.loaded {
     }
     
     .footer-section .contact-item h5 {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     
     .footer-section .contact-item p {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
     
     .email-links a {
@@ -4903,11 +4903,11 @@ img.loaded {
     }
     
     .footer-section .contact-item h5 {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
     
     .footer-section .contact-item p {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
     
     .email-links a {
