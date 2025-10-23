@@ -24,7 +24,12 @@ include 'app/includes/header.php';
 
 <style>
 .about-intro {
-    background: linear-gradient(to bottom, #F8F8F8 0%, #F8F8F8 70%, rgba(248, 248, 248, 0) 100%);
+    background: 
+        url('<?php echo $base_path; ?>assets/images/about_intro_bg.png'),
+        linear-gradient(to bottom, #F8F8F8 0%, #F8F8F8 70%, rgba(248, 248, 248, 0) 100%);
+    background-size: contain, cover;
+    background-position: center;
+    background-repeat: no-repeat;
     padding: 6rem 0 4rem;
     position: relative;
     overflow: hidden;
