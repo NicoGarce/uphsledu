@@ -51,7 +51,7 @@ include 'app/includes/header.php';
 }
 
 .intro-text h1 {
-    font-size: 3.5rem;
+    font-size: 2.8rem;
     color: var(--primary-color);
     margin-bottom: 1.5rem;
     font-weight: 900;
@@ -71,7 +71,7 @@ include 'app/includes/header.php';
 }
 
 .intro-text .tagline {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: var(--secondary-color);
     font-weight: 600;
     margin-bottom: 2rem;
@@ -83,9 +83,9 @@ include 'app/includes/header.php';
 }
 
 .intro-text .description {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-dark);
-    line-height: 1.8;
+    line-height: 1.7;
     margin-bottom: 2rem;
 }
 
@@ -143,14 +143,14 @@ include 'app/includes/header.php';
 }
 
 .stat-number {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 900;
     color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
 
 .stat-label {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--text-light);
     font-weight: 600;
     text-transform: uppercase;
@@ -203,7 +203,7 @@ include 'app/includes/header.php';
 }
 
 .section-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: var(--primary-color);
     margin-bottom: 1rem;
     font-weight: 700;
@@ -225,11 +225,11 @@ include 'app/includes/header.php';
 
 .section-content {
     background: rgba(255, 255, 255, 0.95);
-    padding: 3rem;
+    padding: 2.5rem;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    line-height: 1.8;
-    font-size: 1.1rem;
+    line-height: 1.7;
+    font-size: 1rem;
     color: var(--text-dark);
     backdrop-filter: blur(5px);
     position: relative;
@@ -409,21 +409,21 @@ include 'app/includes/header.php';
 }
 
 .member-name {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
 
 .member-position {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--secondary-color);
     font-weight: 600;
     margin-bottom: 1rem;
 }
 
 .member-qualifications {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-light);
     font-style: italic;
 }
@@ -490,7 +490,7 @@ include 'app/includes/header.php';
 }
 
 .philosophy-quote {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 700;
     font-style: italic;
     margin-bottom: 1.5rem;
@@ -525,7 +525,7 @@ include 'app/includes/header.php';
 
 
 .philosophy-author {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: var(--secondary-color);
     font-weight: 600;
     text-transform: uppercase;
@@ -583,78 +583,61 @@ include 'app/includes/header.php';
 /* Perpetual Hymn Styling */
 .hymn-container {
     background: rgba(255, 255, 255, 0.95);
-    padding: 1.5rem 2rem;
+    padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     z-index: 2;
     position: relative;
     border: 2px solid rgba(28, 77, 161, 0.1);
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
 }
 
 .hymn-content {
-    max-width: 100%;
-    margin: 0 auto;
     text-align: center;
 }
 
-.hymn-verse {
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    text-align: left;
+.hymn-verse, .hymn-chorus {
+    margin-bottom: 2rem;
+    text-align: center;
 }
 
-.hymn-chorus {
-    margin-bottom: 1.5rem;
-    text-align: left;
+.verse-number, .chorus-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-weight: 700;
+    border-radius: 20px;
+    display: inline-block;
+    box-shadow: 0 3px 8px rgba(28, 77, 161, 0.3);
+    margin-bottom: 1rem;
 }
 
 .verse-number {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 1rem;
-    flex-shrink: 0;
-    box-shadow: 0 3px 8px rgba(28, 77, 161, 0.3);
+    font-size: 1.1rem;
 }
 
 .chorus-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    font-weight: 700;
     font-size: 0.9rem;
-    margin-bottom: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    padding: 6px 12px;
-    border-radius: 15px;
-    display: inline-block;
-    box-shadow: 0 3px 8px rgba(28, 77, 161, 0.3);
+    padding: 8px 16px;
 }
 
-.verse-text {
-    flex: 1;
-    line-height: 1.8;
-}
-
-.chorus-text {
-    line-height: 1.6;
-    margin-left: 45px;
+.verse-text, .chorus-text {
+    line-height: 1.7;
+    text-align: center;
 }
 
 .verse-text p, .chorus-text p {
-    margin: 0.3rem 0;
-    font-size: 0.95rem;
+    margin: 0.5rem 0;
+    font-size: 1rem;
     color: var(--text-dark);
     font-weight: 500;
 }
@@ -663,56 +646,52 @@ include 'app/includes/header.php';
 /* Responsive Hymn Styling */
 @media (max-width: 768px) {
     .hymn-container {
-        padding: 1.2rem 1.5rem;
-        max-width: 450px;
+        padding: 1.5rem;
+        max-width: 500px;
     }
     
     .hymn-verse, .hymn-chorus {
-        flex-direction: column;
-        gap: 0.8rem;
-        text-align: center;
+        margin-bottom: 1.5rem;
     }
     
     .verse-number {
-        align-self: center;
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
     }
     
     .chorus-header {
-        text-align: center;
         font-size: 0.85rem;
-        padding: 5px 10px;
+        padding: 6px 12px;
     }
     
-    .verse-text p,
-    .chorus-text p {
+    .verse-text p, .chorus-text p {
         font-size: 0.9rem;
-    }
-    
-    .chorus-text {
-        margin-left: 0;
     }
 }
 
 @media (max-width: 480px) {
     .hymn-container {
-        padding: 1rem 1.2rem;
+        padding: 1.2rem;
         max-width: 400px;
     }
     
+    .hymn-verse, .hymn-chorus {
+        margin-bottom: 1.2rem;
+    }
+    
     .verse-number {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
         font-size: 0.9rem;
     }
     
     .chorus-header {
         font-size: 0.8rem;
-        letter-spacing: 0.5px;
-        padding: 4px 8px;
+        padding: 5px 10px;
     }
     
-    .verse-text p,
-    .chorus-text p {
+    .verse-text p, .chorus-text p {
         font-size: 0.85rem;
     }
 }
@@ -779,8 +758,8 @@ include 'app/includes/header.php';
 }
 
 .mission-text, .vision-text {
-    font-size: 1rem;
-    line-height: 1.7;
+    font-size: 0.95rem;
+    line-height: 1.6;
     color: #2F4F4F;
     text-align: justify;
     position: relative;
@@ -808,6 +787,24 @@ include 'app/includes/header.php';
         gap: 2rem;
         margin: 2.5rem 0;
     }
+    
+    .mission-text, .vision-text {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .mission-text p, .vision-text p {
+        text-indent: 1.2rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .philosophy-quote {
+        font-size: 1.4rem;
+    }
+    
+    .philosophy-author {
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 768px) {
@@ -817,16 +814,16 @@ include 'app/includes/header.php';
     }
     
     .intro-text h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
     
     .intro-text .tagline {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         letter-spacing: 0.2px;
     }
     
     .intro-text .description {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
     
     .intro-visual {
@@ -844,19 +841,36 @@ include 'app/includes/header.php';
     }
     
     .stat-number {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .stat-label {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
     }
     
     .section-content {
         padding: 2rem;
+        font-size: 0.95rem;
     }
     
     .board-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .member-name {
+        font-size: 1rem;
+    }
+    
+    .member-position {
+        font-size: 0.85rem;
+    }
+    
+    .member-qualifications {
+        font-size: 0.8rem;
     }
     
     .campus-grid {
@@ -985,7 +999,44 @@ include 'app/includes/header.php';
     }
     
     .intro-text h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+    
+    .intro-text .tagline {
+        font-size: 1rem;
+    }
+    
+    .intro-text .description {
+        font-size: 0.9rem;
+    }
+    
+    .section-title {
+        font-size: 1.6rem;
+    }
+    
+    .section-content {
+        padding: 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .stat-number {
+        font-size: 1.6rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .member-name {
+        font-size: 0.9rem;
+    }
+    
+    .member-position {
+        font-size: 0.8rem;
+    }
+    
+    .member-qualifications {
+        font-size: 0.75rem;
     }
     
     .history-timeline {
@@ -1135,6 +1186,19 @@ include 'app/includes/header.php';
         text-indent: 1.2rem;
         margin-bottom: 1.2rem;
         flex: none;
+    }
+    
+    .mission-text, .vision-text {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    .philosophy-quote {
+        font-size: 1.2rem;
+    }
+    
+    .philosophy-author {
+        font-size: 0.75rem;
     }
 }
 </style>
