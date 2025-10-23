@@ -415,7 +415,7 @@ h2, h3, h4, h5, h6 {
 /* Main Content */
 .main-content {
     min-height: calc(100vh - 60px);
-    padding-top: 3rem;
+    padding-top: 1rem;
 }
 
 /* Mobile responsive - remove top padding */
