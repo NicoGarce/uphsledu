@@ -194,10 +194,17 @@ include 'app/includes/header.php';
 }
 
 .sdg-goal-icon {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: var(--white);
     margin-bottom: 0.5rem;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sdg-goal-icon i {
+    font-size: 1.5rem;
 }
 
 
@@ -254,6 +261,25 @@ include 'app/includes/header.php';
 .sdg-goal-17 { background: var(--sdg-17); }
 .sdg-goal-17::before { background: var(--sdg-17); }
 
+/* SDG Modal Header Top Border Colors */
+.sdg-modal-header.sdg-header-1::before { background: var(--sdg-1); }
+.sdg-modal-header.sdg-header-2::before { background: var(--sdg-2); }
+.sdg-modal-header.sdg-header-3::before { background: var(--sdg-3); }
+.sdg-modal-header.sdg-header-4::before { background: var(--sdg-4); }
+.sdg-modal-header.sdg-header-5::before { background: var(--sdg-5); }
+.sdg-modal-header.sdg-header-6::before { background: var(--sdg-6); }
+.sdg-modal-header.sdg-header-7::before { background: var(--sdg-7); }
+.sdg-modal-header.sdg-header-8::before { background: var(--sdg-8); }
+.sdg-modal-header.sdg-header-9::before { background: var(--sdg-9); }
+.sdg-modal-header.sdg-header-10::before { background: var(--sdg-10); }
+.sdg-modal-header.sdg-header-11::before { background: var(--sdg-11); }
+.sdg-modal-header.sdg-header-12::before { background: var(--sdg-12); }
+.sdg-modal-header.sdg-header-13::before { background: var(--sdg-13); }
+.sdg-modal-header.sdg-header-14::before { background: var(--sdg-14); }
+.sdg-modal-header.sdg-header-15::before { background: var(--sdg-15); }
+.sdg-modal-header.sdg-header-16::before { background: var(--sdg-16); }
+.sdg-modal-header.sdg-header-17::before { background: var(--sdg-17); }
+
 /* Modal Styles */
 .sdg-modal {
     display: none;
@@ -297,6 +323,19 @@ include 'app/includes/header.php';
     padding: 2rem;
     border-bottom: 1px solid var(--border-light);
     position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.sdg-modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-blue);
+    border-radius: 12px 12px 0 0;
+    transition: background-color 0.3s ease;
 }
 
 .sdg-modal-close {
@@ -308,9 +347,15 @@ include 'app/includes/header.php';
     font-size: 1.5rem;
     cursor: pointer;
     color: var(--text-gray);
-    padding: 0.5rem;
+    padding: 0;
     border-radius: 50%;
     transition: all 0.3s ease;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .sdg-modal-close:hover {
@@ -713,120 +758,154 @@ include 'app/includes/header.php';
             <!-- Goal 1: No Poverty -->
             <div class="sdg-goal sdg-goal-1" data-goal="1">
                 <div class="sdg-goal-number">1</div>
-                <div class="sdg-goal-icon">👨‍👩‍👧‍👦</div>
                 <div class="sdg-goal-title">NO POVERTY</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-users"></i>
+                </div>
             </div>
 
             <!-- Goal 2: Zero Hunger -->
             <div class="sdg-goal sdg-goal-2" data-goal="2">
                 <div class="sdg-goal-number">2</div>
-                <div class="sdg-goal-icon">🍲</div>
                 <div class="sdg-goal-title">ZERO HUNGER</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
             </div>
 
             <!-- Goal 3: Good Health -->
             <div class="sdg-goal sdg-goal-3" data-goal="3">
                 <div class="sdg-goal-number">3</div>
-                <div class="sdg-goal-icon">💗</div>
                 <div class="sdg-goal-title">GOOD HEALTH AND WELL-BEING</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
             </div>
 
             <!-- Goal 4: Quality Education -->
             <div class="sdg-goal sdg-goal-4" data-goal="4">
                 <div class="sdg-goal-number">4</div>
-                <div class="sdg-goal-icon">📚</div>
                 <div class="sdg-goal-title">QUALITY EDUCATION</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
             </div>
 
             <!-- Goal 5: Gender Equality -->
             <div class="sdg-goal sdg-goal-5" data-goal="5">
                 <div class="sdg-goal-number">5</div>
-                <div class="sdg-goal-icon">⚖️</div>
                 <div class="sdg-goal-title">GENDER EQUALITY</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
             </div>
 
             <!-- Goal 6: Clean Water -->
             <div class="sdg-goal sdg-goal-6" data-goal="6">
                 <div class="sdg-goal-number">6</div>
-                <div class="sdg-goal-icon">💧</div>
                 <div class="sdg-goal-title">CLEAN WATER AND SANITATION</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
             </div>
 
             <!-- Goal 7: Clean Energy -->
             <div class="sdg-goal sdg-goal-7" data-goal="7">
                 <div class="sdg-goal-number">7</div>
-                <div class="sdg-goal-icon">⚡</div>
                 <div class="sdg-goal-title">AFFORDABLE AND CLEAN ENERGY</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
             </div>
 
             <!-- Goal 8: Decent Work -->
             <div class="sdg-goal sdg-goal-8" data-goal="8">
                 <div class="sdg-goal-number">8</div>
-                <div class="sdg-goal-icon">📈</div>
                 <div class="sdg-goal-title">DECENT WORK AND ECONOMIC GROWTH</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
             </div>
 
             <!-- Goal 9: Industry Innovation -->
             <div class="sdg-goal sdg-goal-9" data-goal="9">
                 <div class="sdg-goal-number">9</div>
-                <div class="sdg-goal-icon">🏗️</div>
                 <div class="sdg-goal-title">INDUSTRY, INNOVATION AND INFRASTRUCTURE</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
             </div>
 
             <!-- Goal 10: Reduced Inequalities -->
             <div class="sdg-goal sdg-goal-10" data-goal="10">
                 <div class="sdg-goal-number">10</div>
-                <div class="sdg-goal-icon">⚖️</div>
                 <div class="sdg-goal-title">REDUCED INEQUALITIES</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-equals"></i>
+                </div>
             </div>
 
             <!-- Goal 11: Sustainable Cities -->
             <div class="sdg-goal sdg-goal-11" data-goal="11">
                 <div class="sdg-goal-number">11</div>
-                <div class="sdg-goal-icon">🏙️</div>
                 <div class="sdg-goal-title">SUSTAINABLE CITIES AND COMMUNITIES</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-city"></i>
+                </div>
             </div>
 
             <!-- Goal 12: Responsible Consumption -->
             <div class="sdg-goal sdg-goal-12" data-goal="12">
                 <div class="sdg-goal-number">12</div>
-                <div class="sdg-goal-icon">♻️</div>
                 <div class="sdg-goal-title">RESPONSIBLE CONSUMPTION AND PRODUCTION</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
             </div>
 
             <!-- Goal 13: Climate Action -->
             <div class="sdg-goal sdg-goal-13" data-goal="13">
                 <div class="sdg-goal-number">13</div>
-                <div class="sdg-goal-icon">🌍</div>
                 <div class="sdg-goal-title">CLIMATE ACTION</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
             </div>
 
             <!-- Goal 14: Life Below Water -->
             <div class="sdg-goal sdg-goal-14" data-goal="14">
                 <div class="sdg-goal-number">14</div>
-                <div class="sdg-goal-icon">🐟</div>
                 <div class="sdg-goal-title">LIFE BELOW WATER</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-fish"></i>
+                </div>
             </div>
 
             <!-- Goal 15: Life on Land -->
             <div class="sdg-goal sdg-goal-15" data-goal="15">
                 <div class="sdg-goal-number">15</div>
-                <div class="sdg-goal-icon">🌳</div>
                 <div class="sdg-goal-title">LIFE ON LAND</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-tree"></i>
+                </div>
             </div>
 
             <!-- Goal 16: Peace Justice -->
             <div class="sdg-goal sdg-goal-16" data-goal="16">
                 <div class="sdg-goal-number">16</div>
-                <div class="sdg-goal-icon">🕊️</div>
                 <div class="sdg-goal-title">PEACE, JUSTICE AND STRONG INSTITUTIONS</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-dove"></i>
+                </div>
             </div>
 
             <!-- Goal 17: Partnerships -->
             <div class="sdg-goal sdg-goal-17" data-goal="17">
                 <div class="sdg-goal-number">17</div>
-                <div class="sdg-goal-icon">🤝</div>
                 <div class="sdg-goal-title">PARTNERSHIPS FOR THE GOALS</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -974,6 +1053,13 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
         
         // Store current scroll position
         scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Remove any existing header color classes
+        const modalHeader = document.querySelector('.sdg-modal-header');
+        modalHeader.className = modalHeader.className.replace(/sdg-header-\d+/g, '');
+        
+        // Add the specific SDG header color class
+        modalHeader.classList.add(`sdg-header-${goalNumber}`);
         
         modalGoalNumber.textContent = goalNumber;
         modalGoalTitle.textContent = goalData.title;
