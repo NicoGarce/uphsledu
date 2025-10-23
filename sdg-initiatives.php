@@ -320,7 +320,7 @@ include 'app/includes/header.php';
 }
 
 .sdg-modal-header {
-    padding: 2rem;
+    padding: 1.25rem 2rem;
     border-bottom: 1px solid var(--border-light);
     position: relative;
     transition: background-color 0.3s ease;
@@ -359,7 +359,6 @@ include 'app/includes/header.php';
 }
 
 .sdg-modal-close:hover {
-    background: var(--bg-accent);
     color: var(--text-dark);
 }
 
@@ -576,7 +575,7 @@ include 'app/includes/header.php';
     }
     
     .sdg-modal-header {
-        padding: 1.2rem;
+        padding: 1rem 1.2rem;
     }
     
     .sdg-modal-body {
@@ -663,7 +662,7 @@ include 'app/includes/header.php';
     }
     
     .sdg-modal-header {
-        padding: 1rem;
+        padding: 0.8rem 1rem;
     }
     
     .sdg-modal-body {
