@@ -162,7 +162,7 @@
 
 .post-title {
     font-family: 'Barlow Semi Condensed', sans-serif;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 800;
     color: var(--primary-color);
     margin-bottom: 20px;
@@ -464,6 +464,36 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    /* Tablet styles - make text smaller on tablets */
+    .post-text {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .post-text p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    
+    .post-text h1 { font-size: 1.8rem; }
+    .post-text h2 { font-size: 1.6rem; }
+    .post-text h3 { font-size: 1.4rem; }
+    .post-text h4 { font-size: 1.2rem; }
+    .post-text h5 { font-size: 1.1rem; }
+    .post-text h6 { font-size: 1rem; }
+    
+    /* Make post title smaller on tablets */
+    .post-title {
+        font-size: 1.8rem;
+    }
+    
+    /* Make author name smaller on tablets */
+    .post-meta {
+        font-size: 0.85rem;
+    }
+}
+
 @media (max-width: 768px) {
     .post-container {
         grid-template-columns: 1fr;
