@@ -520,12 +520,80 @@ include 'app/includes/header.php';
     
     .sdg-modal-content {
         width: 95%;
-        margin: 10% auto;
+        margin: 5% auto;
+        max-height: 90vh;
     }
     
-    .sdg-modal-header,
+    .sdg-modal-header {
+        padding: 1.2rem;
+    }
+    
     .sdg-modal-body {
-        padding: 1.5rem;
+        padding: 1.2rem;
+        max-height: calc(90vh - 100px);
+    }
+    
+    .sdg-modal-title {
+        font-size: 1.4rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .sdg-modal-number {
+        font-size: 1rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .sdg-modal-description {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+    
+    .sdg-programs-section {
+        padding: 1rem;
+    }
+    
+    .sdg-programs-section h4 {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .sdg-post-item {
+        padding: 1rem;
+    }
+    
+    .sdg-post-title {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    .sdg-post-content {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+    
+    .sdg-post-content p {
+        margin-bottom: 0.6rem;
+    }
+    
+    .sdg-post-meta {
+        font-size: 0.75rem;
+        padding-top: 0.6rem;
+    }
+    
+    .sdg-program-item {
+        padding: 0.8rem;
+    }
+    
+    .sdg-program-title {
+        font-size: 0.9rem;
+    }
+    
+    .sdg-program-description {
+        font-size: 0.8rem;
+        line-height: 1.3;
     }
 }
 
@@ -533,7 +601,85 @@ include 'app/includes/header.php';
     .sdg-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    .sdg-intro { padding: 0.5rem; }
+    .sdg-intro { 
+        padding: 0.5rem; 
+    }
+    
+    .sdg-modal-content {
+        width: 98%;
+        margin: 2% auto;
+        max-height: 95vh;
+    }
+    
+    .sdg-modal-header {
+        padding: 1rem;
+    }
+    
+    .sdg-modal-body {
+        padding: 1rem;
+        max-height: calc(95vh - 80px);
+    }
+    
+    .sdg-modal-title {
+        font-size: 1.2rem;
+        gap: 0.3rem;
+    }
+    
+    .sdg-modal-number {
+        font-size: 0.9rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .sdg-modal-description {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-bottom: 1.2rem;
+    }
+    
+    .sdg-programs-section {
+        padding: 0.8rem;
+    }
+    
+    .sdg-programs-section h4 {
+        font-size: 0.9rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .sdg-post-item {
+        padding: 0.8rem;
+    }
+    
+    .sdg-post-title {
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+    
+    .sdg-post-content {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .sdg-post-content p {
+        margin-bottom: 0.5rem;
+    }
+    
+    .sdg-post-meta {
+        font-size: 0.7rem;
+        padding-top: 0.5rem;
+    }
+    
+    .sdg-program-item {
+        padding: 0.6rem;
+    }
+    
+    .sdg-program-title {
+        font-size: 0.85rem;
+    }
+    
+    .sdg-program-description {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
 }
 </style>
 
