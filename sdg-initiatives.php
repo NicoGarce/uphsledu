@@ -327,6 +327,12 @@ include 'app/includes/header.php';
     gap: 1rem;
 }
 
+.sdg-modal-title span:not(.sdg-modal-number) {
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+}
+
 .sdg-modal-number {
     background: var(--primary-blue);
     color: white;
@@ -954,6 +960,9 @@ const modalGoalDescription = document.getElementById('modalGoalDescription');
 const programsPlaceholder = document.getElementById('programsPlaceholder');
 const programsList = document.getElementById('programsList');
 
+// Store scroll position
+let scrollPosition = 0;
+
 // SDG Posts Data (passed from PHP)
 const sdgPostsData = <?php echo json_encode($sdgPosts); ?>;
 
@@ -962,6 +971,9 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
     goal.addEventListener('click', function() {
         const goalNumber = parseInt(this.dataset.goal);
         const goalData = sdgGoals[goalNumber];
+        
+        // Store current scroll position
+        scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
         
         modalGoalNumber.textContent = goalNumber;
         modalGoalTitle.textContent = goalData.title;
@@ -974,6 +986,7 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
         document.body.style.overflow = 'hidden';
         document.body.style.position = 'fixed';
         document.body.style.width = '100%';
+        document.body.style.top = `-${scrollPosition}px`;
     });
 });
 
@@ -1019,31 +1032,32 @@ function displaySdgPosts(goalNumber) {
     }
 }
 
-// Close modal
-modalClose.addEventListener('click', function() {
+// Function to close modal and restore scroll position
+function closeModal() {
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
     document.body.style.position = '';
     document.body.style.width = '';
-});
+    document.body.style.top = '';
+    
+    // Restore scroll position
+    window.scrollTo(0, scrollPosition);
+}
+
+// Close modal
+modalClose.addEventListener('click', closeModal);
 
 // Close modal when clicking outside
 modal.addEventListener('click', function(e) {
     if (e.target === modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        document.body.style.position = '';
-        document.body.style.width = '';
+        closeModal();
     }
 });
 
 // Close modal with Escape key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && modal.style.display === 'block') {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        document.body.style.position = '';
-        document.body.style.width = '';
+        closeModal();
     }
 });
 
