@@ -24,7 +24,7 @@ include 'app/includes/header.php';
 
 <style>
 .about-intro {
-    background: #F8F8F8;
+    background: linear-gradient(to bottom, #F8F8F8 0%, #F8F8F8 70%, rgba(248, 248, 248, 0) 100%);
     padding: 6rem 0 4rem;
     position: relative;
     overflow: hidden;
@@ -37,7 +37,7 @@ include 'app/includes/header.php';
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(28, 77, 161, 0.05) 0%, rgba(82, 123, 189, 0.05) 100%);
+    background: linear-gradient(45deg, rgba(28, 77, 161, 0.05) 0%, rgba(82, 123, 189, 0.05) 70%, transparent 100%);
     z-index: 0;
 }
 
