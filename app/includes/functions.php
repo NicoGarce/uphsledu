@@ -438,5 +438,114 @@ function incrementPostViews($postId) {
     $stmt = $pdo->prepare("UPDATE posts SET views = views + 1 WHERE id = ?");
     $stmt->execute([$postId]);
 }
+
+// Get published posts with search and filters
+function getPublishedPostsWithFilters($page = 1, $limit = 12, $search = '', $category = '', $dateRange = '') {
+    $pdo = getDBConnection();
+    $offset = ($page - 1) * $limit;
+    
+    // Cast to integers to prevent SQL injection
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    
+    $sql = "
+        SELECT p.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM posts p 
+        JOIN users u ON p.author_id = u.id 
+        WHERE p.status = 'published'
+    ";
+    
+    $params = [];
+    
+    // Add search condition
+    if (!empty($search)) {
+        $sql .= " AND (p.title LIKE ? OR p.content LIKE ?)";
+        $searchTerm = "%{$search}%";
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+    }
+    
+    // Add category filter (assuming posts have a category field or we use tags)
+    if (!empty($category)) {
+        $sql .= " AND p.category = ?";
+        $params[] = $category;
+    }
+    
+    // Add date range filter
+    if (!empty($dateRange)) {
+        $dateCondition = getDateRangeCondition($dateRange);
+        if ($dateCondition) {
+            $sql .= " AND " . $dateCondition;
+        }
+    }
+    
+    $sql .= " ORDER BY p.published_at DESC, p.created_at DESC LIMIT :limit OFFSET :offset";
+    
+    $stmt = $pdo->prepare($sql);
+    
+    // Bind parameters
+    foreach ($params as $i => $param) {
+        $stmt->bindValue($i + 1, $param);
+    }
+    
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+// Get total count of published posts with filters
+function getPublishedPostsCountWithFilters($search = '', $category = '', $dateRange = '') {
+    $pdo = getDBConnection();
+    
+    $sql = "SELECT COUNT(*) as count FROM posts p WHERE p.status = 'published'";
+    $params = [];
+    
+    // Add search condition
+    if (!empty($search)) {
+        $sql .= " AND (p.title LIKE ? OR p.content LIKE ?)";
+        $searchTerm = "%{$search}%";
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+    }
+    
+    // Add category filter
+    if (!empty($category)) {
+        $sql .= " AND p.category = ?";
+        $params[] = $category;
+    }
+    
+    // Add date range filter
+    if (!empty($dateRange)) {
+        $dateCondition = getDateRangeCondition($dateRange);
+        if ($dateCondition) {
+            $sql .= " AND " . $dateCondition;
+        }
+    }
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $result = $stmt->fetch();
+    return $result['count'];
+}
+
+// Get date range condition for SQL
+function getDateRangeCondition($dateRange) {
+    $today = date('Y-m-d');
+    
+    switch ($dateRange) {
+        case 'today':
+            return "DATE(p.published_at) = '$today'";
+        case 'week':
+            return "p.published_at >= DATE_SUB('$today', INTERVAL 1 WEEK)";
+        case 'month':
+            return "p.published_at >= DATE_SUB('$today', INTERVAL 1 MONTH)";
+        case 'year':
+            return "p.published_at >= DATE_SUB('$today', INTERVAL 1 YEAR)";
+        default:
+            return null;
+    }
+}
 ?>
 

@@ -15,13 +15,14 @@ require_once 'app/includes/functions.php';
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $page = max(1, $page); // Ensure page is at least 1
 
-// Get posts for current page
-$posts = getPublishedPosts($page, 10);
-$totalPosts = getPublishedPostsCount();
-$totalPages = ceil($totalPosts / 10);
+// Get filter parameters
+$search = $_GET['search'] ?? '';
+$dateRange = $_GET['date_range'] ?? '';
 
-// Get recent posts for sidebar
-$recentPosts = getRecentPosts(5);
+// Get posts for current page with filters (12 posts per page)
+$posts = getPublishedPostsWithFilters($page, 12, $search, '', $dateRange);
+$totalPosts = getPublishedPostsCountWithFilters($search, '', $dateRange);
+$totalPages = ceil($totalPosts / 12);
 
 // Set page title
 $page_title = "All Posts - University of Perpetual Help System";
@@ -48,8 +49,47 @@ include 'app/includes/header.php';
             </p>
         </div>
 
+
+        <!-- Search and Filter System -->
+        <div class="posts-filter">
+            <form method="GET" class="filter-form" id="filterForm">
+                <div class="filter-row">
+                    <div class="search-group">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="search" id="searchInput" 
+                                   placeholder="Search posts..." 
+                                   value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="filter-group">
+                        <select name="date_range" id="dateRangeFilter">
+                            <option value="">All Time</option>
+                            <option value="today" <?php echo (($_GET['date_range'] ?? '') === 'today') ? 'selected' : ''; ?>>Today</option>
+                            <option value="week" <?php echo (($_GET['date_range'] ?? '') === 'week') ? 'selected' : ''; ?>>This Week</option>
+                            <option value="month" <?php echo (($_GET['date_range'] ?? '') === 'month') ? 'selected' : ''; ?>>This Month</option>
+                            <option value="year" <?php echo (($_GET['date_range'] ?? '') === 'year') ? 'selected' : ''; ?>>This Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button type="submit" class="filter-btn">
+                            <i class="fas fa-filter"></i>
+                            Filter
+                        </button>
+                        <a href="posts.php" class="clear-btn">
+                            <i class="fas fa-times"></i>
+                            Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <div class="posts-content">
-            <div class="posts-main">
+            <div id="searchResults">
                 <?php if (!empty($posts)): ?>
                     <div class="posts-grid">
                         <?php foreach ($posts as $post): ?>
@@ -73,22 +113,18 @@ include 'app/includes/header.php';
                                 </div>
                                 
                                 <div class="post-card-content">
-                                    <div class="post-card-meta">
-                                        <span class="post-date">
-                                            <i class="fas fa-calendar"></i>
-                                            <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
-                                        </span>
-                                        <span class="post-author">
-                                            <i class="fas fa-user"></i>
-                                            University of Perpetual Help System Laguna
-                                        </span>
-                                    </div>
-                                    
                                     <h2 class="post-card-title">
                                         <a href="post.php?slug=<?php echo $post['slug']; ?>">
                                             <?php echo htmlspecialchars($post['title']); ?>
                                         </a>
                                     </h2>
+                                    
+                                    <div class="post-card-meta">
+                                        <span class="post-date">
+                                            <i class="fas fa-calendar"></i>
+                                            <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
+                                        </span>
+                                    </div>
                                     
                                     <div class="post-card-footer">
                                         <div class="post-stats">
@@ -111,7 +147,7 @@ include 'app/includes/header.php';
                         <div class="pagination-container">
                             <div class="pagination">
                                 <?php if ($page > 1): ?>
-                                    <a href="posts.php?page=<?php echo $page - 1; ?>" class="pagination-btn prev-btn">
+                                    <a href="posts.php?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-btn prev-btn">
                                         <i class="fas fa-chevron-left"></i>
                                         Previous
                                     </a>
@@ -123,14 +159,14 @@ include 'app/includes/header.php';
                                     $endPage = min($totalPages, $page + 2);
                                     
                                     if ($startPage > 1): ?>
-                                        <a href="posts.php?page=1" class="pagination-number">1</a>
+                                        <a href="posts.php?page=1&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-number">1</a>
                                         <?php if ($startPage > 2): ?>
                                             <span class="pagination-ellipsis">...</span>
                                         <?php endif; ?>
                                     <?php endif; ?>
 
                                     <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                                        <a href="posts.php?page=<?php echo $i; ?>" 
+                                        <a href="posts.php?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" 
                                            class="pagination-number <?php echo $i === $page ? 'active' : ''; ?>">
                                             <?php echo $i; ?>
                                         </a>
@@ -140,14 +176,14 @@ include 'app/includes/header.php';
                                         <?php if ($endPage < $totalPages - 1): ?>
                                             <span class="pagination-ellipsis">...</span>
                                         <?php endif; ?>
-                                        <a href="posts.php?page=<?php echo $totalPages; ?>" class="pagination-number">
+                                        <a href="posts.php?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-number">
                                             <?php echo $totalPages; ?>
                                         </a>
                                     <?php endif; ?>
                                 </div>
 
                                 <?php if ($page < $totalPages): ?>
-                                    <a href="posts.php?page=<?php echo $page + 1; ?>" class="pagination-btn next-btn">
+                                    <a href="posts.php?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-btn next-btn">
                                         Next
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -155,7 +191,7 @@ include 'app/includes/header.php';
                             </div>
                             
                             <div class="pagination-info">
-                                <p>Showing <?php echo (($page - 1) * 10) + 1; ?>-<?php echo min($page * 10, $totalPosts); ?> of <?php echo $totalPosts; ?> posts</p>
+                                <p>Showing <?php echo (($page - 1) * 12) + 1; ?>-<?php echo min($page * 12, $totalPosts); ?> of <?php echo $totalPosts; ?> posts</p>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -171,56 +207,164 @@ include 'app/includes/header.php';
                     </div>
                 <?php endif; ?>
             </div>
-
-            <!-- Sidebar -->
-            <aside class="posts-sidebar">
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Recent Posts</h3>
-                    <div class="recent-posts">
-                        <?php foreach ($recentPosts as $recentPost): ?>
-                            <div class="recent-post-item">
-                                <a href="post.php?slug=<?php echo $recentPost['slug']; ?>" class="recent-post-link">
-                                    <h4 class="recent-post-title"><?php echo htmlspecialchars($recentPost['title']); ?></h4>
-                                    <span class="recent-post-date"><?php echo formatDate($recentPost['published_at'] ?: $recentPost['created_at']); ?></span>
-                                </a>
-                            </div>
-                        <?php endforeach; ?>
                     </div>
                 </div>
 
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">University Info</h3>
-                    <div class="university-info">
-                        <p>Stay connected with the University of Perpetual Help System Laguna for the latest news, announcements, and updates.</p>
-                        <a href="index.php" class="btn btn-primary">Visit Homepage</a>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const dateRangeFilter = document.getElementById('dateRangeFilter');
+    const searchResults = document.getElementById('searchResults');
+    const filterBtn = document.querySelector('.filter-btn');
+    
+    let currentPage = 1;
+    let isLoading = false;
+    
+    // Search with AJAX
+    function performSearch(page = 1) {
+        if (isLoading) return;
+        
+        isLoading = true;
+        currentPage = page;
+        
+        // Show loading state
+        const originalBtnText = filterBtn.innerHTML;
+        filterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+        filterBtn.disabled = true;
+        
+        // Add loading overlay to results
+        searchResults.style.opacity = '0.6';
+        searchResults.style.pointerEvents = 'none';
+        
+        const params = new URLSearchParams({
+            search: searchInput.value,
+            date_range: dateRangeFilter.value,
+            page: page
+        });
+        
+        fetch(`ajax-search.php?${params}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    searchResults.innerHTML = data.html;
+                    
+                    // Re-attach pagination event listeners
+                    attachPaginationListeners();
+                    
+                    // Highlight search terms
+                    if (searchInput.value.trim()) {
+                        highlightSearchTerms(searchInput.value.trim());
+                    }
+                } else {
+                    searchResults.innerHTML = `<div class="empty-posts">
+                        <div class="empty-posts-content">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Search Error</h3>
+                            <p>An error occurred while searching. Please try again.</p>
+                        </div>
+                    </div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+                searchResults.innerHTML = `<div class="empty-posts">
+                    <div class="empty-posts-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Search Error</h3>
+                        <p>Network error: ${error.message}</p>
                     </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Quick Links</h3>
-                    <div class="quick-links">
-                        <a href="index.php" class="quick-link">
-                            <i class="fas fa-home"></i>
-                            Homepage
-                        </a>
-                        <a href="about" class="quick-link">
-                            <i class="fas fa-info-circle"></i>
-                            About Us
-                        </a>
-                        <a href="about/contact.php" class="quick-link">
-                            <i class="fas fa-envelope"></i>
-                            Contact
-                        </a>
-                        <?php if (isLoggedIn()): ?>
-                            <a href="dashboard.php" class="quick-link">
-                                <i class="fas fa-tachometer-alt"></i>
-                                Dashboard
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </aside>
-        </div>
-    </div>
+                </div>`;
+            })
+            .finally(() => {
+                isLoading = false;
+                filterBtn.innerHTML = originalBtnText;
+                filterBtn.disabled = false;
+                searchResults.style.opacity = '1';
+                searchResults.style.pointerEvents = 'auto';
+            });
+    }
+    
+    // Attach pagination event listeners
+    function attachPaginationListeners() {
+        const paginationLinks = document.querySelectorAll('.pagination-number, .pagination-btn');
+        paginationLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = parseInt(this.dataset.page);
+                if (!isNaN(page)) {
+                    performSearch(page);
+                }
+            });
+        });
+    }
+    
+    // Search input with debounce
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            performSearch(1); // Reset to page 1 when searching
+        }, 300);
+    });
+    
+    // Date range filter
+    dateRangeFilter.addEventListener('change', function() {
+        performSearch(1); // Reset to page 1 when filtering
+    });
+    
+    // Manual filter button
+    filterBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        performSearch(1);
+    });
+    
+    
+    // Highlight search terms
+    function highlightSearchTerms(term) {
+        const postTitles = document.querySelectorAll('.post-card-title a');
+        const postContents = document.querySelectorAll('.post-card-excerpt');
+        
+        const regex = new RegExp(`(${term})`, 'gi');
+        
+        postTitles.forEach(title => {
+            title.innerHTML = title.innerHTML.replace(regex, '<mark>$1</mark>');
+        });
+        
+        postContents.forEach(content => {
+            content.innerHTML = content.innerHTML.replace(regex, '<mark>$1</mark>');
+        });
+        
+        // Add CSS for highlighted terms if not already added
+        if (!document.querySelector('#highlight-styles')) {
+            const style = document.createElement('style');
+            style.id = 'highlight-styles';
+            style.textContent = `
+                mark {
+                    background-color: #fef3cd;
+                    color: #856404;
+                    padding: 2px 4px;
+                    border-radius: 3px;
+                    font-weight: 600;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+    
+    // Initial pagination setup
+    attachPaginationListeners();
+    
+    // Highlight initial search term if present
+    const initialSearch = '<?php echo addslashes($search); ?>';
+    if (initialSearch) {
+        highlightSearchTerms(initialSearch);
+    }
+});
+</script>
 
 <?php include 'app/includes/footer.php'; ?>
