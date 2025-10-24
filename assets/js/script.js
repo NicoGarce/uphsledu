@@ -139,34 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Optimized hero video injection with lazy loading and performance optimization
+    // Progressive hero video injection (avoid FOUC on hard refresh)
     const heroBg = document.querySelector('.hero-background .hero-image');
     if (heroBg && heroBg.dataset.bgVideo) {
-        // Use Intersection Observer for lazy loading
-        if ('IntersectionObserver' in window) {
-            const videoObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        // Only load video when hero section is visible
-                        loadHeroVideo(heroBg);
-                        videoObserver.unobserve(entry.target);
-                    }
-                });
-            }, { 
-                rootMargin: '50px 0px', // Start loading 50px before it comes into view
-                threshold: 0.1 
-            });
-            
-            videoObserver.observe(heroBg);
-        } else {
-            // Fallback for older browsers - load after a delay
-            setTimeout(() => {
-                loadHeroVideo(heroBg);
-            }, 1000);
-        }
-    }
-    
-    function loadHeroVideo(heroBg) {
         // Defer injection until after load to let CSS settle
         window.requestAnimationFrame(() => {
             const video = document.createElement('video');
@@ -175,29 +150,14 @@ document.addEventListener('DOMContentLoaded', function() {
             video.muted = true;
             video.loop = true;
             video.playsInline = true;
-            video.preload = 'metadata'; // Only load metadata initially
             video.poster = heroBg.dataset.bgPoster || '';
-            
-            // Add loading optimization
-            video.addEventListener('loadstart', () => {
-                video.style.opacity = '0';
-            });
-            
             const source = document.createElement('source');
             source.src = heroBg.dataset.bgVideo;
             source.type = 'video/mp4';
             video.appendChild(source);
-            
             // Replace image once metadata is ready to minimize flash
             video.addEventListener('loadeddata', () => {
-                video.style.opacity = '1';
-                video.style.transition = 'opacity 0.3s ease';
                 heroBg.replaceWith(video);
-            }, { once: true });
-            
-            // Handle loading errors gracefully
-            video.addEventListener('error', () => {
-                console.warn('Video failed to load, keeping image fallback');
             }, { once: true });
         });
     }
