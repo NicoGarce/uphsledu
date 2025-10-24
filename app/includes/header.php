@@ -53,6 +53,15 @@ if ($current_page === 'index' && (strpos($script_name, '/') !== false || strpos(
     }
 }
 
+// Additional check for subdirectories - handle cases where the path contains the directory name
+if ($current_page === 'index' && (strpos($request_uri, 'programs') !== false || strpos($request_uri, 'support-services') !== false)) {
+    if (strpos($request_uri, 'programs') !== false) {
+        $current_page = 'programs';
+    } elseif (strpos($request_uri, 'support-services') !== false) {
+        $current_page = 'support-services';
+    }
+}
+
 
 // Use the automatically detected base path
 $base_path = $GLOBALS['base_path'];
@@ -71,7 +80,7 @@ $base_path = $GLOBALS['base_path'];
     
     <?php
     // Conditional preloading based on current page
-    $current_page = basename($_SERVER['PHP_SELF'], '.php');
+    // Don't reassign $current_page here as it was already set above with proper subdirectory detection
     $request_uri = $_SERVER['REQUEST_URI'];
     
     // Preload program logos only on programs pages
