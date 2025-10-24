@@ -87,9 +87,10 @@ $base_path = $GLOBALS['base_path'];
     echo '    <!-- Preload critical images to prevent alt text flash -->' . "\n";
     echo '    <link rel="preload" href="' . $base_path . 'assets/images/Logos/Logo2025.png" as="image" type="image/png">' . "\n";
     
-    // Preload video on home page
+    // Preload video and hero image on home page
     if ($current_page === 'index') {
-        echo '    <link rel="preload" href="' . $base_path . 'assets/video/AD2025.mp4" as="video" type="video/mp4">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/video/AD2025.mp4" as="fetch" type="video/mp4">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/FACADE.jpg" as="image" type="image/jpeg">' . "\n";
     }
     
     // Preload program logos only on programs pages
