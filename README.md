@@ -1,7 +1,34 @@
-# UPHSL Education Website with Posting System - Project Structure
+# UPHSL Education Website with Advanced Features - Project Structure
 
 ## Overview
-This is a comprehensive educational website for the University of Perpetual Help System Laguna (UPHSL) featuring a complete content management system with posting capabilities. The website includes both public-facing pages and an administrative panel for content management.
+This is a comprehensive educational website for the University of Perpetual Help System Laguna (UPHSL) featuring a complete content management system with posting capabilities, advanced search functionality, responsive design, and modern UI/UX. The website includes both public-facing pages and an administrative panel for content management.
+
+## Recent Updates & Features (2025)
+
+### **🎨 UI/UX Improvements**
+- ✅ **Modern Design System**: Updated with consistent color schemes and typography
+- ✅ **Responsive Navigation**: Mobile-first navbar with dropdown menus
+- ✅ **Advanced Search**: Real-time AJAX search with dropdown results
+- ✅ **Shimmer Loading**: Smooth loading animations for images
+- ✅ **Glass Effects**: Modern backdrop-filter effects throughout the site
+
+### **🔍 Search & Navigation**
+- ✅ **Global AJAX Search**: Real-time search across all pages and posts
+- ✅ **Smart Navigation**: Active menu detection for subdirectory pages
+- ✅ **Mobile Search**: Optimized mobile search experience
+- ✅ **Filter System**: Advanced post filtering with date ranges and categories
+
+### **📱 Mobile Optimization**
+- ✅ **Responsive Design**: Fully optimized for all device sizes
+- ✅ **Touch-Friendly**: Mobile-optimized interactions
+- ✅ **Performance**: Optimized loading and preloading strategies
+- ✅ **Accessibility**: Improved accessibility features
+
+### **🎯 Content Management**
+- ✅ **News Stand Layout**: Modern posts page with grid layout
+- ✅ **Program Pages**: Comprehensive program listings with logos
+- ✅ **SDG Initiatives**: Interactive SDG goals with modals
+- ✅ **Support Services**: Organized service pages with navigation
 
 ## Prerequisites
 
@@ -73,6 +100,7 @@ After setup, you can log in with these default accounts:
 1. Visit `http://localhost/uphsledu/` to see the homepage
 2. Test the admin panel at `http://localhost/uphsledu/auth/login.php`
 3. Create a test post to verify the posting system works
+4. Test the search functionality and navigation
 
 ## Production Deployment (cPanel)
 
@@ -82,6 +110,8 @@ After setup, you can log in with these default accounts:
 ✅ **Database Ready**: Uses the same database configuration
 ✅ **Clean URLs**: .htaccess rules work in production
 ✅ **File Permissions**: Uploads directory will be automatically writable
+✅ **Search Functionality**: AJAX search works in production
+✅ **Mobile Optimization**: Responsive design works across all devices
 
 ### **Deployment Steps**
 
@@ -112,6 +142,7 @@ After setup, you can log in with these default accounts:
 1. Visit your domain to see the homepage
 2. Test admin login at `https://yourdomain.com/auth/login.php`
 3. Create a test post to verify functionality
+4. Test search functionality and mobile responsiveness
 
 ### **Production Features**
 - **Automatic Path Detection**: No manual configuration needed
@@ -119,14 +150,39 @@ After setup, you can log in with these default accounts:
 - **SSL Ready**: Works with HTTPS
 - **Mobile Responsive**: Optimized for all devices
 - **SEO Friendly**: Clean URLs and proper meta tags
+- **Advanced Search**: Real-time search functionality
+- **Performance Optimized**: Preloading and caching strategies
 
 ## Key Features
+
+### **🎯 Core Functionality**
 - **Content Management System**: Full CRUD operations for posts and pages
 - **User Authentication**: Role-based access control (Super Admin, Admin, Author)
 - **Posting System**: Create, edit, delete, and publish posts with images
 - **Responsive Design**: Mobile-first approach with modern UI/UX
 - **Clean URLs**: SEO-friendly URLs without .php extensions
 - **Multi-role Dashboard**: Different interfaces for different user roles
+
+### **🔍 Advanced Search & Navigation**
+- **Global AJAX Search**: Real-time search across all pages and posts
+- **Smart Navigation**: Active menu detection for subdirectory pages
+- **Filter System**: Advanced post filtering with date ranges and categories
+- **Mobile Search**: Optimized mobile search experience
+- **Search Results**: Dropdown results with proper categorization
+
+### **📱 Mobile & Performance**
+- **Responsive Design**: Fully optimized for all device sizes
+- **Touch-Friendly**: Mobile-optimized interactions
+- **Performance**: Optimized loading and preloading strategies
+- **Shimmer Loading**: Smooth loading animations for images
+- **Accessibility**: Improved accessibility features
+
+### **🎨 Modern UI/UX**
+- **Glass Effects**: Modern backdrop-filter effects
+- **Consistent Design**: Unified color schemes and typography
+- **Interactive Elements**: Hover effects and smooth transitions
+- **News Stand Layout**: Modern posts page with grid layout
+- **Program Pages**: Comprehensive program listings with logos
 
 ## New Organized Structure
 
@@ -135,17 +191,19 @@ uphsledu/
 ├── index.php                    # Main homepage with news slider
 ├── about.php                    # About page (moved from about/about.php)
 ├── post.php                     # Individual post view page
-├── posts.php                    # All posts listing page
+├── posts.php                    # All posts listing page (News Stand Layout)
 ├── search.php                   # Search functionality
 ├── campuses.php                 # Campus information
-├── programs.php                 # Programs overview
-├── sdg-initiatives.php          # SDG Initiatives page
+├── sdg-initiatives.php          # SDG Initiatives page with interactive modals
 ├── ols_instructions.php         # Online services instructions
 ├── privacy-policy.php           # Privacy policy page
 ├── terms-of-service.php         # Terms of service page
 ├── accessibility.php            # Accessibility page
 ├── 404.php                      # Error page
-├── PROJECT_STRUCTURE.md         # This documentation
+├── ajax-search.php              # AJAX search endpoint
+├── ajax-navbar-search.php       # Navbar search endpoint
+├── deploy-to-production.php     # Production deployment script
+├── robots.txt                   # SEO robots file
 ├── .htaccess                    # URL rewriting rules
 │
 ├── auth/                        # Authentication system
@@ -158,36 +216,39 @@ uphsledu/
 │   ├── dashboard.php            # Main admin dashboard (Super Admin/Admin)
 │   ├── author-dashboard.php     # Author-specific dashboard
 │   ├── create-post.php          # Post creation and editing
+│   ├── create-sdg-post.php      # SDG post creation
 │   ├── posts.php                # Post management (all roles)
-│   └── accounts.php             # User account management (Super Admin/Admin)
+│   ├── accounts.php             # User account management (Super Admin/Admin)
+│   └── sdg-initiatives.php      # SDG initiatives management
 │
 ├── app/                        # Application core
 │   ├── config/
-│   │   └── database.php        # Database configuration and schema
+│   │   ├── database.php         # Database configuration and schema
+│   │   └── paths.php            # Path configuration and base path detection
 │   ├── includes/
-│   │   ├── header.php          # Public site header with navigation
-│   │   ├── footer.php          # Public site footer
-│   │   ├── admin-header.php    # Admin panel header with sidebar
-│   │   ├── admin-footer.php    # Admin panel footer
-│   │   ├── functions.php       # Core utility functions
-│   │   ├── coming-soon.php     # Coming soon template
+│   │   ├── header.php           # Public site header with navigation and AJAX search
+│   │   ├── footer.php           # Public site footer
+│   │   ├── admin-header.php     # Admin panel header with sidebar
+│   │   ├── admin-footer.php     # Admin panel footer
+│   │   ├── functions.php        # Core utility functions
+│   │   ├── coming-soon.php      # Coming soon template
 │   │   └── general-coming-soon.php
-│   └── functions/              # Additional function files (future)
+│   └── functions/               # Additional function files (future)
 │
 ├── assets/                     # Static assets
 │   ├── css/                    # Stylesheets
 │   │   ├── style.css           # Main public site styles
 │   │   ├── admin.css           # Admin panel styles
 │   │   ├── auth.css            # Authentication page styles
-│   │   ├── dashboard.css       # Dashboard and sidebar styles
+│   │   ├── dashboard.css        # Dashboard and sidebar styles
 │   │   ├── editor.css          # Post editor styles
 │   │   ├── post.css            # Individual post page styles
-│   │   └── posts.css           # Posts listing styles
+│   │   └── posts.css           # Posts listing styles with shimmer loading
 │   ├── js/                     # JavaScript files
 │   │   ├── script.js           # Main site JavaScript
 │   │   └── post.js             # Post-specific JavaScript
 │   ├── images/                 # Images (reorganized)
-│   │   ├── logos/              # Logo files
+│   │   ├── Logos/              # Logo files
 │   │   ├── banners/            # Banner images
 │   │   ├── programs/           # Program-related images
 │   │   ├── news/               # News images
@@ -204,15 +265,19 @@ uphsledu/
 │   │   ├── research/           # Research images
 │   │   ├── sps/                # SPS images
 │   │   └── support-services/   # Support services content
-│   └── documents/              # Document files
-│       ├── pdfs/               # PDF documents
-│       └── handbooks/          # Handbook files
+│   ├── documents/              # Document files
+│   │   ├── pdfs/               # PDF documents
+│   │   └── handbooks/          # Handbook files
+│   └── video/                  # Video files
+│       └── AD2025.mp4          # Promotional video
 │
 ├── uploads/                    # User uploads and post images
 │   └── [uploaded files]        # Post featured images and attachments
 │
 ├── programs/                   # Program pages
-│   ├── index.php
+│   ├── index.php               # Programs overview with modern design
+│   ├── img/                    # Program logos and images
+│   │   └── logo/               # Program-specific logos
 │   ├── senior-high-school.php
 │   ├── junior-high-school.php
 │   ├── grade-school.php
@@ -229,7 +294,8 @@ uphsledu/
 │   └── graduate-school.php
 │
 ├── support-services/           # Support service pages
-│   ├── index.php
+│   ├── index.php               # Support services overview
+│   ├── sps-assets/             # SPS-specific assets
 │   ├── careers.php
 │   ├── clinic.php
 │   ├── cod.php
@@ -237,7 +303,7 @@ uphsledu/
 │   ├── library.php
 │   ├── quality-assurance.php
 │   ├── research.php
-│   └── sps/
+│   └── sps.php
 │
 ├── about/                      # About section pages
 │   ├── index.php               # Redirects to about.php
@@ -251,55 +317,89 @@ uphsledu/
 │   └── bed-shs-academic-calendar.php
 ```
 
-## Posting System Features
+## Advanced Features
 
-### **Content Management**
+### **🔍 Search & Navigation System**
+- **Global AJAX Search**: Real-time search across all pages and posts
+- **Smart Navigation**: Active menu detection for subdirectory pages
+- **Mobile Search**: Optimized mobile search experience
+- **Filter System**: Advanced post filtering with date ranges and categories
+- **Search Results**: Dropdown results with proper categorization
+
+### **📱 Mobile Optimization**
+- **Responsive Design**: Fully optimized for all device sizes
+- **Touch-Friendly**: Mobile-optimized interactions
+- **Performance**: Optimized loading and preloading strategies
+- **Shimmer Loading**: Smooth loading animations for images
+- **Accessibility**: Improved accessibility features
+
+### **🎨 Modern UI/UX**
+- **Glass Effects**: Modern backdrop-filter effects
+- **Consistent Design**: Unified color schemes and typography
+- **Interactive Elements**: Hover effects and smooth transitions
+- **News Stand Layout**: Modern posts page with grid layout
+- **Program Pages**: Comprehensive program listings with logos
+
+### **🎯 Content Management**
 - **Post Creation**: Rich text editor with image upload capabilities
 - **Post Editing**: Full CRUD operations for all user roles
 - **Image Management**: Upload, display, and delete post images
 - **Publishing Control**: Draft/Published status with date scheduling
 - **SEO-Friendly**: Clean URLs and meta descriptions
+- **Shimmer Loading**: Smooth loading animations for images
 
-### **User Roles & Permissions**
+### **👥 User Roles & Permissions**
 - **Super Admin**: Full access to all features (Dashboard, Posts, Accounts)
 - **Admin**: Content management access (Dashboard, Posts)
 - **Author**: Post creation and management only
 
-### **Database Schema**
+### **🗄️ Database Schema**
 - **Users Table**: User authentication and role management
 - **Posts Table**: Content storage with published_at timestamps
 - **Images Table**: Post image associations and metadata
+- **SDG Initiatives**: SDG-specific content management
 
-### **Frontend Features**
+### **🌐 Frontend Features**
 - **News Slider**: Homepage carousel with recent posts
 - **Post Listing**: Paginated posts with search functionality
 - **Individual Posts**: Full post view with image galleries
 - **Responsive Design**: Mobile-first approach across all devices
+- **AJAX Search**: Real-time search with dropdown results
+- **Filter System**: Advanced post filtering capabilities
 
-## Key Improvements
+## Key Improvements (2025)
 
-### 1. **Separation of Concerns**
-- **Public files**: All user-facing pages in `/public/`
-- **Authentication**: All auth-related files in `/auth/`
-- **Admin panel**: Administrative functions in `/admin/`
-- **Application logic**: Core functionality in `/app/`
+### 1. **Advanced Search System**
+- **Global AJAX Search**: Real-time search across all pages and posts
+- **Smart Navigation**: Active menu detection for subdirectory pages
+- **Mobile Search**: Optimized mobile search experience
+- **Filter System**: Advanced post filtering with date ranges and categories
 
-### 2. **Better Asset Organization**
-- **Logos**: All logo files in `/assets/images/logos/`
-- **Banners**: Banner images in `/assets/images/banners/`
-- **Programs**: Program-related images in `/assets/images/programs/`
-- **Documents**: PDFs and handbooks in `/assets/documents/`
+### 2. **Modern UI/UX Design**
+- **Glass Effects**: Modern backdrop-filter effects throughout the site
+- **Consistent Design**: Unified color schemes and typography
+- **Interactive Elements**: Hover effects and smooth transitions
+- **News Stand Layout**: Modern posts page with grid layout
+- **Program Pages**: Comprehensive program listings with logos
 
-### 3. **Consistent Path Structure**
-- All includes use relative paths from their new locations
-- Asset references updated to new organized structure
-- Admin files properly reference public and auth directories
+### 3. **Mobile Optimization**
+- **Responsive Design**: Fully optimized for all device sizes
+- **Touch-Friendly**: Mobile-optimized interactions
+- **Performance**: Optimized loading and preloading strategies
+- **Shimmer Loading**: Smooth loading animations for images
+- **Accessibility**: Improved accessibility features
 
-### 4. **Maintained Functionality**
-- All file references updated to maintain functionality
-- Database connections preserved
-- User authentication flow intact
-- Admin panel functionality preserved
+### 4. **Performance Enhancements**
+- **Preloading Strategy**: Smart preloading of critical resources
+- **Image Optimization**: Shimmer loading and lazy loading
+- **AJAX Implementation**: Real-time search and filtering
+- **Caching**: Optimized asset loading and caching
+
+### 5. **Content Management**
+- **SDG Initiatives**: Interactive SDG goals with modals
+- **Program Pages**: Comprehensive program listings with logos
+- **Support Services**: Organized service pages with navigation
+- **News Stand Layout**: Modern posts page with grid layout
 
 ## Benefits
 
@@ -308,11 +408,11 @@ uphsledu/
 3. **Modern UI/UX**: Responsive design with intuitive admin interface
 4. **SEO Optimized**: Clean URLs and proper meta tags for better search visibility
 5. **Image Management**: Built-in image upload and management system
-6. **Cleaner Structure**: Logical separation of different types of files
-7. **Better Maintainability**: Easier to find and modify specific functionality
-8. **Improved Security**: Clear separation between public and private areas
-9. **Scalability**: Structure supports future growth and additions
-10. **Developer Experience**: More intuitive file organization
+6. **Advanced Search**: Real-time search functionality across all content
+7. **Mobile Optimized**: Fully responsive design for all devices
+8. **Performance**: Optimized loading and caching strategies
+9. **Accessibility**: Improved accessibility features
+10. **Scalability**: Structure supports future growth and additions
 
 ## Technical Implementation
 
@@ -326,6 +426,12 @@ uphsledu/
 - User authentication and session management
 - Post storage with image associations
 - Role-based access control
+
+### **AJAX Implementation**
+- Real-time search functionality
+- Dynamic content loading
+- Mobile-optimized search experience
+- Filter system with date ranges and categories
 
 ### **File Structure**
 - Root-level pages for main functionality
@@ -364,14 +470,28 @@ uphsledu/
   - Check `.htaccess` file is present and readable
   - Verify Apache configuration allows .htaccess overrides
 
-#### **4. Login Issues**
+#### **4. Search Not Working**
+- **Problem**: AJAX search not functioning
+- **Solution**:
+  - Check JavaScript console for errors
+  - Verify AJAX endpoints are accessible
+  - Ensure proper file permissions
+
+#### **5. Mobile Issues**
+- **Problem**: Mobile search or navigation not working
+- **Solution**:
+  - Check mobile-specific CSS
+  - Verify touch event handlers
+  - Test on actual mobile devices
+
+#### **6. Login Issues**
 - **Problem**: Cannot log in or session errors
 - **Solution**:
   - Clear browser cookies and cache
   - Check PHP session configuration
   - Verify user exists in database
 
-#### **5. Permission Denied Errors**
+#### **7. Permission Denied Errors**
 - **Problem**: File permission errors
 - **Solution**:
   - Set proper permissions on `uploads/` directory
@@ -399,6 +519,9 @@ Enable PDO error mode in `app/config/database.php`:
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 ```
 
+#### **AJAX Debugging**
+Check browser console for JavaScript errors and network tab for AJAX requests.
+
 ## Migration Notes
 
 - All path references have been updated to work with current structure
@@ -406,4 +529,16 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 - Database configuration centralized in `app/config/database.php`
 - All include/require statements updated to new paths
 - Clean URL implementation with .htaccess rewrite rules
+- AJAX search functionality implemented
+- Mobile optimization completed
+- Performance enhancements applied
 
+## Support
+
+For technical support or questions about the UPHSL Education Website, please refer to the troubleshooting section above or contact the development team.
+
+---
+
+**Last Updated**: January 2025
+**Version**: 2.0
+**Author**: Nico Roell D. Garce - UPHSL Web Administrator 2025
