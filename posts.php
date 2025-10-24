@@ -18,10 +18,11 @@ $page = max(1, $page); // Ensure page is at least 1
 // Get filter parameters
 $search = $_GET['search'] ?? '';
 $dateRange = $_GET['date_range'] ?? '';
+$specificDate = $_GET['specific_date'] ?? '';
 
 // Get posts for current page with filters (12 posts per page)
-$posts = getPublishedPostsWithFilters($page, 12, $search, '', $dateRange);
-$totalPosts = getPublishedPostsCountWithFilters($search, '', $dateRange);
+$posts = getPublishedPostsWithFilters($page, 12, $search, '', $dateRange, $specificDate);
+$totalPosts = getPublishedPostsCountWithFilters($search, '', $dateRange, $specificDate);
 $totalPages = ceil($totalPosts / 12);
 
 // Set page title
@@ -72,6 +73,12 @@ include 'app/includes/header.php';
                             <option value="month" <?php echo (($_GET['date_range'] ?? '') === 'month') ? 'selected' : ''; ?>>This Month</option>
                             <option value="year" <?php echo (($_GET['date_range'] ?? '') === 'year') ? 'selected' : ''; ?>>This Year</option>
                         </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <input type="date" name="specific_date" id="specificDateFilter" 
+                               value="<?php echo htmlspecialchars($_GET['specific_date'] ?? ''); ?>"
+                               placeholder="Select Date">
                     </div>
                     
                     <div class="filter-actions">
@@ -214,6 +221,7 @@ include 'app/includes/header.php';
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const dateRangeFilter = document.getElementById('dateRangeFilter');
+    const specificDateFilter = document.getElementById('specificDateFilter');
     const searchResults = document.getElementById('searchResults');
     const filterBtn = document.querySelector('.filter-btn');
     
@@ -239,6 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const params = new URLSearchParams({
             search: searchInput.value,
             date_range: dateRangeFilter.value,
+            specific_date: specificDateFilter.value,
             page: page
         });
         
@@ -317,6 +326,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Date range filter
     dateRangeFilter.addEventListener('change', function() {
+        // Clear specific date when using date range
+        specificDateFilter.value = '';
+        performSearch(1); // Reset to page 1 when filtering
+    });
+    
+    // Specific date filter
+    specificDateFilter.addEventListener('change', function() {
+        // Clear date range when using specific date
+        dateRangeFilter.value = '';
         performSearch(1); // Reset to page 1 when filtering
     });
     
@@ -335,6 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Clear the form inputs
             searchInput.value = '';
             dateRangeFilter.value = '';
+            specificDateFilter.value = '';
             
             // Perform search with empty filters
             performSearch(1);
