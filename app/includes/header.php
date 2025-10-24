@@ -69,43 +69,62 @@ $base_path = $GLOBALS['base_path'];
     <!-- Preload critical logo image to prevent text flash -->
     <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" as="image" type="image/png">
     
-    <!-- Preload program logos to prevent alt text flash -->
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-cihm-logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-shs-logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-educ-logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-criminology-logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/CCS-Logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-cba_logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/aviation_logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/uphsl-cas-logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/logo-cmt.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/logo-law.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>programs/img/logo/graduate-school-logo.png" as="image" type="image/png">
+    <?php
+    // Conditional preloading based on current page
+    $current_page = basename($_SERVER['PHP_SELF'], '.php');
+    $request_uri = $_SERVER['REQUEST_URI'];
     
-    <!-- Preload support service logos to prevent alt text flash -->
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/sps/Picture1.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/sps/Handbook.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/library/logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/research/uphsl-research-logo.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/cod/UPHSL-COD.png" as="image" type="image/png">
+    // Preload program logos only on programs pages
+    if (strpos($request_uri, 'programs') !== false) {
+        echo '    <!-- Preload program logos to prevent alt text flash -->' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-cihm-logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-shs-logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-educ-logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-criminology-logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/CCS-Logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-cba_logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/aviation_logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-cas-logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/logo-cmt.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/logo-law.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/graduate-school-logo.png" as="image" type="image/png">' . "\n";
+    }
     
-    <!-- Preload library service images to prevent alt text flash -->
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-opac.jpg" as="image" type="image/jpeg">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-ebsco.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-pej.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/starbooks.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/escra.png" as="image" type="image/png">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/turnitin.png" as="image" type="image/png">
+    // Preload support service logos only on support-services pages
+    if (strpos($request_uri, 'support-services') !== false) {
+        echo '    <!-- Preload support service logos to prevent alt text flash -->' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/sps/Picture1.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/sps/Handbook.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/library/logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/research/uphsl-research-logo.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/cod/UPHSL-COD.png" as="image" type="image/png">' . "\n";
+    }
     
-    <!-- Preload campus images to prevent alt text flash -->
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/FACADE.jpg" as="image" type="image/jpeg">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/gma-college.jpeg" as="image" type="image/jpeg">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/sampaloc-college.jpeg" as="image" type="image/jpeg">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/uphs-pangasinan.jpg" as="image" type="image/jpeg">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/Cauayan-college.jpg" as="image" type="image/jpeg">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/pueblo-college.jpg" as="image" type="image/jpeg">
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/campuses/Allied.png" as="image" type="image/png">
+    // Preload library service images only on library page
+    if (strpos($request_uri, 'library') !== false) {
+        echo '    <!-- Preload library service images to prevent alt text flash -->' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/uphsl-opac.jpg" as="image" type="image/jpeg">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/uphsl-ebsco.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/uphsl-pej.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/starbooks.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/escra.png" as="image" type="image/png">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/turnitin.png" as="image" type="image/png">' . "\n";
+    }
+    
+    // Preload campus images only on campuses page
+    if ($current_page === 'campuses') {
+        echo '    <!-- Preload campus images to prevent alt text flash -->' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/FACADE.jpg" as="image" type="image/jpeg">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/gma-college.jpeg" as="image" type="image/jpeg">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/sampaloc-college.jpeg" as="image" type="image/jpeg">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/uphs-pangasinan.jpg" as="image" type="image/jpeg">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/Cauayan-college.jpg" as="image" type="image/jpeg">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/pueblo-college.jpg" as="image" type="image/jpeg">' . "\n";
+        echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/Allied.png" as="image" type="image/png">' . "\n";
+    }
+    ?>
+    
     <?php if (!empty($og) && is_array($og)): ?>
         <meta property="og:title" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <meta property="og:description" content="<?php echo htmlspecialchars($og['description'] ?? ''); ?>">
