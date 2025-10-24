@@ -87,10 +87,10 @@ $base_path = $GLOBALS['base_path'];
     echo '    <!-- Preload critical images to prevent alt text flash -->' . "\n";
     echo '    <link rel="preload" href="' . $base_path . 'assets/images/Logos/Logo2025.png" as="image" type="image/png">' . "\n";
     
-    // Preload video and hero image on home page
+    // Preload hero image on home page (video will be lazy loaded)
     if ($current_page === 'index') {
-        echo '    <link rel="preload" href="' . $base_path . 'assets/video/AD2025.mp4" as="fetch" type="video/mp4">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/FACADE.jpg" as="image" type="image/jpeg">' . "\n";
+        // Note: Video preload removed - will be lazy loaded via JavaScript for better performance
     }
     
     // Preload program logos only on programs pages
