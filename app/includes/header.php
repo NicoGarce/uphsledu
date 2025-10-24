@@ -246,6 +246,315 @@ $base_path = $GLOBALS['base_path'];
         .logo-loaded .nav-logo, .logo-loaded .mobile-sidebar-logo { 
             opacity: 1; 
         }
+        
+        /* Navbar Search Dropdown */
+        .search-container {
+            position: relative;
+        }
+        
+        .search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .search-dropdown.show {
+            display: block;
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Mobile show class */
+        @media (max-width: 768px) {
+            .search-dropdown.show {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+        }
+        
+        .search-results {
+            padding: 0;
+        }
+        
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-result-item:hover {
+            background-color: #f8fafc;
+        }
+        
+        .search-result-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+        
+        .search-result-content {
+            flex: 1;
+        }
+        
+        .search-result-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+            font-size: 14px;
+        }
+        
+        .search-result-meta {
+            font-size: 12px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .search-result-category {
+            background: #e2e8f0;
+            color: var(--text-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .search-no-results {
+            padding: 16px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .search-loading {
+            padding: 16px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .search-loading i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile Responsive Search */
+        @media (max-width: 768px) {
+            .mobile-search {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                padding: 10px 15px;
+            }
+            
+            .mobile-search .search-container {
+                width: 100%;
+                max-width: 500px;
+                position: relative;
+            }
+            
+            .mobile-search .search-form {
+                display: flex;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 25px;
+                overflow: hidden;
+                backdrop-filter: blur(10px);
+            }
+            
+            .mobile-search .search-input {
+                flex: 1;
+                width: 100%;
+                font-size: 14px;
+                padding: 10px 15px;
+                height: 40px;
+                border: none;
+                background: transparent;
+                color: #ffffff;
+                outline: none;
+                transition: all 0.3s ease;
+            }
+            
+            .mobile-search .search-input::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+            
+            .mobile-search .search-input:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .mobile-search .search-btn {
+                padding: 10px 15px;
+                height: 40px;
+                border: none;
+                background: rgba(255, 255, 255, 0.2);
+                color: #ffffff;
+                cursor: pointer;
+                transition: background 0.3s ease;
+                border-radius: 0 25px 25px 0;
+            }
+            
+            .mobile-search .search-btn:hover {
+                background: #0056b3;
+            }
+            
+            .search-dropdown {
+                position: fixed !important;
+                top: 60px !important;
+                left: 20px !important;
+                right: 20px !important;
+                z-index: 9999 !important;
+                max-height: 50vh;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                background: white !important;
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+            }
+            
+            .search-dropdown.show {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
+            .search-result-item {
+                padding: 12px;
+                font-size: 14px;
+                cursor: pointer;
+                -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            }
+            
+            .search-result-item:active {
+                background-color: #f8f9fa;
+            }
+            
+            .search-result-title {
+                font-size: 14px;
+                margin-bottom: 3px;
+                line-height: 1.2;
+            }
+            
+            .search-result-meta {
+                font-size: 12px;
+            }
+            
+            .search-result-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .mobile-search {
+                padding: 8px 10px;
+            }
+            
+            .mobile-search .search-container {
+                max-width: 100%;
+            }
+            
+            .mobile-search .search-input {
+                font-size: 13px;
+                padding: 8px 12px;
+                height: 36px;
+                background: transparent;
+                color: #ffffff;
+            }
+            
+            .mobile-search .search-input::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+            
+            .mobile-search .search-input:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            .mobile-search .search-btn {
+                padding: 8px 12px;
+                height: 36px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 0 25px 25px 0;
+            }
+            
+            .search-dropdown {
+                left: 15px;
+                right: 15px;
+                top: 55px;
+            }
+            
+            .search-result-item {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .search-result-title {
+                font-size: 13px;
+                margin-bottom: 2px;
+                line-height: 1.1;
+            }
+            
+            .search-result-meta {
+                font-size: 11px;
+            }
+            
+            .search-result-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 10px;
+            }
+        }
+        
+        /* Tablet responsive */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .mobile-search {
+                display: none;
+            }
+        }
+        
+        /* Desktop - hide mobile search */
+        @media (min-width: 1025px) {
+            .mobile-search {
+                display: none;
+            }
+        }
     </style>
     <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/style.css">
     <?php if (isset($additional_css)): ?>
@@ -384,6 +693,297 @@ $base_path = $GLOBALS['base_path'];
                 }
             });
         });
+        
+        // Navbar AJAX Search - Global variables
+        let navbarSearchTimeout;
+        let navbarIsSearching = false;
+        let navbarSearchInput;
+        let searchDropdown;
+        let searchResults;
+        
+        // Initialize after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Desktop search elements
+            navbarSearchInput = document.getElementById('navbar-search-input');
+            searchDropdown = document.getElementById('search-dropdown');
+            searchResults = document.getElementById('search-results');
+            
+            // Mobile search elements
+            const mobileSearchInput = document.getElementById('mobile-search-input');
+            const mobileSearchDropdown = document.getElementById('mobile-search-dropdown');
+            const mobileSearchResults = document.getElementById('mobile-search-results');
+            
+            
+            
+            
+            if (navbarSearchInput) {
+                
+                navbarSearchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    
+                    clearTimeout(navbarSearchTimeout);
+                    
+                    if (query.length < 2) {
+                        hideSearchDropdown();
+                        return;
+                    }
+                    
+                    navbarSearchTimeout = setTimeout(() => {
+                        performNavbarSearch(query);
+                    }, 300);
+                });
+                
+                // Hide dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.search-container')) {
+                        hideSearchDropdown();
+                    }
+                });
+                
+                // Show dropdown on focus if there's a query
+                navbarSearchInput.addEventListener('focus', function() {
+                    if (this.value.trim().length >= 2) {
+                        showSearchDropdown();
+                    }
+                });
+                
+                // Mobile touch events
+                navbarSearchInput.addEventListener('touchstart', function() {
+                    if (this.value.trim().length >= 2) {
+                        showSearchDropdown();
+                    }
+                });
+                
+                // Show dropdown on click
+                navbarSearchInput.addEventListener('click', function() {
+                    if (this.value.trim().length >= 2) {
+                        showSearchDropdown();
+                    }
+                });
+                
+                
+            }
+            
+            // Mobile search functionality
+            if (mobileSearchInput) {
+                mobileSearchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    
+                    clearTimeout(navbarSearchTimeout);
+                    
+                    if (query.length < 2) {
+                        hideMobileSearchDropdown();
+                        return;
+                    }
+                    
+                    navbarSearchTimeout = setTimeout(() => {
+                        performMobileSearch(query, mobileSearchDropdown, mobileSearchResults);
+                    }, 300);
+                });
+                
+                mobileSearchInput.addEventListener('click', function() {
+                    if (this.value.trim().length >= 2) {
+                        showMobileSearchDropdown(mobileSearchDropdown);
+                    }
+                });
+            }
+            
+        });
+        
+        function performNavbarSearch(query) {
+            if (navbarIsSearching) return;
+            
+            navbarIsSearching = true;
+            showSearchDropdown();
+            showLoading();
+            
+            
+            fetch(`<?php echo $base_path; ?>ajax-navbar-search.php?q=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        displaySearchResults(data.results);
+                    } else {
+                        showNoResults();
+                    }
+                })
+                .catch(error => {
+                    showNoResults();
+                })
+                .finally(() => {
+                    navbarIsSearching = false;
+                });
+        }
+        
+            function showSearchDropdown() {
+                if (searchDropdown) {
+                    searchDropdown.classList.add('show');
+                    
+                    // Add test content
+                    if (searchResults) {
+                        searchResults.innerHTML = '<div class="search-no-results">Search results will appear here</div>';
+                    }
+                }
+            }
+            
+            function hideSearchDropdown() {
+                if (searchDropdown) {
+                    searchDropdown.classList.remove('show');
+                }
+            }
+            
+            // Mobile search functions
+            function showMobileSearchDropdown(dropdown) {
+                if (dropdown) {
+                    dropdown.classList.add('show');
+                }
+            }
+            
+            function hideMobileSearchDropdown() {
+                const mobileDropdown = document.getElementById('mobile-search-dropdown');
+                if (mobileDropdown) {
+                    mobileDropdown.classList.remove('show');
+                }
+            }
+            
+            function performMobileSearch(query, dropdown, results) {
+                if (navbarIsSearching) return;
+                
+                navbarIsSearching = true;
+                showMobileSearchDropdown(dropdown);
+                showMobileLoading(results);
+                
+                fetch(`<?php echo $base_path; ?>ajax-navbar-search.php?q=${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            displayMobileSearchResults(data.results, results);
+                        } else {
+                            showMobileNoResults(results);
+                        }
+                    })
+                    .catch(error => {
+                        showMobileNoResults(results);
+                    })
+                    .finally(() => {
+                        navbarIsSearching = false;
+                    });
+            }
+            
+            
+            function showLoading() {
+                if (searchResults) {
+                    searchResults.innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i> Searching...</div>';
+                }
+            }
+            
+            function displaySearchResults(results) {
+                if (!searchResults) return;
+                
+                if (results.length === 0) {
+                    showNoResults();
+                    return;
+                }
+                
+                let html = '';
+                results.forEach(result => {
+                    let icon = 'fas fa-file-alt';
+                    if (result.type === 'post') {
+                        icon = 'fas fa-newspaper';
+                    } else if (result.type === 'external') {
+                        icon = 'fas fa-external-link-alt';
+                    }
+                    
+                    const date = result.date ? ` • ${result.date}` : '';
+                    
+                    html += `
+                        <div class="search-result-item" onclick="window.location.href='${result.url}'" ontouchend="window.location.href='${result.url}'">
+                            <div class="search-result-icon">
+                                <i class="${icon}"></i>
+                            </div>
+                            <div class="search-result-content">
+                                <div class="search-result-title">${result.title}</div>
+                                <div class="search-result-meta">
+                                    <span class="search-result-category">${result.category}</span>
+                                    ${date}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                searchResults.innerHTML = html;
+            }
+            
+            function showNoResults() {
+                if (searchResults) {
+                    searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+                }
+            }
+            
+            // Mobile search helper functions
+            function showMobileLoading(results) {
+                if (results) {
+                    results.innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i> Searching...</div>';
+                }
+            }
+            
+            function displayMobileSearchResults(results, resultsElement) {
+                if (!resultsElement) return;
+                
+                if (results.length === 0) {
+                    showMobileNoResults(resultsElement);
+                    return;
+                }
+                
+                let html = '';
+                results.forEach(result => {
+                    let icon = 'fas fa-file-alt';
+                    if (result.type === 'post') {
+                        icon = 'fas fa-newspaper';
+                    } else if (result.type === 'external') {
+                        icon = 'fas fa-external-link-alt';
+                    }
+                    
+                    const date = result.date ? ` • ${result.date}` : '';
+                    
+                    html += `
+                        <div class="search-result-item" onclick="window.location.href='${result.url}'" ontouchend="window.location.href='${result.url}'">
+                            <div class="search-result-icon">
+                                <i class="${icon}"></i>
+                            </div>
+                            <div class="search-result-content">
+                                <div class="search-result-title">${result.title}</div>
+                                <div class="search-result-meta">
+                                    <span class="search-result-category">${result.category}</span>
+                                    ${date}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                resultsElement.innerHTML = html;
+            }
+            
+            function showMobileNoResults(results) {
+                if (results) {
+                    results.innerHTML = '<div class="search-no-results">No results found</div>';
+                }
+            }
+            
+        
     </script>
     <!-- Navigation -->
     <nav class="navbar">
@@ -403,23 +1003,37 @@ $base_path = $GLOBALS['base_path'];
                         <h1>UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h1>
                     </div>
                     <div class="nav-search">
-                        <form class="search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
-                            <input type="text" name="q" placeholder="Search..." class="search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
-                            <button type="submit" class="search-btn">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </form>
+                        <div class="search-container">
+                            <form class="search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
+                                <input type="text" name="q" placeholder="Search..." class="search-input" id="navbar-search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
+                                <button type="submit" class="search-btn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </form>
+                            <div class="search-dropdown" id="search-dropdown">
+                                <div class="search-results" id="search-results">
+                                    <!-- AJAX results will be inserted here -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Mobile Search Bar (separate from nav-header) -->
                 <div class="nav-search mobile-search">
-                    <form class="search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
-                        <input type="text" name="q" placeholder="Search..." class="search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
-                        <button type="submit" class="search-btn">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
+                    <div class="search-container">
+                        <form class="search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
+                            <input type="text" name="q" placeholder="Search..." class="search-input" id="mobile-search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                        <div class="search-dropdown" id="mobile-search-dropdown">
+                            <div class="search-results" id="mobile-search-results">
+                                <!-- AJAX results will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Mobile Menu Toggle Button -->
@@ -557,14 +1171,6 @@ $base_path = $GLOBALS['base_path'];
             </button>
         </div>
         
-        <div class="mobile-sidebar-search">
-            <form class="mobile-search-form" action="<?php echo isset($base_path) ? $base_path : ''; ?>search.php" method="GET">
-                <input type="text" name="q" placeholder="Search..." class="mobile-search-input" value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
-                <button type="submit" class="mobile-search-btn">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
-        </div>
         
         <nav class="mobile-sidebar-menu">
             <div class="mobile-nav-item">
