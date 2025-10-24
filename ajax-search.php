@@ -40,6 +40,7 @@ try {
     // Get parameters
     $search = $_GET['search'] ?? '';
     $dateRange = $_GET['date_range'] ?? '';
+    $specificDate = $_GET['specific_date'] ?? '';
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $page = max(1, $page);
     
@@ -90,6 +91,19 @@ try {
             }
             
             if ($include) {
+                $filteredPosts[] = $post;
+            }
+        }
+        $posts = $filteredPosts;
+    }
+    
+    // Apply specific date filter if provided
+    if (!empty($specificDate)) {
+        $filteredPosts = [];
+        
+        foreach ($posts as $post) {
+            $postDate = new DateTime($post['published_at'] ?: $post['created_at']);
+            if ($postDate->format('Y-m-d') === $specificDate) {
                 $filteredPosts[] = $post;
             }
         }
