@@ -7,7 +7,7 @@
  * @description Main programs page listing all available programs at UPHSL
  */
 
-$page_title = "Programs";
+$page_title = "Academic Programs";
 $base_path = '../';
 
 // Include header
@@ -15,224 +15,371 @@ include '../app/includes/header.php';
 ?>
 
 <style>
-.programs-hero {
-    background: linear-gradient(135deg, rgba(28, 77, 161, 0.9), rgba(20, 57, 128, 0.9)), url('<?php echo $base_path; ?>assets/images/FACADE.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    color: white;
-    padding: 5rem 0 3rem;
-    text-align: center;
-}
-
-.programs-hero h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.programs-hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.programs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    padding: 4rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.program-card {
-    background: white;
-    border-radius: 15px;
-    padding: 2rem;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.program-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    border-color: var(--primary-color);
-}
-
-.program-card h3 {
-    color: var(--primary-color);
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    font-weight: 700;
-}
-
-.program-card p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.program-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--primary-color);
-    color: white;
-    text-decoration: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.program-link:hover {
-    background: var(--secondary-color);
-    transform: translateY(-2px);
-    text-decoration: none;
-    color: white;
-}
-
-@media (max-width: 768px) {
-    .programs-hero h1 {
-        font-size: 2rem;
-    }
+    /* New page hero - matching SDG banner styling */
+    .page-hero { position: relative; padding: 80px 0; color: #fff; text-align: center; isolation: isolate; overflow: hidden; background: url('<?php echo $base_path; ?>assets/images/banners/UPHSL%20Facade.png') center/cover no-repeat; }
+    .page-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(28,77,161,.85), rgba(82,123,189,.85)); z-index: 1; }
+    .page-hero .content { position: relative; z-index: 2; display: inline-block; padding: 24px 28px; border-radius: 16px; background: rgba(0,0,0,.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+    .page-hero .title { font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 18px; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
+    .page-hero .subtitle { font-size: 1.05rem; margin: 0; }
+    @media (max-width: 1024px){ .page-hero{ padding:60px 0; } .page-hero .content{ padding:16px 18px; border-radius:12px; } .page-hero .title{ font-size:2.2rem; } .page-hero .subtitle{ font-size:1rem; } }
     
-    .programs-hero p {
-        font-size: 1rem;
-    }
-    
-    .programs-grid {
-        grid-template-columns: 1fr;
-        padding: 2rem 1rem;
-    }
-}
 </style>
 
-<main>
-    <!-- Programs Hero Section -->
-    <section class="programs-hero">
+
+    <!-- New Banner -->
+    <section class="page-hero">
         <div class="container">
-            <h1>Academic Programs</h1>
-            <p>Discover the comprehensive range of academic programs offered at the University of Perpetual Help System Laguna</p>
+            <div class="content">
+                <h1 class="title">Academic Programs</h1>
+                <p class="subtitle">Discover our comprehensive range of academic programs designed to shape future leaders and innovators</p>
+            </div>
         </div>
     </section>
 
-    <!-- Programs Grid -->
-    <section class="programs-grid">
-        <div class="program-card">
-            <h3>Basic Education</h3>
-            <p>Foundation programs including Senior High School, Junior High School, and Grade School education.</p>
-            <a href="senior-high-school" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Basic Education
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Program Categories -->
+            <div class="programs-layout">
+                <!-- Basic Education -->
+                <section class="program-category">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3 class="category-title">Basic Education</h3>
+                            <p class="category-description">Foundation programs that build strong academic and character foundations</p>
+                        </div>
+                    </div>
+                    <div class="programs-grid">
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <div class="program-badge">K-6</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Grade School</h4>
+                                <p class="program-description">Foundation years that build strong academic and character foundations for young learners.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Elementary</span>
+                                    <span class="feature-tag">Foundation</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="grade-school.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="program-badge">7-10</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Junior High School</h4>
+                                <p class="program-description">Comprehensive secondary education program preparing students for senior high school.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Secondary</span>
+                                    <span class="feature-tag">Foundation</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="junior-high-school.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="program-badge">11-12</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Senior High School</h4>
+                                <p class="program-description">Specialized tracks and strands preparing students for college and career paths.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Tracks</span>
+                                    <span class="feature-tag">Strands</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="senior-high-school.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
             </a>
         </div>
-
-        <div class="program-card">
-            <h3>Aviation</h3>
-            <p>Unlock your wings to limitless possibilities with our comprehensive aviation programs.</p>
-            <a href="aviation" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Aviation
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Business & Accountancy</h3>
-            <p>Develop effective skills for successful careers in business administration and accountancy.</p>
-            <a href="business-accountancy" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Business & Accountancy
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Computer Studies</h3>
-            <p>Comprehensive computer science and information technology programs for the digital age.</p>
-            <a href="computer-studies" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Computer Studies
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Criminology</h3>
-            <p>Produce graduates with technical skills in law enforcement and public safety.</p>
-            <a href="criminology" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Criminology
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Teacher Education</h3>
-            <p>Leading teacher education for globally competitive teaching professionals.</p>
-            <a href="education" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Teacher Education
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Engineering & Architecture</h3>
-            <p>Comprehensive programs in engineering, architecture, and aviation disciplines.</p>
-            <a href="engineering-architecture" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Engineering & Architecture
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Hospitality Management</h3>
-            <p>International hospitality management and tourism education for the global industry.</p>
-            <a href="hospitality-management" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Hospitality Management
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Maritime</h3>
-            <p>Navigate the world's oceans with excellence and safety through our maritime programs.</p>
-            <a href="maritime" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Maritime
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Law/Juris Doctor</h3>
-            <p>Pursue justice through comprehensive legal education and practice programs.</p>
-            <a href="law" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Law
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Graduate School</h3>
-            <p>Advance your knowledge through advanced studies and research programs.</p>
-            <a href="graduate-school" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Graduate School
-            </a>
-        </div>
-
-        <div class="program-card">
-            <h3>Arts & Sciences</h3>
-            <p>Multidimensional education fostering critical thinking and creative communication.</p>
-            <a href="arts-sciences" class="program-link">
-                <i class="fas fa-arrow-right"></i>
-                Explore Arts & Sciences
-            </a>
+                        </div>
         </div>
     </section>
+
+                <!-- Higher Education -->
+                <section class="program-category">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3 class="category-title">Higher Education</h3>
+                            <p class="category-description">Undergraduate and graduate programs for specialized career paths</p>
+                        </div>
+                    </div>
+                    <div class="programs-grid">
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-plane"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Aviation</h4>
+                                <p class="program-description">Professional pilot training and aviation management programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Pilot Training</span>
+                                    <span class="feature-tag">Management</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="aviation.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-palette"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Arts & Sciences</h4>
+                                <p class="program-description">Liberal arts and sciences programs fostering critical thinking and creativity.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Liberal Arts</span>
+                                    <span class="feature-tag">Sciences</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="arts-sciences.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Business & Accountancy</h4>
+                                <p class="program-description">Business administration, accounting, and management programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Business</span>
+                                    <span class="feature-tag">Accounting</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="business-accountancy.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-laptop-code"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Computer Studies</h4>
+                                <p class="program-description">Information technology, computer science, and software engineering programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">IT</span>
+                                    <span class="feature-tag">Programming</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="computer-studies.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Criminology</h4>
+                                <p class="program-description">Law enforcement, criminal justice, and forensic science programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Law Enforcement</span>
+                                    <span class="feature-tag">Forensics</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="criminology.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Education</h4>
+                                <p class="program-description">Teacher education and educational leadership programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Teaching</span>
+                                    <span class="feature-tag">Leadership</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="education.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Engineering & Architecture</h4>
+                                <p class="program-description">Engineering disciplines and architectural design programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Engineering</span>
+                                    <span class="feature-tag">Architecture</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="engineering-architecture.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-concierge-bell"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">International Hospitality Management</h4>
+                                <p class="program-description">Hotel and restaurant management with international standards.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Hospitality</span>
+                                    <span class="feature-tag">International</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="hospitality-management.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-ship"></i>
+                                </div>
+                                <div class="program-badge">Bachelor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Maritime</h4>
+                                <p class="program-description">Maritime transportation and marine engineering programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Maritime</span>
+                                    <span class="feature-tag">Transportation</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="maritime.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-gavel"></i>
+                                </div>
+                                <div class="program-badge">Juris Doctor</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Law/Juris Doctor</h4>
+                                <p class="program-description">Legal education and jurisprudence programs.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Legal</span>
+                                    <span class="feature-tag">Jurisprudence</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="law.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+        </div>
+
+                        <div class="program-card modern-card">
+                            <div class="card-header">
+                                <div class="program-icon">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="program-badge">Graduate</div>
+                            </div>
+                            <div class="card-content">
+                                <h4 class="program-title">Graduate School</h4>
+                                <p class="program-description">Master's and doctoral programs for advanced studies.</p>
+                                <div class="program-features">
+                                    <span class="feature-tag">Master's</span>
+                                    <span class="feature-tag">Doctoral</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="graduate-school.php" class="program-link">
+                                    Learn More <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+        </div>
+    </section>
+        </div>
+
+        </div>
 </main>
 
 <?php include '../app/includes/footer.php'; ?>
