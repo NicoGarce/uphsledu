@@ -387,11 +387,11 @@ include 'app/includes/header.php';
     <section class="hero">
         <div class="hero-background">
             <img 
-                src="assets/images/banners/UPHSL Facade.png" 
+                src="assets/images/FACADE.jpg" 
                 alt="University of Perpetual Help System Laguna" 
                 class="hero-image"
                 data-bg-video="assets/video/AD2025.mp4"
-                data-bg-poster="assets/images/banners/UPHSL Facade.png">
+                data-bg-poster="assets/images/FACADE.jpg">
         </div>
         <div class="video-overlay">
             <div class="hero-slider-container">
