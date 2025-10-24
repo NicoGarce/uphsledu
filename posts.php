@@ -256,6 +256,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Re-attach pagination event listeners
                     attachPaginationListeners();
                     
+                    // Initialize image loading for new results
+                    initializeImageLoading();
+                    
                     // Highlight search terms
                     if (searchInput.value.trim()) {
                         highlightSearchTerms(searchInput.value.trim());
@@ -364,7 +367,52 @@ document.addEventListener('DOMContentLoaded', function() {
     if (initialSearch) {
         highlightSearchTerms(initialSearch);
     }
+    
+    // Initialize image loading with shimmer effect
+    initializeImageLoading();
 });
+
+// Image loading with shimmer effect
+function initializeImageLoading() {
+    const postImages = document.querySelectorAll('.card-image');
+    
+    postImages.forEach(function(img, index) {
+        // Add loading class to container
+        const container = img.closest('.post-card-image');
+        if (container) {
+            container.classList.add('loading');
+        }
+        
+        // Add staggered delay for multiple images
+        const delay = index * 100; // 100ms delay between each image
+        
+        if (img.complete) {
+            setTimeout(() => {
+                img.classList.add('loaded');
+                if (container) {
+                    container.classList.remove('loading');
+                }
+            }, delay);
+        } else {
+            img.addEventListener('load', function() {
+                setTimeout(() => {
+                    this.classList.add('loaded');
+                    if (container) {
+                        container.classList.remove('loading');
+                    }
+                }, delay);
+            });
+            img.addEventListener('error', function() {
+                setTimeout(() => {
+                    this.classList.add('loaded'); // Show alt text if image fails to load
+                    if (container) {
+                        container.classList.remove('loading');
+                    }
+                }, delay);
+            });
+        }
+    });
+}
 </script>
 
 <?php include 'app/includes/footer.php'; ?>
