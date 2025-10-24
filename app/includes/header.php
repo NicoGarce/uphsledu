@@ -83,18 +83,9 @@ $base_path = $GLOBALS['base_path'];
     // Don't reassign $current_page here as it was already set above with proper subdirectory detection
     $request_uri = $_SERVER['REQUEST_URI'];
     
-    // Preload critical images to prevent alt text flash
-    echo '    <!-- Preload critical images to prevent alt text flash -->' . "\n";
-    echo '    <link rel="preload" href="' . $base_path . 'assets/images/Logos/Logo2025.png" as="image" type="image/png">' . "\n";
-    
-    // Preload hero image on home page (video will be lazy loaded)
-    if ($current_page === 'index') {
-        echo '    <link rel="preload" href="' . $base_path . 'assets/images/FACADE.jpg" as="image" type="image/jpeg">' . "\n";
-        // Note: Video preload removed - will be lazy loaded via JavaScript for better performance
-    }
-    
     // Preload program logos only on programs pages
     if (strpos($request_uri, 'programs') !== false) {
+        echo '    <!-- Preload program logos to prevent alt text flash -->' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-cihm-logo.png" as="image" type="image/png">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/uphsl-shs-logo.png" as="image" type="image/png">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'programs/img/logo/logo.png" as="image" type="image/png">' . "\n";
@@ -111,6 +102,7 @@ $base_path = $GLOBALS['base_path'];
     
     // Preload support service logos only on support-services pages
     if (strpos($request_uri, 'support-services') !== false) {
+        echo '    <!-- Preload support service logos to prevent alt text flash -->' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/sps/Picture1.png" as="image" type="image/png">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/sps/Handbook.png" as="image" type="image/png">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/library/logo.png" as="image" type="image/png">' . "\n";
@@ -120,6 +112,7 @@ $base_path = $GLOBALS['base_path'];
     
     // Preload library service images only on library page
     if (strpos($request_uri, 'library') !== false) {
+        echo '    <!-- Preload library service images to prevent alt text flash -->' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/uphsl-opac.jpg" as="image" type="image/jpeg">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/uphsl-ebsco.png" as="image" type="image/png">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/support-services/college-library/img/olservices/uphsl-pej.png" as="image" type="image/png">' . "\n";
@@ -130,6 +123,7 @@ $base_path = $GLOBALS['base_path'];
     
     // Preload campus images only on campuses page
     if ($current_page === 'campuses') {
+        echo '    <!-- Preload campus images to prevent alt text flash -->' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/FACADE.jpg" as="image" type="image/jpeg">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/gma-college.jpeg" as="image" type="image/jpeg">' . "\n";
         echo '    <link rel="preload" href="' . $base_path . 'assets/images/campuses/sampaloc-college.jpeg" as="image" type="image/jpeg">' . "\n";
