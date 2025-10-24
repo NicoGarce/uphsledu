@@ -140,7 +140,67 @@
     
     <!-- Facebook SDK -->
     <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v24.0&appId=APP_ID"></script>
+    <script>
+        // Lazy load Facebook SDK only when needed
+        function loadFacebookSDK() {
+            if (window.FB) return; // Already loaded
+            
+            const script = document.createElement('script');
+            script.async = true;
+            script.defer = true;
+            script.crossOrigin = 'anonymous';
+            script.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v24.0&appId=APP_ID';
+            
+            // Handle SDK loading
+            script.onload = function() {
+                // Hide loading indicator and show Facebook feed
+                const loadingIndicator = document.querySelector('.facebook-loading');
+                const fbPage = document.querySelector('.fb-page');
+                if (loadingIndicator && fbPage) {
+                    loadingIndicator.style.display = 'none';
+                    fbPage.style.display = 'block';
+                }
+                
+                // Parse Facebook widgets
+                if (window.FB) {
+                    window.FB.XFBML.parse();
+                }
+            };
+            
+            script.onerror = function() {
+                // Handle loading error
+                const loadingIndicator = document.querySelector('.facebook-loading');
+                if (loadingIndicator) {
+                    loadingIndicator.innerHTML = '<div style="text-align: center;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #ff6b6b; margin-bottom: 10px;"></i><p style="margin: 0; color: #666;">Unable to load Facebook feed</p></div>';
+                }
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        // Load Facebook SDK when Facebook feed comes into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const facebookFeed = document.querySelector('.facebook-embed');
+            if (facebookFeed && 'IntersectionObserver' in window) {
+                const fbObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            loadFacebookSDK();
+                            fbObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { 
+                    rootMargin: '100px 0px', // Start loading 100px before it comes into view
+                    threshold: 0.1 
+                });
+                
+                fbObserver.observe(facebookFeed);
+            } else if (facebookFeed) {
+                // Fallback for older browsers - load after delay
+                setTimeout(loadFacebookSDK, 2000);
+            }
+        });
+    </script>
     
 </body>
 </html>
