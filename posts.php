@@ -79,10 +79,10 @@ include 'app/includes/header.php';
                             <i class="fas fa-filter"></i>
                             Filter
                         </button>
-                        <a href="posts.php" class="clear-btn">
+                        <button type="button" class="clear-btn" id="clearFilters">
                             <i class="fas fa-times"></i>
                             Clear
-                        </a>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -325,6 +325,21 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         performSearch(1);
     });
+    
+    // Clear filters button
+    const clearBtn = document.getElementById('clearFilters');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Clear the form inputs
+            searchInput.value = '';
+            dateRangeFilter.value = '';
+            
+            // Perform search with empty filters
+            performSearch(1);
+        });
+    }
     
     
     // Highlight search terms
