@@ -155,15 +155,9 @@ document.addEventListener('DOMContentLoaded', function() {
             source.src = heroBg.dataset.bgVideo;
             source.type = 'video/mp4';
             video.appendChild(source);
-            
-            // Only replace image when video is fully ready to play
-            video.addEventListener('canplaythrough', () => {
+            // Replace image once metadata is ready to minimize flash
+            video.addEventListener('loadeddata', () => {
                 heroBg.replaceWith(video);
-            }, { once: true });
-            
-            // Fallback: if video fails to load, keep the facade image
-            video.addEventListener('error', () => {
-                console.log('Video failed to load, keeping facade background');
             }, { once: true });
         });
     }
