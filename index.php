@@ -570,13 +570,7 @@ include 'app/includes/header.php';
                         <p class="facebook-subtitle">Stay connected with our latest updates</p>
                     </a>
                     <div class="facebook-embed">
-                        <div class="facebook-loading" style="display: flex; align-items: center; justify-content: center; height: 200px; background: #f5f5f5; border-radius: 8px; margin: 20px 0;">
-                            <div style="text-align: center;">
-                                <i class="fab fa-facebook" style="font-size: 2rem; color: #1877f2; margin-bottom: 10px;"></i>
-                                <p style="margin: 0; color: #666;">Loading Facebook feed...</p>
-                            </div>
-                        </div>
-                        <div class="fb-page" data-href="https://www.facebook.com/uphsl.info.ph" data-tabs="timeline" data-width="" data-height="650" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" style="display: none;"></div>
+                        <div class="fb-page" data-href="https://www.facebook.com/uphsl.info.ph" data-tabs="timeline" data-width="" data-height="650" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
                     </div>
                 </div>
             </div>
