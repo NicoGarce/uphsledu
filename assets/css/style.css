@@ -1908,7 +1908,7 @@ li {
     .content-wrapper {
         grid-template-columns: 1fr;
         gap: 20px;
-        padding: 20px 0;
+        padding: 30px 0;
     }
     
     /* Removed legacy Programs banner overrides */
