@@ -223,6 +223,29 @@ include '../app/includes/header.php';
                                 <li>To deliver quality services to the clientele.</li>
                             </ol>
                         </section>
+
+                        <!-- Accreditation Section -->
+                        <section class="objectives-section">
+                            <h2>Accreditations & Recognitions</h2>
+                            <ul>
+                                <li>Programs aligned with CHED policies, standards, and guidelines.</li>
+                                <li>Teacher education curriculum aligned with PPST and PRC Licensure outcomes.</li>
+                                <li>Library and Information Science outcomes aligned with professional competencies.</li>
+                                <li>Institutional commitment to continuous quality improvement and external quality assurance.</li>
+                            </ul>
+                        </section>
+
+                        <!-- Facilities Section -->
+                        <section class="objectives-section">
+                            <h2>Learning Facilities</h2>
+                            <ul>
+                                <li>Specialized teaching laboratories and demonstration classrooms</li>
+                                <li>Instructional Media Center and e-learning resources</li>
+                                <li>Library and information resource center with digital access</li>
+                                <li>Sports and wellness facilities supporting Physical Education</li>
+                                <li>Partner basic education schools for practice teaching</li>
+                            </ul>
+                        </section>
                     </article>
                 </div>
                 
