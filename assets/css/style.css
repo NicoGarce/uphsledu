@@ -6139,6 +6139,8 @@ section, .section {
 .career-category ul {
     font-size: clamp(0.85rem, 1.4vw, 0.95rem);
     line-height: 1.5;
+    list-style: disc;
+    padding-left: 1.25rem; /* ensure bullets don't overlap text */
 }
 
 .career-category li {
@@ -6152,12 +6154,8 @@ section, .section {
     border-bottom: none;
 }
 
-.career-category li:before {
-    content: "✓";
-    color: #28a745;
-    font-weight: bold;
-    margin-right: clamp(6px, 1vw, 10px);
-}
+/* Use native list bullets to avoid icon/text overlap on some systems */
+.career-category li:before { content: none; }
 
 .objectives-section {
     margin: clamp(20px, 4vw, 40px) 0;
