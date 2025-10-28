@@ -5973,6 +5973,67 @@ section, .section {
     margin-bottom: 25px;
 }
 
+/* History Content Styles */
+.history-content {
+    max-width: 100%;
+}
+
+.history-intro {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #2c5aa0;
+    font-weight: 500;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-left: 4px solid #2c5aa0;
+    border-radius: 8px;
+}
+
+.history-paragraph {
+    margin-bottom: 25px;
+}
+
+.history-paragraph p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #495057;
+    text-align: justify;
+}
+
+.history-highlight {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-top: 3px solid #2c5aa0;
+}
+
+.history-highlight h3 {
+    color: #2c5aa0;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.history-highlight p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #495057;
+    text-align: justify;
+    margin-bottom: 15px;
+}
+
+.history-highlight p:last-child {
+    margin-bottom: 0;
+}
+
+.history-highlight strong {
+    color: #2c5aa0;
+    font-weight: 600;
+}
+
 .programs-section {
     margin: 40px 0;
 }

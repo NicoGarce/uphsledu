@@ -46,13 +46,55 @@ include '../app/includes/header.php';
                         <!-- Mission Section -->
                         <section class="mission-vision-section">
                             <h2>Mission</h2>
-                            <p>The College of Arts and Sciences is designed to produce dynamic graduates who are physically, intellectually, socially, and spiritually committed to the achievement of the best quality of life. It pursues the overriding philosophy of streamlining its offerings to promote the socio-economic conditions of the clientele it serves, aiming at the total development of the individual so he could be of meaningful service to the mission of the institution.</p>
+                            <p>The College of Arts and Sciences is committed to producing well-rounded graduates who embody Perpetualite core values and demonstrate program excellence in psychology, communication, and political science. Guided by a holistic approach, the College develops individuals who are physically, intellectually, socially, and spiritually prepared to contribute meaningfully to society. We strive to promote socio-economic advancement, foster critical thinking, enhance communication skills, encourage responsible leadership, and champion lifelong learning through innovative, technology-based instruction and interdisciplinary community engagement, all while upholding academic integrity and the protection of intellectual property.</p>
                         </section>
 
                         <!-- Vision Section -->
                         <section class="mission-vision-section">
                             <h2>Vision</h2>
-                            <p>The College of Arts and Sciences is an educational organization that serves as a creative catalyst of change in the formation of values-oriented, socially and intellectually balanced graduates who can emancipate themselves and their fellowmen, by developing the ability to think critically and upholding useful knowledge and skills for globally-oriented citizenry.</p>
+                            <p>The College of Arts and Sciences envisions itself as a leading educational institution recognized for excellence in psychology, communication, and political science. We aim to be a creative catalyst of change, forming values-driven, globally competent graduates who can think critically, lead effectively, innovate responsibly, and uplift themselves and their communities. Anchored in our commitment to quality, compliance, and social relevance, we dedicate ourselves to generating and sharing knowledge through meaningful partnerships and impactful community engagements.</p>
+                        </section>
+
+                        <!-- Brief History Section -->
+                        <section class="mission-vision-section">
+                            <h2>Brief History</h2>
+                            
+                            <div class="history-content">
+                                <p class="history-intro">The College of Arts & Sciences (CAS) of the University of Perpetual Help System-Laguna (UPHSL) is tasked with the delivery of first-rate tertiary instruction in programs related to Liberal Arts and Social Sciences, such as Political Science, Psychology, and Communication. Likewise, the CAS is a servicing College, providing General Education courses to other colleges of the UPHSL.</p>
+                                
+                                <div class="history-paragraph">
+                                    <p>The College of Arts & Sciences stands witness to the phenomenal growth of the University from a College (i.e. Perpetual Help College of Laguna) when it opened in School Year 1976-1977 with a total of 89 high school freshmen and sophomores and 37 college students in the Arts & Sciences, Nursing, Commerce. Through the years, CAS has evolved in response to global academic trends and local needs, expanding its curriculum to include interdisciplinary studies, research-based instruction, and innovative community engagement. The college remains committed to academic excellence, ethical scholarship, and nation-building.</p>
+                                </div>
+                                
+                                <div class="history-highlight">
+                                    <h3>Academic Excellence</h3>
+                                    <p>The College has consistently produced outstanding graduates recognized for their academic excellence. A significant number of students have graduated with Latin honors—Cum Laude, Magna Cum Laude, and Summa Cum Laude—demonstrating the college's dedication to high academic standards. These awardees have gone on to become respected professionals, researchers, educators, and leaders in their respective fields both locally and internationally. Their success reflects the rigorous training and mentorship provided by the college.</p>
+                                </div>
+                                
+                                <div class="history-highlight">
+                                    <h3>Research and Scholarship</h3>
+                                    <p>CAS faculty members are actively engaged in scholarly research, contributing to local and international knowledge production. Many have published in reputable peer-reviewed journals, authored books, and presented papers in conferences around the world. The college also promotes collaborative research through interdisciplinary projects, research centers, and partnerships with other academic institutions and government agencies.</p>
+                                </div>
+                                
+                                <div class="history-highlight">
+                                    <h3>International Recognition and Quality Assurance</h3>
+                                    <p>As part of the university's drive toward internationalization, CAS actively participates in several internationally recognized accreditation and ranking systems that reflect its pursuit of continuous improvement and global competitiveness.</p>
+                                    
+                                    <p>In alignment with the university's quality assurance initiatives, CAS contributed to the successful attainment and maintenance of <strong>ISO 9001:2015 certification</strong>, ensuring that administrative and academic support processes meet international quality management standards.</p>
+                                    
+                                    <p>CAS has also taken part in the <strong>QS Stars Rating System</strong>, supporting the university's achievement of high scores in areas such as teaching, employability, and inclusiveness. The college's innovative curriculum, competent faculty, and student support systems have been instrumental in boosting the university's QS performance.</p>
+                                    
+                                    <p>Furthermore, CAS played a significant role in fulfilling the university's requirements for the <strong>Times Higher Education (THE) Impact Rankings</strong>, particularly in key United Nations Sustainable Development Goals (SDGs) such as Quality Education, Gender Equality, and Climate Action. Faculty-led community extension programs, sustainability research, and interdisciplinary collaborations were central to this recognition.</p>
+                                    
+                                    <p>The college is also engaged in initiatives aligned with <strong>AppliedHE</strong>, a rising global rating and ranking platform that focuses on teaching and learning quality, graduate employability, and internationalization. CAS has contributed to the university's standing through its student-centered pedagogy, international research publications, and growing global linkages.</p>
+                                    
+                                    <p>Through these accreditations and rankings, the College of Arts and Sciences reaffirms its commitment to delivering globally benchmarked education, fostering a culture of excellence, and nurturing graduates who are equipped to thrive in a global society.</p>
+                                </div>
+                                
+                                <div class="history-paragraph">
+                                    <p>The Liberal Arts programs (AB Psychology, AB Communication Arts, AB Political Science) of the College were accredited <strong>Level IV</strong> by the Philippines Association of Colleges and Universities-Commission on Accreditation (PACUCOA) for the period of January 2021 to November 2026. Bachelor of Science in Psychology was granted <strong>Level III</strong> accreditation status in October 2024 to October 2029.</p>
+                                </div>
+                            </div>
                         </section>
 
                         <!-- Programs Section -->
