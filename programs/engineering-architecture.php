@@ -31,8 +31,8 @@ include '../app/includes/header.php';
                 <img src="<?php echo $base_path; ?>programs/img/logo/logo.png" alt="Engineering and Architecture Logo">
             </div>
             <div class="banner-content">
-                <h1>College of Engineering, Architecture and Aviation</h1>
-                <p>The College of Engineering, Architecture & Aviation adheres to the philosophy of the university which believes and invokes Divine Guidance in the betterment of the quality of life through national development and transformation, which are predicated upon the quality of education of its people.</p>
+                <h1>College of Engineering & Architecture</h1>
+                <p>Globally recognized hub of academic excellence, leading transformative advancements in engineering and architectural disciplines through innovative research, cutting-edge technology, and socially responsive education.</p>
             </div>
         </div>
     </section>
@@ -46,30 +46,44 @@ include '../app/includes/header.php';
                         <!-- Mission Section -->
                         <section class="mission-vision-section">
                             <h2>Mission</h2>
-                            <p>The College of Engineering shall provide students with responsive Engineering education through state-of-the-art methods of instruction, research & industry practice.</p>
+                            <p>Guided by a commitment to academic excellence, the College of Engineering & Architecture is dedicated to provide accessible and high-quality education aligned with the global sustainable development goals through outcomes-based education, industry collaboration and innovative research.</p>
                         </section>
 
                         <!-- Vision Section -->
                         <section class="mission-vision-section">
                             <h2>Vision</h2>
-                            <p>The College of Engineering as a center of excellence in Engineering education, research & development.</p>
+                            <p>The College of Engineering aims to be a globally recognized hub of academic and excellence, leading transformative advancements in engineering and architectural disciplines through innovative research, cutting-edge technology, and socially responsive education for future generations.</p>
+                        </section>
+
+                        <!-- Graduate Attributes Section -->
+                        <section class="mission-vision-section">
+                            <h2>Graduate Attributes</h2>
+                            <ul>
+                                <li>Professionally Competent</li>
+                                <li>Effective Communicator & Collaborator</li>
+                                <li>Reflective Learner</li>
+                                <li>Problem Solver & Design Specialist</li>
+                                <li>Socially Responsible & Ethical Person</li>
+                            </ul>
                         </section>
 
                         <!-- Quality Policy Section -->
                         <section class="objectives-section">
                             <h2>Quality Policy</h2>
-                            <p>College of Engineering is committed to continually improve the quality of Engineering education which will mould the students with moral character, enhance the competence of the faculty, collaborate with industry and other institutions for mutual benefit, promote research and development, and adhere to the quality assurance requirements set by the institution.</p>
+                            <p>The College of Engineering & Architecture is committed to continually improve the quality of Engineering and Architecture education that develops competent, innovative, and ethical professionals dedicated to nation-building and sustainable development. We uphold the University's Mission of nurturing Helpers of God by promoting academic excellence, research, industry collaboration, and community service guided by moral integrity and social responsibility.</p>
                         </section>
 
                         <!-- Quality Objectives Section -->
                         <section class="objectives-section">
                             <h2>Quality Objectives</h2>
-                            <p>The college of Engineering as envisioned by our Founder should be able to:</p>
                             <ul>
-                                <li>Develop competent and competitive Engineers with Perpetualite values</li>
-                                <li>Be recognized as one of the highly reputable Engineering schools at par with ASEAN standards</li>
-                                <li>Develop research and programs that address emerging issues in Engineering education and practice</li>
-                                <li>Develop and implement sustainable programs based community activities in the country and participate in an international community</li>
+                                <li>Improve international readiness of students through curriculum enhancements, certification training and value formation programs.</li>
+                                <li>Be at par with the national passing percentage in the licensure examinations given by the Professional Regulation Commission for Engineering and Architecture programs.</li>
+                                <li>Maintain the institutional autonomous status and accreditation of all programs by local and international certifying bodies.</li>
+                                <li>Promote the creation and dissemination of knowledge through faculty and student engagement in research presentations at local and international conferences, publication in reputable journals, and the application of research outcomes in industry and community extension programs.</li>
+                                <li>Actively engage in community extension programs that improve the socio-economic, health, educational, and environmental conditions of the adopted community.</li>
+                                <li>Enhance teaching and learning through the strategic integration of new technologies and educational practices.</li>
+                                <li>Develop and enforce intellectual property policies, raise awareness, and support IP registration to foster a culture of innovation and protect authorship.</li>
                             </ul>
                         </section>
 
@@ -247,26 +261,93 @@ include '../app/includes/header.php';
                             
                             <div class="program-section">
                                 <h3>Bachelor of Science in Architecture</h3>
-                                <h4>Guided by the University Mission, the Perpetualite Architects must be able to:</h4>
-                                <ul>
-                                    <li>Perform standard competencies in accordance with the scope of the global and local practice of architecture</li>
-                                    <li>Show traits of professionalism, sense of responsibility equality and patriotism</li>
-                                    <li>Receptiveness to new ideas and knowledge through scientific research</li>
-                                    <li>Direct and focus the thrust of architecture education to the needs and demands of society and its integration into the social, economic, cultural and environmental aspects of nation building</li>
-                                    <li>Instill understanding of the basic philosophy and fundamental principles of the multi-dimensional aspects of architecture, and the direct relationship between man and his environment</li>
-                                </ul>
+                                <p>The Bachelor of Science in Architecture is a five-year undergraduate program designed to develop competent, creative, and ethical architects who can contribute to nation-building through sustainable and responsive design. The curriculum integrates artistic, scientific, and technical knowledge in the planning, design, and construction of buildings and communities for global competitiveness. It provides a balanced learning experience through design studios, technical courses, research, and professional practice.</p>
+                                
+                                <h4>Program Educational Objectives</h4>
+                                <p>Guided by the University Mission, the Perpetualite Architects must be able to:</p>
+                                <ol>
+                                    <li>Optimize their technical knowledge and skills to thrive in Architecture practice</li>
+                                    <li>Apply professional ethics with a deep sense of Christian values in fulfilling the needs of society</li>
+                                </ol>
                                 
                                 <h4>Student Outcomes:</h4>
+                                <p>By the time of graduation, the students of the Architecture program should be able to:</p>
                                 <ul>
-                                    <li>Creation of Architectural solution by applying knowledge in history, theory, planning, building technology and utilities, structural concepts and professional practice</li>
-                                    <li>Use of concepts and principles from specialized fields and allied disciplines into various architectural problems</li>
-                                    <li>Preparation of contract documents, technical reports and other legal documents used in architectural practice adhering to applicable laws, standards and regulations</li>
-                                    <li>Interpretation and application of relevant laws, codes, charters and standards of architecture and the built environment</li>
-                                    <li>Application of research methods to address architectural problems</li>
-                                    <li>Use of various information and communication technology (ICT) media for architectural solutions, presentation and techniques in design and construction</li>
-                                    <li>Acquisition of entrepreneurial and business acumen relevant to Architecture practice</li>
-                                    <li>Involvement in the management of the construction works and Building administration</li>
+                                    <li>Apply knowledge of mathematics, science, and architecture to solve complex architectural problems</li>
+                                    <li>Use architectural research methods including data collection and analysis to address complex architectural problems</li>
+                                    <li>Understand and apply the history and theory of architecture, and the culture and heritage of architecture in the local and global context</li>
+                                    <li>Apply architectural principles and design processes in producing a set of architectural solutions that demonstrate aesthetic, functional, and technical soundness</li>
+                                    <li>Use modern technologies and digital tools relevant to architectural design and practice</li>
+                                    <li>Understand and apply laws, codes, and regulations related to building construction, safety, and environmental sustainability</li>
+                                    <li>Prepare contract documents, cost estimates, and technical specifications in accordance with professional standards</li>
+                                    <li>Work effectively in multidisciplinary and multicultural teams in architectural and construction projects</li>
+                                    <li>Communicate effectively in oral, written, and graphical forms with professionals and stakeholders</li>
+                                    <li>Demonstrate ethical and professional responsibility in the practice of architecture</li>
+                                    <li>Understand contemporary issues and apply sustainable and inclusive design solutions to address societal needs</li>
+                                    <li>Engage in lifelong learning and keep abreast with the latest trends and developments in the field</li>
                                 </ul>
+                                
+                                <h4>Career Opportunities</h4>
+                                <p>Graduates of the Bachelor of Science in Architecture program can pursue a wide range of careers in the architecture, design, construction, and allied industries, both in the Philippines and abroad.</p>
+                                
+                                <div class="career-grid" style="margin-top: 20px;">
+                                    <div class="career-category">
+                                        <h3>A. Professional Practice (Licensed Architects)</h3>
+                                        <ul>
+                                            <li>Registered and Licensed Architect (RLA)</li>
+                                            <li>Architectural Designer</li>
+                                            <li>Project Architect / Design Architect</li>
+                                            <li>Site or Supervising Architect</li>
+                                            <li>Urban Planner or Urban Designer</li>
+                                            <li>Heritage or Conservation Architect</li>
+                                            <li>Landscape Architect (with further specialization)</li>
+                                            <li>Sustainable Design Consultant / Green Building Specialist</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="career-category">
+                                        <h3>B. Technical and Construction Fields</h3>
+                                        <ul>
+                                            <li>Project Manager / Construction Manager</li>
+                                            <li>Building Information Modeling (BIM) Specialist</li>
+                                            <li>CAD Designer / Draftsperson</li>
+                                            <li>Estimator / Specifications Writer</li>
+                                            <li>Facilities Planner / Building Administrator</li>
+                                            <li>Construction Supervisor / Site Engineer</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="career-category">
+                                        <h3>C. Design and Creative Industries</h3>
+                                        <ul>
+                                            <li>Interior Designer (with specialization or collaboration license)</li>
+                                            <li>Set Designer / Exhibition Designer</li>
+                                            <li>Graphic or 3D Visual Artist</li>
+                                            <li>Furniture and Product Designer</li>
+                                            <li>Lighting Designer</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="career-category">
+                                        <h3>D. Research, Education, and Government Service</h3>
+                                        <ul>
+                                            <li>Architecture Educator / Professor</li>
+                                            <li>Researcher in Architecture and Urban Studies</li>
+                                            <li>Technical Officer / Planning Officer in LGUs or Government Agencies</li>
+                                            <li>Housing and Urban Development Specialist</li>
+                                            <li>Environmental and Policy Planner</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="career-category">
+                                        <h3>E. Entrepreneurial and Allied Professions</h3>
+                                        <ul>
+                                            <li>Real Estate Developer or Consultant</li>
+                                            <li>Construction Firm Owner / Design-Build Contractor</li>
+                                            <li>Property Management Professional</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </section>
 
@@ -278,98 +359,83 @@ include '../app/includes/header.php';
                                 <div class="career-category">
                                     <h3>Civil Engineering</h3>
                                     <ul>
-                                        <li>Water Resources Engineer</li>
-                                        <li>Construction Engineer</li>
                                         <li>Structural Engineer</li>
                                         <li>Geotechnical Engineer</li>
-                                        <li>Highway Transportation Engineer</li>
-                                        <li>Site Project Engineer</li>
-                                        <li>Engineering Educator & Researcher</li>
-                                        <li>Sanitary / Environmental Engineer</li>
-                                        <li>Physical Plant Maintenance Administrator</li>
-                                        <li>Contractor</li>
+                                        <li>Transportation or Highway Engineer</li>
+                                        <li>Water Resources Engineer</li>
+                                        <li>Construction or Project Manager</li>
+                                        <li>Sanitary or Environmental Engineer</li>
+                                        <li>Building or Infrastructure Consultant</li>
+                                        <li>Researcher</li>
                                     </ul>
                                 </div>
                                 
                                 <div class="career-category">
                                     <h3>Computer Engineering</h3>
                                     <ul>
-                                        <li>System Engineer / Developer/Manager</li>
-                                        <li>Network System Administrator/Manager</li>
-                                        <li>Data Communication Engineer</li>
-                                        <li>Project Engineer/Manager</li>
-                                        <li>Technical Support Engineer</li>
-                                        <li>Test Engineer</li>
-                                        <li>Quality Assurance Engineer</li>
-                                        <li>Technopreneur</li>
-                                        <li>System Analyst/Designer</li>
+                                        <li>Computer Engineers</li>
+                                        <li>Network Engineers or System Administrators</li>
+                                        <li>Embedded Systems Developers</li>
+                                        <li>Software and Hardware Designers</li>
+                                        <li>Robotics Engineers</li>
+                                        <li>IT Project Managers</li>
+                                        <li>Researchers</li>
                                     </ul>
                                 </div>
                                 
                                 <div class="career-category">
                                     <h3>Electrical Engineering</h3>
                                     <ul>
-                                        <li>Design / Production Engineer</li>
                                         <li>Power System Engineer</li>
-                                        <li>Construction & Project Engineer</li>
-                                        <li>Illumination Engineer</li>
-                                        <li>Maintenance Engineer</li>
-                                        <li>Engineering Educator & Researcher</li>
-                                        <li>Distribution Engineer</li>
-                                        <li>Software Developer</li>
-                                        <li>Instrumentation & Control Engineer</li>
-                                        <li>Safety Engineer</li>
-                                        <li>Electrical Design Inspector</li>
+                                        <li>Electrical Design Engineer</li>
+                                        <li>Maintenance and Operations Engineer</li>
+                                        <li>Control and Instrumentation Engineer</li>
+                                        <li>Project or Plant Engineer</li>
+                                        <li>Energy Systems Analyst or Consultant</li>
+                                        <li>Research and Development Engineer</li>
                                     </ul>
                                 </div>
                                 
                                 <div class="career-category">
                                     <h3>Electronics Engineering</h3>
                                     <ul>
-                                        <li>Electronics / Communications Systems</li>
-                                        <li>Biomedical Engineer</li>
-                                        <li>Industrial Electronics Engineer</li>
-                                        <li>Instrumentation & Control Engineer</li>
-                                        <li>Broadcast Engineer</li>
-                                        <li>Designer / Engineer</li>
-                                        <li>Semiconductor Engineer</li>
-                                        <li>Sales Engineer</li>
-                                        <li>Entrepreneur</li>
-                                        <li>Operations and Maintenance Engineer</li>
+                                        <li>Electronics Design Engineer</li>
+                                        <li>Telecommunications Engineer</li>
+                                        <li>Instrumentation and Control Engineer</li>
+                                        <li>Broadcast or Audio-Video Systems Engineer</li>
+                                        <li>Embedded Systems or IoT Engineer</li>
+                                        <li>Semiconductor Process Engineer</li>
+                                        <li>Project Engineer or Technical Consultant</li>
+                                        <li>Researcher or Innovator</li>
                                     </ul>
                                 </div>
                                 
                                 <div class="career-category">
                                     <h3>Industrial Engineering</h3>
                                     <ul>
-                                        <li>Facilities Engineer</li>
-                                        <li>Production Engineer</li>
-                                        <li>Methods Engineer</li>
-                                        <li>Sales Engineer</li>
-                                        <li>Manufacturing/Process Engineer</li>
-                                        <li>Strategic Planning Engineer</li>
-                                        <li>Information System Engineer</li>
-                                        <li>Maintenance Engineer</li>
-                                        <li>Product Design Engineer</li>
-                                        <li>Engineering Educator & Researcher</li>
+                                        <li>Industrial Engineer</li>
+                                        <li>Production or Operations Manager</li>
+                                        <li>Quality Assurance Engineer</li>
+                                        <li>Systems Analyst or Process Improvement Specialist</li>
+                                        <li>Supply Chain or Logistics Engineer</li>
+                                        <li>Project Management Professional</li>
+                                        <li>Operations Research Analyst</li>
+                                        <li>Systems Engineer</li>
                                     </ul>
                                 </div>
                                 
                                 <div class="career-category">
-                                    <h3>Mechanical Engineer</h3>
+                                    <h3>Mechanical Engineering</h3>
                                     <ul>
-                                        <li>Plant Engineer / Manager</li>
-                                        <li>Production Engineer</li>
-                                        <li>HVAC Engineer</li>
-                                        <li>Maintenance/Design Engineer</li>
-                                        <li>Construction/Project Engineer</li>
-                                        <li>Sales Engineer</li>
-                                        <li>Manufacturing Engineer</li>
-                                        <li>Instrumentation & Control Engineer</li>
-                                        <li>Biomedical Engineer</li>
-                                        <li>Pollution Control Officer</li>
-                                        <li>Safety Engineer</li>
-                                        <li>Engineering Educator & Researcher</li>
+                                        <li>Mechanical Design Engineer</li>
+                                        <li>Power Plant Engineer</li>
+                                        <li>Maintenance and Operations Engineer</li>
+                                        <li>Manufacturing or Production Engineer</li>
+                                        <li>HVAC (Heating, Ventilation, and Air Conditioning) Engineer</li>
+                                        <li>Automotive or Aerospace Engineer</li>
+                                        <li>Energy Systems Engineer</li>
+                                        <li>Project Engineer</li>
+                                        <li>Researcher</li>
                                     </ul>
                                 </div>
                             </div>
