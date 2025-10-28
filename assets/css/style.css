@@ -1728,6 +1728,80 @@ h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
 
+/* Linkages Styles */
+.linkages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.linkage-category {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #2c5aa0;
+}
+
+.linkage-category h3 {
+    color: #2c5aa0;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.linkage-list {
+    list-style: none;
+    padding: 0;
+}
+
+.linkage-list li {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+    gap: 15px;
+}
+
+.linkage-list li:last-child {
+    border-bottom: none;
+}
+
+.linkage-icon {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 8px;
+    padding: 5px;
+    background: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.linkage-list li div {
+    flex: 1;
+    font-size: 0.95rem;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.linkage-list li div strong {
+    color: #2c5aa0;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .linkage-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .linkage-list li {
+        padding: 10px 0;
+        gap: 10px;
+    }
+}
+
 .certification-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
