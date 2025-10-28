@@ -1331,11 +1331,11 @@ include 'app/includes/header.php';
                         <div class="mission-content">
                             <h3 class="mission-title">Mission</h3>
                             <div class="mission-text">
-                                <p>The University of Perpetual Help System is dedicated to the development of the Filipino as a leader. It aims to graduate dynamic students who are physically, intellectually, socially and spiritually committed to the achievement of the best quality of life.</p>
+                                <p>The UPHS is dedicated to the development of the Filipino as a leader. It aims to graduate dynamic students who are physically, intellectually, socially, spiritually committed to the achievement of the best quality of life.</p>
                                 
-                                <p>As a system of service in health and education, the University of Perpetual Help System is dedicated to the formation of Christian, services and research oriented professionals and leaders in quality education and health care.</p>
+                                <p>As a system of services in health and education, the University of Perpetual Help System of Laguna is dedicated to the formation of Christian services and research oriented professional and leaders in quality education and health care.</p>
                                 
-                                <p>It shall produce Perpetualites who outstandingly value the virtues of reaching out and helping others as vital ingredients to nation building.</p>
+                                <p>It shall provide Perpetualites who outstandingly value the virtues of reaching out and helping others as vital ingredients to nation building.</p>
                             </div>
                         </div>
                     </div>
@@ -1345,11 +1345,11 @@ include 'app/includes/header.php';
                         <div class="vision-content">
                             <h3 class="vision-title">Vision</h3>
                             <div class="vision-text">
-                                <p>The University of Perpetual Help System is a premier University that provides unique and innovative educational processes, contents, end-results for the pursuit of excellence in academics, technology, and research through community partnership and industry linkages.</p>
+                                <p>The UPHS is a premiere University that provides unique and innovative educational processes, contents, end-results for the pursuit of excellence in academics, technology, and research through community partnership and industry linkages.</p>
                                 
-                                <p>The University takes the lead role as a catalyst for human resource development, continues to inculcate values as way of strengthening the moral fiber of the Filipino individuals proud of their race and prepared for exemplary global participation in the realm of arts, sciences, humanities, and business.</p>
+                                <p>The University takes the lead role as catalyst for human resource development, and continue to inculcate values as way of strengthening the moral fiber of the Filipino individuals proud of their race and prepared for exemplary global participation in the realm of arts, sciences, humanities and business.</p>
                                 
-                                <p>It sees the Filipino people enjoying quality and abundant life, living in peace and building a nation that the next generations shall be nourishing, cherishing and valuing.</p>
+                                <p>It sees the Filipino people enjoying quality and abundant life, living in peace and building a nation that the next generation shall be nourishing, cherishing and valuing.</p>
                             </div>
                         </div>
                     </div>
@@ -1366,7 +1366,13 @@ include 'app/includes/header.php';
                     <div class="philosophy-author">- University of Perpetual Help System Laguna</div>
                 </div>
                 <div class="section-content">
-                    <p>The University of Perpetual Help System Laguna believes that national development and transformation are predicated on the quality of the education of its people. Towards this end, the institution is committed to the ideas of teaching, community service and research with "Character Building is Nation Building" as its guiding principle.</p>
+                    <p>The University of Perpetual Help System JONELTA believes that national and global development process, contents, and end-results are predicated on the quality of education of its people. Towards this end, the institution is committed to the ideals of teaching, research, student services, community service and partnership. The University believes in the full holistic development of Perpetualites as leaders who are committed to the national and global development and to the achievement of the best quality of life.</p>
+                    
+                    <p style="margin-top: 1.5rem; font-style: italic; text-align: center;"><em>"Today is ours, why be afraid?<br>
+                    Today is ours, our labor we have made<br>
+                    Let's vanish anxiety, vanish sorrow<br>
+                    Today, makes our tomorrow."</em><br>
+                    <strong style="display: block; margin-top: 1rem;">- Dr. Jose G. Tamayo, Founder, UPHS</strong></p>
                 </div>
             </div>
 
@@ -1463,44 +1469,123 @@ include 'app/includes/header.php';
                 </div>
             </div>
 
+            <!-- Core Values Section -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">UPHS Core Values</h2>
+                </div>
+                <div class="section-content">
+                    <p>The University of Perpetual Help Laguna, Binan Campus is planned and designed to open the windows and doors of opportunities for a holistic approach to quality education. The educational processes, contents and end-results are anchored on its guiding philosophy that is, <strong>"Character Building is Nation Building"</strong>.</p>
+                    
+                    <p style="margin-top: 1.5rem;">The University of Perpetual Help Laguna is increasing and strengthening its local and international linkages and networks with existing and diverse leadership coming from relevant and known industries, academic institutions and non-government organizations (NGOs). Below are the core values of our University:</p>
+                    
+                    <div class="quality-objectives" style="margin-top: 2rem;">
+                        <div class="objective-item">
+                            <div class="objective-title">Love</div>
+                            <ul class="objective-list">
+                                <li>Love of God, Self, Neighbor, and Country</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="objective-item">
+                            <div class="objective-title">Spiritual Values</div>
+                            <ul class="objective-list">
+                                <li>Value of Catholic Doctrines</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="objective-item">
+                            <div class="objective-title">Excellence</div>
+                            <ul class="objective-list">
+                                <li>Academic and Professional Excellence</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="objective-item">
+                            <div class="objective-title">Governance</div>
+                            <ul class="objective-list">
+                                <li>Love of Country and Good Governance</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="objective-item">
+                            <div class="objective-title">Solidarity</div>
+                            <ul class="objective-list">
+                                <li>Peace and Global solidarity</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="objective-item">
+                            <div class="objective-title">Consciousness</div>
+                            <ul class="objective-list">
+                                <li>Health and Ecological Consciousness</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="objective-item">
+                            <div class="objective-title">Leadership</div>
+                            <ul class="objective-list">
+                                <li>Filipino Christian Leadership</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 2rem;"><strong>Inclusive Environment:</strong> The University promotes a community that is open, safe and supportive by providing quality education and at the same time welcome Perpetualites of all gender identities, respecting their expressions to thrive in an inclusive and affirming academic and campus environment.</p>
+                </div>
+            </div>
+
             <!-- Quality Objectives Section -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2 class="section-title">Institutional Quality Objectives</h2>
+                    <h2 class="section-title">UPHS Quality Objectives</h2>
                 </div>
                 <div class="quality-objectives">
                     <div class="objective-item">
-                        <div class="objective-title">Professional Development</div>
+                        <div class="objective-title">Professional Excellence</div>
                         <ul class="objective-list">
-                            <li>Develop professionals with appropriate technical and professional competencies for local and international market</li>
+                            <li>To develop professionals with appropriate technical and professional competencies for international market imbued with Perpetualite values</li>
                         </ul>
                     </div>
                     
                     <div class="objective-item">
-                        <div class="objective-title">Recognition</div>
+                        <div class="objective-title">Regulatory Compliance</div>
                         <ul class="objective-list">
-                            <li>Achieve recognition as one of the respected universities in the country</li>
+                            <li>To comply with the regulatory and statutory requirements, fostering accountability, integrity, and alignment with educational standards</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="objective-item">
+                        <div class="objective-title">Global Recognition</div>
+                        <ul class="objective-list">
+                            <li>To achieve recognition as one of the formidable universities both locally and internationally, ensuring the satisfaction of our learners and interested parties</li>
                         </ul>
                     </div>
                     
                     <div class="objective-item">
                         <div class="objective-title">Knowledge Generation</div>
                         <ul class="objective-list">
-                            <li>Serve as venue for knowledge generation and dissemination</li>
+                            <li>To serve as a venue for knowledge generation, dissemination, and utilization</li>
                         </ul>
                     </div>
                     
                     <div class="objective-item">
-                        <div class="objective-title">Community Upliftment</div>
+                        <div class="objective-title">Community Development</div>
                         <ul class="objective-list">
-                            <li>Uplift the quality of life of people living in the adopted community</li>
+                            <li>To uplift the quality of life of people living in the adopted community</li>
                         </ul>
                     </div>
                     
                     <div class="objective-item">
-                        <div class="objective-title">Service Delivery</div>
+                        <div class="objective-title">Technology & Innovation</div>
                         <ul class="objective-list">
-                            <li>Deliver quality services to the clientele</li>
+                            <li>To keep abreast with technology and innovation in the educational landscape</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="objective-item">
+                        <div class="objective-title">Intellectual Property Management</div>
+                        <ul class="objective-list">
+                            <li>To manage intellectual property to encourage innovation and protection of the rights of creators</li>
                         </ul>
                     </div>
                 </div>
