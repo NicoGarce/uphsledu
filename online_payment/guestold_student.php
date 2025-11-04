@@ -408,7 +408,7 @@
         .student-info {
             background: #e3f2fd;
             border-left: 4px solid var(--primary-color);
-            padding: 20px;
+            padding: 12px 15px;
             margin-top: 20px;
             border-radius: 0 10px 10px 0;
         }
@@ -416,15 +416,15 @@
         .student-info h4 {
             color: var(--primary-color);
             font-family: 'Barlow Semi Condensed', sans-serif;
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
         
         .student-info p {
             color: var(--text-light);
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 10px;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 6px;
         }
         
         .error-message {
@@ -531,6 +531,14 @@ function confirmStudent() {
 	isStudentVerified = true;
 	document.getElementById('submit-help').innerHTML = '✓ Student confirmed! You may now proceed with payment.';
 	toggleSubmit();
+	
+	// Scroll to the proceed to payment button after it appears
+	setTimeout(function() {
+		var submitBtn = document.getElementById('btnsubmit');
+		if (submitBtn) {
+			submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		}
+	}, 100);
 }
 
 function rejectStudent() {
@@ -594,12 +602,24 @@ function verifyStudent() {
 			document.getElementById('submit-help').innerHTML = 'Please confirm the student name above to proceed';
 			// Keep submit button disabled until user confirms
 			toggleSubmit();
+			// Scroll to verification result
+			setTimeout(function() {
+				if (resultDiv) {
+					resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			}, 100);
 		} else {
 			isStudentVerified = false;
                     resultDiv.innerHTML = '<div class="verification-error">✗ ' + data.message + '</div>';
 			document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
 			// Keep submit button disabled on verification failure
 			toggleSubmit();
+			// Scroll to verification result
+			setTimeout(function() {
+				if (resultDiv) {
+					resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+			}, 100);
 		}
 	})
 	.catch(error => {
@@ -608,6 +628,12 @@ function verifyStudent() {
 		document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
 		console.error('Error:', error);
 		toggleSubmit();
+		// Scroll to verification result
+		setTimeout(function() {
+			if (resultDiv) {
+				resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			}
+		}, 100);
 	})
 	.finally(() => {
 		// Re-enable button
@@ -676,18 +702,18 @@ function verifyStudent() {
                 <div id="verification-result" class="verification-result"></div>
 	</div>
 	
+            <div id="submit-section" style="display: none;">
+                <button type="submit" id="btnsubmit" name="btnsubmit" class="submit-btn">
+                    💳 Proceed to Payment
+                </button>
+            </div>
+
             <div class="student-info">
                 <h4>📋 Payment Information</h4>
                 <p><strong>For Current Students:</strong></p>
                 <p>Please select your campus first, then verify your student number to access the payment portal. This ensures that only registered students can make payments for their accounts.</p>
                 <p><strong>Note:</strong> Make sure you have your student number ready and select the correct campus where you are enrolled.</p>
 	</div>
-
-            <div id="submit-section" style="display: none;">
-                <button type="submit" id="btnsubmit" name="btnsubmit" class="submit-btn">
-                    💳 Proceed to Payment
-                </button>
-            </div>
 	</form>	
     </div>
 </body>
