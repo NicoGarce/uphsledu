@@ -809,8 +809,10 @@ include 'app/includes/header.php';
             // Touch/swipe support
             let touchStartX = 0;
             let touchEndX = 0;
+            let lastSwipeTime = 0;
+            const swipeCooldown = 400; // Minimum time between swipes in ms
             
-            // Swipe detection on modal content
+            // Swipe detection on modal content only (to avoid duplicate calls)
             const modalContent = document.querySelector('.gallery-modal-content');
             
             modalContent.addEventListener('touchstart', function(e) {
@@ -818,16 +820,13 @@ include 'app/includes/header.php';
             }, { passive: true });
             
             modalContent.addEventListener('touchend', function(e) {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, { passive: true });
-            
-            // Also support swipe on the image itself
-            modalImage.addEventListener('touchstart', function(e) {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-            
-            modalImage.addEventListener('touchend', function(e) {
+                const currentTime = Date.now();
+                
+                // Prevent rapid duplicate calls
+                if (currentTime - lastSwipeTime < swipeCooldown) {
+                    return;
+                }
+                
                 touchEndX = e.changedTouches[0].screenX;
                 handleSwipe();
             }, { passive: true });
@@ -837,6 +836,8 @@ include 'app/includes/header.php';
                 const diff = touchStartX - touchEndX;
                 
                 if (Math.abs(diff) > swipeThreshold) {
+                    lastSwipeTime = Date.now();
+                    
                     if (diff > 0) {
                         // Swipe left - next image
                         showNextImage();
