@@ -441,6 +441,7 @@ include 'app/includes/header.php';
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border-left: 4px solid var(--primary-blue);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1rem;
 }
 
 .sdg-post-item:hover {
@@ -475,6 +476,8 @@ include 'app/includes/header.php';
     font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 1rem;
+    white-space: pre-wrap;
+    text-align: justify;
 }
 
 .sdg-post-content p {
@@ -1100,10 +1103,10 @@ function displaySdgPosts(goalNumber) {
                     ${post.featured_image ? `<div class="sdg-post-image"><img src="${post.featured_image}" alt="${post.title}" /></div>` : ''}
                     <div class="sdg-post-content">${post.content}</div>
                     <div class="sdg-post-meta">
-                        <div class="sdg-post-date">
+                        <!--<div class="sdg-post-date">
                             <i class="fas fa-calendar"></i>
                             ${publishedDate}
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             `;
