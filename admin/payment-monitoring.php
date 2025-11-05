@@ -257,7 +257,7 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
         font-weight: 600;
         color: var(--text-dark);
         border-bottom: 2px solid #e1e5e9;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     
     .data-table td {
