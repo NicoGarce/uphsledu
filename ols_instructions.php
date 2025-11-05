@@ -468,6 +468,83 @@ include 'app/includes/header.php';
                                         <h4>What is the Online Payment System?</h4>
                                         <p>UPHSL's Online Payment System allows students and parents to pay tuition fees, miscellaneous fees, and other school charges conveniently and securely through various payment methods including credit cards, debit cards, and digital wallets.</p>
                                         
+                                        <h4>Step-by-Step Payment Guide:</h4>
+                                        <p style="margin-bottom: 1rem; color: #666; font-size: 0.95rem;"><i class="fas fa-info-circle"></i> Click on any image to view in full screen and navigate through the steps</p>
+                                        <div class="payment-steps">
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 1</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/1.png" alt="Payment Step 1" class="payment-instruction-image gallery-image" data-gallery-index="0" data-image-src="online_payment/instructions/1.png">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 2</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/2.png" alt="Payment Step 2" class="payment-instruction-image gallery-image" data-gallery-index="1" data-image-src="online_payment/instructions/2.png">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 3</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/3.png" alt="Payment Step 3" class="payment-instruction-image gallery-image" data-gallery-index="2" data-image-src="online_payment/instructions/3.png">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 4</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/4.png" alt="Payment Step 4" class="payment-instruction-image gallery-image" data-gallery-index="3" data-image-src="online_payment/instructions/4.png">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 5</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/5.png" alt="Payment Step 5" class="payment-instruction-image gallery-image" data-gallery-index="4" data-image-src="online_payment/instructions/5.png">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 6</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/6.png" alt="Payment Step 6" class="payment-instruction-image gallery-image" data-gallery-index="5" data-image-src="online_payment/instructions/6.png">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 7</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/7.png" alt="Payment Step 7" class="payment-instruction-image gallery-image" data-gallery-index="6" data-image-src="online_payment/instructions/7.png">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="payment-step">
+                                                <h5><i class="fas fa-step-forward"></i> Step 8</h5>
+                                                <div class="step-image">
+                                                    <img src="online_payment/instructions/8.png" alt="Payment Step 8" class="payment-instruction-image gallery-image" data-gallery-index="7" data-image-src="online_payment/instructions/8.png">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Gallery Modal -->
+                                        <div id="gallery-modal" class="gallery-modal">
+                                            <span class="gallery-close">&times;</span>
+                                            <button class="gallery-nav gallery-prev" aria-label="Previous image">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <button class="gallery-nav gallery-next" aria-label="Next image">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                            <div class="gallery-modal-content">
+                                                <img id="gallery-modal-image" src="" alt="Payment Step">
+                                                <div class="gallery-counter">
+                                                    <span id="gallery-current">1</span> / <span id="gallery-total">8</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                         <h4>Access Methods:</h4>
                                         <div class="access-methods">
                                             <div class="method-section">
@@ -650,6 +727,125 @@ include 'app/includes/header.php';
                     document.getElementById(targetTab + '-tab').classList.add('active');
                 });
             });
+            
+            // Gallery Modal Functionality
+            const galleryImages = document.querySelectorAll('.gallery-image');
+            const galleryModal = document.getElementById('gallery-modal');
+            const modalImage = document.getElementById('gallery-modal-image');
+            const galleryClose = document.querySelector('.gallery-close');
+            const galleryPrev = document.querySelector('.gallery-prev');
+            const galleryNext = document.querySelector('.gallery-next');
+            const galleryCurrent = document.getElementById('gallery-current');
+            const galleryTotal = document.getElementById('gallery-total');
+            
+            let currentImageIndex = 0;
+            const totalImages = galleryImages.length;
+            galleryTotal.textContent = totalImages;
+            
+            // Get all image sources
+            const imageSources = Array.from(galleryImages).map(img => img.getAttribute('data-image-src'));
+            
+            // Open modal when image is clicked
+            galleryImages.forEach((img, index) => {
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', function() {
+                    currentImageIndex = index;
+                    openGallery(index);
+                });
+            });
+            
+            // Close modal
+            function closeGallery() {
+                galleryModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            galleryClose.addEventListener('click', closeGallery);
+            
+            // Close modal when clicking outside the image
+            galleryModal.addEventListener('click', function(e) {
+                if (e.target === galleryModal) {
+                    closeGallery();
+                }
+            });
+            
+            // Open gallery
+            function openGallery(index) {
+                currentImageIndex = index;
+                modalImage.src = imageSources[index];
+                galleryCurrent.textContent = index + 1;
+                galleryModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Navigate to previous image
+            function showPrevImage() {
+                currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
+                openGallery(currentImageIndex);
+            }
+            
+            // Navigate to next image
+            function showNextImage() {
+                currentImageIndex = (currentImageIndex + 1) % totalImages;
+                openGallery(currentImageIndex);
+            }
+            
+            galleryPrev.addEventListener('click', showPrevImage);
+            galleryNext.addEventListener('click', showNextImage);
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (galleryModal.style.display === 'flex') {
+                    if (e.key === 'ArrowLeft') {
+                        showPrevImage();
+                    } else if (e.key === 'ArrowRight') {
+                        showNextImage();
+                    } else if (e.key === 'Escape') {
+                        closeGallery();
+                    }
+                }
+            });
+            
+            // Touch/swipe support
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            // Swipe detection on modal content
+            const modalContent = document.querySelector('.gallery-modal-content');
+            
+            modalContent.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            
+            modalContent.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+            
+            // Also support swipe on the image itself
+            modalImage.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            
+            modalImage.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe left - next image
+                        showNextImage();
+                    } else {
+                        // Swipe right - previous image
+                        showPrevImage();
+                    }
+                }
+            }
         });
     </script>
 
