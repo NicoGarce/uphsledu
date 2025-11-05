@@ -295,12 +295,12 @@ include 'app/includes/header.php';
 
 .sdg-modal-content {
     background-color: var(--white);
-    margin: 5% auto;
+    margin: 2% auto;
     padding: 0;
     border-radius: 12px;
     width: 90%;
     max-width: 800px;
-    max-height: 80vh;
+    max-height: 92vh;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     animation: modalSlideIn 0.3s ease;
@@ -390,7 +390,6 @@ include 'app/includes/header.php';
     padding: 2rem;
     flex: 1;
     overflow-y: auto;
-    max-height: calc(80vh - 120px);
 }
 
 .sdg-modal-description {
