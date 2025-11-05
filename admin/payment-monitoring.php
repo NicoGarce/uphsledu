@@ -263,8 +263,8 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
     .data-table td {
         padding: 1rem;
         border-bottom: 1px solid #e9ecef;
-        font-size: 0.9rem;
-        color: var(--text-light);
+        font-size: 0.7rem;
+        color: var(--text-dark);
     }
     
     .data-table tr:hover {
@@ -274,7 +274,7 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
     .status-badge {
         padding: 0.4rem 0.8rem;
         border-radius: 20px;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         font-weight: 600;
         display: inline-block;
     }
