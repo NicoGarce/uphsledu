@@ -453,6 +453,11 @@
     color: var(--text-light);
 }
 
+.recent-post-goal {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
 .post-sidebar .university-info {
     text-align: center;
 }

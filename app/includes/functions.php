@@ -28,6 +28,25 @@ function getRecentPosts($limit = 10) {
     return $stmt->fetchAll();
 }
 
+// Get recent SDG posts
+function getRecentSDGPosts($limit = 10) {
+    $pdo = getDBConnection();
+    // Cast limit to integer to prevent SQL injection
+    $limit = (int)$limit;
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM sdg_initiatives_posts p 
+        JOIN users u ON p.author_id = u.id 
+        WHERE p.status = 'published' 
+        ORDER BY p.published_at DESC, p.created_at DESC 
+        LIMIT :limit
+    ");
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
 // Get post by ID
 function getPostById($id) {
     $pdo = getDBConnection();
@@ -386,6 +405,18 @@ function getPostImages($postId) {
     return $stmt->fetchAll();
 }
 
+// Get SDG post images
+function getSDGPostImages($postId) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("
+        SELECT * FROM sdg_initiatives_images 
+        WHERE post_id = ? 
+        ORDER BY sort_order ASC, created_at ASC
+    ");
+    $stmt->execute([$postId]);
+    return $stmt->fetchAll();
+}
+
 // Get all published posts with pagination
 function getPublishedPosts($page = 1, $limit = 10) {
     $pdo = getDBConnection();
@@ -432,10 +463,31 @@ function getPostBySlug($slug) {
     return $stmt->fetch();
 }
 
+// Get SDG post by slug
+function getSDGPostBySlug($slug) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM sdg_initiatives_posts p 
+        JOIN users u ON p.author_id = u.id 
+        WHERE p.slug = ? AND p.status = 'published'
+    ");
+    $stmt->execute([$slug]);
+    return $stmt->fetch();
+}
+
 // Increment post views
 function incrementPostViews($postId) {
     $pdo = getDBConnection();
     $stmt = $pdo->prepare("UPDATE posts SET views = views + 1 WHERE id = ?");
+    $stmt->execute([$postId]);
+}
+
+// Increment SDG post views
+function incrementSDGPostViews($postId) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("UPDATE sdg_initiatives_posts SET views = views + 1 WHERE id = ?");
     $stmt->execute([$postId]);
 }
 
