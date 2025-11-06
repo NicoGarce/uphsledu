@@ -71,6 +71,11 @@ $base_path = $GLOBALS['base_path'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Nico Roell D. Garce"/>
+    <meta
+      name="description"
+      content="University of Perpetual Help System - Laguna, UPHSL, Perpetual Laguna"
+    />
     <title><?php echo (isset($page_title) && $page_title !== 'Home') ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
     <!-- Performance: speed up icon/font loading to prevent flash of text -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
