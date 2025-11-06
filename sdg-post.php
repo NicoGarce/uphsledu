@@ -178,6 +178,9 @@ include 'app/includes/header.php';
                     // Display content as HTML (already sanitized in database)
                     $content = $sdg_post['content'];
                     
+                    // Decode HTML entities first (for apostrophes, quotes, etc.)
+                    $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+                    
                     // If content doesn't have HTML tags, convert line breaks to paragraphs and URLs to links
                     if (strip_tags($content) === $content) {
                         // Split by double line breaks to create paragraphs
@@ -185,8 +188,8 @@ include 'app/includes/header.php';
                         foreach ($paragraphs as $paragraph) {
                             $paragraph = trim($paragraph);
                             if (!empty($paragraph)) {
-                                // First escape HTML to prevent XSS, then convert URLs to links
-                                $paragraph = htmlspecialchars($paragraph);
+                                // Escape HTML to prevent XSS, but use ENT_NOQUOTES to keep apostrophes readable
+                                $paragraph = htmlspecialchars($paragraph, ENT_NOQUOTES, 'UTF-8');
                                 
                                 // Convert URLs to clickable links (after escaping)
                                 $paragraph = preg_replace(
