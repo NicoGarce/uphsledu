@@ -471,12 +471,37 @@ include 'app/includes/header.php';
 }
 
 .sdg-post-content {
-    color: var(--text-gray);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    white-space: pre-wrap;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.sdg-excerpt {
     text-align: justify;
+    text-indent: 0 !important;
+    margin-bottom: 15px;
+}
+
+.sdg-post-content > a.read-more-btn {
+    align-self: center; /* Centers the button */
+    margin-top: 10px;
+}
+
+.read-more-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    background-color: #1c4da1;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.read-more-btn:hover {
+    background-color: #527bbd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .sdg-post-content p {
@@ -1100,7 +1125,21 @@ function displaySdgPosts(goalNumber) {
                 <div class="sdg-post-item">
                     <div class="sdg-post-title">${post.title}</div>
                     ${post.featured_image ? `<div class="sdg-post-image"><img src="${post.featured_image}" alt="${post.title}" /></div>` : ''}
-                    <div class="sdg-post-content">${post.content}</div>
+                    <div class="sdg-post-content">
+                        <div class="sdg-excerpt">
+                            ${(() => {
+                                // Extract first paragraph
+                                const tempDiv = document.createElement('div');
+                                tempDiv.innerHTML = post.content;
+                                const firstParagraph = tempDiv.querySelector('p')?.textContent || post.content.split('\n')[0] || post.content.substring(0, 200);
+                                // Remove leading spaces, tabs, and non-breaking spaces
+                                return firstParagraph.trim().replace(/^[\s\u00A0]+/, '');
+                            })()}...
+                        </div>
+                        <div style="text-align: center;">
+                            <a class="read-more-btn" href="sdg-post.php?slug=${post.slug}">Read More</a>
+                        </div>
+                    </div>
                     <div class="sdg-post-meta">
                         <!--<div class="sdg-post-date">
                             <i class="fas fa-calendar"></i>

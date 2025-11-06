@@ -223,11 +223,101 @@ $sdgGoals = [
             document.getElementById('deleteModal').style.display = 'none';
         }
         
+        // Copy SDG post link function
         function copyPostLink(slug) {
-            const url = window.location.origin + '/sdg-initiatives.php#' + slug;
-            navigator.clipboard.writeText(url).then(function() {
-                alert('Post link copied to clipboard!');
-            });
+            // Build site base URL (root of app, not /admin) and ensure no trailing slash
+            const baseUrl = '<?php 
+                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+                $appRoot = $protocol . $_SERVER['HTTP_HOST'] . dirname(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'));
+                echo rtrim($appRoot, '/');
+            ?>';
+            const postUrl = `${baseUrl}/sdg-post?slug=${slug}`;
+            
+            // Create a temporary textarea element
+            const textarea = document.createElement('textarea');
+            textarea.value = postUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                // Copy the text
+                document.execCommand('copy');
+                
+                // Show success message
+                showNotification('SDG post link copied to clipboard!', 'success');
+            } catch (err) {
+                // Fallback for modern browsers
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(postUrl).then(function() {
+                        showNotification('SDG post link copied to clipboard!', 'success');
+                    }).catch(function() {
+                        showNotification('Failed to copy link', 'error');
+                    });
+                } else {
+                    showNotification('Failed to copy link', 'error');
+                }
+            }
+            
+            // Remove the temporary textarea
+            document.body.removeChild(textarea);
+        }
+
+        // Show notification function
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            // Style the notification
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                padding: 14px 22px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 2000;
+                opacity: 0;
+                transform: translate(-50%, -60%);
+                transition: all 0.25s ease;
+                max-width: 80vw;
+                word-wrap: break-word;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                pointer-events: none;
+            `;
+            
+            // Set background color based on type
+            if (type === 'success') {
+                notification.style.backgroundColor = '#28a745';
+            } else if (type === 'error') {
+                notification.style.backgroundColor = '#dc3545';
+            } else {
+                notification.style.backgroundColor = '#007bff';
+            }
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translate(-50%, -50%)';
+            }, 50);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translate(-50%, -60%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 1500);
         }
         
         // Close modal when clicking outside
