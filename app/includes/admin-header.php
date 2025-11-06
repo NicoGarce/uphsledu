@@ -21,6 +21,11 @@ $base_path = $GLOBALS['base_path'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Nico Roell D. Garce"/>
+    <meta
+      name="description"
+      content="University of Perpetual Help System - Laguna, UPHSL, Perpetual Laguna"
+    />
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
