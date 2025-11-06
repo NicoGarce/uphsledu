@@ -116,7 +116,7 @@ include '../app/includes/header.php';
                                         <div class="timeline-content">
                                             <h4>JCI Manila International</h4>
                                             <p>The Community Outreach Department of the University of Perpetual Help System Laguna (UPHSL) - Biñan Campus proudly played a central role in the university's participation in the nationwide bloodletting event, "Juan for All: National Blood Letting Activity.</p>
-                                            <a href="#" class="program-link">Read More</a>
+                                            <a href="<?= $base_path ?>assets/documents/pdfs/2024/June/6.%20JCI%20Manila%20Bloodletting%20Project.pdf" target="_blank" class="program-link">Read More</a>
                                         </div>
                                     </div>
 
