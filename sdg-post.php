@@ -251,9 +251,9 @@ include 'app/includes/header.php';
                     <?php foreach ($recentPosts as $recentPost): ?>
                         <?php if ($recentPost['id'] != $sdg_post['id']): ?>
                             <div class="recent-post-item">
-                                <a href="post.php?slug=<?php echo $recentPost['slug']; ?>" class="recent-post-link">
+                                <a href="sdg-post.php?slug=<?php echo $recentPost['slug']; ?>" class="recent-post-link">
                                     <h4 class="recent-post-title"><?php echo htmlspecialchars($recentPost['title']); ?></h4>
-                                    <span class="recent-post-date"><?php echo htmlspecialchars($sdg_post['sdg_number']. '. ' .$sdg_post['sdg_title']); ?></span>
+                                    <span class="recent-post-date"><?php echo htmlspecialchars($recentPost['sdg_number']. '. ' .$sdg_post['sdg_title']); ?></span>
                                     <!--<span class="recent-post-date"><?php echo formatDate($recentPost['published_at'] ?: $recentPost['created_at']); ?></span>-->
                                 </a>
                             </div>
