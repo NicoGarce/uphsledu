@@ -6,8 +6,8 @@
  * @title UPHSL Web Administrator 2025
  * @description Displays information about all UPHSL campus locations and facilities
  */
-
-$page_title = "JONELTA Campuses";
+session_start();
+$page_title = "JONELTA Campuses - UPHSL";
 
 // Set base path for assets
 $base_path = '';

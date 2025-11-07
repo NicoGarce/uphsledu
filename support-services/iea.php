@@ -6,9 +6,9 @@
  * @title UPHSL Web Administrator 2025
  * @description Information about international programs and external affairs at UPHSL
  */
-
+session_start();
 $base_path = '../';
-$page_title = "International & External Affairs";
+$page_title = "International & External Affairs - UPHSL";
 
 // Base path for assets
 

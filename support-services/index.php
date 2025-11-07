@@ -6,7 +6,7 @@
  * @title UPHSL Web Administrator 2025
  * @description Main support services page listing all available support services at UPHSL
  */
-
+session_start();
 $page_title = "Support Services";
 $base_path = '../';
 

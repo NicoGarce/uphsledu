@@ -6,7 +6,8 @@
  * @title UPHSL Web Administrator 2025
  * @description Information about the University Clinic services and facilities
  */
-
+session_start();
+$page_title = "University Clinic - UPHSL";
 // Set base path for subdirectory
 $base_path = '../';
 // Include header

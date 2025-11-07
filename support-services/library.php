@@ -6,9 +6,9 @@
  * @title UPHSL Web Administrator 2025
  * @description Information about the College Library services and resources
  */
-
+session_start();
 $base_path = '../';
-$page_title = "University Library";
+$page_title = "University Library - UPHSL";
 include '../app/includes/header.php';
 ?>
 
