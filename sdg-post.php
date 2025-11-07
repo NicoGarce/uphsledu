@@ -256,7 +256,7 @@ include 'app/includes/header.php';
                             <div class="recent-post-item">
                                 <a href="sdg-post.php?slug=<?php echo $recentPost['slug']; ?>" class="recent-post-link">
                                     <h4 class="recent-post-title"><?php echo htmlspecialchars($recentPost['title']); ?></h4>
-                                    <span class="recent-post-date">SDG <?php echo htmlspecialchars($recentPost['sdg_number']. '. ' .$sdg_post['sdg_title']); ?></span>
+                                    <span class="recent-post-date">SDG <?php echo htmlspecialchars($recentPost['sdg_number']. '. ' .$recentPost['sdg_title']); ?></span>
                                     <!--<span class="recent-post-date"><?php echo formatDate($recentPost['published_at'] ?: $recentPost['created_at']); ?></span>-->
                                 </a>
                             </div>
