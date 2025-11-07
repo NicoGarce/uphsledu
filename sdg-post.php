@@ -108,7 +108,7 @@ include 'app/includes/header.php';
         <div class="post-content">
             <!-- Post Header -->
             <header class="post-header">
-                <h5 class="post-meta"><?php echo htmlspecialchars($sdg_post['sdg_number']. '. ' .$sdg_post['sdg_title']); ?></h5>
+                <h5 class="post-meta">SDG <?php echo htmlspecialchars($sdg_post['sdg_number']. '. ' .$sdg_post['sdg_title']); ?></h5>
                 <h1 class="post-title"><?php echo htmlspecialchars($sdg_post['title']); ?></h1>
                 <div class="post-meta">
                     <div class="post-author">
@@ -256,7 +256,7 @@ include 'app/includes/header.php';
                             <div class="recent-post-item">
                                 <a href="sdg-post.php?slug=<?php echo $recentPost['slug']; ?>" class="recent-post-link">
                                     <h4 class="recent-post-title"><?php echo htmlspecialchars($recentPost['title']); ?></h4>
-                                    <span class="recent-post-date"><?php echo htmlspecialchars($recentPost['sdg_number']. '. ' .$sdg_post['sdg_title']); ?></span>
+                                    <span class="recent-post-date">SDG <?php echo htmlspecialchars($recentPost['sdg_number']. '. ' .$sdg_post['sdg_title']); ?></span>
                                     <!--<span class="recent-post-date"><?php echo formatDate($recentPost['published_at'] ?: $recentPost['created_at']); ?></span>-->
                                 </a>
                             </div>
