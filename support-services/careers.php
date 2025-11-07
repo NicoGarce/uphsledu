@@ -6,7 +6,8 @@
  * @title UPHSL Web Administrator 2025
  * @description Career opportunities and job listings at the University of Perpetual Help System Laguna
  */
-
+session_start();
+$page_title = "Careers - UPHSL";
 // Set base path for subdirectory
 $base_path = '../';
 // Include header

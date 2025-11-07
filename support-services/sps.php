@@ -6,8 +6,8 @@
  * @title UPHSL Web Administrator 2025
  * @description Information about Student Personnel Services and guidance programs at UPHSL
  */
-
-$page_title = "Student Personnel Services";
+session_start();
+$page_title = "Student Personnel Services - UPHSL";
 $base_path = '../';
 
 // Base path for assets

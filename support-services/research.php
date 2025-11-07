@@ -6,9 +6,9 @@
  * @title UPHSL Web Administrator 2025
  * @description Information about research programs and initiatives at UPHSL
  */
-
+session_start();
 $base_path = '../';
-$page_title = "Research & Publication";
+$page_title = "Research & Publication - UPHSL";
 include '../app/includes/header.php';
 ?>
 

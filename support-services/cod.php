@@ -6,7 +6,8 @@
  * @title UPHSL Web Administrator 2025
  * @description Information about the Community Outreach Department and its programs
  */
-
+session_start();
+$page_title = "Community Outreach Department - UPHSL";
 $base_path = '../';
 
 // Base path for assets

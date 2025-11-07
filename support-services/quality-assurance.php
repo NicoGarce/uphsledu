@@ -6,9 +6,9 @@
  * @title UPHSL Web Administrator 2025
  * @description Information about Quality Assurance programs and initiatives at UPHSL
  */
-
+session_start();
 $base_path = '../';
-$page_title = "Quality Assurance";
+$page_title = "Quality Assurance - UPHSL";
 include '../app/includes/header.php';
 ?>
 
