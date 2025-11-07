@@ -314,9 +314,9 @@
                         <i class="fas fa-headset"></i>
                         Support Services
                     </a>
-                    <a href="search.php" class="quick-link">
-                        <i class="fas fa-search"></i>
-                        Search Site
+                    <a href="ols_instructions.php" class="quick-link">
+                        <i class="fas fa-globe"></i>
+                        Online Services
                     </a>
                 </div>
             </div>
