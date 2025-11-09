@@ -1091,7 +1091,7 @@ $base_path = $GLOBALS['base_path'];
                         <!-- DEBUG: Programs - current_page='<?php echo $current_page; ?>', is_programs_active=<?php echo $is_programs_active ? 'true' : 'false'; ?>, classes="<?php echo $is_programs_active ? 'active' : ''; ?>" -->
                         <div class="dropdown-menu">
                             <div class="dropdown-item-with-submenu">
-                                <a href="#" class="dropdown-link dropdown-parent">Basic Education <i class="fas fa-chevron-right submenu-chevron"></i></a>
+                                <a href="#" class="dropdown-link dropdown-parent">Basic Education <i class="fas fa-chevron-down submenu-chevron"></i></a>
                                 <div class="submenu-dropdown">
                                     <a href="<?php echo $base_path; ?>programs/senior-high-school.php" class="submenu-link <?php echo ($current_page == 'senior-high-school') ? 'active' : ''; ?>">Senior High School</a>
                                     <a href="<?php echo $base_path; ?>programs/junior-high-school.php" class="submenu-link <?php echo ($current_page == 'junior-high-school') ? 'active' : ''; ?>">Junior High School</a>
@@ -1204,7 +1204,7 @@ $base_path = $GLOBALS['base_path'];
                     ?>
                     <div class="nav-item dropdown">
                         <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="nav-link dropdown-toggle <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives <i class="fas fa-chevron-down desktop-chevron"></i></a>
-                        <div class="dropdown-menu">
+                        <div class="dropdown-menu sdg-dropdown-menu">
                             <?php for ($i = 1; $i <= 17; $i++): ?>
                                 <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=<?php echo $i; ?>" class="dropdown-link">SDG <?php echo $i; ?>: <?php echo $sdgTitles[$i]; ?></a>
                             <?php endfor; ?>
@@ -1378,6 +1378,8 @@ $base_path = $GLOBALS['base_path'];
             }
         }
         
+        // No JavaScript needed for inline submenu - CSS handles it
+        
         const dropdowns = document.querySelectorAll('.nav-item.dropdown');
         
         dropdowns.forEach(function(dropdown) {
@@ -1385,6 +1387,8 @@ $base_path = $GLOBALS['base_path'];
             dropdown.addEventListener('mouseenter', function() {
                 adjustDropdownPosition(dropdown);
             });
+            
+            // No JavaScript needed for inline submenu - CSS handles it
         });
         
         // Re-adjust on window resize
@@ -1394,6 +1398,13 @@ $base_path = $GLOBALS['base_path'];
                     dropdown.matches(':hover')) {
                     adjustDropdownPosition(dropdown);
                 }
+                
+                const submenuItems = dropdown.querySelectorAll('.dropdown-item-with-submenu');
+                submenuItems.forEach(function(submenuItem) {
+                    if (submenuItem.matches(':hover')) {
+                        adjustSubmenuPosition(submenuItem);
+                    }
+                });
             });
         });
     });
