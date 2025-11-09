@@ -58,6 +58,7 @@ $base_path = $GLOBALS['base_path'];
                 <?php if (isAuthor() || isAdmin() || isSuperAdmin()): ?>
                     <a href="posts.php" class="nav-link <?php echo ($current_page == 'posts') ? 'active' : ''; ?>">Post Management</a>
                     <a href="sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
+                    <a href="sdg-full-report.php" class="nav-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">SDG Full Report</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>
                     <a href="accounts.php" class="nav-link <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>">Account Management</a>
@@ -124,6 +125,10 @@ $base_path = $GLOBALS['base_path'];
                     <a href="sdg-initiatives.php" class="sidebar-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">
                         <i class="fas fa-globe-americas"></i>
                         <span>SDG Initiatives</span>
+                    </a>
+                    <a href="sdg-full-report.php" class="sidebar-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>SDG Full Report</span>
                     </a>
                 </div>
                 <?php endif; ?>

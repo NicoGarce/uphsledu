@@ -599,5 +599,50 @@ function getDateRangeCondition($dateRange) {
             return null;
     }
 }
+
+// Get setting value
+function getSetting($key, $default = null) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
+    $stmt->execute([$key]);
+    $result = $stmt->fetch();
+    return $result ? $result['setting_value'] : $default;
+}
+
+// Set setting value
+function setSetting($key, $value, $type = 'text', $description = null, $userId = null) {
+    try {
+        $pdo = getDBConnection();
+        
+        // First check if setting exists
+        $checkStmt = $pdo->prepare("SELECT id FROM settings WHERE setting_key = ?");
+        $checkStmt->execute([$key]);
+        $exists = $checkStmt->fetch();
+        
+        if ($exists) {
+            // Update existing setting
+            $stmt = $pdo->prepare("
+                UPDATE settings 
+                SET setting_value = ?, 
+                    setting_type = ?, 
+                    description = ?, 
+                    updated_by = ?, 
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE setting_key = ?
+            ");
+            return $stmt->execute([$value, $type, $description, $userId, $key]);
+        } else {
+            // Insert new setting
+            $stmt = $pdo->prepare("
+                INSERT INTO settings (setting_key, setting_value, setting_type, description, updated_by)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+            return $stmt->execute([$key, $value, $type, $description, $userId]);
+        }
+    } catch (PDOException $e) {
+        error_log("Error setting setting '{$key}': " . $e->getMessage());
+        return false;
+    }
+}
 ?>
 
