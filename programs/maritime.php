@@ -42,6 +42,15 @@ include '../app/includes/header.php';
         <div class="container">
             <div class="content-wrapper">
                 <div class="content-main">
+                    <!-- News Carousel Section -->
+                    <?php
+                    $category = getCategoryByName('Maritime');
+                    $categoryId = $category ? $category['id'] : null;
+                    $sectionTitle = 'Maritime News & Updates';
+                    $sectionDescription = 'Stay updated with the latest news and announcements from the College of Maritime.';
+                    include '../app/includes/news-carousel.php';
+                    ?>
+                    
                     <article class="content-article">
                         <!-- Mission Section -->
                         <section class="mission-vision-section">

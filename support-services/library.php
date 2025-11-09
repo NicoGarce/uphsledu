@@ -7,6 +7,9 @@
  * @description Information about the College Library services and resources
  */
 session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
+
 $base_path = '../';
 $page_title = "University Library - UPHSL";
 include '../app/includes/header.php';
@@ -352,6 +355,14 @@ body {
             </div>
         </div>
     </section>
+
+    <!-- News Carousel Section -->
+    <?php
+    $categoryId = 'Library'; // Pass category name, component will look it up
+    $sectionTitle = 'Library News & Updates';
+    $sectionDescription = 'Stay updated with the latest news and announcements from the University Library.';
+    include '../app/includes/news-carousel.php';
+    ?>
 
     <!-- Mission and Vision Section -->
     <section class="content-section mission-vision-section">

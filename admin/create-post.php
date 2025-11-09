@@ -27,6 +27,35 @@ $success = '';
 $isEdit = false;
 $post = null;
 
+// Get all categories from database
+$pdo = getDBConnection();
+$allCategories = getAllCategories();
+
+// Organize categories by type for display
+$programCategories = [];
+$supportServiceCategories = [];
+
+$programNames = [
+    'Senior High School', 'Junior High School', 'Grade School',
+    'Aviation', 'Arts & Sciences', 'Business & Accountancy', 'Computer Studies',
+    'Criminology', 'Education', 'Engineering & Architecture',
+    'International Hospitality Management', 'Maritime', 'Law/Juris Doctor', 'Graduate School'
+];
+
+$supportServiceNames = [
+    'Careers', 'University Clinic', 'Community Outreach Department',
+    'International & External Affairs', 'Student Personnel Services',
+    'Library', 'Quality Assurance', 'Research'
+];
+
+foreach ($allCategories as $category) {
+    if (in_array($category['name'], $programNames)) {
+        $programCategories[] = $category;
+    } elseif (in_array($category['name'], $supportServiceNames)) {
+        $supportServiceCategories[] = $category;
+    }
+}
+
 // Check if this is an edit request
 if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     $isEdit = true;
@@ -53,6 +82,11 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
         $isEdit = false;
     } else {
         $page_title = 'Edit Post';
+        // Get category name if category_id exists
+        if (!empty($post['category_id'])) {
+            $category = getCategoryById($post['category_id']);
+            $post['category_id'] = $category ? $post['category_id'] : null;
+        }
     }
 }
 
@@ -65,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'];
     $excerpt = sanitizeInput($_POST['excerpt'] ?? '');
     $publishedDate = $_POST['published_date'] ?? null;
+    $categoryId = isset($_POST['category']) && is_numeric($_POST['category']) ? (int)$_POST['category'] : null;
     $isEdit = isset($_POST['is_edit']) && $_POST['is_edit'] === '1';
     $postId = isset($_POST['post_id']) ? (int)$_POST['post_id'] : 0;
     
@@ -72,6 +107,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Please fill in all required fields';
     } else {
         $pdo = getDBConnection();
+        
+        // Check if images are provided (for new posts) or exist (for edited posts)
+        $hasImages = false;
+        if ($isEdit && $postId > 0) {
+            // For edits, check if post already has images
+            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM post_images WHERE post_id = ?");
+            $stmt->execute([$postId]);
+            $result = $stmt->fetch();
+            $hasImages = ($result['count'] > 0) || !empty($_FILES['images']['name'][0]);
+        } else {
+            // For new posts, images must be uploaded
+            $hasImages = !empty($_FILES['images']['name'][0]);
+        }
+        
+        if (!$hasImages) {
+            $error = 'Please attach at least one image. Images are required for posts.';
+        } else {
         
         try {
             // Start transaction
@@ -84,18 +136,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Authors can only update their own posts
                     $stmt = $pdo->prepare("
                         UPDATE posts 
-                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, updated_at = CURRENT_TIMESTAMP 
+                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, category_id = ?, updated_at = CURRENT_TIMESTAMP 
                         WHERE id = ? AND author_id = ?
                     ");
-                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $postId, $_SESSION['user_id']]);
+                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $categoryId, $postId, $_SESSION['user_id']]);
                 } else {
                     // Admins and Super Admins can update any post
                     $stmt = $pdo->prepare("
                         UPDATE posts 
-                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, updated_at = CURRENT_TIMESTAMP 
+                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, category_id = ?, updated_at = CURRENT_TIMESTAMP 
                         WHERE id = ?
                     ");
-                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $postId]);
+                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $categoryId, $postId]);
                 }
                 
                 if ($stmt->rowCount() === 0) {
@@ -105,11 +157,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Create new post
                 $slug = generateUniqueSlug($title);
                 $stmt = $pdo->prepare("
-                    INSERT INTO posts (title, slug, content, excerpt, status, published_at, author_id) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO posts (title, slug, content, excerpt, status, published_at, category_id, author_id) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ");
-                $stmt->execute([$title, $slug, $content, $excerpt, $status, $publishedDate, $_SESSION['user_id']]);
+                $stmt->execute([$title, $slug, $content, $excerpt, $status, $publishedDate, $categoryId, $_SESSION['user_id']]);
                 $postId = $pdo->lastInsertId();
+            }
+            
+            // Check current image count before deletion
+            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM post_images WHERE post_id = ?");
+            $stmt->execute([$postId]);
+            $currentImageCount = $stmt->fetch()['count'];
+            $deletingCount = isset($_POST['delete_images']) && is_array($_POST['delete_images']) ? count($_POST['delete_images']) : 0;
+            $uploadingCount = !empty($_FILES['images']['name'][0]) ? count(array_filter($_FILES['images']['name'])) : 0;
+            
+            // Validate that at least one image will remain after deletion
+            if ($isEdit && ($currentImageCount - $deletingCount + $uploadingCount) < 1) {
+                throw new Exception('At least one image is required. Please keep existing images or upload new ones.');
             }
             
             // Handle deletion of existing images
@@ -226,6 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->rollBack();
             error_log("PDO Exception in post creation: " . $e->getMessage());
             $error = 'Failed to create post. Please try again.';
+            }
         }
     }
 }
@@ -271,6 +336,51 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
             </div>
 
             <div class="form-group">
+                <label for="category" class="form-label">
+                    <i class="fas fa-tags"></i>
+                    Category (Program/Support Service)
+                </label>
+                <select id="category" name="category" class="form-input">
+                    <option value="">Select a Category (Optional)</option>
+                    <?php
+                    // Get the current category ID for edit mode
+                    $currentCategoryId = null;
+                    if ($isEdit && isset($post['category_id']) && !empty($post['category_id'])) {
+                        $currentCategoryId = (int)$post['category_id'];
+                    } elseif (isset($_POST['category']) && is_numeric($_POST['category'])) {
+                        $currentCategoryId = (int)$_POST['category'];
+                    }
+                    ?>
+                    <optgroup label="Programs - Basic Education">
+                        <?php foreach ($programCategories as $cat): 
+                            if (in_array($cat['name'], ['Senior High School', 'Junior High School', 'Grade School'])): ?>
+                                <option value="<?php echo $cat['id']; ?>" <?php echo ($currentCategoryId === (int)$cat['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($cat['name']); ?>
+                                </option>
+                            <?php endif;
+                        endforeach; ?>
+                    </optgroup>
+                    <optgroup label="Programs - Other">
+                        <?php foreach ($programCategories as $cat): 
+                            if (!in_array($cat['name'], ['Senior High School', 'Junior High School', 'Grade School'])): ?>
+                                <option value="<?php echo $cat['id']; ?>" <?php echo ($currentCategoryId === (int)$cat['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($cat['name']); ?>
+                                </option>
+                            <?php endif;
+                        endforeach; ?>
+                    </optgroup>
+                    <optgroup label="Support Services">
+                        <?php foreach ($supportServiceCategories as $cat): ?>
+                            <option value="<?php echo $cat['id']; ?>" <?php echo ($currentCategoryId === (int)$cat['id']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($cat['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </optgroup>
+                </select>
+                <small class="form-help">Select the program or support service this post relates to. Posts will be displayed on their respective pages.</small>
+            </div>
+
+            <div class="form-group">
                 <label for="excerpt" class="form-label">
                     <i class="fas fa-quote-left"></i>
                     Excerpt (Optional)
@@ -291,15 +401,15 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
             <div class="form-group">
                 <label for="images" class="form-label">
                     <i class="fas fa-images"></i>
-                    Attach Images (Optional)
+                    Attach Images <span style="color: red;">*</span>
                 </label>
                 <div class="image-upload-container">
                     <input type="file" id="images" name="images[]" class="image-input" 
-                           multiple accept="image/*" accept="image/jpeg,image/png,image/gif,image/webp">
+                           multiple accept="image/*" accept="image/jpeg,image/png,image/gif,image/webp" <?php echo !$isEdit ? 'required' : ''; ?>>
                     <div class="image-upload-area" onclick="document.getElementById('images').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Click to select images or drag and drop</p>
-                        <small>Supported formats: JPEG, PNG, GIF, WebP (Max 10MB each)</small>
+                        <small>Supported formats: JPEG, PNG, GIF, WebP (Max 10MB each). <strong>At least one image is required.</strong></small>
                     </div>
                     <div id="image-preview" class="image-preview">
                         <?php if ($isEdit && $post): ?>
@@ -370,6 +480,28 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
 
         <script src="../assets/js/script.js"></script>
     <script>
+        // Form validation - ensure images are provided
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.editor-form');
+            const imageInput = document.getElementById('images');
+            const imagePreview = document.getElementById('image-preview');
+            const isEdit = <?php echo $isEdit ? 'true' : 'false'; ?>;
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const hasExistingImages = imagePreview && imagePreview.querySelectorAll('.existing-image').length > 0;
+                    const hasNewImages = imageInput && imageInput.files && imageInput.files.length > 0;
+                    
+                    if (!hasExistingImages && !hasNewImages) {
+                        e.preventDefault();
+                        alert('Please attach at least one image. Images are required for posts.');
+                        imageInput.focus();
+                        return false;
+                    }
+                });
+            }
+        });
+        
         // Image upload and preview functionality
         function initImageUpload() {
             const imageInput = document.getElementById('images');
@@ -490,6 +622,17 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
         }
         
         function removeExistingImage(imageId) {
+            const imagePreview = document.getElementById('image-preview');
+            const imageInput = document.getElementById('images');
+            const existingImages = imagePreview.querySelectorAll('.existing-image');
+            const newImages = imageInput && imageInput.files && imageInput.files.length > 0;
+            
+            // Check if removing this image would leave no images
+            if (existingImages.length === 1 && !newImages) {
+                alert('Cannot remove the last image. At least one image is required for posts. Please upload a new image before removing this one.');
+                return;
+            }
+            
             if (confirm('Are you sure you want to remove this image?')) {
                 // Create a hidden input to mark this image for deletion
                 const deleteInput = document.createElement('input');
@@ -500,7 +643,9 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                 
                 // Remove the preview item
                 const previewItem = event.target.closest('.image-preview-item');
-                previewItem.remove();
+                if (previewItem) {
+                    previewItem.remove();
+                }
             }
         }
     </script>

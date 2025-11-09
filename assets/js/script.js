@@ -39,105 +39,119 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // News Carousel functionality
-    const newsCarousel = document.getElementById('newsCarousel');
-    const newsPrev = document.getElementById('newsPrev');
-    const newsNext = document.getElementById('newsNext');
-    const newsDots = document.getElementById('newsDots');
-    
-    if (newsCarousel && newsPrev && newsNext && newsDots) {
-        const slides = newsCarousel.querySelectorAll('.news-slide');
-        let currentSlide = 0;
-        let autoPlayInterval;
+    // News Carousel functionality - supports multiple carousels
+    function initializeNewsCarousel(carouselId) {
+        // Extract base ID (remove category suffix if present)
+        const baseId = carouselId.replace(/^newsCarousel-/, 'newsCarousel');
+        const suffix = carouselId.includes('-') ? carouselId.replace('newsCarousel-', '') : '';
         
-        // Create dots
-        slides.forEach((_, index) => {
-            const dot = document.createElement('button');
-            dot.className = 'carousel-dot';
-            if (index === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => goToSlide(index));
-            newsDots.appendChild(dot);
-        });
+        const newsCarousel = document.getElementById(carouselId);
+        const newsPrev = document.getElementById(suffix ? `newsPrev-${suffix}` : 'newsPrev');
+        const newsNext = document.getElementById(suffix ? `newsNext-${suffix}` : 'newsNext');
+        const newsDots = document.getElementById(suffix ? `newsDots-${suffix}` : 'newsDots');
         
-        function goToSlide(slideIndex) {
-            slides.forEach((slide, index) => {
-                slide.classList.toggle('active', index === slideIndex);
+        if (newsCarousel && newsPrev && newsNext && newsDots) {
+            const slides = newsCarousel.querySelectorAll('.news-slide');
+            if (slides.length === 0) return; // No slides, skip initialization
+            
+            let currentSlide = 0;
+            let autoPlayInterval;
+            
+            // Create dots
+            slides.forEach((_, index) => {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot';
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                newsDots.appendChild(dot);
             });
             
-            newsDots.querySelectorAll('.carousel-dot').forEach((dot, index) => {
-                dot.classList.toggle('active', index === slideIndex);
-            });
-            
-            currentSlide = slideIndex;
-        }
-        
-        function nextSlide() {
-            const next = (currentSlide + 1) % slides.length;
-            goToSlide(next);
-        }
-        
-        function prevSlide() {
-            const prev = (currentSlide - 1 + slides.length) % slides.length;
-            goToSlide(prev);
-        }
-        
-        // Function to start auto-play
-        function startAutoPlay() {
-            autoPlayInterval = setInterval(nextSlide, 5000);
-        }
-        
-        // Function to stop auto-play
-        function stopAutoPlay() {
-            if (autoPlayInterval) {
-                clearInterval(autoPlayInterval);
-                autoPlayInterval = null;
+            function goToSlide(slideIndex) {
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === slideIndex);
+                });
+                
+                newsDots.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+                    dot.classList.toggle('active', index === slideIndex);
+                });
+                
+                currentSlide = slideIndex;
             }
-        }
-        
-        // Event listeners
-        newsNext.addEventListener('click', nextSlide);
-        newsPrev.addEventListener('click', prevSlide);
-        
-        // Start auto-play carousel
-        startAutoPlay();
-        
-        // Pause auto-play on hover over carousel
-        newsCarousel.addEventListener('mouseenter', stopAutoPlay);
-        
-        // Resume auto-play when mouse leaves carousel
-        newsCarousel.addEventListener('mouseleave', startAutoPlay);
-        
-        // Pause auto-play on hover over navigation controls
-        newsPrev.addEventListener('mouseenter', stopAutoPlay);
-        newsNext.addEventListener('mouseenter', stopAutoPlay);
-        newsDots.addEventListener('mouseenter', stopAutoPlay);
-        
-        // Resume auto-play when mouse leaves navigation controls
-        newsPrev.addEventListener('mouseleave', startAutoPlay);
-        newsNext.addEventListener('mouseleave', startAutoPlay);
-        newsDots.addEventListener('mouseleave', startAutoPlay);
-        
-        // Touch/swipe support
-        let startX = 0;
-        let endX = 0;
-        
-        newsCarousel.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-        });
-        
-        newsCarousel.addEventListener('touchend', (e) => {
-            endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
             
-            if (Math.abs(diff) > 50) { // Minimum swipe distance
-                if (diff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
+            function nextSlide() {
+                const next = (currentSlide + 1) % slides.length;
+                goToSlide(next);
+            }
+            
+            function prevSlide() {
+                const prev = (currentSlide - 1 + slides.length) % slides.length;
+                goToSlide(prev);
+            }
+            
+            // Function to start auto-play
+            function startAutoPlay() {
+                autoPlayInterval = setInterval(nextSlide, 5000);
+            }
+            
+            // Function to stop auto-play
+            function stopAutoPlay() {
+                if (autoPlayInterval) {
+                    clearInterval(autoPlayInterval);
+                    autoPlayInterval = null;
                 }
             }
-        });
+            
+            // Event listeners
+            newsNext.addEventListener('click', nextSlide);
+            newsPrev.addEventListener('click', prevSlide);
+            
+            // Start auto-play carousel
+            startAutoPlay();
+            
+            // Pause auto-play on hover over carousel
+            newsCarousel.addEventListener('mouseenter', stopAutoPlay);
+            
+            // Resume auto-play when mouse leaves carousel
+            newsCarousel.addEventListener('mouseleave', startAutoPlay);
+            
+            // Pause auto-play on hover over navigation controls
+            newsPrev.addEventListener('mouseenter', stopAutoPlay);
+            newsNext.addEventListener('mouseenter', stopAutoPlay);
+            newsDots.addEventListener('mouseenter', stopAutoPlay);
+            
+            // Resume auto-play when mouse leaves navigation controls
+            newsPrev.addEventListener('mouseleave', startAutoPlay);
+            newsNext.addEventListener('mouseleave', startAutoPlay);
+            newsDots.addEventListener('mouseleave', startAutoPlay);
+            
+            // Touch/swipe support
+            let startX = 0;
+            let endX = 0;
+            
+            newsCarousel.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+            
+            newsCarousel.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
+                
+                if (Math.abs(diff) > 50) { // Minimum swipe distance
+                    if (diff > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                }
+            });
+        }
     }
+    
+    // Initialize all carousels on the page
+    const allCarousels = document.querySelectorAll('[id^="newsCarousel"]');
+    allCarousels.forEach(carousel => {
+        initializeNewsCarousel(carousel.id);
+    });
 
     // Progressive hero video injection (avoid FOUC on hard refresh)
     const heroBg = document.querySelector('.hero-background .hero-image');

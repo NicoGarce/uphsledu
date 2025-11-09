@@ -9,7 +9,7 @@
 
 // Utility functions for the blog
 
-// Get recent posts
+// Get recent posts (excludes categorized posts - only shows general/university-wide posts)
 function getRecentPosts($limit = 10) {
     $pdo = getDBConnection();
     // Cast limit to integer to prevent SQL injection
@@ -20,11 +20,56 @@ function getRecentPosts($limit = 10) {
         FROM posts p 
         JOIN users u ON p.author_id = u.id 
         WHERE p.status = 'published' 
+        AND p.category_id IS NULL
         ORDER BY p.published_at DESC, p.created_at DESC 
         LIMIT :limit
     ");
     $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
     $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+// Get recent posts by category ID
+function getRecentPostsByCategory($categoryId, $limit = 10) {
+    $pdo = getDBConnection();
+    // Cast limit to integer to prevent SQL injection
+    $limit = (int)$limit;
+    $categoryId = (int)$categoryId;
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM posts p 
+        JOIN users u ON p.author_id = u.id 
+        WHERE p.status = 'published' AND p.category_id = ?
+        ORDER BY p.published_at DESC, p.created_at DESC 
+        LIMIT ?
+    ");
+    $stmt->bindValue(1, $categoryId, PDO::PARAM_INT);
+    $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+// Get category by name
+function getCategoryByName($name) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT * FROM categories WHERE name = ?");
+    $stmt->execute([$name]);
+    return $stmt->fetch();
+}
+
+// Get category by ID
+function getCategoryById($id) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT * FROM categories WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+// Get all categories
+function getAllCategories() {
+    $pdo = getDBConnection();
+    $stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
     return $stmt->fetchAll();
 }
 
@@ -363,16 +408,17 @@ function getCategories() {
     return $stmt->fetchAll();
 }
 
-// Get post categories
+// Get post category (posts now have a single category via category_id)
 function getPostCategories($postId) {
     $pdo = getDBConnection();
     $stmt = $pdo->prepare("
         SELECT c.* FROM categories c
-        JOIN post_categories pc ON c.id = pc.category_id
-        WHERE pc.post_id = ?
+        JOIN posts p ON c.id = p.category_id
+        WHERE p.id = ?
     ");
     $stmt->execute([$postId]);
-    return $stmt->fetchAll();
+    $result = $stmt->fetch();
+    return $result ? [$result] : [];
 }
 
 // Flash message functions
@@ -492,7 +538,7 @@ function incrementSDGPostViews($postId) {
 }
 
 // Get published posts with search and filters
-function getPublishedPostsWithFilters($page = 1, $limit = 12, $search = '', $category = '', $dateRange = '') {
+function getPublishedPostsWithFilters($page = 1, $limit = 12, $search = '', $category = '', $dateRange = '', $specificDate = '') {
     $pdo = getDBConnection();
     $offset = ($page - 1) * $limit;
     
@@ -518,10 +564,25 @@ function getPublishedPostsWithFilters($page = 1, $limit = 12, $search = '', $cat
         $params[] = $searchTerm;
     }
     
-    // Add category filter (assuming posts have a category field or we use tags)
+    // Add category filter (category can be ID or name for backward compatibility)
     if (!empty($category)) {
-        $sql .= " AND p.category = ?";
-        $params[] = $category;
+        // Check if category is numeric (ID) or string (name)
+        if (is_numeric($category)) {
+            $sql .= " AND p.category_id = ?";
+            $params[] = (int)$category;
+        } else {
+            // Try to find category by name
+            $catStmt = $pdo->prepare("SELECT id FROM categories WHERE name = ?");
+            $catStmt->execute([$category]);
+            $cat = $catStmt->fetch();
+            if ($cat) {
+                $sql .= " AND p.category_id = ?";
+                $params[] = $cat['id'];
+            } else {
+                // Category not found, return empty result
+                $sql .= " AND 1 = 0";
+            }
+        }
     }
     
     // Add date range filter
@@ -532,23 +593,34 @@ function getPublishedPostsWithFilters($page = 1, $limit = 12, $search = '', $cat
         }
     }
     
-    $sql .= " ORDER BY p.published_at DESC, p.created_at DESC LIMIT :limit OFFSET :offset";
+    // Add specific date filter
+    if (!empty($specificDate)) {
+        $sql .= " AND DATE(p.published_at) = ?";
+        $params[] = $specificDate;
+    }
+    
+    $sql .= " ORDER BY p.published_at DESC, p.created_at DESC LIMIT ? OFFSET ?";
     
     $stmt = $pdo->prepare($sql);
     
-    // Bind parameters
-    foreach ($params as $i => $param) {
-        $stmt->bindValue($i + 1, $param);
+    // Bind all parameters
+    $paramIndex = 1;
+    foreach ($params as $param) {
+        $stmt->bindValue($paramIndex, $param);
+        $paramIndex++;
     }
     
-    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    // Bind LIMIT and OFFSET as integers
+    $stmt->bindValue($paramIndex, (int)$limit, PDO::PARAM_INT);
+    $paramIndex++;
+    $stmt->bindValue($paramIndex, (int)$offset, PDO::PARAM_INT);
+    
     $stmt->execute();
     return $stmt->fetchAll();
 }
 
 // Get total count of published posts with filters
-function getPublishedPostsCountWithFilters($search = '', $category = '', $dateRange = '') {
+function getPublishedPostsCountWithFilters($search = '', $category = '', $dateRange = '', $specificDate = '') {
     $pdo = getDBConnection();
     
     $sql = "SELECT COUNT(*) as count FROM posts p WHERE p.status = 'published'";
@@ -562,10 +634,25 @@ function getPublishedPostsCountWithFilters($search = '', $category = '', $dateRa
         $params[] = $searchTerm;
     }
     
-    // Add category filter
+    // Add category filter (category can be ID or name for backward compatibility)
     if (!empty($category)) {
-        $sql .= " AND p.category = ?";
-        $params[] = $category;
+        // Check if category is numeric (ID) or string (name)
+        if (is_numeric($category)) {
+            $sql .= " AND p.category_id = ?";
+            $params[] = (int)$category;
+        } else {
+            // Try to find category by name
+            $catStmt = $pdo->prepare("SELECT id FROM categories WHERE name = ?");
+            $catStmt->execute([$category]);
+            $cat = $catStmt->fetch();
+            if ($cat) {
+                $sql .= " AND p.category_id = ?";
+                $params[] = $cat['id'];
+            } else {
+                // Category not found, return empty result
+                $sql .= " AND 1 = 0";
+            }
+        }
     }
     
     // Add date range filter
@@ -574,6 +661,12 @@ function getPublishedPostsCountWithFilters($search = '', $category = '', $dateRa
         if ($dateCondition) {
             $sql .= " AND " . $dateCondition;
         }
+    }
+    
+    // Add specific date filter
+    if (!empty($specificDate)) {
+        $sql .= " AND DATE(p.published_at) = ?";
+        $params[] = $specificDate;
     }
     
     $stmt = $pdo->prepare($sql);

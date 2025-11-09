@@ -39,6 +39,20 @@ include '../app/includes/header.php';
 
     <!-- Main Content -->
     <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <div class="content-main">
+                    <!-- News Carousel Section -->
+                    <?php
+                    $category = getCategoryByName('Law/Juris Doctor');
+                    $categoryId = $category ? $category['id'] : null;
+                    $sectionTitle = 'Law/Juris Doctor News & Updates';
+                    $sectionDescription = 'Stay updated with the latest news and announcements from the College of Law.';
+                    include '../app/includes/news-carousel.php';
+                    ?>
+                </div>
+            </div>
+        </div>
         <?php include '../app/includes/coming-soon.php'; ?>
     </main>
 

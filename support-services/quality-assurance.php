@@ -7,6 +7,8 @@
  * @description Information about Quality Assurance programs and initiatives at UPHSL
  */
 session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 $base_path = '../';
 $page_title = "Quality Assurance - UPHSL";
 include '../app/includes/header.php';
@@ -127,6 +129,14 @@ body {
             </div>
         </div>
     </section>
+
+    <!-- News Carousel Section -->
+    <?php
+    $categoryId = 'Quality Assurance'; // Pass category name, component will look it up
+    $sectionTitle = 'Quality Assurance News & Updates';
+    $sectionDescription = 'Stay updated with the latest news and announcements from the Quality Assurance department.';
+    include '../app/includes/news-carousel.php';
+    ?>
 
     <!-- Coming Soon Section -->
     <section class="content-section">

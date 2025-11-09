@@ -39,76 +39,16 @@ try {
 try {
     // Get parameters
     $search = $_GET['search'] ?? '';
+    $category = $_GET['category'] ?? '';
     $dateRange = $_GET['date_range'] ?? '';
     $specificDate = $_GET['specific_date'] ?? '';
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $page = max(1, $page);
     
-    // Use basic functions that we know work
-    $posts = getPublishedPosts($page, 12);
-    $totalPosts = getPublishedPostsCount();
+    // Use the proper filtering function that handles all filters including category
+    $posts = getPublishedPostsWithFilters($page, 12, $search, $category, $dateRange, $specificDate);
+    $totalPosts = getPublishedPostsCountWithFilters($search, $category, $dateRange, $specificDate);
     $totalPages = ceil($totalPosts / 12);
-    
-    // Apply search filter if provided
-    if (!empty($search)) {
-        $filteredPosts = [];
-        foreach ($posts as $post) {
-            if (stripos($post['title'], $search) !== false || stripos($post['content'], $search) !== false) {
-                $filteredPosts[] = $post;
-            }
-        }
-        $posts = $filteredPosts;
-    }
-    
-    // Apply date range filter if provided
-    if (!empty($dateRange)) {
-        $today = new DateTime();
-        $filteredPosts = [];
-        
-        foreach ($posts as $post) {
-            $postDate = new DateTime($post['published_at'] ?: $post['created_at']);
-            $include = false;
-            
-            switch ($dateRange) {
-                case 'today':
-                    $include = $postDate->format('Y-m-d') === $today->format('Y-m-d');
-                    break;
-                case 'week':
-                    $weekAgo = clone $today;
-                    $weekAgo->modify('-1 week');
-                    $include = $postDate >= $weekAgo;
-                    break;
-                case 'month':
-                    $monthAgo = clone $today;
-                    $monthAgo->modify('-1 month');
-                    $include = $postDate >= $monthAgo;
-                    break;
-                case 'year':
-                    $yearAgo = clone $today;
-                    $yearAgo->modify('-1 year');
-                    $include = $postDate >= $yearAgo;
-                    break;
-            }
-            
-            if ($include) {
-                $filteredPosts[] = $post;
-            }
-        }
-        $posts = $filteredPosts;
-    }
-    
-    // Apply specific date filter if provided
-    if (!empty($specificDate)) {
-        $filteredPosts = [];
-        
-        foreach ($posts as $post) {
-            $postDate = new DateTime($post['published_at'] ?: $post['created_at']);
-            if ($postDate->format('Y-m-d') === $specificDate) {
-                $filteredPosts[] = $post;
-            }
-        }
-        $posts = $filteredPosts;
-    }
     
     // Generate HTML for posts
     $html = '';

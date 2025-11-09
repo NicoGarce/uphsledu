@@ -42,6 +42,15 @@ include '../app/includes/header.php';
         <div class="container">
             <div class="content-wrapper">
                 <div class="content-main">
+                    <!-- News Carousel Section -->
+                    <?php
+                    $category = getCategoryByName('Senior High School');
+                    $categoryId = $category ? $category['id'] : null;
+                    $sectionTitle = 'Senior High School News & Updates';
+                    $sectionDescription = 'Stay updated with the latest news and announcements from the Senior High School.';
+                    include '../app/includes/news-carousel.php';
+                    ?>
+                    
                     <article class="content-article">
                         <!-- Mission and Vision -->
                         <div class="mission-vision-section">

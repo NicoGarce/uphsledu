@@ -17,16 +17,44 @@ $page = max(1, $page); // Ensure page is at least 1
 
 // Get filter parameters
 $search = $_GET['search'] ?? '';
+$category = $_GET['category'] ?? '';
 $dateRange = $_GET['date_range'] ?? '';
 $specificDate = $_GET['specific_date'] ?? '';
 
+// Normalize category to integer if it's numeric (for consistent comparison)
+$categoryId = null;
+if (!empty($category)) {
+    if (is_numeric($category)) {
+        $categoryId = (int)$category;
+    }
+}
+
 // Get posts for current page with filters (12 posts per page)
-$posts = getPublishedPostsWithFilters($page, 12, $search, '', $dateRange, $specificDate);
-$totalPosts = getPublishedPostsCountWithFilters($search, '', $dateRange, $specificDate);
+$posts = getPublishedPostsWithFilters($page, 12, $search, $category, $dateRange, $specificDate);
+$totalPosts = getPublishedPostsCountWithFilters($search, $category, $dateRange, $specificDate);
 $totalPages = ceil($totalPosts / 12);
 
+// Get all categories from database for filter dropdown
+$allCategories = getAllCategories();
+
+// Get category name for display
+$categoryName = '';
+if (!empty($category)) {
+    if (is_numeric($category)) {
+        $cat = getCategoryById($category);
+        $categoryName = $cat ? $cat['name'] : '';
+    } else {
+        $cat = getCategoryByName($category);
+        $categoryName = $cat ? $cat['name'] : $category;
+    }
+}
+
 // Set page title
-$page_title = "All Posts - University of Perpetual Help System";
+if (!empty($categoryName)) {
+    $page_title = $categoryName . " Posts - University of Perpetual Help System";
+} else {
+    $page_title = "All Posts - University of Perpetual Help System";
+}
 
 // Set base path for assets
 $base_path = '';
@@ -43,10 +71,18 @@ include 'app/includes/header.php';
         <div class="posts-header">
             <h1 class="posts-title">
                 <i class="fas fa-newspaper"></i>
-                University News & Announcements
+                <?php if (!empty($categoryName)): ?>
+                    <?php echo htmlspecialchars($categoryName); ?> News & Announcements
+                <?php else: ?>
+                    University News & Announcements
+                <?php endif; ?>
             </h1>
             <p class="posts-subtitle">
-                Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna.
+                <?php if (!empty($categoryName)): ?>
+                    Stay updated with the latest news and announcements from <?php echo htmlspecialchars($categoryName); ?>.
+                <?php else: ?>
+                    Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna.
+                <?php endif; ?>
             </p>
         </div>
 
@@ -64,6 +100,58 @@ include 'app/includes/header.php';
                         </div>
                     </div>
                     
+                    
+                    <div class="filter-group">
+                        <select name="category" id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <?php
+                            // Organize categories for display
+                            $programCats = ['basic' => [], 'other' => []];
+                            $supportCats = [];
+                            $programNames = ['Senior High School', 'Junior High School', 'Grade School', 'Aviation', 'Arts & Sciences', 'Business & Accountancy', 'Computer Studies', 'Criminology', 'Education', 'Engineering & Architecture', 'International Hospitality Management', 'Maritime', 'Law/Juris Doctor', 'Graduate School'];
+                            $supportNames = ['Careers', 'University Clinic', 'Community Outreach Department', 'International & External Affairs', 'Student Personnel Services', 'Library', 'Quality Assurance', 'Research'];
+                            
+                            foreach ($allCategories as $cat) {
+                                if (in_array($cat['name'], $programNames)) {
+                                    if (in_array($cat['name'], ['Senior High School', 'Junior High School', 'Grade School'])) {
+                                        $programCats['basic'][] = $cat;
+                                    } else {
+                                        $programCats['other'][] = $cat;
+                                    }
+                                } elseif (in_array($cat['name'], $supportNames)) {
+                                    $supportCats[] = $cat;
+                                }
+                            }
+                            ?>
+                            <?php if (!empty($programCats['basic'])): ?>
+                                <optgroup label="Programs - Basic Education">
+                                    <?php foreach ($programCats['basic'] as $cat): ?>
+                                        <option value="<?php echo $cat['id']; ?>" <?php echo (($categoryId !== null && $categoryId === (int)$cat['id']) || ($category === $cat['name'])) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($cat['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                            <?php endif; ?>
+                            <?php if (!empty($programCats['other'])): ?>
+                                <optgroup label="Programs - Other">
+                                    <?php foreach ($programCats['other'] as $cat): ?>
+                                        <option value="<?php echo $cat['id']; ?>" <?php echo (($categoryId !== null && $categoryId === (int)$cat['id']) || ($category === $cat['name'])) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($cat['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                            <?php endif; ?>
+                            <?php if (!empty($supportCats)): ?>
+                                <optgroup label="Support Services">
+                                    <?php foreach ($supportCats as $cat): ?>
+                                        <option value="<?php echo $cat['id']; ?>" <?php echo (($categoryId !== null && $categoryId === (int)$cat['id']) || ($category === $cat['name'])) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($cat['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                            <?php endif; ?>
+                        </select>
+                    </div>
                     
                     <div class="filter-group">
                         <select name="date_range" id="dateRangeFilter">
@@ -220,6 +308,7 @@ include 'app/includes/header.php';
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
     const dateRangeFilter = document.getElementById('dateRangeFilter');
     const specificDateFilter = document.getElementById('specificDateFilter');
     const searchResults = document.getElementById('searchResults');
@@ -246,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const params = new URLSearchParams({
             search: searchInput.value,
+            category: categoryFilter ? categoryFilter.value : '',
             date_range: dateRangeFilter.value,
             specific_date: specificDateFilter.value,
             page: page
@@ -324,6 +414,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     });
     
+    // Category filter
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', function() {
+            performSearch(1); // Reset to page 1 when filtering
+        });
+    }
+    
     // Date range filter
     dateRangeFilter.addEventListener('change', function() {
         // Clear specific date when using date range
@@ -352,6 +449,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Clear the form inputs
             searchInput.value = '';
+            const categoryFilter = document.getElementById('categoryFilter');
+            if (categoryFilter) categoryFilter.value = '';
             dateRangeFilter.value = '';
             specificDateFilter.value = '';
             

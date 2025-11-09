@@ -991,9 +991,9 @@ include 'app/includes/header.php';
             <div class="sdg-goal sdg-goal-report" data-goal="report">
                 <div class="sdg-report-main">SDG</div>
                 <div class="sdg-report-subtitle">Full Report</div>
-                <div class="sdg-goal-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
+                    <div class="sdg-goal-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
             </div>
         </div>
     </div>
@@ -1153,17 +1153,17 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
             // Regular SDG goal
             const goalNumber = parseInt(goalType);
             const goalData = sdgGoals[goalNumber];
-            
-            // Remove any existing header color classes
-            const modalHeader = document.querySelector('.sdg-modal-header');
-            modalHeader.className = modalHeader.className.replace(/sdg-header-\d+/g, '');
-            
-            // Add the specific SDG header color class
-            modalHeader.classList.add(`sdg-header-${goalNumber}`);
-            
-            modalGoalNumber.textContent = goalNumber;
-            modalGoalTitle.textContent = goalData.title;
-            modalGoalDescription.textContent = goalData.description;
+        
+        // Remove any existing header color classes
+        const modalHeader = document.querySelector('.sdg-modal-header');
+        modalHeader.className = modalHeader.className.replace(/sdg-header-\d+/g, '');
+        
+        // Add the specific SDG header color class
+        modalHeader.classList.add(`sdg-header-${goalNumber}`);
+        
+        modalGoalNumber.textContent = goalNumber;
+        modalGoalTitle.textContent = goalData.title;
+        modalGoalDescription.textContent = goalData.description;
             
             // Reset modal width for regular SDG content
             const modalContent = document.querySelector('.sdg-modal-content');
@@ -1174,15 +1174,15 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
             document.getElementById('pdfViewerContainer').style.display = 'none';
             document.getElementById('modalGoalDescription').style.display = 'block';
             document.getElementById('programsSection').style.display = 'block';
-            
-            // Display SDG posts for this goal
-            displaySdgPosts(goalNumber);
-            
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-            document.body.style.top = `-${scrollPosition}px`;
+        
+        // Display SDG posts for this goal
+        displaySdgPosts(goalNumber);
+        
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.top = `-${scrollPosition}px`;
         }
     });
 });

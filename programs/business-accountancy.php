@@ -42,6 +42,15 @@ include '../app/includes/header.php';
         <div class="container">
             <div class="content-wrapper">
                 <div class="content-main">
+                    <!-- News Carousel Section -->
+                    <?php
+                    $category = getCategoryByName('Business & Accountancy');
+                    $categoryId = $category ? $category['id'] : null;
+                    $sectionTitle = 'Business & Accountancy News & Updates';
+                    $sectionDescription = 'Stay updated with the latest news and announcements from the College of Business & Accountancy.';
+                    include '../app/includes/news-carousel.php';
+                    ?>
+                    
                     <article class="content-article">
                         <!-- Mission Section -->
                         <section class="mission-vision-section">
