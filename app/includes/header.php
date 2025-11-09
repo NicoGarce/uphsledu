@@ -1079,8 +1079,7 @@ $base_path = $GLOBALS['base_path'];
                 <!-- Second Row: Main Menu -->
                 <div class="nav-menu" id="nav-menu">
                     <div class="nav-item">
-                        <a href="<?php echo $base_path; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>" style="<?php echo ($current_page != 'index') ? 'background: none !important; color: #ffffff !important;' : ''; ?>">Home</a>
-                        <!-- DEBUG: Home - current_page='<?php echo $current_page; ?>', script_name='<?php echo $script_name; ?>', request_uri='<?php echo $request_uri; ?>', is_index=<?php echo ($current_page == 'index') ? 'true' : 'false'; ?>, classes="<?php echo ($current_page == 'index') ? 'active' : ''; ?>" -->
+                        <a href="<?php echo $base_path; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
                     </div>
                     
                     <div class="nav-item dropdown">
