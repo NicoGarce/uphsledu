@@ -1345,6 +1345,60 @@ $base_path = $GLOBALS['base_path'];
         </nav>
     </div>
 
+    <!-- Dropdown positioning script to prevent overflow -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function adjustDropdownPosition(dropdown) {
+            const menu = dropdown.querySelector('.dropdown-menu');
+            if (!menu) return;
+            
+            // Temporarily show menu to measure
+            const originalVisibility = menu.style.visibility;
+            const originalOpacity = menu.style.opacity;
+            menu.style.visibility = 'hidden';
+            menu.style.opacity = '1';
+            menu.style.display = 'block';
+            
+            const rect = menu.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const navItemRect = dropdown.getBoundingClientRect();
+            
+            // Restore original state
+            menu.style.visibility = originalVisibility;
+            menu.style.opacity = originalOpacity;
+            menu.style.display = '';
+            
+            // Check if dropdown would overflow
+            if (navItemRect.left + rect.width > viewportWidth) {
+                menu.style.left = 'auto';
+                menu.style.right = '0';
+            } else {
+                menu.style.left = '';
+                menu.style.right = '';
+            }
+        }
+        
+        const dropdowns = document.querySelectorAll('.nav-item.dropdown');
+        
+        dropdowns.forEach(function(dropdown) {
+            // Check on hover
+            dropdown.addEventListener('mouseenter', function() {
+                adjustDropdownPosition(dropdown);
+            });
+        });
+        
+        // Re-adjust on window resize
+        window.addEventListener('resize', function() {
+            dropdowns.forEach(function(dropdown) {
+                if (dropdown.querySelector('.dropdown-menu').style.visibility === 'visible' || 
+                    dropdown.matches(':hover')) {
+                    adjustDropdownPosition(dropdown);
+                }
+            });
+        });
+    });
+    </script>
+
     <!-- Floating User Actions (only for logged-in users on main website) -->
     <?php if (isset($_SESSION['user_id']) && !strpos($_SERVER['REQUEST_URI'], '/admin/')): ?>
     <div class="floating-user-actions">

@@ -310,6 +310,7 @@ li {
     left: 0;
     background: #ffffff;
     min-width: 280px;
+    max-width: 90vw;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     opacity: 0;
@@ -321,12 +322,54 @@ li {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar for dropdown menus */
+.dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Smaller max-height for smaller desktop screens */
+@media (max-width: 1400px) {
+    .dropdown-menu {
+        max-height: 60vh;
+    }
+}
+
+@media (max-width: 1200px) {
+    .dropdown-menu {
+        max-height: 50vh;
+    }
 }
 
 .dropdown:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+}
+
+/* Position dropdown from right when it's the last nav item or would overflow */
+.nav-item:last-child .dropdown-menu,
+.nav-item:nth-last-child(2) .dropdown-menu {
+    left: auto;
+    right: 0;
 }
 
 .dropdown-section h4 {
