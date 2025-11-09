@@ -1180,8 +1180,36 @@ $base_path = $GLOBALS['base_path'];
                         </div>
                     </div>
                     
-                    <div class="nav-item">
-                        <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
+                    <?php
+                    // SDG Titles for navigation
+                    $sdgTitles = [
+                        1 => 'No Poverty',
+                        2 => 'Zero Hunger',
+                        3 => 'Good Health and Well-being',
+                        4 => 'Quality Education',
+                        5 => 'Gender Equality',
+                        6 => 'Clean Water and Sanitation',
+                        7 => 'Affordable and Clean Energy',
+                        8 => 'Decent Work and Economic Growth',
+                        9 => 'Industry, Innovation and Infrastructure',
+                        10 => 'Reduced Inequalities',
+                        11 => 'Sustainable Cities and Communities',
+                        12 => 'Responsible Consumption and Production',
+                        13 => 'Climate Action',
+                        14 => 'Life Below Water',
+                        15 => 'Life on Land',
+                        16 => 'Peace, Justice and Strong Institutions',
+                        17 => 'Partnerships for the Goals'
+                    ];
+                    ?>
+                    <div class="nav-item dropdown">
+                        <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="nav-link dropdown-toggle <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <div class="dropdown-menu">
+                            <?php for ($i = 1; $i <= 17; $i++): ?>
+                                <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=<?php echo $i; ?>" class="dropdown-link">SDG <?php echo $i; ?>: <?php echo $sdgTitles[$i]; ?></a>
+                            <?php endfor; ?>
+                            <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=report" class="dropdown-link">SDG Full Report</a>
+                        </div>
                     </div>
                     
                 </div>
@@ -1303,8 +1331,15 @@ $base_path = $GLOBALS['base_path'];
                 </div>
             </div>
             
-            <div class="mobile-nav-item">
-                <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="mobile-nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="mobile-nav-link mobile-dropdown-toggle <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <?php
+                    for ($i = 1; $i <= 17; $i++): ?>
+                        <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=<?php echo $i; ?>" class="mobile-dropdown-link">SDG <?php echo $i; ?>: <?php echo $sdgTitles[$i]; ?></a>
+                    <?php endfor; ?>
+                    <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=report" class="mobile-dropdown-link">SDG Full Report</a>
+                </div>
             </div>
             
         </nav>

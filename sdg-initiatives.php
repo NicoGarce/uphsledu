@@ -1344,6 +1344,29 @@ document.querySelectorAll('.sdg-goal').forEach(goal => {
     });
 });
 
+// Check URL parameter and open modal automatically
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sdgParam = urlParams.get('sdg');
+    
+    if (sdgParam) {
+        // Small delay to ensure page is fully loaded
+        setTimeout(function() {
+            if (sdgParam === 'report') {
+                openReportModal();
+            } else {
+                const goalNumber = parseInt(sdgParam);
+                if (goalNumber >= 1 && goalNumber <= 17 && sdgGoals[goalNumber]) {
+                    const goalElement = document.querySelector(`.sdg-goal[data-goal="${goalNumber}"]`);
+                    if (goalElement) {
+                        goalElement.click();
+                    }
+                }
+            }
+        }, 100);
+    }
+});
+
 </script>
 
 <?php
