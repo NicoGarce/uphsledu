@@ -7,6 +7,8 @@
  * @description Information about research programs and initiatives at UPHSL
  */
 session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 $base_path = '../';
 $page_title = "Research & Publication - UPHSL";
 include '../app/includes/header.php';
@@ -411,6 +413,14 @@ body {
             </div>
         </div>
     </section>
+
+    <!-- News Carousel Section -->
+    <?php
+    $categoryId = 'Research'; // Pass category name, component will look it up
+    $sectionTitle = 'Research News & Updates';
+    $sectionDescription = 'Stay updated with the latest news and announcements from the Research department.';
+    include '../app/includes/news-carousel.php';
+    ?>
 
     <!-- Mission and Vision Section -->
     <section class="content-section mission-vision-section">

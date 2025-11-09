@@ -7,6 +7,8 @@
  * @description Information about international programs and external affairs at UPHSL
  */
 session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 $base_path = '../';
 $page_title = "International & External Affairs - UPHSL";
 
@@ -525,6 +527,14 @@ body {
             </div>
         </div>
     </section>
+
+    <!-- News Carousel Section -->
+    <?php
+    $categoryId = 'International & External Affairs'; // Pass category name, component will look it up
+    $sectionTitle = 'International & External Affairs News & Updates';
+    $sectionDescription = 'Stay updated with the latest news and announcements from the International & External Affairs department.';
+    include '../app/includes/news-carousel.php';
+    ?>
 
     <!-- Mission & Vision Section -->
     <section class="mvp-section">

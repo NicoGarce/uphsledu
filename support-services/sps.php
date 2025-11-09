@@ -7,6 +7,8 @@
  * @description Information about Student Personnel Services and guidance programs at UPHSL
  */
 session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 $page_title = "Student Personnel Services - UPHSL";
 $base_path = '../';
 
@@ -626,6 +628,14 @@ body {
             </div>
         </div>
     </section>
+
+    <!-- News Carousel Section -->
+    <?php
+    $categoryId = 'Student Personnel Services'; // Pass category name, component will look it up
+    $sectionTitle = 'Student Personnel Services News & Updates';
+    $sectionDescription = 'Stay updated with the latest news and announcements from the Student Personnel Services.';
+    include '../app/includes/news-carousel.php';
+    ?>
 
     <!-- Admission and Discipline Section -->
     <section class="content-section">

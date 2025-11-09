@@ -7,6 +7,8 @@
  * @description Information about the Community Outreach Department and its programs
  */
 session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
 $page_title = "Community Outreach Department - UPHSL";
 $base_path = '../';
 
@@ -37,6 +39,14 @@ include '../app/includes/header.php';
                                 </div>
                             </div>
                         </section>
+
+    <!-- News Carousel Section -->
+    <?php
+    $categoryId = 'Community Outreach Department'; // Pass category name, component will look it up
+    $sectionTitle = 'Community Outreach Department News & Updates';
+    $sectionDescription = 'Stay updated with the latest news and announcements from the Community Outreach Department.';
+    include '../app/includes/news-carousel.php';
+    ?>
 
                         <!-- Programs Timeline Section -->
                         <section id="programs" class="programs-timeline-section">

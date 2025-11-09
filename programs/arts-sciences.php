@@ -42,6 +42,15 @@ include '../app/includes/header.php';
         <div class="container">
             <div class="content-wrapper">
                 <div class="content-main">
+                    <!-- News Carousel Section -->
+                    <?php
+                    $category = getCategoryByName('Arts & Sciences');
+                    $categoryId = $category ? $category['id'] : null;
+                    $sectionTitle = 'Arts & Sciences News & Updates';
+                    $sectionDescription = 'Stay updated with the latest news and announcements from the College of Arts & Sciences.';
+                    include '../app/includes/news-carousel.php';
+                    ?>
+                    
                     <article class="content-article">
                         <!-- Mission Section -->
                         <section class="mission-vision-section">
