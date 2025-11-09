@@ -261,6 +261,33 @@ include 'app/includes/header.php';
 .sdg-goal-17 { background: var(--sdg-17); }
 .sdg-goal-17::before { background: var(--sdg-17); }
 
+/* SDG Full Report */
+.sdg-goal-report {
+    background: #6c757d; /* Gray color */
+}
+
+.sdg-goal-report:before {
+    background: #6c757d;
+}
+
+.sdg-report-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    line-height: 1;
+}
+
+.sdg-report-subtitle {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    margin-bottom: 0.5rem;
+}
+
 /* SDG Modal Header Top Border Colors */
 .sdg-modal-header.sdg-header-1::before { background: var(--sdg-1); }
 .sdg-modal-header.sdg-header-2::before { background: var(--sdg-2); }
@@ -279,6 +306,7 @@ include 'app/includes/header.php';
 .sdg-modal-header.sdg-header-15::before { background: var(--sdg-15); }
 .sdg-modal-header.sdg-header-16::before { background: var(--sdg-16); }
 .sdg-modal-header.sdg-header-17::before { background: var(--sdg-17); }
+.sdg-modal-header.sdg-header-report::before { background: #6c757d; }
 
 /* Modal Styles */
 .sdg-modal {
@@ -595,6 +623,14 @@ include 'app/includes/header.php';
         font-size: 0.7rem;
     }
     
+    .sdg-report-main {
+        font-size: 1.5rem;
+    }
+    
+    .sdg-report-subtitle {
+        font-size: 0.7rem;
+    }
+    
     .sdg-modal-content {
         width: 95%;
         margin: 5% auto;
@@ -757,6 +793,23 @@ include 'app/includes/header.php';
         font-size: 0.75rem;
         line-height: 1.2;
     }
+    
+    #pdfViewerContainer {
+        height: calc(95vh - 120px);
+        min-height: 400px;
+    }
+}
+
+/* PDF Viewer Styles */
+#pdfViewerContainer {
+    background: var(--bg-accent);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+#pdfViewer {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 </style>
 
@@ -933,6 +986,15 @@ include 'app/includes/header.php';
                     <i class="fas fa-handshake"></i>
                 </div>
             </div>
+
+            <!-- SDG Full Report -->
+            <div class="sdg-goal sdg-goal-report" data-goal="report">
+                <div class="sdg-report-main">SDG</div>
+                <div class="sdg-report-subtitle">Full Report</div>
+                <div class="sdg-goal-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -952,7 +1014,12 @@ include 'app/includes/header.php';
                 <!-- Goal description will be loaded here -->
             </div>
             
-            <div class="sdg-programs-section">
+            <!-- PDF Viewer Container (hidden by default) -->
+            <div id="pdfViewerContainer" style="display: none; width: 100%; height: calc(92vh - 150px); min-height: 500px;">
+                <iframe id="pdfViewer" src="" style="width: 100%; height: 100%; border: none; border-radius: 8px;"></iframe>
+            </div>
+            
+            <div class="sdg-programs-section" id="programsSection">
                 <h4>UPHSL Programs & Initiatives</h4>
                 <div class="sdg-programs-placeholder" id="programsPlaceholder" style="display: none;">
                     No initiatives posted for this SDG yet.
@@ -1074,33 +1141,104 @@ const sdgPostsData = <?php echo json_encode($sdgPosts); ?>;
 // Open modal when SDG goal is clicked
 document.querySelectorAll('.sdg-goal').forEach(goal => {
     goal.addEventListener('click', function() {
-        const goalNumber = parseInt(this.dataset.goal);
-        const goalData = sdgGoals[goalNumber];
+        const goalType = this.dataset.goal;
         
         // Store current scroll position
         scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
         
-        // Remove any existing header color classes
-        const modalHeader = document.querySelector('.sdg-modal-header');
-        modalHeader.className = modalHeader.className.replace(/sdg-header-\d+/g, '');
-        
-        // Add the specific SDG header color class
-        modalHeader.classList.add(`sdg-header-${goalNumber}`);
-        
-        modalGoalNumber.textContent = goalNumber;
-        modalGoalTitle.textContent = goalData.title;
-        modalGoalDescription.textContent = goalData.description;
-        
-        // Display SDG posts for this goal
-        displaySdgPosts(goalNumber);
-        
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = `-${scrollPosition}px`;
+        // Check if it's the SDG Full Report
+        if (goalType === 'report') {
+            openReportModal();
+        } else {
+            // Regular SDG goal
+            const goalNumber = parseInt(goalType);
+            const goalData = sdgGoals[goalNumber];
+            
+            // Remove any existing header color classes
+            const modalHeader = document.querySelector('.sdg-modal-header');
+            modalHeader.className = modalHeader.className.replace(/sdg-header-\d+/g, '');
+            
+            // Add the specific SDG header color class
+            modalHeader.classList.add(`sdg-header-${goalNumber}`);
+            
+            modalGoalNumber.textContent = goalNumber;
+            modalGoalTitle.textContent = goalData.title;
+            modalGoalDescription.textContent = goalData.description;
+            
+            // Reset modal width for regular SDG content
+            const modalContent = document.querySelector('.sdg-modal-content');
+            modalContent.style.maxWidth = '800px';
+            modalContent.style.width = '90%';
+            
+            // Hide PDF viewer, show regular content
+            document.getElementById('pdfViewerContainer').style.display = 'none';
+            document.getElementById('modalGoalDescription').style.display = 'block';
+            document.getElementById('programsSection').style.display = 'block';
+            
+            // Display SDG posts for this goal
+            displaySdgPosts(goalNumber);
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.top = `-${scrollPosition}px`;
+        }
     });
 });
+
+// Function to open the SDG Full Report modal
+function openReportModal() {
+    const modalHeader = document.querySelector('.sdg-modal-header');
+    const modalContent = document.querySelector('.sdg-modal-content');
+    modalHeader.className = modalHeader.className.replace(/sdg-header-\d+/g, '');
+    modalHeader.classList.add('sdg-header-report');
+    
+    // Make modal wider for PDF viewing
+    modalContent.style.maxWidth = '95%';
+    modalContent.style.width = '95%';
+    
+    modalGoalNumber.textContent = 'REPORT';
+    modalGoalTitle.textContent = 'SDG Report for Academic Year 2023-2024';
+    modalGoalDescription.textContent = '';
+    
+    // Hide regular content, show PDF viewer
+    document.getElementById('modalGoalDescription').style.display = 'none';
+    document.getElementById('programsSection').style.display = 'none';
+    document.getElementById('pdfViewerContainer').style.display = 'block';
+    
+    // Set PDF source from database setting (use default only if setting exists)
+    <?php 
+    $pdfPath = getSetting('sdg_full_report_pdf');
+    if (!$pdfPath || !file_exists($pdfPath)) {
+        // Try to find the 2023-2024 report as fallback
+        $fallbackPath = 'assets/documents/pdfs/SDG Report for Academic Year 2023-2024.pdf';
+        if (file_exists($fallbackPath)) {
+            $pdfPath = $fallbackPath;
+        } else {
+            $pdfPath = null;
+        }
+    }
+    ?>
+    const pdfPath = <?php echo $pdfPath ? "'" . htmlspecialchars($pdfPath, ENT_QUOTES, "UTF-8") . "'" : "null"; ?>;
+    // Clear iframe first to force reload, then set with cache-busting parameter
+    const pdfViewer = document.getElementById('pdfViewer');
+    pdfViewer.src = '';
+    
+    if (pdfPath) {
+        // Add timestamp to bypass browser cache
+        pdfViewer.src = pdfPath + '?t=' + new Date().getTime();
+    } else {
+        // Show error message if no PDF is set
+        document.getElementById('pdfViewerContainer').innerHTML = '<div style="padding: 2rem; text-align: center; color: #dc3545;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>No SDG Full Report PDF has been uploaded yet.</p><p>Please contact an administrator to upload the PDF.</p></div>';
+    }
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = `-${scrollPosition}px`;
+}
 
 // Function to display SDG posts
 function displaySdgPosts(goalNumber) {
@@ -1160,11 +1298,19 @@ function displaySdgPosts(goalNumber) {
 
 // Function to close modal and restore scroll position
 function closeModal() {
+    const modalContent = document.querySelector('.sdg-modal-content');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
     document.body.style.position = '';
     document.body.style.width = '';
     document.body.style.top = '';
+    
+    // Clear PDF viewer to stop loading
+    document.getElementById('pdfViewer').src = '';
+    
+    // Reset modal width
+    modalContent.style.maxWidth = '800px';
+    modalContent.style.width = '90%';
     
     // Restore scroll position
     window.scrollTo(0, scrollPosition);
