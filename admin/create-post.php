@@ -48,13 +48,28 @@ $supportServiceNames = [
     'Library', 'Quality Assurance', 'Research'
 ];
 
+// Use category name as key to prevent duplicates
+$programCategoriesMap = [];
+$supportServiceCategoriesMap = [];
+
 foreach ($allCategories as $category) {
-    if (in_array($category['name'], $programNames)) {
-        $programCategories[] = $category;
-    } elseif (in_array($category['name'], $supportServiceNames)) {
-        $supportServiceCategories[] = $category;
+    $categoryName = $category['name'];
+    if (in_array($categoryName, $programNames)) {
+        // Only add if we haven't seen this category name before
+        if (!isset($programCategoriesMap[$categoryName])) {
+            $programCategoriesMap[$categoryName] = $category;
+        }
+    } elseif (in_array($categoryName, $supportServiceNames)) {
+        // Only add if we haven't seen this category name before
+        if (!isset($supportServiceCategoriesMap[$categoryName])) {
+            $supportServiceCategoriesMap[$categoryName] = $category;
+        }
     }
 }
+
+// Convert maps back to arrays
+$programCategories = array_values($programCategoriesMap);
+$supportServiceCategories = array_values($supportServiceCategoriesMap);
 
 // Check if this is an edit request
 if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
