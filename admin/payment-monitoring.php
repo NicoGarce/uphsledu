@@ -399,15 +399,15 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
     <div class="stats-row">
         <div class="stat-card">
             <h4>Total Records</h4>
-            <div class="stat-value"><?php echo number_format($totalRecords); ?></div>
+            <div class="stat-value" id="total-records"><?php echo number_format($totalRecords); ?></div>
         </div>
         <div class="stat-card" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h4>Current Page</h4>
-                <div class="stat-value"><?php echo $page; ?> / <?php echo $totalPages; ?></div>
+                <div class="stat-value" id="page-info"><?php echo $page; ?> / <?php echo $totalPages; ?></div>
             </div>
             <div>
-                <a href="?<?php echo http_build_query(array_merge($_GET, ['export' => 'csv'])); ?>" class="btn btn-success">
+                <a href="#" id="export-csv-btn" class="btn btn-success">
                     <i class="fas fa-download"></i> Export CSV
                 </a>
             </div>
@@ -416,45 +416,43 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
     
     <!-- Filters -->
     <div class="filters-container">
-        <form method="GET" action="">
-            <div class="filters-row">
-                <div class="filter-group">
-                    <label class="filter-label">Search</label>
-                    <input type="text" name="search" class="filter-input" placeholder="Transaction ID, Reference No., or Description" value="<?php echo htmlspecialchars($search); ?>">
-                </div>
-                
-                <div class="filter-group">
-                    <label class="filter-label">Status</label>
-                    <select name="status" class="filter-select">
-                        <option value="">All Statuses</option>
-                        <?php foreach ($statuses as $status): ?>
-                            <option value="<?php echo htmlspecialchars($status); ?>" <?php echo $statusFilter === $status ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($status); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label class="filter-label">Date From</label>
-                    <input type="date" name="date_from" class="filter-input" value="<?php echo htmlspecialchars($dateFrom); ?>">
-                </div>
-                
-                <div class="filter-group">
-                    <label class="filter-label">Date To</label>
-                    <input type="date" name="date_to" class="filter-input" value="<?php echo htmlspecialchars($dateTo); ?>">
-                </div>
+        <div class="filters-row">
+            <div class="filter-group">
+                <label class="filter-label">Search</label>
+                <input type="text" id="filter-search" class="filter-input" placeholder="Transaction ID, Reference No., or Description" value="<?php echo htmlspecialchars($search); ?>">
             </div>
             
-            <div class="filter-actions">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Apply Filters
-                </button>
-                <a href="payment-monitoring.php" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Clear
-                </a>
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select id="filter-status" class="filter-select">
+                    <option value="">All Statuses</option>
+                    <?php foreach ($statuses as $status): ?>
+                        <option value="<?php echo htmlspecialchars($status); ?>" <?php echo $statusFilter === $status ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($status); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-        </form>
+            
+            <div class="filter-group">
+                <label class="filter-label">Date From</label>
+                <input type="date" id="filter-date-from" class="filter-input" value="<?php echo htmlspecialchars($dateFrom); ?>">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Date To</label>
+                <input type="date" id="filter-date-to" class="filter-input" value="<?php echo htmlspecialchars($dateTo); ?>">
+            </div>
+        </div>
+        
+        <div class="filter-actions">
+            <button type="button" id="clear-filters" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Clear
+            </button>
+            <div id="loading-indicator" style="display: none; padding: 0.75rem 1.5rem; color: var(--primary-color);">
+                <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
+        </div>
     </div>
     
     <!-- Data Table -->
@@ -463,82 +461,309 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
             <h3>Payment Transactions</h3>
         </div>
         
-        <?php if (empty($payments)): ?>
-            <div class="no-data">
-                <i class="fas fa-inbox" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
-                <p>No payment records found.</p>
-            </div>
-        <?php else: ?>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Transaction ID</th>
-                        <th>Reference No.</th>
-                        <th>Status</th>
-                        <th>Description</th>
-                        <th>Transaction Date</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($payments as $payment): ?>
+        <div id="table-content">
+            <?php if (empty($payments)): ?>
+                <div class="no-data">
+                    <i class="fas fa-inbox" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>No payment records found.</p>
+                </div>
+            <?php else: ?>
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td><?php echo htmlspecialchars($payment['txnid']); ?></td>
-                            <td><?php echo htmlspecialchars($payment['refno']); ?></td>
-                            <td>
-                                <?php
-                                $status = strtolower($payment['status']);
-                                $badgeClass = 'status-pending';
-                                if (strpos($status, 'success') !== false || strpos($status, 'approved') !== false || strpos($status, 'paid') !== false) {
-                                    $badgeClass = 'status-success';
-                                } elseif (strpos($status, 'fail') !== false || strpos($status, 'error') !== false || strpos($status, 'reject') !== false) {
-                                    $badgeClass = 'status-failed';
-                                }
-                                ?>
-                                <span class="status-badge <?php echo $badgeClass; ?>">
-                                    <?php echo htmlspecialchars($payment['status']); ?>
-                                </span>
-                            </td>
-                            <td><?php echo htmlspecialchars($payment['message']); ?></td>
-                            <td><?php echo date('M d, Y H:i:s', strtotime($payment['transdate'])); ?></td>
-                            <td><strong>₱<?php echo number_format($payment['amount'], 2, '.', ','); ?></strong></td>
+                            <th>Transaction ID</th>
+                            <th>Reference No.</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Transaction Date</th>
+                            <th>Amount</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <!-- Pagination -->
-            <?php if ($totalPages > 1): ?>
-                <div class="pagination">
-                    <?php if ($page > 1): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>">
-                            <i class="fas fa-chevron-left"></i> Previous
-                        </a>
-                    <?php endif; ?>
-                    
-                    <?php
-                    $startPage = max(1, $page - 2);
-                    $endPage = min($totalPages, $page + 2);
-                    
-                    for ($i = $startPage; $i <= $endPage; $i++):
-                    ?>
-                        <?php if ($i == $page): ?>
-                            <span class="current"><?php echo $i; ?></span>
-                        <?php else: ?>
-                            <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"><?php echo $i; ?></a>
-                        <?php endif; ?>
-                    <?php endfor; ?>
-                    
-                    <?php if ($page < $totalPages): ?>
-                        <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>">
-                            Next <i class="fas fa-chevron-right"></i>
-                        </a>
+                    </thead>
+                    <tbody id="payments-tbody">
+                        <?php foreach ($payments as $payment): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($payment['txnid']); ?></td>
+                                <td><?php echo htmlspecialchars($payment['refno']); ?></td>
+                                <td>
+                                    <?php
+                                    $status = strtolower($payment['status']);
+                                    $badgeClass = 'status-pending';
+                                    if (strpos($status, 'success') !== false || strpos($status, 'approved') !== false || strpos($status, 'paid') !== false) {
+                                        $badgeClass = 'status-success';
+                                    } elseif (strpos($status, 'fail') !== false || strpos($status, 'error') !== false || strpos($status, 'reject') !== false) {
+                                        $badgeClass = 'status-failed';
+                                    }
+                                    ?>
+                                    <span class="status-badge <?php echo $badgeClass; ?>">
+                                        <?php echo htmlspecialchars($payment['status']); ?>
+                                    </span>
+                                </td>
+                                <td><?php echo htmlspecialchars($payment['message']); ?></td>
+                                <td><?php echo date('M d, Y H:i:s', strtotime($payment['transdate'])); ?></td>
+                                <td><strong>₱<?php echo number_format($payment['amount'], 2, '.', ','); ?></strong></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div id="pagination-container">
+                    <?php if ($totalPages > 1): ?>
+                        <div class="pagination">
+                            <?php if ($page > 1): ?>
+                                <a href="#" class="pagination-link" data-page="<?php echo $page - 1; ?>">
+                                    <i class="fas fa-chevron-left"></i> Previous
+                                </a>
+                            <?php endif; ?>
+                            
+                            <?php
+                            $startPage = max(1, $page - 2);
+                            $endPage = min($totalPages, $page + 2);
+                            
+                            for ($i = $startPage; $i <= $endPage; $i++):
+                            ?>
+                                <?php if ($i == $page): ?>
+                                    <span class="current"><?php echo $i; ?></span>
+                                <?php else: ?>
+                                    <a href="#" class="pagination-link" data-page="<?php echo $i; ?>"><?php echo $i; ?></a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                            
+                            <?php if ($page < $totalPages): ?>
+                                <a href="#" class="pagination-link" data-page="<?php echo $page + 1; ?>">
+                                    Next <i class="fas fa-chevron-right"></i>
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
-        <?php endif; ?>
+        </div>
     </div>
 </div>
+
+<script>
+let currentPage = <?php echo $page; ?>;
+let filterTimeout;
+
+function getStatusBadgeClass(status) {
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('success') || statusLower.includes('approved') || statusLower.includes('paid')) {
+        return 'status-success';
+    } else if (statusLower.includes('fail') || statusLower.includes('error') || statusLower.includes('reject')) {
+        return 'status-failed';
+    }
+    return 'status-pending';
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${month} ${day}, ${year} ${hours}:${minutes}:${seconds}`;
+}
+
+function formatAmount(amount) {
+    return '₱' + parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+function loadPayments(page = 1) {
+    const search = document.getElementById('filter-search').value;
+    const status = document.getElementById('filter-status').value;
+    const dateFrom = document.getElementById('filter-date-from').value;
+    const dateTo = document.getElementById('filter-date-to').value;
+    
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const tableContent = document.getElementById('table-content');
+    
+    loadingIndicator.style.display = 'block';
+    tableContent.style.opacity = '0.5';
+    
+    const params = new URLSearchParams({
+        search: search,
+        status: status,
+        date_from: dateFrom,
+        date_to: dateTo,
+        page: page
+    });
+    
+    fetch('ajax-payment-monitoring.php?' + params.toString())
+        .then(response => response.json())
+        .then(data => {
+            loadingIndicator.style.display = 'none';
+            tableContent.style.opacity = '1';
+            
+            currentPage = data.pagination.current_page;
+            
+            // Update statistics
+            document.getElementById('total-records').textContent = parseInt(data.pagination.total_records).toLocaleString();
+            document.getElementById('page-info').textContent = `${data.pagination.current_page} / ${data.pagination.total_pages}`;
+            
+            // Update export link
+            const exportUrl = 'payment-monitoring.php?' + params.toString() + '&export=csv';
+            document.getElementById('export-csv-btn').href = exportUrl;
+            
+            // Update table
+            const tbody = document.getElementById('payments-tbody');
+            if (data.payments.length === 0) {
+                tableContent.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-inbox" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <p>No payment records found.</p>
+                    </div>
+                `;
+            } else {
+                let tableHTML = `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Reference No.</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                                <th>Transaction Date</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payments-tbody">
+                `;
+                
+                data.payments.forEach(payment => {
+                    const badgeClass = getStatusBadgeClass(payment.status);
+                    tableHTML += `
+                        <tr>
+                            <td>${escapeHtml(payment.txnid)}</td>
+                            <td>${escapeHtml(payment.refno)}</td>
+                            <td>
+                                <span class="status-badge ${badgeClass}">
+                                    ${escapeHtml(payment.status)}
+                                </span>
+                            </td>
+                            <td>${escapeHtml(payment.message)}</td>
+                            <td>${formatDate(payment.transdate)}</td>
+                            <td><strong>${formatAmount(payment.amount)}</strong></td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                // Update pagination
+                if (data.pagination.total_pages > 1) {
+                    tableHTML += '<div id="pagination-container"><div class="pagination">';
+                    
+                    if (data.pagination.current_page > 1) {
+                        tableHTML += `<a href="#" class="pagination-link" data-page="${data.pagination.current_page - 1}"><i class="fas fa-chevron-left"></i> Previous</a>`;
+                    }
+                    
+                    const startPage = Math.max(1, data.pagination.current_page - 2);
+                    const endPage = Math.min(data.pagination.total_pages, data.pagination.current_page + 2);
+                    
+                    for (let i = startPage; i <= endPage; i++) {
+                        if (i === data.pagination.current_page) {
+                            tableHTML += `<span class="current">${i}</span>`;
+                        } else {
+                            tableHTML += `<a href="#" class="pagination-link" data-page="${i}">${i}</a>`;
+                        }
+                    }
+                    
+                    if (data.pagination.current_page < data.pagination.total_pages) {
+                        tableHTML += `<a href="#" class="pagination-link" data-page="${data.pagination.current_page + 1}">Next <i class="fas fa-chevron-right"></i></a>`;
+                    }
+                    
+                    tableHTML += '</div></div>';
+                } else {
+                    tableHTML += '<div id="pagination-container"></div>';
+                }
+                
+                tableContent.innerHTML = tableHTML;
+                
+                // Re-attach pagination event listeners
+                attachPaginationListeners();
+            }
+            
+            // Scroll to top of table
+            document.querySelector('.data-table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(error => {
+            loadingIndicator.style.display = 'none';
+            tableContent.style.opacity = '1';
+            console.error('Error loading payments:', error);
+            alert('Error loading payment data. Please try again.');
+        });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function attachPaginationListeners() {
+    document.querySelectorAll('.pagination-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = parseInt(this.getAttribute('data-page'));
+            loadPayments(page);
+        });
+    });
+}
+
+// Filter event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('filter-search');
+    const statusSelect = document.getElementById('filter-status');
+    const dateFromInput = document.getElementById('filter-date-from');
+    const dateToInput = document.getElementById('filter-date-to');
+    const clearBtn = document.getElementById('clear-filters');
+    
+    // Debounced search input
+    searchInput.addEventListener('input', function() {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(() => {
+            currentPage = 1;
+            loadPayments(1);
+        }, 500);
+    });
+    
+    // Immediate filter changes
+    statusSelect.addEventListener('change', function() {
+        currentPage = 1;
+        loadPayments(1);
+    });
+    
+    dateFromInput.addEventListener('change', function() {
+        currentPage = 1;
+        loadPayments(1);
+    });
+    
+    dateToInput.addEventListener('change', function() {
+        currentPage = 1;
+        loadPayments(1);
+    });
+    
+    // Clear filters
+    clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        statusSelect.value = '';
+        dateFromInput.value = '';
+        dateToInput.value = '';
+        currentPage = 1;
+        loadPayments(1);
+    });
+    
+    // Initial pagination listeners
+    attachPaginationListeners();
+});
+</script>
 
 <?php include '../app/includes/admin-footer.php'; ?>
 
