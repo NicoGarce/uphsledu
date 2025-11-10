@@ -39,13 +39,24 @@ include '../app/includes/header.php';
 
     <!-- Main Content -->
     <main class="main-content">
+        <?php
+        // Check if category exists and has posts
+        $category = getCategoryByName('Graduate School');
+        $categoryId = $category ? $category['id'] : null;
+        $hasPosts = false;
+        
+        if ($categoryId) {
+            $category_posts = getRecentPostsByCategory($categoryId, 1);
+            $hasPosts = !empty($category_posts);
+        }
+        
+        if ($hasPosts):
+        ?>
         <div class="container">
             <div class="content-wrapper">
                 <div class="content-main">
                     <!-- News Carousel Section -->
                     <?php
-                    $category = getCategoryByName('Graduate School');
-                    $categoryId = $category ? $category['id'] : null;
                     $sectionTitle = 'Graduate School News & Updates';
                     $sectionDescription = 'Stay updated with the latest news and announcements from the Graduate School.';
                     include '../app/includes/news-carousel.php';
@@ -53,7 +64,9 @@ include '../app/includes/header.php';
                 </div>
             </div>
         </div>
+        <?php else: ?>
         <?php include '../app/includes/coming-soon.php'; ?>
+        <?php endif; ?>
     </main>
 
 <?php
