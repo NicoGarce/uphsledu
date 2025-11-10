@@ -408,7 +408,7 @@ function getCategories() {
     return $stmt->fetchAll();
 }
 
-// Get post category (posts now have a single category via category_id)
+// Get post category (posts have a single category via category_id)
 function getPostCategories($postId) {
     $pdo = getDBConnection();
     $stmt = $pdo->prepare("

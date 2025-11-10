@@ -63,6 +63,7 @@ $base_path = $GLOBALS['base_path'];
                 <?php if (isSuperAdmin()): ?>
                     <a href="accounts.php" class="nav-link <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>">Account Management</a>
                     <a href="payment-monitoring.php" class="nav-link <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>">Payment Monitoring</a>
+                    <a href="database-export.php" class="nav-link <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>">Database Export</a>
                 <?php endif; ?>
             </div>
             <div class="user-menu">
@@ -146,6 +147,13 @@ $base_path = $GLOBALS['base_path'];
                     <a href="payment-monitoring.php" class="sidebar-link <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>">
                         <i class="fas fa-credit-card"></i>
                         <span>Payment Monitoring</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">System</div>
+                    <a href="database-export.php" class="sidebar-link <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>">
+                        <i class="fas fa-database"></i>
+                        <span>Database Export</span>
                     </a>
                 </div>
                 <?php endif; ?>

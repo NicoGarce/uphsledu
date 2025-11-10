@@ -97,11 +97,7 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
         $isEdit = false;
     } else {
         $page_title = 'Edit Post';
-        // Get category name if category_id exists
-        if (!empty($post['category_id'])) {
-            $category = getCategoryById($post['category_id']);
-            $post['category_id'] = $category ? $post['category_id'] : null;
-        }
+        // category_id is already in the post data from the SELECT query
     }
 }
 
