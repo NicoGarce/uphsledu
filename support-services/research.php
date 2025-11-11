@@ -11,6 +11,79 @@ require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 $base_path = '../';
 $page_title = "Research & Publication - UPHSL";
+
+// Function to find PDF file for a research title
+function findResearchPDF($title, $department) {
+    global $base_path;
+    
+    // Map department names to folder names
+    $departmentFolders = [
+        'arts-science' => 'Cas',
+        'criminology' => 'Criminology',
+        'graduate-school' => 'Graduate School',
+        'business-accountancy' => 'Business-Accountancy',
+        'education' => 'Education',
+        'hospitality' => 'Intl Hospitality Management',
+        'computer-studies' => 'Computer Studies',
+        'engineering' => 'Engineering',
+        'maritime' => 'Maritime'
+    ];
+    
+    $folder = $departmentFolders[$department] ?? '';
+    if (empty($folder)) {
+        return null;
+    }
+    
+    $pdfDir = __DIR__ . '/../assets/documents/pdfs/researches/' . $folder . '/';
+    
+    if (!is_dir($pdfDir)) {
+        return null;
+    }
+    
+    // Normalize title for matching (remove extra spaces, convert to uppercase, remove special chars)
+    $normalizedTitle = strtoupper(trim(preg_replace('/\s+/', ' ', $title)));
+    $normalizedTitle = preg_replace('/[^\w\s]/', '', $normalizedTitle);
+    
+    // Get all PDF files in the directory
+    $files = glob($pdfDir . '*.pdf');
+    
+    foreach ($files as $file) {
+        $filename = basename($file, '.pdf');
+        $normalizedFilename = strtoupper(trim(preg_replace('/\s+/', ' ', $filename)));
+        $normalizedFilename = preg_replace('/[^\w\s]/', '', $normalizedFilename);
+        
+        // Try exact match first
+        if ($normalizedFilename === $normalizedTitle) {
+            return $base_path . 'assets/documents/pdfs/researches/' . $folder . '/' . basename($file);
+        }
+        
+        // Try partial match - check if most of the title matches
+        $titleWords = explode(' ', $normalizedTitle);
+        $filenameWords = explode(' ', $normalizedFilename);
+        $matchCount = 0;
+        foreach ($titleWords as $word) {
+            if (strlen($word) > 3 && in_array($word, $filenameWords)) {
+                $matchCount++;
+            }
+        }
+        // If 70% of significant words match, consider it a match
+        if ($matchCount >= count(array_filter($titleWords, function($w) { return strlen($w) > 3; })) * 0.7) {
+            return $base_path . 'assets/documents/pdfs/researches/' . $folder . '/' . basename($file);
+        }
+    }
+    
+    return null;
+}
+
+// Helper function to render research title with PDF link
+function renderResearchTitle($title, $department) {
+    $pdfLink = findResearchPDF($title, $department);
+    if ($pdfLink) {
+        return '<a href="' . htmlspecialchars($pdfLink) . '" target="_blank" class="research-link">' . htmlspecialchars($title) . '</a>';
+    }
+    return htmlspecialchars($title);
+}
+
 include '../app/includes/header.php';
 ?>
 
@@ -534,115 +607,115 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">ADVANTAGES, CHALLENGES ENCOUNTERED AND ATTITUDE OF TEACHERS IN UTILIZING MULTIMEDIA IN THE CLASSROOM</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ADVANTAGES, CHALLENGES ENCOUNTERED AND ATTITUDE OF TEACHERS IN UTILIZING MULTIMEDIA IN THE CLASSROOM", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Alma T. Jallorina</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">ASSESSING STUDENTS' RESEARCH EXPERIENCE AT THE UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA COLLEGE OF MARITIME EDUCATION</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ASSESSING STUDENTS' RESEARCH EXPERIENCE AT THE UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA COLLEGE OF MARITIME EDUCATION", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Amador B. Alumia & Leomar S. Galicia</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">AWARENESS ON THE ADVANTAGES AND DISADVANTAGES OF OUTCOME BASED EDUCATION AMONG GRADUATING PSYCHOLOGY STUDENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("AWARENESS ON THE ADVANTAGES AND DISADVANTAGES OF OUTCOME BASED EDUCATION AMONG GRADUATING PSYCHOLOGY STUDENTS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Sherill S. Villaluz</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">BEYOND PREJUDICE UNDERSTANDING PEOPLE LIVING WITH HUMAN</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("BEYOND PREJUDICE UNDERSTANDING PEOPLE LIVING WITH HUMAN IMMUNODEFICIENCY VIRUS (PLHIV)", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Sherill S. Villaluz, Jershon Ammon N. Teodoro & Radlyn L. del Prado</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DEGREE OF INCLINATION, BOARD COURSE COMPETENCE, AND LICENSURE READINESS AMONG UPHSL PSYCHOLOGY GRADUATES</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DEGREE OF INCLINATION, BOARD COURSE COMPETENCE, AND LICENSURE READINESS AMONG UPHSL PSYCHOLOGY GRADUATES", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Sherill S. Villaluz</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DEGREE OF INVOLVEMENT IN LEISURE ACTIVITIES AND ACADEMIC PERFORMANCE OF UPHSL MARITIME STUDENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DEGREE OF INVOLVEMENT IN LEISURE ACTIVITIES AND ACADEMIC PERFORMANCE OF UPHSL MARITIME STUDENTS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Araceli C. Corpuz, Ace C. Bernarte, Eraume Ramir M. Saluba & Raymond-Paul T. Sanchez</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DIFFICULTIES ENCOUNTERED, LEARNING STRATEGIES AND ACADEMIC PERFORMANCE IN PHYSICS OF PSYCHOLOGY STUDENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DIFFICULTIES ENCOUNTERED, LEARNING STRATEGIES AND ACADEMIC PERFORMANCE IN PHYSICS OF PSYCHOLOGY STUDENTS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Araceli C. Corpuz</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">FAMILY DYNAMICS, EMOTIONAL RESPONSES, HOPE AND HANDLING STRATEGIES AMONG CALAMITY VICTIMS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("FAMILY DYNAMICS, EMOTIONAL RESPONSES, HOPE AND HANDLING STRATEGIES AMONG CALAMITY VICTIMS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Laura De Guzman, Frances Amara Cristobal & Gimmeli Ann Palomares</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">FREQUENCY OF WATCHING POLITICAL NEWS PROGRAM ON TELEVISION, POLITICAL NEWS BIAS, AND POLITICAL NEWS DELIVERY SATISFACTION</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("FREQUENCY OF WATCHING POLITICAL NEWS PROGRAM ON TELEVISION, POLITICAL NEWS BIAS, AND POLITICAL NEWS DELIVERY SATISFACTION", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Nimfa R. Marcelo</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">FROM LETTERS TO LIFE UNDERSTANDING LANGUAGE TEACHERS EXPERIENCES</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("FROM LETTERS TO LIFE UNDERSTANDING LANGUAGE TEACHERS EXPERIENCES", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Rowena R. Contillo, Leomar S. Galicia, Antonio R. Yango & Pedrito Jose V. Bermudo</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">GAY LANGUAGE IMPACT ON COLLOQUIAL COMMUNICATION IN BARANGAY STO. TOMAS, CITY OF BIÑAN, LAGUNA</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("GAY LANGUAGE IMPACT ON COLLOQUIAL COMMUNICATION IN BARANGAY STO. TOMAS, CITY OF BIÑAN, LAGUNA", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Hazel V. Cortez</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">KNOWLEDGE AND AWARENESS ON MTRCB ADVISORIES AMONG FOURTH GRADERS OF UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("KNOWLEDGE AND AWARENESS ON MTRCB ADVISORIES AMONG FOURTH GRADERS OF UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Hazel V. Cortez, Yves Carlson R. Hitchon & Precious May V. Dicolen</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">LAUGHTER IN CLASS HUMOROUS MEMES IN 21ST CENTURY LEARNING</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("LAUGHTER IN CLASS HUMOROUS MEMES IN 21ST CENTURY LEARNING", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Paulo Emmanuel G. Baysac</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">MOTIVATION, FREQUENCY OF USAGE AND LEVEL OF CONFIDENCE IN USING PHILIPPINE ENGLISH AMONG FOREIGN STUDENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("MOTIVATION, FREQUENCY OF USAGE AND LEVEL OF CONFIDENCE IN USING PHILIPPINE ENGLISH AMONG FOREIGN STUDENTS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Alma T. Jallorina</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">PAIN AND FORGIVENESS IN THE EYES OF THE FILIPINOS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("PAIN AND FORGIVENESS IN THE EYES OF THE FILIPINOS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Sherill S. Villaluz, Paulo Emmanuel G. Baysac, Antonio S. Yango, Czarina Isabelle I. Arimado & Fatima Mikaela C. Remoquillo</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">PET ANIMALS TO OWN AND TO LOVE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("PET ANIMALS TO OWN AND TO LOVE", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Luz Remedios Quito Del Rosario, Antonio Yango, Rissel C. Dela Paz, Jodel Clarissa B. Margate & Eire Ramallosa P. May</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">REVISITING ART THERAPY A COUNSELING INTERVENTION FOR PUPILS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("REVISITING ART THERAPY A COUNSELING INTERVENTION FOR PUPILS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Jocelyn G. Capacio</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">SELF – APPRAISAL, INTERPERSONAL RELATIONSHIP, AND LIFE SATISFACTION OF TEENAGE PARENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("SELF –APPRAISAL, INTERPERSONAL RELATIONSHIP, AND LIFE SATISFACTION OF TEENAGE PARENTS", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Leomar S. Galicia</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">TO LOCK AND TO UNLOCK UNDERSTANDING THE LIVED EXPERIENCE OF PUBLIC HIGH SCHOOL TEACHERS WITH STUDENTS HAVING READING DIFFICULTY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("TO LOCK AND TO UNLOCK UNDERSTANDING THE LIVED EXPERIENCE OF PUBLIC HIGH SCHOOL TEACHERS WITH STUDENTS HAVING READING DIFFICULTY", 'arts-science'); ?></div>
                                 </td>
                                 <td><div class="research-author">Juditha L. Nievarez –Teodoro & Antonio R. Yango</div></td>
                             </tr>
@@ -662,13 +735,13 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">CLOSED CIRCUIT TELEVISION (CCTV) IN THE SCHOOL CAMPUS FACULTYEMPLOYEE, AND STUDENT'S PERSPECTIVE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("CLOSED CIRCUIT TELEVISION (CCTV) IN THE SCHOOL CAMPUS FACULTYEMPLOYEE, AND STUDENT'S PERSPECTIVE", 'criminology'); ?></div>
                                 </td>
                                 <td><div class="research-author">Diadem DV. Fantony</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">PARENTAL ATTITUDE TOWARDS WAR TOYS ITS PERCEIVED EFFECTS TO CHILD'S BEHAVIOR</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("PARENTAL ATTITUDE TOWARDS WAR TOYS ITS PERCEIVED EFFECTS TO CHILD'S BEHAVIOR", 'criminology'); ?></div>
                                 </td>
                                 <td><div class="research-author">J. Acosta, R. Abayan, P. Abella, M. Alad, H. Buenconsejo, F. Cabanero, A. Figueroa & A. Santiago</div></td>
                             </tr>
@@ -688,49 +761,49 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">ASSESSING STUDENTS' RESEARCH EXPERIENCE AT THE UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA COLLEGE OF MARITIME EDUCATION</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ASSESSING STUDENTS' RESEARCH EXPERIENCE AT THE UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA COLLEGE OF MARITIME EDUCATION", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Amador B. Alumia & Leomar S. Galicia</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">COLLEGE STUDENTS' ATTITUDE TOWARDS THE INTERNET AS A COMMUNICATION MEDIUM AND LEVEL OF UTILIZATION OF ENGLISH LANGUAGE IN THE CLASSROOM</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("COLLEGE STUDENTS' ATTITUDE TOWARDS THE INTERNET AS A COMMUNICATION MEDIUM AND LEVEL OF UTILIZATION OF ENGLISH LANGUAGE IN THE CLASSROOM", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Antonio R. Yango & Maria Cecilia L. Garcia</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">CROSSROADS OF QUALITY ASSURANCE: THE PHILIPPINE BASIC EDUCATION EXPERIENCE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("CROSSROADS OF QUALITY ASSURANCE: THE PHILIPPINE BASIC EDUCATION EXPERIENCE", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Ferdinand C. Somido</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">FROM LETTERS TO LIFE: UNDERSTANDING LANGUAGE TEACHERS EXPERIENCES IN TEACHING LITERATURE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("FROM LETTERS TO LIFE: UNDERSTANDING LANGUAGE TEACHERS EXPERIENCES IN TEACHING LITERATURE", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Rowena R. Contillo, Leomar S. Galicia, Antonio R. Yango & Pedrito Jose V. Bermudo</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">PERSONALITY TYPE, ORGANIZATIONAL COMMITMENT, AND COLLABORATIVE ALLIANCE AMONG UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA (UPHSL) ACADEMIC PERSONNEL</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("PERSONALITY TYPE, ORGANIZATIONAL COMMITMENT, AND COLLABORATIVE ALLIANCE AMONG UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA (UPHSL) ACADEMIC PERSONNEL", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Sherill S. Villaluz & Leomar S. Galicia</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">SELF - APPRAISAL, INTERPERSONAL RELATIONSHIP, AND LIFE SATISFACTION OF TEENAGE PARENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("SELF – APPRAISAL, INTERPERSONAL RELATIONSHIP, AND LIFE SATISFACTION OF TEENAGE PARENTS", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Leomar S. Galicia</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">TO LOCK AND TO UNLOCK UNDERSTANDING THE LIVED EXPERIENCE OF PUBLIC HIGH SCHOOL TEACHERS WITH STUDENTS HAVING READING DIFFICULTY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("TO LOCK AND TO UNLOCK UNDERSTANDING THE LIVED EXPERIENCE OF PUBLIC HIGH SCHOOL TEACHERS WITH STUDENTS HAVING READING DIFFICULTY", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Juditha L. Nievarez - Teodoro & Antonio R. Yango</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">WORDS OR NUMBERS THE ESSENCE OF LANGUAGE TEACHERS' UNAPPRECIATION OF MATHEMATICS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("WORDS OR NUMBERS THE ESSENCE OF LANGUAGE TEACHERS' UNAPPRECIATION OF MATHEMATICS", 'graduate-school'); ?></div>
                                 </td>
                                 <td><div class="research-author">Leomar S. Galicia</div></td>
                             </tr>
@@ -750,19 +823,19 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">THE GRADUATES OF BUSINESS VS. EMPLOYMENT (A TRACER STUDY)</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("THE GRADUATES OF BUSINESS VS. EMPLOYMENT (A TRACER STUDY)", 'business-accountancy'); ?></div>
                                 </td>
                                 <td><div class="research-author">Francisca A. Argana, Marilyn A. Cabalza & Ernesto A. Serrano Jr.</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">THE PARTICIPANTS EVALUATION'S RESULT FOR THE SEMINAR WORKSHOP - COMMUNITY OUTREACH PROGRAM OF THE COLLEGE OF BUSINESS AND ACCOUNTANCY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("THE PARTICIPANTS EVALUATION'S RESULT FOR THE SEMINAR WORKSHOP - COMMUNITY OUTREACH PROGRAM OF THE COLLEGE OF BUSINESS AND ACCOUNTANCY", 'business-accountancy'); ?></div>
                                 </td>
                                 <td><div class="research-author">Carlito A. Vizconde</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">THE PERSONAL AND ORGANIZATIONAL COMPETENCES OF THE SELECTED DEPARTMENT HEADS OF THE UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("THE PERSONAL AND ORGANIZATIONAL COMPETENCES OF THE SELECTED DEPARTMENT HEADS OF THE UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA", 'business-accountancy'); ?></div>
                                 </td>
                                 <td><div class="research-author">Carlito A. Vizconde</div></td>
                             </tr>
@@ -782,31 +855,31 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">KINDERGARTEN TEACHERS' PROFILE, FACILITIES & INSTRUCTIONAL PRACTICES TOWARDS SUSTAINABILITY AND ENVIRONMENTAL SAFETY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("KINDERGARTEN TEACHERS' PROFILE, FACILITIES & INSTRUCTIONAL PRACTICES TOWARDS SUSTAINABILITY AND ENVIRONMENTAL SAFETY", 'education'); ?></div>
                                 </td>
                                 <td><div class="research-author">Elena A. Salinas</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">READING COMPREHENSION INTERVENTION PROGRAM OF UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("READING COMPREHENSION INTERVENTION PROGRAM OF UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA", 'education'); ?></div>
                                 </td>
                                 <td><div class="research-author">Alberto R. Rocero & Jhoana L. Macha</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">REGISTRAR'S EXECUTIVE ASSISTANCE (REA) A CUSTOMER RELATIONSHIP MANAGEMENT SYSTEM OR NOT?</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("REGISTRAR'S EXECUTIVE ASSISTANCE (REA) A CUSTOMER RELATIONSHIP MANAGEMENT SYSTEM OR NOT?", 'education'); ?></div>
                                 </td>
                                 <td><div class="research-author">Ma. Eliza D. Mapanoo, Oliver M. Junio & Remina L. Tanyag</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">THE EFFECTIVENESS OF COOPERATIVE LEARNING IN STUDENTS' COMPREHENSION OF LITERARY TEXTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("THE EFFECTIVENESS OF COOPERATIVE LEARNING IN STUDENTS' COMPREHENSION OF LITERARY TEXTS", 'education'); ?></div>
                                 </td>
                                 <td><div class="research-author">Victorio B. Duyan, Alberto R. Rocero, Adelaida G. Abalos, Jesus M. Purificacion & Edmil L. Recibe</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">THE PICTURE IMAGINATIVE MATERIALS AND THE CREATIVE WRITING SKILLS OF GRADE 10 STUDENTS OF UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("THE PICTURE IMAGINATIVE MATERIALS AND THE CREATIVE WRITING SKILLS OF GRADE 10 STUDENTS OF UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA", 'education'); ?></div>
                                 </td>
                                 <td><div class="research-author">Alberto R. Rocero, Elena A. Salinas & Remedios M. Dela Rosa</div></td>
                             </tr>
@@ -826,31 +899,31 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">ACADEMIC PERFORMANCE AND PERCEIVED EMPLOYABILITY SKILLS OF HOTEL AND RESTAURANT MANAGEMENT GRADUATING STUDENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ACADEMIC PERFORMANCE AND PERCEIVED EMPLOYABILITY SKILLS OF HOTEL AND RESTAURANT MANAGEMENT GRADUATING STUDENTS", 'hospitality'); ?></div>
                                 </td>
                                 <td><div class="research-author">Nenita A. Daquiz</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">CUSTOMERS' SATISFACTION ON ONLINE RESERVATION AMONG SELECTED FIVE-STAR HOTELS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("CUSTOMERS' SATISFACTION ON ONLINE RESERVATION AMONG SELECTED FIVE-STAR HOTELS", 'hospitality'); ?></div>
                                 </td>
                                 <td><div class="research-author">Susan L. Palaroan</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">LEVEL OF DIFFICULTIES ENCOUNTERED AND THE PERFORMANCE OF NUTRITION AND DIETETICS GRADUATES IN FOOD SERVICE, COMMUNITY, AND HOSPITAL PRACTICUM</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("LEVEL OF DIFFICULTIES ENCOUNTERED AND THE PERFORMANCE OF NUTRITION AND DIETETICS GRADUATES IN FOOD SERVICE, COMMUNITY, AND HOSPITAL PRACTICUM", 'hospitality'); ?></div>
                                 </td>
                                 <td><div class="research-author">Olivia J. Factoriza</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">LEVEL OF IMPLEMENTATION OF FOOD SANITATION PRACTICES IN SCHOOL CAFETERIAS AS RATED BY UPHSL STUDENTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("LEVEL OF IMPLEMENTATION OF FOOD SANITATION PRACTICES IN SCHOOL CAFETERIAS AS RATED BY UPHSL STUDENTS", 'hospitality'); ?></div>
                                 </td>
                                 <td><div class="research-author">Adorita C. De Jose</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">PROPOSED PREVENTIVE AND CORRECTIVE MEASURES FOR HANDLING CUSTOMER COMPLAINTS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("PROPOSED PREVENTIVE AND CORRECTIVE MEASURES FOR HANDLING CUSTOMER COMPLAINTS", 'hospitality'); ?></div>
                                 </td>
                                 <td><div class="research-author">Susan L. Palaroan</div></td>
                             </tr>
@@ -870,79 +943,79 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">ACCREDITATION MANAGEMENT SYSTEM</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ACCREDITATION MANAGEMENT SYSTEM", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Ma. Eliza D. Mapanoo</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">ASSESSMENT OF ONLINE OJT PERFORMANCE MONITORING</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ASSESSMENT OF ONLINE OJT PERFORMANCE MONITORING", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Jasmin H. Almarinez</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">COMPARATIVE STUDY OF AIRDROP VS SHAREIT WIFI DIRECT FILE TRANSFER USING COMPATIBLE DEVICES</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("COMPARATIVE STUDY OF AIRDROP VS SHAREIT WIFI DIRECT FILE TRANSFER USING COMPATIBLE DEVICES", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Michael M. Orozco</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DEVELOPMENT OF ADDA (ADDITIONAL DATA) ALGORITHM FOR 10T SECURITY AND PRIVACY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DEVELOPMENT OF ADDA (ADDITIONAL DATA) ALGORITHM FOR 10T SECURITY AND PRIVACY", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Oliver M. Junio & Jasmin De Castro-Niguidula</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DEVELOPMENT OF OFFLINE CHAT APPLICATION: FRAMEWORK FOR RESILIENT DISASTER MANAGEMENT</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DEVELOPMENT OF OFFLINE CHAT APPLICATION: FRAMEWORK FOR RESILIENT DISASTER MANAGEMENT", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Oliver M. Junio & Enrico P. Chavez</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DEVELOPMENT OF ONLINE GRADUATE TRACER SYSTEM WITH DATA ANALYTICS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DEVELOPMENT OF ONLINE GRADUATE TRACER SYSTEM WITH DATA ANALYTICS", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Michael M. Orozco</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DEVELOPMENT OF READING TUTORIAL A SUPPLEMENTARY LEARNING SOFTWARE FOR DAY CARE CENTER</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DEVELOPMENT OF READING TUTORIAL A SUPPLEMENTARY LEARNING SOFTWARE FOR DAY CARE CENTER", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Ma. Eliza D. Mapanoo</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">E-GOVERNMENT FOR HUMAN CAPABILITY DEVELOPMENT PROGRAM: AN IMPLEMENTATION OF G2E SYSTEM FOR ENHANCED GOVERNMENT SERVICES</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("E-GOVERNMENT FOR HUMAN CAPABILITY DEVELOPMENT PROGRAM: AN IMPLEMENTATION OF G2E SYSTEM FOR ENHANCED GOVERNMENT SERVICES", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Ma. Eliza D. Mapanoo & Jonathan M. Caballero</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">HISTOGRAM-BASED IMAGE SEGMENTATION ALGORITHM APPLICATION FOR FLOOD DISASTER MANAGEMENT</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("HISTOGRAM-BASED IMAGE SEGMENTATION ALGORITHM APPLICATION FOR FLOOD DISASTER MANAGEMENT", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Michael M. Orozco & Jonathan M. Caballero</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">MAVIS: SPECIAL EDUCATION VIRTUAL ASSISTANT</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("MAVIS: SPECIAL EDUCATION VIRTUAL ASSISTANT", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Eliza D. Mapanoo & Jonathan M. Caballero</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">POINT OF SALES SYSTEM FOR DRUGSTORE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("POINT OF SALES SYSTEM FOR DRUGSTORE", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Jasmin H. Almarinez</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">SMART DISASTER PREDICTION APPLICATION USING FLOOD-RISK ANALYTICS TOWARDS SUSTAINABLE CLIMATE ACTION</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("SMART DISASTER PREDICTION APPLICATION USING FLOOD-RISK ANALYTICS TOWARDS SUSTAINABLE CLIMATE ACTION", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Michael M. Orozco & Jonathan M. Caballero</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">WEB-BASED THESIS/ CAPSTONE PROJECT DEFENSE EVALUATION SYSTEM OF THE CCS BIÑAN</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("WEB-BASED THESIS/ CAPSTONE PROJECT DEFENSE EVALUATION SYSTEM OF THE CCS BIÑAN", 'computer-studies'); ?></div>
                                 </td>
                                 <td><div class="research-author">Michael M. Orozco</div></td>
                             </tr>
@@ -962,79 +1035,79 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">5S: A LEARNER WORKFLOW TOOL AT AGM VENTURE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("5S: A LEARNER WORKFLOW TOOL AT AGM VENTURE", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Teresita B. Gonzales & Deserie D. Mendoza</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">ADVANCED INTEGRATION OF QUALITY CONTROL THROUGH INVENTORY MANAGEMENT SYSTEM IN A SEMICONDUCTOR COMPANY IN THE PHILIPPINES</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ADVANCED INTEGRATION OF QUALITY CONTROL THROUGH INVENTORY MANAGEMENT SYSTEM IN A SEMICONDUCTOR COMPANY IN THE PHILIPPINES", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Kierven R. de Mesa</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">ASSESSING THE ENRICHMENT PROGRAM FOR SOPHOMORE ENGINEERING STUDENTS OF UPHSL SCHOOL YEAR 2013-14: BASIS FOR DEVELOPMENT INTERVENTIONS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("ASSESSING THE ENRICHMENT PROGRAM FOR SOPHOMORE ENGINEERING STUDENTS OF UPHSL SCHOOL YEAR 2013-14: BASIS FOR DEVELOPMENT INTERVENTIONS", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Antonino D. Carpena, Leilani A. Gonzales, Teresita B. Gonzales, Nancy P. Mercado & Engr. Jimmy B. Teodoro</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">CYCLE TIME REDUCTION THROUGH MINIMIZATION OF TRANSPORTATION AT DYNASTY PALLETS SYSTEMS INC.</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("CYCLE TIME REDUCTION THROUGH MINIMIZATION OF TRANSPORTATION AT DYNASTY PALLETS SYSTEMS INC.", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Nancy P. Mercado, Teresita B. Gonzales & Jayson D. Pobar</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DAYLIGHT AND SOLAR ENERGY OPTIMIZATION THRU SMART LIGHTING MANAGEMENT SYSTEM WITH MANUAL OVERRIDE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DAYLIGHT AND SOLAR ENERGY OPTIMIZATION THRU SMART LIGHTING MANAGEMENT SYSTEM WITH MANUAL OVERRIDE", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Antonino D. Carpena & Flocerfida L. Amaya</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DESIGN AND EVALUATION OF ELECTRONIC CLASS RECORD IN UNIVERSITY OF PERPETUAL HELP SYSTEM-LAGUNA</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DESIGN AND EVALUATION OF ELECTRONIC CLASS RECORD IN UNIVERSITY OF PERPETUAL HELP SYSTEM-LAGUNA", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Nancy P. Mercado</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">DEVELOPMENT OF FUN LEARNING APPLICATION FO PRESCHOOLERS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("DEVELOPMENT OF FUN LEARNING APPLICATION FO PRESCHOOLERS", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Leilani A. Gonzales</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">IMPROVED PRODUCTION EFFICIENCY THROUGH LEAN MANUFACTURING TOOL WITH THE USE OF VALUE STREAM MAPPING (VSM)</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("IMPROVED PRODUCTION EFFICIENCY THROUGH LEAN MANUFACTURING TOOL WITH THE USE OF VALUE STREAM MAPPING (VSM)", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Antonino D. Carpena & Flocerfida L. Amaya</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">LEVEL OF SAFETY AWARENESS OF THE MANAGEMENT AND THE WORKERS AT THE ASSEMBLY AREA IN A SEWING COMPANY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("LEVEL OF SAFETY AWARENESS OF THE MANAGEMENT AND THE WORKERS AT THE ASSEMBLY AREA IN A SEWING COMPANY", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Leilani A. Gonzales & Jimmy M. Teodoro</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">PRODUCTIVITY IMPROVEMENT THROUGH VALUE STREAM MAPPING IN JARVY'S FOOTWEAR COMPANY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("PRODUCTIVITY IMPROVEMENT THROUGH VALUE STREAM MAPPING IN JARVY'S FOOTWEAR COMPANY", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Leilani A. Gonzales, Teresita B. Gonzales & Nancy P. Mercado</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">RAPID UPPER LIMB ASSESSMENT: BASIS FOR INTERVENTION OF FACTORY WORKERS IN A GARMENT COMPANY</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("RAPID UPPER LIMB ASSESSMENT: BASIS FOR INTERVENTION OF FACTORY WORKERS IN A GARMENT COMPANY", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Nancy P. Mercado</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">STUDY HABITS, ATTITUDES AND ACADEMIC PERFORMANCE OF SELECTED COLLEGE OF ENGINEERING STUDENTS OF SUMMER 2016: BASIS FOR STUDENT REINFORCEMENT</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("STUDY HABITS, ATTITUDES AND ACADEMIC PERFORMANCE OF SELECTED COLLEGE OF ENGINEERING STUDENTS OF SUMMER 2016: BASIS FOR STUDENT REINFORCEMENT", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Teresita B. Gonzales</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">VALUE STREAM MAPPING AS AN EFFECTIVE LEAN MANUFACTURING TOOL IN A CARAGEENAN PRODUCING COMPANY IN THE PHILIPPINES</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("VALUE STREAM MAPPING AS AN EFFECTIVE LEAN MANUFACTURING TOOL IN A CARAGEENAN PRODUCING COMPANY IN THE PHILIPPINES", 'engineering'); ?></div>
                                 </td>
                                 <td><div class="research-author">Antonino D. Carpena & Flocerfida L. Amaya</div></td>
                             </tr>
@@ -1054,19 +1127,19 @@ body {
                         <tbody>
                             <tr>
                                 <td>
-                                    <div class="research-title">BERTHING ALONG SIDE PIER: RISK FACTORS AND SAFETY PRACTICES DURING MOORING AND UNMOORING OPERATIONS</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("BERTHING ALONG SIDE PIER: RISK FACTORS AND SAFETY PRACTICES DURING MOORING AND UNMOORING OPERATIONS", 'maritime'); ?></div>
                                 </td>
                                 <td><div class="research-author">Reynaldo A. Lora, Elpidio P. Onte, Dalisay G. Bantatua & Sherill S. Villaluz</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">RISK FACTORS ASSOCIATED WITH THE SEAFARER'S FREQUENCY AND LEVEL OF FATIGUE</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("RISK FACTORS ASSOCIATED WITH THE SEAFARER'S FREQUENCY AND LEVEL OF FATIGUE", 'maritime'); ?></div>
                                 </td>
                                 <td><div class="research-author">Dalisay G. Bantatua, Nonet A. Cuy, Maximo V. Herrera & Elpidio P. Onte</div></td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="research-title">THE APPRENTICESHIP DIFFICULTIES MANAGED BY SEAFARERS WHILE TRAINING ONBOARD</div>
+                                    <div class="research-title"><?php echo renderResearchTitle("THE APPRENTICESHIP DIFFICULTIES MANAGED BY SEAFARERS WHILE TRAINING ONBOARD", 'maritime'); ?></div>
                                 </td>
                                 <td><div class="research-author">Maximo V. Herrera & Hazel Cortez</div></td>
                             </tr>
