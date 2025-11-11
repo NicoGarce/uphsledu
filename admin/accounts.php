@@ -163,10 +163,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+    } elseif ($action === 'verify_reset_password') {
+        $adminPassword = $_POST['admin_password'] ?? '';
+        $userId = $_POST['user_id'] ?? '';
+        
+        // Verify admin's password
+        if (empty($adminPassword)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Please enter your password']);
+            exit;
+        }
+        
+        if (!password_verify($adminPassword, $user['password'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Invalid password. Please enter your current password.']);
+            exit;
+        }
+        
+        // Get target user info
+        if (empty($userId)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'User ID is required']);
+            exit;
+        }
+        
+        $stmt = $pdo->prepare("SELECT id, username, email, first_name, last_name, role FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $targetUser = $stmt->fetch();
+        
+        if (!$targetUser) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'User not found']);
+            exit;
+        }
+        
+        // Return success with user data to show confirmation
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'user' => [
+                'id' => $targetUser['id'],
+                'name' => $targetUser['first_name'] . ' ' . $targetUser['last_name'],
+                'username' => $targetUser['username'],
+                'email' => $targetUser['email'],
+                'role' => $targetUser['role']
+            ]
+        ]);
+        exit;
     } elseif ($action === 'reset_password') {
         $userId = $_POST['user_id'];
         $newPassword = $_POST['new_password'] ?? '';
         $generatePassword = isset($_POST['generate_password']) && $_POST['generate_password'] === '1';
+        $adminPassword = $_POST['admin_password'] ?? '';
+        
+        // Security: Verify admin password again before resetting
+        if (empty($adminPassword) || !password_verify($adminPassword, $user['password'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Admin password verification failed. Please try again.']);
+            exit;
+        }
         
         // Validation
         if (empty($userId)) {
@@ -180,41 +235,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$targetUser) {
                 $error = 'User not found';
             } else {
-                // Generate password if requested, otherwise use provided password
-                if ($generatePassword) {
-                    // Generate a random 12-character password
-                    $newPassword = bin2hex(random_bytes(6)); // 12 characters
-                } elseif (empty($newPassword)) {
-                    $error = 'Please enter a new password or select generate password';
-                } elseif (strlen($newPassword) < 6) {
-                    $error = 'Password must be at least 6 characters long';
-                }
-                
-                if (empty($error)) {
-                    try {
-                        // Hash the new password
-                        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                        
-                        // Update password
-                        $stmt = $pdo->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?");
-                        $stmt->execute([$hashedPassword, $userId]);
-                        
-                        // Return success with the new password (for display)
-                        header('Content-Type: application/json');
-                        echo json_encode([
-                            'success' => true,
-                            'message' => 'Password reset successfully',
-                            'new_password' => $newPassword,
-                            'user' => [
-                                'id' => $targetUser['id'],
-                                'name' => $targetUser['first_name'] . ' ' . $targetUser['last_name'],
-                                'username' => $targetUser['username'],
-                                'email' => $targetUser['email']
-                            ]
-                        ]);
-                        exit;
-                    } catch (PDOException $e) {
-                        $error = 'Failed to reset password';
+                // Prevent resetting own password through this method (security measure)
+                if ($userId == $_SESSION['user_id']) {
+                    $error = 'You cannot reset your own password through this method. Please use the profile settings.';
+                } else {
+                    // Generate password if requested, otherwise use provided password
+                    if ($generatePassword) {
+                        // Generate a random 12-character password
+                        $newPassword = bin2hex(random_bytes(6)); // 12 characters
+                    } elseif (empty($newPassword)) {
+                        $error = 'Please enter a new password or select generate password';
+                    } elseif (strlen($newPassword) < 6) {
+                        $error = 'Password must be at least 6 characters long';
+                    }
+                    
+                    if (empty($error)) {
+                        try {
+                            // Hash the new password
+                            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                            
+                            // Update password
+                            $stmt = $pdo->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?");
+                            $stmt->execute([$hashedPassword, $userId]);
+                            
+                            // Return success with the new password (for display)
+                            header('Content-Type: application/json');
+                            echo json_encode([
+                                'success' => true,
+                                'message' => 'Password reset successfully',
+                                'new_password' => $newPassword,
+                                'user' => [
+                                    'id' => $targetUser['id'],
+                                    'name' => $targetUser['first_name'] . ' ' . $targetUser['last_name'],
+                                    'username' => $targetUser['username'],
+                                    'email' => $targetUser['email']
+                                ]
+                            ]);
+                            exit;
+                        } catch (PDOException $e) {
+                            $error = 'Failed to reset password';
+                        }
                     }
                 }
             }
@@ -443,6 +503,39 @@ $users = $stmt->fetchAll();
         </div>
     </div>
 
+    <!-- Password Verification Modal for Reset -->
+    <div id="resetPasswordVerifyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Verify Your Password</h3>
+                <span class="close" onclick="closeResetPasswordVerifyModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" style="margin-bottom: 15px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Security Verification Required</strong>
+                </div>
+                <p id="resetPasswordVerifyUserInfo" style="margin-bottom: 15px; color: #666;"></p>
+                <p style="margin-bottom: 15px; color: #666;">Please enter your password to confirm this action:</p>
+                <form id="resetPasswordVerifyForm">
+                    <input type="hidden" name="action" value="verify_reset_password">
+                    <input type="hidden" name="user_id" id="verify_reset_user_id">
+                    
+                    <div class="form-group">
+                        <label for="admin_password_verify" class="form-label">Your Password</label>
+                        <input type="password" id="admin_password_verify" name="admin_password" class="form-input" required autocomplete="current-password">
+                        <small style="color: #666; display: block; margin-top: 5px;">Enter your admin password to proceed</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeResetPasswordVerifyModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="verifyResetPassword()">Verify & Continue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Reset Password Modal -->
     <div id="resetPasswordModal" class="modal">
         <div class="modal-content">
@@ -451,10 +544,15 @@ $users = $stmt->fetchAll();
                 <span class="close" onclick="closeResetPasswordModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <p id="resetPasswordUserInfo" style="margin-bottom: 15px; color: #666;"></p>
+                <div class="alert alert-info" style="margin-bottom: 15px;">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Confirming password reset for:</strong>
+                    <div id="resetPasswordUserInfo" style="margin-top: 5px; font-weight: bold;"></div>
+                </div>
                 <form id="resetPasswordForm">
                     <input type="hidden" name="action" value="reset_password">
                     <input type="hidden" name="user_id" id="reset_user_id">
+                    <input type="hidden" name="admin_password" id="reset_admin_password">
                     
                     <div class="form-group">
                         <label class="form-label">
@@ -471,7 +569,7 @@ $users = $stmt->fetchAll();
                     
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeResetPasswordModal()">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="resetPassword()">Reset Password</button>
+                        <button type="button" class="btn btn-primary" onclick="resetPassword()">Confirm Reset Password</button>
                     </div>
                 </form>
             </div>
@@ -645,13 +743,83 @@ $users = $stmt->fetchAll();
         // Reset Password Functions
         let currentResetUserId = null;
         let currentResetUserName = null;
+        let verifiedAdminPassword = null;
 
         function openResetPasswordModal(userId, userName) {
             currentResetUserId = userId;
             currentResetUserName = userName;
             
-            document.getElementById('reset_user_id').value = userId;
-            document.getElementById('resetPasswordUserInfo').textContent = `Reset password for: ${userName}`;
+            // Show verification modal first
+            document.getElementById('verify_reset_user_id').value = userId;
+            document.getElementById('resetPasswordVerifyUserInfo').textContent = `Reset password for: ${userName}`;
+            document.getElementById('resetPasswordVerifyForm').reset();
+            document.getElementById('resetPasswordVerifyModal').style.display = 'block';
+            
+            // Focus on password field
+            setTimeout(() => {
+                document.getElementById('admin_password_verify').focus();
+            }, 100);
+        }
+
+        function closeResetPasswordVerifyModal() {
+            document.getElementById('resetPasswordVerifyModal').style.display = 'none';
+            document.getElementById('resetPasswordVerifyForm').reset();
+            verifiedAdminPassword = null;
+        }
+
+        function verifyResetPassword() {
+            const form = document.getElementById('resetPasswordVerifyForm');
+            const formData = new FormData(form);
+            const adminPassword = document.getElementById('admin_password_verify').value;
+            
+            if (!adminPassword) {
+                alert('Please enter your password');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="button"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            
+            fetch('', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Store verified password for the reset step
+                    verifiedAdminPassword = adminPassword;
+                    closeResetPasswordVerifyModal();
+                    openResetPasswordForm(data.user);
+                } else {
+                    alert(data.message || 'Verification failed');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    document.getElementById('admin_password_verify').focus();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        }
+
+        function openResetPasswordForm(userData) {
+            document.getElementById('reset_user_id').value = userData.id;
+            document.getElementById('reset_admin_password').value = verifiedAdminPassword;
+            document.getElementById('resetPasswordUserInfo').innerHTML = `
+                <div style="margin-top: 5px;">
+                    <strong>${userData.name}</strong><br>
+                    <small>Username: ${userData.username}</small><br>
+                    <small>Email: ${userData.email}</small><br>
+                    <small>Role: ${userData.role.replace('_', ' ').toUpperCase()}</small>
+                </div>
+            `;
             document.getElementById('resetPasswordForm').reset();
             document.getElementById('generate_password').checked = true;
             togglePasswordInput();
@@ -662,6 +830,7 @@ $users = $stmt->fetchAll();
         function closeResetPasswordModal() {
             document.getElementById('resetPasswordModal').style.display = 'none';
             document.getElementById('resetPasswordForm').reset();
+            verifiedAdminPassword = null;
             currentResetUserId = null;
             currentResetUserName = null;
         }
@@ -687,12 +856,30 @@ $users = $stmt->fetchAll();
             const formData = new FormData(form);
             const generatePassword = document.getElementById('generate_password').checked;
             
+            // Double-check admin password is still set
+            if (!verifiedAdminPassword) {
+                alert('Security verification expired. Please start over.');
+                closeResetPasswordModal();
+                return;
+            }
+            
+            // Ensure admin password is in form data
+            formData.set('admin_password', verifiedAdminPassword);
+            
             if (!generatePassword) {
                 const newPassword = document.getElementById('new_password').value;
                 if (!newPassword || newPassword.length < 6) {
                     alert('Please enter a password with at least 6 characters');
                     return;
                 }
+            }
+            
+            // Final confirmation
+            const userId = document.getElementById('reset_user_id').value;
+            const userName = currentResetUserName || 'this user';
+            
+            if (!confirm(`Are you sure you want to reset the password for ${userName}? This action cannot be undone.`)) {
+                return;
             }
             
             // Show loading state
@@ -776,6 +963,7 @@ $users = $stmt->fetchAll();
         window.onclick = function(event) {
             const passwordModal = document.getElementById('passwordModal');
             const editModal = document.getElementById('editModal');
+            const resetPasswordVerifyModal = document.getElementById('resetPasswordVerifyModal');
             const resetPasswordModal = document.getElementById('resetPasswordModal');
             const passwordDisplayModal = document.getElementById('passwordDisplayModal');
             
@@ -784,6 +972,9 @@ $users = $stmt->fetchAll();
             }
             if (event.target === editModal) {
                 closeEditModal();
+            }
+            if (event.target === resetPasswordVerifyModal) {
+                closeResetPasswordVerifyModal();
             }
             if (event.target === resetPasswordModal) {
                 closeResetPasswordModal();
