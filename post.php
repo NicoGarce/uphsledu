@@ -178,10 +178,28 @@ include 'app/includes/header.php';
                     $content = $post['content'];
                     
                     // Decode HTML entities first (for apostrophes, quotes, etc.)
-                    $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+                    $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     
-                    // If content doesn't have HTML tags, convert line breaks to paragraphs and URLs to links
-                    if (strip_tags($content) === $content) {
+                    // Check if content has HTML tags (from TinyMCE or other rich text editor)
+                    $hasHtmlTags = strip_tags($content) !== $content;
+                    
+                    if ($hasHtmlTags) {
+                        // Content already has HTML formatting (from TinyMCE)
+                        // Sanitize to allow only safe HTML tags
+                        $allowedTags = '<p><br><strong><b><em><i><u><s><strike><del><ins><a><ul><ol><li><h1><h2><h3><h4><h5><h6><blockquote><pre><code><span><div><img><table><thead><tbody><tr><td><th>';
+                        $content = strip_tags($content, $allowedTags);
+                        
+                        // Process hashtags in HTML content
+                        $processedContent = preg_replace(
+                            '/(?<!\w)#([a-zA-Z0-9_]+)/',
+                            '<span class="hashtag">#$1</span>',
+                            $content
+                        );
+                        
+                        // Output the formatted HTML content
+                        echo $processedContent;
+                    } else {
+                        // Plain text content - convert line breaks to paragraphs and URLs to links
                         // Split by double line breaks to create paragraphs
                         $paragraphs = preg_split('/\n\s*\n/', $content);
                         foreach ($paragraphs as $paragraph) {
@@ -221,15 +239,6 @@ include 'app/includes/header.php';
                                 echo '<p>' . $paragraph . '</p>';
                             }
                         }
-                    } else {
-                        // Content already has HTML, but we still want to process hashtags
-                        // Process hashtags in HTML content
-                        $processedContent = preg_replace(
-                            '/(?<!\w)#([a-zA-Z0-9_]+)/',
-                            '<span class="hashtag">#$1</span>',
-                            $content
-                        );
-                        echo $processedContent;
                     }
                     ?>
                 </div>
