@@ -264,10 +264,16 @@ foreach ($allCategoriesRaw as $cat) {
         <div class="dashboard-section">
             <div class="section-header">
                 <h2 class="section-title">All Posts (<span id="postCount"><?php echo count($posts); ?></span>)</h2>
-                <a href="create-post.php" class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Create New Post
-                </a>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="btn btn-info" id="openPdfBrowser" title="Browse PDF Files">
+                        <i class="fas fa-file-pdf"></i>
+                        Browse PDFs
+                    </button>
+                    <a href="create-post.php" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Create New Post
+                    </a>
+                </div>
             </div>
             
         <div class="posts-list" id="postsList">
@@ -347,6 +353,37 @@ foreach ($allCategoriesRaw as $cat) {
                     <button type="submit" class="btn btn-danger">Delete Post</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- PDF Browser Modal -->
+    <div id="pdfBrowserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-file-pdf"></i>
+                    PDF Browser
+                </h3>
+                <span class="close" onclick="closePdfBrowser()">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="search-input-wrapper" style="margin-bottom: 0;">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="pdfSearch" placeholder="Search PDF files..." style="width: 100%;">
+                    </div>
+                </div>
+                <div id="pdfListContainer" style="max-height: 60vh; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; padding: 1rem;">
+                    <div style="text-align: center; padding: 2rem; color: #666;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Loading PDFs...</p>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd; color: #666; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="pdfCount">0</span> PDF file(s) found
+                </div>
+            </div>
         </div>
     </div>
 
@@ -601,9 +638,261 @@ foreach ($allCategoriesRaw as $cat) {
                 closeDeleteModal();
             }
         }
+
+        // PDF Browser Functions
+        let pdfSearchTimeout;
+        const pdfBrowserModal = document.getElementById('pdfBrowserModal');
+        const pdfSearchInput = document.getElementById('pdfSearch');
+        const pdfListContainer = document.getElementById('pdfListContainer');
+        const pdfCount = document.getElementById('pdfCount');
+        const openPdfBrowserBtn = document.getElementById('openPdfBrowser');
+
+        // Open PDF Browser
+        if (openPdfBrowserBtn) {
+            openPdfBrowserBtn.addEventListener('click', function() {
+                pdfBrowserModal.style.display = 'block';
+                loadPDFs();
+            });
+        }
+
+        // Close PDF Browser
+        function closePdfBrowser() {
+            pdfBrowserModal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        if (pdfBrowserModal) {
+            window.addEventListener('click', function(event) {
+                if (event.target === pdfBrowserModal) {
+                    closePdfBrowser();
+                }
+            });
+        }
+
+        // Search PDFs
+        if (pdfSearchInput) {
+            pdfSearchInput.addEventListener('input', function() {
+                clearTimeout(pdfSearchTimeout);
+                pdfSearchTimeout = setTimeout(() => {
+                    loadPDFs(pdfSearchInput.value);
+                }, 300);
+            });
+        }
+
+        // Load PDFs
+        function loadPDFs(search = '') {
+            if (!pdfListContainer) return;
+            
+            pdfListContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: #666;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                    <p>Loading PDFs...</p>
+                </div>
+            `;
+
+            const url = 'ajax-pdf-browser.php' + (search ? '?search=' + encodeURIComponent(search) : '');
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderPDFs(data.files);
+                        if (pdfCount) pdfCount.textContent = data.count;
+                    } else {
+                        pdfListContainer.innerHTML = `
+                            <div style="text-align: center; padding: 2rem; color: #dc3545;">
+                                <i class="fas fa-exclamation-circle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>Error loading PDFs: ${data.error || 'Unknown error'}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    pdfListContainer.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #dc3545;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p>Error loading PDFs: ${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+
+        // Render PDFs
+        function renderPDFs(files) {
+            if (!pdfListContainer) return;
+            
+            if (files.length === 0) {
+                pdfListContainer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #666;">
+                        <i class="fas fa-file-pdf" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        <p>No PDF files found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div style="display: grid; gap: 0.5rem;">';
+            
+            files.forEach(file => {
+                const fileSize = formatFileSize(file.size);
+                const modifiedDate = new Date(file.modified * 1000).toLocaleDateString();
+                const fullPath = file.fullPath.replace(/\\/g, '/');
+                
+                html += `
+                    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 0.6rem 0.75rem; display: flex; align-items: center; gap: 0.75rem; transition: all 0.2s;">
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem;">
+                                <i class="fas fa-file-pdf" style="color: #dc3545; font-size: 0.9rem;"></i>
+                                <strong style="color: #212529; font-size: 0.85rem; word-break: break-word;">${escapeHtml(file.name)}</strong>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #6c757d; margin-bottom: 0.2rem;">
+                                <i class="fas fa-folder" style="font-size: 0.7rem;"></i> ${escapeHtml(file.path.replace(/\\/g, '/'))}
+                            </div>
+                            <div style="font-size: 0.7rem; color: #adb5bd; display: flex; gap: 0.75rem;">
+                                <span><i class="fas fa-hdd" style="font-size: 0.65rem;"></i> ${fileSize}</span>
+                                <span><i class="fas fa-calendar" style="font-size: 0.65rem;"></i> ${modifiedDate}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.4rem; flex-shrink: 0;">
+                            <button class="btn btn-sm btn-primary" onclick="copyPdfLink('${escapeHtml(fullPath)}', '${escapeHtml(file.name)}')" title="Copy Link" style="padding: 0.35rem 0.5rem; font-size: 0.75rem;">
+                                <i class="fas fa-copy" style="font-size: 0.75rem;"></i>
+                            </button>
+                            <a href="${escapeHtml(fullPath)}" target="_blank" class="btn btn-sm btn-info" title="Open PDF" style="padding: 0.35rem 0.5rem; font-size: 0.75rem;">
+                                <i class="fas fa-external-link-alt" style="font-size: 0.75rem;"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            pdfListContainer.innerHTML = html;
+        }
+
+        // Copy PDF Link
+        function copyPdfLink(path, fileName) {
+            // Remove '../' from the beginning if present
+            const cleanPath = path.replace(/^\.\.\//, '');
+            const baseUrl = '<?php 
+                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+                $appRoot = $protocol . $_SERVER['HTTP_HOST'] . dirname(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'));
+                echo rtrim($appRoot, '/');
+            ?>';
+            const fullUrl = baseUrl + '/' + cleanPath;
+            
+            // Create a temporary textarea element
+            const textarea = document.createElement('textarea');
+            textarea.value = fullUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                showNotification('PDF link copied to clipboard!', 'success');
+            } catch (err) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(fullUrl).then(function() {
+                        showNotification('PDF link copied to clipboard!', 'success');
+                    }).catch(function() {
+                        showNotification('Failed to copy link', 'error');
+                    });
+                } else {
+                    showNotification('Failed to copy link', 'error');
+                }
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
     </script>
 
     <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1c4da1;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #f0f0f0;
+            opacity: 0.8;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
         /* Filter Form Styles */
         .filter-form {
             background: white;
