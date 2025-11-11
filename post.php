@@ -191,9 +191,21 @@ include 'app/includes/header.php';
                                 $paragraph = htmlspecialchars($paragraph, ENT_NOQUOTES, 'UTF-8');
                                 
                                 // Convert URLs to clickable links (after escaping)
-                                $paragraph = preg_replace(
-                                    '/(https?:\/\/[^\s]+)/',
-                                    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',
+                                // Improved regex to handle URLs with spaces and encode them properly
+                                $paragraph = preg_replace_callback(
+                                    '/(https?:\/\/[^\s<>"\'\)]+(?:\s+[^\s<>"\'\)]+)*)/',
+                                    function($matches) {
+                                        $url = trim($matches[0]);
+                                        // Remove trailing punctuation that shouldn't be part of URL
+                                        $url = rtrim($url, '.,;:!?');
+                                        // URL encode spaces and other special characters in the href
+                                        $encodedUrl = str_replace(' ', '%20', $url);
+                                        // Also encode other characters that might cause issues
+                                        $encodedUrl = str_replace(['<', '>', '"', "'"], ['%3C', '%3E', '%22', '%27'], $encodedUrl);
+                                        // Keep display text readable (spaces visible)
+                                        $displayUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+                                        return '<a href="' . htmlspecialchars($encodedUrl, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener noreferrer">' . $displayUrl . '</a>';
+                                    },
                                     $paragraph
                                 );
                                 
