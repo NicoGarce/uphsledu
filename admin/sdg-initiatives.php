@@ -24,6 +24,15 @@ $userRole = $_SESSION['user_role'];
 // Set page title for header
 $page_title = 'SDG Initiatives Management';
 
+// Initialize success and error variables
+$success = '';
+$error = '';
+
+// Get success message from URL
+if (isset($_GET['success'])) {
+    $success = urldecode($_GET['success']);
+}
+
 // Handle post updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'update_post') {
@@ -106,17 +115,17 @@ $sdgGoals = [
             <p class="dashboard-subtitle">Create, edit, and manage SDG initiatives posts</p>
         </div>
 
-        <?php if (isset($success)): ?>
+        <?php if (!empty($success)): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i>
-                <?php echo $success; ?>
+                <?php echo htmlspecialchars($success); ?>
             </div>
         <?php endif; ?>
 
-        <?php if (isset($error)): ?>
+        <?php if (!empty($error)): ?>
             <div class="alert alert-error">
                 <i class="fas fa-exclamation-circle"></i>
-                <?php echo $error; ?>
+                <?php echo htmlspecialchars($error); ?>
             </div>
         <?php endif; ?>
 

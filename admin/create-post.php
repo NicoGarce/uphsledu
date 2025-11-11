@@ -280,18 +280,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->commit();
             error_log("Transaction committed successfully");
             
+            // Set success message and redirect to post management
             if ($isEdit) {
-                setFlashMessage('success', 'Post updated successfully!');
+                $successMsg = urlencode('Post updated successfully!');
             } else {
-                setFlashMessage('success', 'Post created successfully!');
+                $successMsg = urlencode('Post created successfully!');
             }
             
-            // Redirect based on user role
-            if (isAuthor()) {
-                redirect('author-dashboard.php');
-            } else {
-                redirect('dashboard.php');
-            }
+            // Redirect to post management with success message
+            header('Location: posts.php?success=' . $successMsg);
+            exit;
             
         } catch (Exception $e) {
             $pdo->rollBack();
@@ -327,6 +325,13 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
             <div class="alert alert-error">
                 <i class="fas fa-exclamation-circle"></i>
                 <?php echo $error; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($success): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <?php echo $success; ?>
             </div>
         <?php endif; ?>
 
