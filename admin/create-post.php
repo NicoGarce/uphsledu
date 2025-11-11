@@ -98,7 +98,38 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     } else {
         $page_title = 'Edit Post';
         // category_id is already in the post data from the SELECT query
+        
+        // Get existing SDG tags for this post
+        $stmt = $pdo->prepare("SELECT sdg_number FROM post_sdg_tags WHERE post_id = ?");
+        $stmt->execute([$postId]);
+        $existingSdgTags = $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
+}
+
+// SDG Goals array for tag selection
+$sdgGoals = [
+    1 => 'No Poverty',
+    2 => 'Zero Hunger',
+    3 => 'Good Health and Well-being',
+    4 => 'Quality Education',
+    5 => 'Gender Equality',
+    6 => 'Clean Water and Sanitation',
+    7 => 'Affordable and Clean Energy',
+    8 => 'Decent Work and Economic Growth',
+    9 => 'Industry, Innovation and Infrastructure',
+    10 => 'Reduced Inequalities',
+    11 => 'Sustainable Cities and Communities',
+    12 => 'Responsible Consumption and Production',
+    13 => 'Climate Action',
+    14 => 'Life Below Water',
+    15 => 'Life on Land',
+    16 => 'Peace, Justice and Strong Institutions',
+    17 => 'Partnerships for the Goals'
+];
+
+// Initialize existingSdgTags if not set
+if (!isset($existingSdgTags)) {
+    $existingSdgTags = [];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -276,6 +307,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
+            // Handle SDG tags (optional)
+            // Delete existing SDG tags for this post
+            $stmt = $pdo->prepare("DELETE FROM post_sdg_tags WHERE post_id = ?");
+            $stmt->execute([$postId]);
+            
+            // Insert new SDG tags if provided
+            if (isset($_POST['sdg_tags']) && is_array($_POST['sdg_tags'])) {
+                $sdgTags = array_filter(array_map('intval', $_POST['sdg_tags']), function($num) {
+                    return $num >= 1 && $num <= 17;
+                });
+                
+                if (!empty($sdgTags)) {
+                    $stmt = $pdo->prepare("INSERT INTO post_sdg_tags (post_id, sdg_number) VALUES (?, ?)");
+                    foreach ($sdgTags as $sdgNumber) {
+                        $stmt->execute([$postId, $sdgNumber]);
+                    }
+                }
+            }
+            
             // Commit transaction
             $pdo->commit();
             error_log("Transaction committed successfully");
@@ -394,6 +444,40 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                     </optgroup>
                 </select>
                 <small class="form-help">Select the program or support service this post relates to. Posts will be displayed on their respective pages.</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-globe"></i>
+                    SDG Tags (Optional)
+                </label>
+                <div class="sdg-tags-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; margin-top: 8px;">
+                    <?php
+                    // Get selected SDG tags
+                    $selectedSdgTags = [];
+                    if ($isEdit && isset($existingSdgTags)) {
+                        $selectedSdgTags = $existingSdgTags;
+                    } elseif (isset($_POST['sdg_tags']) && is_array($_POST['sdg_tags'])) {
+                        $selectedSdgTags = array_map('intval', $_POST['sdg_tags']);
+                    }
+                    
+                    foreach ($sdgGoals as $number => $title): 
+                        $isChecked = in_array($number, $selectedSdgTags);
+                    ?>
+                        <label class="sdg-tag-checkbox" style="display: flex; align-items: center; padding: 4px 8px; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer; transition: all 0.2s; background: <?php echo $isChecked ? '#eff6ff' : '#fff'; ?>; border-color: <?php echo $isChecked ? '#2563eb' : '#e5e7eb'; ?>; font-size: 0.8rem;">
+                            <input type="checkbox" name="sdg_tags[]" value="<?php echo $number; ?>" 
+                                   <?php echo $isChecked ? 'checked' : ''; ?>
+                                   style="margin-right: 6px; cursor: pointer; width: 14px; height: 14px;"
+                                   onchange="this.parentElement.style.background = this.checked ? '#eff6ff' : '#fff'; this.parentElement.style.borderColor = this.checked ? '#2563eb' : '#e5e7eb';">
+                            <span style="font-size: 0.75rem; font-weight: 500; line-height: 1.2;">
+                                <strong>SDG <?php echo $number; ?>:</strong> <span style="font-size: 0.7rem;"><?php echo htmlspecialchars($title); ?></span>
+                            </span>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+                <small class="form-help" style="display: block; margin-top: 6px; color: #6b7280; font-size: 0.8rem;">
+                    <i class="fas fa-info-circle"></i> Select one or more SDG goals to tag this post. Tagged posts will appear in the corresponding SDG modal on the SDG Initiatives page.
+                </small>
             </div>
 
             <div class="form-group">
