@@ -15,13 +15,14 @@ require_once 'app/includes/functions.php';
 $page_title = "SDG Initiatives";
 $base_path = '';
 
-// Fetch SDG initiatives posts
+// Fetch SDG initiatives posts and regular posts with SDG tags
 $pdo = getDBConnection();
 $sdgPosts = [];
 
 try {
+    // Fetch SDG initiatives posts
     $stmt = $pdo->prepare("
-        SELECT p.*, u.first_name, u.last_name 
+        SELECT p.*, u.first_name, u.last_name, 'sdg_initiative' as post_type
         FROM sdg_initiatives_posts p 
         JOIN users u ON p.author_id = u.id 
         WHERE p.status = 'published'
@@ -30,10 +31,46 @@ try {
     $stmt->execute();
     $allSdgPosts = $stmt->fetchAll();
     
-    // Group posts by SDG number
+    // Group SDG posts by SDG number
     foreach ($allSdgPosts as $post) {
+        $post['post_type'] = 'sdg_initiative';
         $sdgPosts[$post['sdg_number']][] = $post;
     }
+    
+    // Fetch regular posts with SDG tags (including featured image)
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.first_name, u.last_name, t.sdg_number, 'regular_post' as post_type
+        FROM posts p 
+        JOIN users u ON p.author_id = u.id 
+        JOIN post_sdg_tags t ON p.id = t.post_id
+        WHERE p.status = 'published'
+        ORDER BY p.published_at DESC, p.created_at DESC
+    ");
+    $stmt->execute();
+    $taggedPosts = $stmt->fetchAll();
+    
+    // For regular posts, ensure featured_image is set (it's already in the posts table)
+    
+    // Group tagged posts by SDG number
+    foreach ($taggedPosts as $post) {
+        $post['post_type'] = 'regular_post';
+        $sdgNumber = $post['sdg_number'];
+        if (!isset($sdgPosts[$sdgNumber])) {
+            $sdgPosts[$sdgNumber] = [];
+        }
+        $sdgPosts[$sdgNumber][] = $post;
+    }
+    
+    // Sort posts within each SDG by published date (newest first)
+    foreach ($sdgPosts as $sdgNumber => &$posts) {
+        usort($posts, function($a, $b) {
+            $dateA = $a['published_at'] ?: $a['created_at'];
+            $dateB = $b['published_at'] ?: $b['created_at'];
+            return strtotime($dateB) - strtotime($dateA);
+        });
+    }
+    unset($posts);
+    
 } catch (PDOException $e) {
     // Handle error silently for now
     $sdgPosts = [];
@@ -1253,29 +1290,37 @@ function displaySdgPosts(goalNumber) {
         // Generate HTML for posts
         let postsHTML = '';
         sdgPostsData[goalNumber].forEach(post => {
-            const publishedDate = new Date(post.published_at).toLocaleDateString('en-US', {
+            const publishedDate = new Date(post.published_at || post.created_at).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
             
+            // Determine post link based on post type
+            const postLink = post.post_type === 'regular_post' 
+                ? `post.php?slug=${post.slug}` 
+                : `sdg-post.php?slug=${post.slug}`;
+            
+            // Get featured image - check different possible fields
+            const featuredImage = post.featured_image || (post.images && post.images[0] && post.images[0].image_path) || '';
+            
             postsHTML += `
                 <div class="sdg-post-item">
                     <div class="sdg-post-title">${post.title}</div>
-                    ${post.featured_image ? `<div class="sdg-post-image"><img src="${post.featured_image}" alt="${post.title}" /></div>` : ''}
+                    ${featuredImage ? `<div class="sdg-post-image"><img src="${featuredImage}" alt="${post.title}" /></div>` : ''}
                     <div class="sdg-post-content">
                         <div class="sdg-excerpt">
                             ${(() => {
                                 // Extract first paragraph
                                 const tempDiv = document.createElement('div');
-                                tempDiv.innerHTML = post.content;
-                                const firstParagraph = tempDiv.querySelector('p')?.textContent || post.content.split('\n')[0] || post.content.substring(0, 200);
+                                tempDiv.innerHTML = post.content || '';
+                                const firstParagraph = tempDiv.querySelector('p')?.textContent || (post.content ? post.content.split('\n')[0] : '') || (post.content ? post.content.substring(0, 200) : '');
                                 // Remove leading spaces, tabs, and non-breaking spaces
-                                return firstParagraph.trim().replace(/^[\s\u00A0]+/, '');
-                            })()}...
+                                return firstParagraph ? firstParagraph.trim().replace(/^[\s\u00A0]+/, '') : '';
+                            })()}${post.content && post.content.length > 200 ? '...' : ''}
                         </div>
                         <div style="text-align: center;">
-                            <a class="read-more-btn" href="sdg-post.php?slug=${post.slug}">Read More</a>
+                            <a class="read-more-btn" href="${postLink}">Read More</a>
                         </div>
                     </div>
                     <div class="sdg-post-meta">
