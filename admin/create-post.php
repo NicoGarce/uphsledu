@@ -482,7 +482,7 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
             </div>
 
             <div class="form-actions">
-                <a href="<?php echo isAuthor() ? 'author-dashboard.php' : 'dashboard.php'; ?>" class="btn btn-secondary">
+                <a href="posts.php" class="btn btn-secondary">
                     <i class="fas fa-times"></i>
                     Cancel
                 </a>
