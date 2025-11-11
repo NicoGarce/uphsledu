@@ -273,16 +273,16 @@ foreach ($allCategoriesRaw as $cat) {
         <div class="dashboard-section">
             <div class="section-header">
                 <h2 class="section-title">All Posts (<span id="postCount"><?php echo count($posts); ?></span>)</h2>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="button" class="btn btn-info" id="openPdfBrowser" title="Browse PDF Files">
-                        <i class="fas fa-file-pdf"></i>
-                        Browse PDFs
-                    </button>
-                    <a href="create-post.php" class="btn btn-primary">
-                        <i class="fas fa-plus"></i>
-                        Create New Post
-                    </a>
-                </div>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 20px;">
+                <button type="button" class="btn btn-info" id="openPdfBrowser" title="Browse PDF Files">
+                    <i class="fas fa-file-pdf"></i>
+                    Browse PDFs
+                </button>
+                <a href="create-post.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Create New Post
+                </a>
             </div>
             
         <div class="posts-list" id="postsList">
