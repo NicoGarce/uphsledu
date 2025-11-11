@@ -61,16 +61,113 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
 }
 
-// Get all posts with author information
-$stmt = $pdo->prepare("
-    SELECT p.*, u.first_name, u.last_name, 
-           CONCAT(u.first_name, ' ', u.last_name) as author_name
+// Get filter parameters
+$search = $_GET['search'] ?? '';
+$statusFilter = $_GET['status'] ?? '';
+$categoryFilter = $_GET['category'] ?? '';
+$dateRange = $_GET['date_range'] ?? '';
+
+// Build query with filters
+$sql = "
+    SELECT p.id, p.title, p.slug, p.status, p.created_at, p.published_at, p.category_id,
+           u.first_name, u.last_name, 
+           CONCAT(u.first_name, ' ', u.last_name) as author_name,
+           COALESCE(c.name, 'University News') as category_name
     FROM posts p 
     JOIN users u ON p.author_id = u.id 
-    ORDER BY p.created_at DESC
-");
-$stmt->execute();
-$posts = $stmt->fetchAll();
+    LEFT JOIN categories c ON p.category_id = c.id
+    WHERE 1=1
+";
+
+$params = [];
+
+// Filter by author if user is an author
+if (isAuthor()) {
+    $sql .= " AND p.author_id = ?";
+    $params[] = $_SESSION['user_id'];
+}
+
+// Search filter
+if (!empty($search)) {
+    $sql .= " AND (p.title LIKE ? OR p.content LIKE ? OR p.excerpt LIKE ?)";
+    $searchTerm = "%{$search}%";
+    $params[] = $searchTerm;
+    $params[] = $searchTerm;
+    $params[] = $searchTerm;
+}
+
+// Status filter
+if (!empty($statusFilter) && in_array($statusFilter, ['draft', 'published', 'archived'])) {
+    $sql .= " AND p.status = ?";
+    $params[] = $statusFilter;
+}
+
+// Category filter
+if (!empty($categoryFilter)) {
+    if ($categoryFilter === 'university-news') {
+        // Filter for posts with null category (University News)
+        $sql .= " AND p.category_id IS NULL";
+    } elseif (is_numeric($categoryFilter)) {
+        $sql .= " AND p.category_id = ?";
+        $params[] = (int)$categoryFilter;
+    } else {
+        $cat = getCategoryByName($categoryFilter);
+        if ($cat) {
+            $sql .= " AND p.category_id = ?";
+            $params[] = $cat['id'];
+        }
+    }
+}
+
+// Date range filter
+if (!empty($dateRange)) {
+    $today = date('Y-m-d');
+    switch ($dateRange) {
+        case 'today':
+            $sql .= " AND DATE(p.created_at) = ?";
+            $params[] = $today;
+            break;
+        case 'week':
+            $sql .= " AND p.created_at >= DATE_SUB(?, INTERVAL 1 WEEK)";
+            $params[] = $today;
+            break;
+        case 'month':
+            $sql .= " AND p.created_at >= DATE_SUB(?, INTERVAL 1 MONTH)";
+            $params[] = $today;
+            break;
+        case 'year':
+            $sql .= " AND p.created_at >= DATE_SUB(?, INTERVAL 1 YEAR)";
+            $params[] = $today;
+            break;
+    }
+}
+
+$sql .= " ORDER BY p.created_at DESC";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$postsRaw = $stmt->fetchAll();
+
+// Remove duplicates by post ID
+$posts = [];
+$seenIds = [];
+foreach ($postsRaw as $post) {
+    if (!in_array($post['id'], $seenIds)) {
+        $posts[] = $post;
+        $seenIds[] = $post['id'];
+    }
+}
+
+// Get all categories for filter dropdown (remove duplicates)
+$allCategoriesRaw = getAllCategories();
+$allCategories = [];
+$seenNames = [];
+foreach ($allCategoriesRaw as $cat) {
+    if (!in_array($cat['name'], $seenNames)) {
+        $allCategories[] = $cat;
+        $seenNames[] = $cat['name'];
+    }
+}
 ?>
 
 <?php include '../app/includes/admin-header.php'; ?>
@@ -99,17 +196,81 @@ $posts = $stmt->fetchAll();
             </div>
         <?php endif; ?>
 
+        <!-- Search and Filters -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">Search & Filters</h2>
+            </div>
+            <form method="GET" class="filter-form" id="filterForm">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="search">Search</label>
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" name="search" id="search" 
+                                   placeholder="Search posts by title or content..." 
+                                   value="<?php echo htmlspecialchars($search); ?>">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="status">Status</label>
+                        <select name="status" id="status">
+                            <option value="">All Statuses</option>
+                            <option value="draft" <?php echo $statusFilter === 'draft' ? 'selected' : ''; ?>>Draft</option>
+                            <option value="published" <?php echo $statusFilter === 'published' ? 'selected' : ''; ?>>Published</option>
+                            <option value="archived" <?php echo $statusFilter === 'archived' ? 'selected' : ''; ?>>Archived</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="category">Category</label>
+                        <select name="category" id="category">
+                            <option value="">All Categories</option>
+                            <option value="university-news" <?php echo ($categoryFilter === 'university-news') ? 'selected' : ''; ?>>
+                                University News
+                            </option>
+                            <?php foreach ($allCategories as $cat): ?>
+                                <option value="<?php echo $cat['id']; ?>" 
+                                        <?php echo ($categoryFilter == $cat['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($cat['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="date_range">Date Range</label>
+                        <select name="date_range" id="date_range">
+                            <option value="">All Time</option>
+                            <option value="today" <?php echo $dateRange === 'today' ? 'selected' : ''; ?>>Today</option>
+                            <option value="week" <?php echo $dateRange === 'week' ? 'selected' : ''; ?>>Last Week</option>
+                            <option value="month" <?php echo $dateRange === 'month' ? 'selected' : ''; ?>>Last Month</option>
+                            <option value="year" <?php echo $dateRange === 'year' ? 'selected' : ''; ?>>Last Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button type="button" class="btn btn-secondary" id="clearFilters">
+                        <i class="fas fa-times"></i>
+                        Clear Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+
         <!-- Posts Table -->
         <div class="dashboard-section">
             <div class="section-header">
-                <h2 class="section-title">All Posts</h2>
+                <h2 class="section-title">All Posts (<span id="postCount"><?php echo count($posts); ?></span>)</h2>
                 <a href="create-post.php" class="btn btn-primary">
                     <i class="fas fa-plus"></i>
                     Create New Post
                 </a>
             </div>
             
-        <div class="posts-list">
+        <div class="posts-list" id="postsList">
             <?php foreach ($posts as $post): ?>
                 <div class="post-item">
                     <div class="post-info">
@@ -122,20 +283,28 @@ $posts = $stmt->fetchAll();
                             <span class="post-status status-<?php echo $post['status']; ?>">
                                 <?php echo ucfirst($post['status']); ?>
                             </span>
+                            <span class="post-category">
+                                <i class="fas fa-folder"></i>
+                                <?php echo htmlspecialchars($post['category_name']); ?>
+                            </span>
                             <span class="post-date">
+                                <i class="fas fa-calendar"></i>
                                 Created: <?php echo date('M j, Y', strtotime($post['created_at'])); ?>
                             </span>
                             <?php if ($post['published_at']): ?>
                                 <span class="post-date">
+                                    <i class="fas fa-clock"></i>
                                     Published: <?php echo date('M j, Y', strtotime($post['published_at'])); ?>
                                 </span>
                             <?php else: ?>
                                 <span class="post-date text-muted">
+                                    <i class="fas fa-clock"></i>
                                     Not published
                                 </span>
                             <?php endif; ?>
                             <span class="post-author">
-                                by University of Perpetual Help System Laguna
+                                <i class="fas fa-user"></i>
+                                by <?php echo htmlspecialchars($post['author_name']); ?>
                             </span>
                         </div>
                     </div>
@@ -182,6 +351,141 @@ $posts = $stmt->fetchAll();
     </div>
 
     <script>
+        // AJAX Search and Filter
+        let isLoading = false;
+        let searchTimeout;
+        
+        const filterForm = document.getElementById('filterForm');
+        const searchInput = document.getElementById('search');
+        const statusSelect = document.getElementById('status');
+        const categorySelect = document.getElementById('category');
+        const dateRangeSelect = document.getElementById('date_range');
+        const postsList = document.getElementById('postsList');
+        const postCount = document.getElementById('postCount');
+        
+        // Function to load posts via AJAX
+        function loadPosts() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            postsList.style.opacity = '0.6';
+            postsList.style.pointerEvents = 'none';
+            
+            const params = new URLSearchParams({
+                search: searchInput.value,
+                status: statusSelect.value,
+                category: categorySelect.value,
+                date_range: dateRangeSelect.value
+            });
+            
+            fetch(`ajax-posts.php?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderPosts(data.posts);
+                        postCount.textContent = data.count;
+                    } else {
+                        console.error('Error:', data.error);
+                        showNotification('Error loading posts: ' + (data.error || 'Unknown error'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error loading posts', 'error');
+                })
+                .finally(() => {
+                    isLoading = false;
+                    postsList.style.opacity = '1';
+                    postsList.style.pointerEvents = 'auto';
+                });
+        }
+        
+        // Function to render posts
+        function renderPosts(posts) {
+            if (posts.length === 0) {
+                postsList.innerHTML = '<div class="no-posts"><p>No posts found matching your filters.</p></div>';
+                return;
+            }
+            
+            let html = '';
+            posts.forEach(post => {
+                const publishedDate = post.published_date ? 
+                    `<span class="post-date"><i class="fas fa-clock"></i> Published: ${post.published_date}</span>` :
+                    `<span class="post-date text-muted"><i class="fas fa-clock"></i> Not published</span>`;
+                
+                const copyButton = post.status === 'published' ?
+                    `<button class="btn btn-sm btn-info" onclick="copyPostLink('${post.slug}')" title="Copy Post Link"><i class="fas fa-copy"></i></button>` :
+                    '';
+                
+                html += `
+                    <div class="post-item">
+                        <div class="post-info">
+                            <h3 class="post-title">
+                                <a href="create-post.php?edit=${post.id}">${escapeHtml(post.title)}</a>
+                            </h3>
+                            <div class="post-meta">
+                                <span class="post-status status-${post.status}">${capitalizeFirst(post.status)}</span>
+                                <span class="post-category"><i class="fas fa-folder"></i> ${escapeHtml(post.category_name)}</span>
+                                <span class="post-date"><i class="fas fa-calendar"></i> Created: ${post.created_date}</span>
+                                ${publishedDate}
+                                <span class="post-author"><i class="fas fa-user"></i> by ${escapeHtml(post.author_name)}</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <a href="create-post.php?edit=${post.id}" class="btn btn-sm btn-primary" title="Edit Post">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            ${copyButton}
+                            <button class="btn btn-sm btn-danger" onclick="deletePost(${post.id})" title="Delete Post">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            postsList.innerHTML = html;
+        }
+        
+        // Helper functions
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        // Clear filters function
+        function clearFilters() {
+            searchInput.value = '';
+            statusSelect.value = '';
+            categorySelect.value = '';
+            dateRangeSelect.value = '';
+            loadPosts();
+        }
+        
+        // Event listeners
+        // Prevent form submission (filters work automatically)
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+        
+        // Clear filters button
+        document.getElementById('clearFilters').addEventListener('click', clearFilters);
+        
+        // Debounced search
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(loadPosts, 500);
+        });
+        
+        // Immediate filter on select change
+        statusSelect.addEventListener('change', loadPosts);
+        categorySelect.addEventListener('change', loadPosts);
+        dateRangeSelect.addEventListener('change', loadPosts);
         
         function deletePost(postId) {
             document.getElementById('delete_post_id').value = postId;
@@ -299,5 +603,134 @@ $posts = $stmt->fetchAll();
         }
     </script>
 
+    <style>
+        /* Filter Form Styles */
+        .filter-form {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(28, 77, 161, 0.1);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .search-input-wrapper input {
+            padding-left: 40px;
+            width: 100%;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .post-category {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .post-category i {
+            font-size: 12px;
+        }
+
+        .post-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .post-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .post-meta span i {
+            font-size: 12px;
+        }
+
+        .no-posts {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .no-posts p {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .filter-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
 
 <?php include '../app/includes/admin-footer.php'; ?>
