@@ -28,6 +28,11 @@ $pdo = getDBConnection();
 $error = '';
 $success = '';
 
+// Get success message from URL
+if (isset($_GET['success'])) {
+    $success = urldecode($_GET['success']);
+}
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -158,6 +163,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+    } elseif ($action === 'reset_password') {
+        $userId = $_POST['user_id'];
+        $newPassword = $_POST['new_password'] ?? '';
+        $generatePassword = isset($_POST['generate_password']) && $_POST['generate_password'] === '1';
+        
+        // Validation
+        if (empty($userId)) {
+            $error = 'User ID is required';
+        } else {
+            // Check if user exists
+            $stmt = $pdo->prepare("SELECT id, username, email, first_name, last_name FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $targetUser = $stmt->fetch();
+            
+            if (!$targetUser) {
+                $error = 'User not found';
+            } else {
+                // Generate password if requested, otherwise use provided password
+                if ($generatePassword) {
+                    // Generate a random 12-character password
+                    $newPassword = bin2hex(random_bytes(6)); // 12 characters
+                } elseif (empty($newPassword)) {
+                    $error = 'Please enter a new password or select generate password';
+                } elseif (strlen($newPassword) < 6) {
+                    $error = 'Password must be at least 6 characters long';
+                }
+                
+                if (empty($error)) {
+                    try {
+                        // Hash the new password
+                        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                        
+                        // Update password
+                        $stmt = $pdo->prepare("UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?");
+                        $stmt->execute([$hashedPassword, $userId]);
+                        
+                        // Return success with the new password (for display)
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Password reset successfully',
+                            'new_password' => $newPassword,
+                            'user' => [
+                                'id' => $targetUser['id'],
+                                'name' => $targetUser['first_name'] . ' ' . $targetUser['last_name'],
+                                'username' => $targetUser['username'],
+                                'email' => $targetUser['email']
+                            ]
+                        ]);
+                        exit;
+                    } catch (PDOException $e) {
+                        $error = 'Failed to reset password';
+                    }
+                }
+            }
+        }
+        
+        // If we get here, there was an error
+        if (!empty($error)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => $error]);
+            exit;
+        }
     }
 }
 
@@ -279,14 +347,19 @@ $users = $stmt->fetchAll();
                             <button type="button" class="btn btn-sm btn-secondary" onclick="openEditModal(<?php echo $account['id']; ?>)">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <?php if (isSuperAdmin() && $account['id'] != $_SESSION['user_id']): ?>
-                                <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account?')">
-                                    <input type="hidden" name="action" value="delete_user">
-                                    <input type="hidden" name="user_id" value="<?php echo $account['id']; ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                            <?php if (isSuperAdmin()): ?>
+                                <button type="button" class="btn btn-sm btn-warning" onclick="openResetPasswordModal(<?php echo $account['id']; ?>, '<?php echo htmlspecialchars($account['first_name'] . ' ' . $account['last_name'], ENT_QUOTES); ?>')" title="Reset Password">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                                <?php if ($account['id'] != $_SESSION['user_id']): ?>
+                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account?')">
+                                        <input type="hidden" name="action" value="delete_user">
+                                        <input type="hidden" name="user_id" value="<?php echo $account['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -366,6 +439,71 @@ $users = $stmt->fetchAll();
                         <button type="submit" class="btn btn-primary">Update User</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Reset Password</h3>
+                <span class="close" onclick="closeResetPasswordModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="resetPasswordUserInfo" style="margin-bottom: 15px; color: #666;"></p>
+                <form id="resetPasswordForm">
+                    <input type="hidden" name="action" value="reset_password">
+                    <input type="hidden" name="user_id" id="reset_user_id">
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="generate_password" name="generate_password" value="1" checked onchange="togglePasswordInput()">
+                            Generate random password
+                        </label>
+                    </div>
+                    
+                    <div class="form-group" id="passwordInputGroup" style="display: none;">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" id="new_password" name="new_password" class="form-input" minlength="6" placeholder="Enter new password (min. 6 characters)">
+                        <small style="color: #666; display: block; margin-top: 5px;">Password must be at least 6 characters long</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeResetPasswordModal()">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="resetPassword()">Reset Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Display Modal -->
+    <div id="passwordDisplayModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Password Reset Successful</h3>
+                <span class="close" onclick="closePasswordDisplayModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">The password has been reset successfully for:</p>
+                <p id="passwordDisplayUserInfo" style="margin-bottom: 20px; font-weight: bold; color: #333;"></p>
+                <div class="form-group">
+                    <label class="form-label">New Password:</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="displayed_password" class="form-input" readonly style="font-family: monospace; font-size: 16px; letter-spacing: 2px;">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="copyPassword()" title="Copy password">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="alert alert-warning" style="margin-top: 15px;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Important:</strong> Please save this password securely. It will not be shown again.
+                </div>
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button type="button" class="btn btn-primary" onclick="closePasswordDisplayModal()">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -504,16 +642,154 @@ $users = $stmt->fetchAll();
             document.getElementById('editModal').style.display = 'block';
         }
 
+        // Reset Password Functions
+        let currentResetUserId = null;
+        let currentResetUserName = null;
+
+        function openResetPasswordModal(userId, userName) {
+            currentResetUserId = userId;
+            currentResetUserName = userName;
+            
+            document.getElementById('reset_user_id').value = userId;
+            document.getElementById('resetPasswordUserInfo').textContent = `Reset password for: ${userName}`;
+            document.getElementById('resetPasswordForm').reset();
+            document.getElementById('generate_password').checked = true;
+            togglePasswordInput();
+            
+            document.getElementById('resetPasswordModal').style.display = 'block';
+        }
+
+        function closeResetPasswordModal() {
+            document.getElementById('resetPasswordModal').style.display = 'none';
+            document.getElementById('resetPasswordForm').reset();
+            currentResetUserId = null;
+            currentResetUserName = null;
+        }
+
+        function togglePasswordInput() {
+            const generateCheckbox = document.getElementById('generate_password');
+            const passwordInputGroup = document.getElementById('passwordInputGroup');
+            const passwordInput = document.getElementById('new_password');
+            
+            if (generateCheckbox.checked) {
+                passwordInputGroup.style.display = 'none';
+                passwordInput.removeAttribute('required');
+                passwordInput.value = '';
+            } else {
+                passwordInputGroup.style.display = 'block';
+                passwordInput.setAttribute('required', 'required');
+                passwordInput.focus();
+            }
+        }
+
+        function resetPassword() {
+            const form = document.getElementById('resetPasswordForm');
+            const formData = new FormData(form);
+            const generatePassword = document.getElementById('generate_password').checked;
+            
+            if (!generatePassword) {
+                const newPassword = document.getElementById('new_password').value;
+                if (!newPassword || newPassword.length < 6) {
+                    alert('Please enter a password with at least 6 characters');
+                    return;
+                }
+            }
+            
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="button"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+            
+            fetch('', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeResetPasswordModal();
+                    showPasswordDisplay(data);
+                } else {
+                    alert(data.message || 'Failed to reset password');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        }
+
+        function showPasswordDisplay(data) {
+            document.getElementById('passwordDisplayUserInfo').textContent = 
+                `${data.user.name} (${data.user.username})`;
+            document.getElementById('displayed_password').value = data.new_password;
+            document.getElementById('passwordDisplayModal').style.display = 'block';
+        }
+
+        function closePasswordDisplayModal() {
+            document.getElementById('passwordDisplayModal').style.display = 'none';
+            // Reload page with success message
+            window.location.href = 'accounts.php?success=' + encodeURIComponent('Password reset successfully');
+        }
+
+        function copyPassword() {
+            const passwordInput = document.getElementById('displayed_password');
+            passwordInput.select();
+            passwordInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                document.execCommand('copy');
+                // Show temporary feedback
+                const copyBtn = event.target.closest('button');
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.style.backgroundColor = '#28a745';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.style.backgroundColor = '';
+                }, 2000);
+            } catch (err) {
+                // Fallback for modern browsers
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(passwordInput.value).then(() => {
+                        const copyBtn = event.target.closest('button');
+                        const originalHTML = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.style.backgroundColor = '#28a745';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalHTML;
+                            copyBtn.style.backgroundColor = '';
+                        }, 2000);
+                    });
+                } else {
+                    alert('Failed to copy password. Please select and copy manually.');
+                }
+            }
+        }
+
         // Close modals when clicking outside
         window.onclick = function(event) {
             const passwordModal = document.getElementById('passwordModal');
             const editModal = document.getElementById('editModal');
+            const resetPasswordModal = document.getElementById('resetPasswordModal');
+            const passwordDisplayModal = document.getElementById('passwordDisplayModal');
             
             if (event.target === passwordModal) {
                 closePasswordModal();
             }
             if (event.target === editModal) {
                 closeEditModal();
+            }
+            if (event.target === resetPasswordModal) {
+                closeResetPasswordModal();
+            }
+            if (event.target === passwordDisplayModal) {
+                closePasswordDisplayModal();
             }
         }
     </script>

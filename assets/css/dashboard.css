@@ -333,6 +333,15 @@
     background: #dc2626;
 }
 
+.btn-warning {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #d97706;
+}
+
 /* User Menu */
 .user-menu {
     display: flex;
