@@ -30,12 +30,6 @@ include '../app/includes/header.php';
                                     </div>
                                     <h2>Community Outreach Department</h2>
                                     <p class="intro-description">The Community Outreach Department is responsible for the implementation of community outreach and extension programs of the university. Its main objectives include, but are not limited to, improvement of health status of a community, enhancement of literacy of the community members, and cultivation of values and culture toward attaining improved quality of life as we exercise our virtue that Perpetualites are helpers of God.</p>
-                                    <div class="intro-actions">
-                                        <a href="#programs" class="btn btn-primary">
-                                            <i class="fas fa-arrow-right"></i>
-                                            Learn More
-                                        </a>
-                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -47,137 +41,6 @@ include '../app/includes/header.php';
     $sectionDescription = 'Stay updated with the latest news and announcements from the Community Outreach Department.';
     include '../app/includes/news-carousel.php';
     ?>
-
-                        <!-- Programs Timeline Section -->
-                        <section id="programs" class="programs-timeline-section">
-                            <div class="container">
-                                <h2>Community Outreach Programs</h2>
-                                <p class="section-subtitle">A comprehensive timeline of our community outreach initiatives and their lasting impact</p>
-                                
-                                <div class="programs-timeline">
-                                    <!-- 2025 Programs -->
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">April 2025</div>
-                                        <div class="timeline-content">
-                                            <h4>Bankstreet Child Learning Center</h4>
-                                            <p>The G.R.E.E.N. Program is a three part initiative designed to cultivate environmental awareness and action among students and local communities. It began with Green Tales, a storytelling and illustration activity that taught children about nature and sustainability through creative expression.</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                        <!-- Example photo - replace with actual image path -->
-                                        <!-- <img src="<?php echo $base_path; ?>assets/images/cod/program-photo.jpg" alt="Bankstreet Child Learning Center" class="timeline-photo"> -->
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">March 2025</div>
-                                        <div class="timeline-content">
-                                            <h4>Faith and Virtue</h4>
-                                            <p>The Faith and Virtue program is an initiative led by the Servers of God Ministry, in collaboration with FCL700 students and the UPHSL Community Outreach Department. It is a community outreach effort aimed at guiding young individuals in their spiritual development by preparing them for and helping them experience the sacraments, such as Baptism, First Communion, Confirmation, Reconciliation.</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">March 2025</div>
-                                        <div class="timeline-content">
-                                            <h4>Growing Responsibility and Empowering Environmental Knowledge</h4>
-                                            <p>The G.R.E.E.N. Program is a three part initiative designed to cultivate environmental awareness and action among students and local communities</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">March 2025</div>
-                                        <div class="timeline-content">
-                                            <h4>PerpetualLife: One Heart, One Goal</h4>
-                                            <p>In times of crisis, the true heart of the Perpetualite shines. This was once again proven through PerpetuaLIFE: One Heart, One Goal, a compassionate initiative by the Community Outreach Department and the Perpetualite Nation Builders (PNB)</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">February 2025</div>
-                                        <div class="timeline-content">
-                                            <h4>Binhi ng Kaalaman</h4>
-                                            <p>The University of Perpetual Help System Laguna's Community Outreach Department, in collaboration with Perpetualite Nation Builders, conducted an environmental awareness initiative at Dr. Jose G. Tamayo Memorial Elementary School in San Pedro, Laguna</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">October 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>Perpetualite Journey</h4>
-                                            <p>October 17, 2024, our section BM4A held a community outreach program at Pedro H. Escueta Memorial Elementary School called Perpetualite Journey: Promoting Health and Character Development. The initiative's goal was to engage sixth-grade students in discussions about health and character, providing them with essential knowledge and skills for their personal and social growth.</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <!-- 2024 Programs -->
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">June 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>Arbor Allies</h4>
-                                            <p>The event commenced with an opening ceremony where key officials from the City Government of Santa Rosa and Nuvali addressed the participants. They emphasized the importance of collective efforts in environmental conservation and the specific goals of the day's activities.</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">June 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>JCI Manila International</h4>
-                                            <p>The Community Outreach Department of the University of Perpetual Help System Laguna (UPHSL) - Biñan Campus proudly played a central role in the university's participation in the nationwide bloodletting event, "Juan for All: National Blood Letting Activity.</p>
-                                            <a href="<?= $base_path ?>assets/documents/pdfs/2024/June/6.%20JCI%20Manila%20Bloodletting%20Project.pdf" target="_blank" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">June 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>Operation Manhood</h4>
-                                            <p>The tradition and somehow poverty among Filipino families, many lads are at risk of botched circumcisions performed by unqualified operators. Circumcision or "Tuli" is considered a rite of passage into manhood</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">May 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>Electrical Safety and Solar Street Light Installation</h4>
-                                            <p>We had the honor of serving as the program chair for our schools annual Community Outreach Program (COP) held at the Municipality of Siniloan, Laguna. Community outreach programs are a vital aspect of our school's mission to provide a holistic education</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">March 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>Basic Safety of Computer Trouble Shooting</h4>
-                                            <p>MicroSociety, the Computer Engineering Society, held its first community outreach program, "Basic Safety of Computer Troubleshooting: Hands-on Workshop,"</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">March 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>Catch-Up Friday</h4>
-                                            <p>There is immense power when a group of people with similar interests gets together to work toward the same goal.</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="timeline-item">
-                                        <div class="timeline-date">March 2024</div>
-                                        <div class="timeline-content">
-                                            <h4>Electrical Safety And Fire Prevention</h4>
-                                            <p>The Community Outreach Program on Electrical Safety and Fire Prevention held at Dr. Jose G. Tamayo Memorial Elementary School on March 16, 2024, was a resounding success. Under the guidance of Ms. Clarisse Anne Lebios and Dean Dr. Flocerfida L. Amaya, and with the invaluable support of Engr. Rodolfo V. Mendoza</p>
-                                            <a href="#" class="program-link">Read More</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
 
                         <!-- Mission, Vision, Philosophy Section -->
                         <section class="mvp-section">
@@ -394,152 +257,6 @@ include '../app/includes/header.php';
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
 
-    .programs-timeline-section {
-        padding: 4rem 0;
-        background: #f8f9fa;
-    }
-
-    .programs-timeline-section h2 {
-        color: var(--primary-color);
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        text-align: center;
-        font-weight: 700;
-    }
-
-    .section-subtitle {
-        text-align: center;
-        color: #666;
-        font-size: 1.1rem;
-        margin-bottom: 3rem;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .programs-timeline {
-        position: relative;
-        padding-left: 2rem;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .programs-timeline::before {
-        content: '';
-        position: absolute;
-        left: 1rem;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
-        border-radius: 2px;
-    }
-
-    .timeline-item {
-        position: relative;
-        margin-bottom: 3rem;
-        padding-left: 2rem;
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        display: flex;
-        gap: 2rem;
-        align-items: flex-start;
-    }
-
-    .timeline-item:hover {
-        transform: translateX(10px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    }
-
-    .timeline-item::before {
-        content: '';
-        position: absolute;
-        left: -1.75rem;
-        top: 2rem;
-        width: 16px;
-        height: 16px;
-        background: var(--primary-color);
-        border-radius: 50%;
-        border: 4px solid white;
-        box-shadow: 0 0 0 4px var(--primary-color);
-    }
-
-    .timeline-date {
-        background: var(--secondary-color);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: inline-block;
-        margin-bottom: 1rem;
-        min-width: 100px;
-        text-align: center;
-        flex-shrink: 0;
-    }
-
-    .timeline-content {
-        flex: 1;
-    }
-
-    .timeline-content h4 {
-        color: var(--primary-color);
-        font-size: 1.3rem;
-        margin-bottom: 1rem;
-        font-weight: 700;
-        line-height: 1.3;
-    }
-
-    .timeline-content p {
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-    }
-
-    .timeline-photo {
-        width: 200px;
-        height: 150px;
-        border-radius: 10px;
-        object-fit: cover;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        flex-shrink: 0;
-    }
-
-    .program-link {
-        background: var(--primary-color);
-        color: white;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1.2rem;
-        border-radius: 25px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(44, 90, 160, 0.2);
-    }
-
-    .program-link:hover {
-        background: var(--secondary-color);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3);
-        color: white;
-    }
-
-    .program-link::after {
-        content: '→';
-        transition: transform 0.3s ease;
-    }
-
-    .program-link:hover::after {
-        transform: translateX(3px);
-    }
-
     .mvp-section {
         background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         color: white;
@@ -743,25 +460,9 @@ include '../app/includes/header.php';
             font-size: 0.8rem;
         }
 
-        .programs-section h2,
         .objectives-section h2,
         .history-section h2 {
             font-size: 2.2rem;
-        }
-
-        .timeline-item {
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .timeline-date {
-            min-width: auto;
-            align-self: flex-start;
-        }
-
-        .timeline-photo {
-            width: 100%;
-            height: 200px;
         }
 
         .mvp-grid {
@@ -771,18 +472,6 @@ include '../app/includes/header.php';
 
         .mvp-card {
             padding: 2rem;
-        }
-
-        .programs-timeline {
-            padding-left: 2rem;
-        }
-
-        .timeline-item {
-            padding-left: 2rem;
-        }
-
-        .timeline-item::before {
-            left: -1.75rem;
         }
 
         .history-content {
@@ -805,15 +494,12 @@ include '../app/includes/header.php';
             font-size: 2rem;
         }
 
-        .programs-section h2,
         .objectives-section h2,
         .history-section h2 {
             font-size: 1.8rem;
         }
 
-        .program-card,
-        .mvp-card,
-        .timeline-item {
+        .mvp-card {
             padding: 1.5rem;
         }
 
