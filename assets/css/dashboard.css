@@ -1033,6 +1033,69 @@ body.sidebar-open {
     color: var(--alt-color-1);
 }
 
+/* Icon-only nav links */
+.nav-link.icon-only {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    min-width: 40px;
+    font-size: 1.1rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.nav-link.icon-only i {
+    display: block;
+    line-height: 1;
+}
+
+.nav-link.icon-only:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--alt-color-1);
+    transform: translateY(-2px);
+}
+
+.nav-link.icon-only.active {
+    background: rgba(255, 198, 62, 0.2);
+    color: var(--alt-color-1);
+}
+
+.nav-link.icon-only[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    font-weight: 500;
+}
+
+.nav-link.icon-only[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    pointer-events: none;
+}
+
 /* Posts Management Styles */
 .posts-table {
     background: white;

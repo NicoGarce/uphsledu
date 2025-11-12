@@ -61,14 +61,25 @@ $base_path = $GLOBALS['base_path'];
                     <a href="sdg-full-report.php" class="nav-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">SDG Full Report</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>
-                    <a href="accounts.php" class="nav-link <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>">Account Management</a>
-                    <a href="payment-monitoring.php" class="nav-link <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>">Payment Monitoring</a>
-                    <a href="database-export.php" class="nav-link <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>">Database Export</a>
+                    <a href="accounts.php" class="nav-link icon-only <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>" title="Account Management">
+                        <i class="fas fa-users-cog"></i>
+                    </a>
+                    <a href="payment-monitoring.php" class="nav-link icon-only <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>" title="Payment Monitoring">
+                        <i class="fas fa-credit-card"></i>
+                    </a>
+                    <a href="database-export.php" class="nav-link icon-only <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>" title="Database Export">
+                        <i class="fas fa-database"></i>
+                    </a>
+                    <a href="settings.php" class="nav-link icon-only <?php echo ($current_page == 'settings') ? 'active' : ''; ?>" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </a>
                 <?php endif; ?>
             </div>
             <div class="user-menu">
                 <span class="user-name"><?php echo htmlspecialchars($user['first_name']); ?></span>
-                <a href="../auth/logout.php" class="nav-link">Logout</a>
+                <a href="../auth/logout.php" class="nav-link icon-only" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
             </div>
         </div>
     </nav>
@@ -143,17 +154,21 @@ $base_path = $GLOBALS['base_path'];
                     </a>
                 </div>
                 <div class="nav-section">
+                    <div class="nav-section-title">System</div>
+                    <a href="settings.php" class="sidebar-link <?php echo ($current_page == 'settings') ? 'active' : ''; ?>">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="database-export.php" class="sidebar-link <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>">
+                        <i class="fas fa-database"></i>
+                        <span>Database Export</span>
+                    </a>
+                </div>
+                <div class="nav-section">
                     <div class="nav-section-title">Payment System</div>
                     <a href="payment-monitoring.php" class="sidebar-link <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>">
                         <i class="fas fa-credit-card"></i>
                         <span>Payment Monitoring</span>
-                    </a>
-                </div>
-                <div class="nav-section">
-                    <div class="nav-section-title">System</div>
-                    <a href="database-export.php" class="sidebar-link <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>">
-                        <i class="fas fa-database"></i>
-                        <span>Database Export</span>
                     </a>
                 </div>
                 <?php endif; ?>
