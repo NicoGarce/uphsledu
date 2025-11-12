@@ -1311,13 +1311,51 @@ function displaySdgPosts(goalNumber) {
                     <div class="sdg-post-content">
                         <div class="sdg-excerpt">
                             ${(() => {
-                                // Extract first paragraph
-                                const tempDiv = document.createElement('div');
-                                tempDiv.innerHTML = post.content || '';
-                                const firstParagraph = tempDiv.querySelector('p')?.textContent || (post.content ? post.content.split('\n')[0] : '') || (post.content ? post.content.substring(0, 200) : '');
-                                // Remove leading spaces, tabs, and non-breaking spaces
-                                return firstParagraph ? firstParagraph.trim().replace(/^[\s\u00A0]+/, '') : '';
-                            })()}${post.content && post.content.length > 200 ? '...' : ''}
+                                // Use excerpt if available
+                                if (post.excerpt && post.excerpt.trim()) {
+                                    return post.excerpt.trim();
+                                }
+                                
+                                // Extract first paragraph from content
+                                let excerpt = '';
+                                const content = post.content || '';
+                                
+                                if (content) {
+                                    // Create temporary div to parse HTML
+                                    const tempDiv = document.createElement('div');
+                                    tempDiv.innerHTML = content;
+                                    
+                                    // Try to get first paragraph
+                                    const firstP = tempDiv.querySelector('p');
+                                    if (firstP) {
+                                        excerpt = firstP.textContent || firstP.innerText || '';
+                                    } else {
+                                        // If no <p> tags, get first text node or strip HTML
+                                        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+                                        // Get first sentence or first 200 characters
+                                        const firstSentence = textContent.split(/[.!?]/)[0];
+                                        excerpt = firstSentence.length > 0 && firstSentence.length <= 200 
+                                            ? firstSentence 
+                                            : textContent.substring(0, 200);
+                                    }
+                                    
+                                    // Clean up the excerpt
+                                    excerpt = excerpt.trim().replace(/^[\s\u00A0]+/, '').replace(/\s+/g, ' ');
+                                    
+                                    // Limit to 200 characters
+                                    if (excerpt.length > 200) {
+                                        excerpt = excerpt.substring(0, 200).trim();
+                                        // Don't cut in the middle of a word
+                                        const lastSpace = excerpt.lastIndexOf(' ');
+                                        if (lastSpace > 150) {
+                                            excerpt = excerpt.substring(0, lastSpace);
+                                        }
+                                        excerpt += '...';
+                                    }
+                                }
+                                
+                                return excerpt || 'No excerpt available.';
+                            })()}
                         </div>
                         <div style="text-align: center;">
                             <a class="read-more-btn" href="${postLink}">Read More</a>
