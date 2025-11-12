@@ -9,11 +9,17 @@
  * @param string $sectionTitle - Title for the carousel section
  * @param string $sectionDescription - Description for the carousel section
  * @param string $viewAllLink - Link to view all posts for this category
+ * @param bool $isSupportService - Set to true for support services (uses horizontal layout), false for programs (uses overlay layout)
  */
 
 // Ensure base_path is set (default to '../' if not set)
 if (!isset($base_path)) {
     $base_path = '../';
+}
+
+// Default to false (program layout) if not set
+if (!isset($isSupportService)) {
+    $isSupportService = false;
 }
 
 // Get category ID if name is provided
@@ -50,45 +56,87 @@ if ($categoryId) {
                 </p>
             </div>
             
-            <div class="news-carousel-container">
+            <div class="news-carousel-container <?php echo $isSupportService ? 'support-service-layout' : 'program-layout'; ?>">
                 <div class="news-carousel" id="newsCarousel-<?php echo $categoryId; ?>">
                     <?php foreach ($category_posts as $index => $post): ?>
                         <div class="news-slide <?php echo $index === 0 ? 'active' : ''; ?>">
-                            <div class="news-slide-meta">
-                                <span class="news-slide-date">
-                                    <i class="fas fa-calendar"></i>
-                                    <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
-                                </span>
-                            </div>
-                            <div class="news-slide-title-overlay">
-                                <h3 class="news-slide-title">
-                                    <a href="<?php echo $base_path; ?>post.php?slug=<?php echo $post['slug']; ?>">
-                                        <?php echo htmlspecialchars($post['title']); ?>
-                                    </a>
-                                </h3>
-                            </div>
-                            <div class="news-slide-image">
-                                <?php if ($post['featured_image']): ?>
-                                    <?php 
-                                        $img = $post['featured_image'];
-                                        // Handle both absolute paths and relative paths
-                                        if (strpos($img, 'uploads/') === 0 || strpos($img, '../uploads/') === 0) {
-                                            $imgSrc = $base_path . $img;
-                                        } elseif (strpos($img, '/') === 0) {
-                                            $imgSrc = $img;
-                                        } else {
-                                            $imgSrc = $base_path . 'uploads/' . $img;
-                                        }
-                                    ?>
-                                    <img src="<?php echo htmlspecialchars($imgSrc); ?>" 
-                                         alt="<?php echo htmlspecialchars($post['title']); ?>"
-                                         decoding="async">
-                                <?php else: ?>
-                                    <div class="news-slide-placeholder">
-                                        <i class="fas fa-newspaper"></i>
+                            <?php if ($isSupportService): ?>
+                                <!-- Support Service Layout: Image left (2/3), Text right (1/3) -->
+                                <div class="news-slide-content">
+                                    <div class="news-slide-image">
+                                        <?php if ($post['featured_image']): ?>
+                                            <?php 
+                                                $img = $post['featured_image'];
+                                                // Handle both absolute paths and relative paths
+                                                if (strpos($img, 'uploads/') === 0 || strpos($img, '../uploads/') === 0) {
+                                                    $imgSrc = $base_path . $img;
+                                                } elseif (strpos($img, '/') === 0) {
+                                                    $imgSrc = $img;
+                                                } else {
+                                                    $imgSrc = $base_path . 'uploads/' . $img;
+                                                }
+                                            ?>
+                                            <img src="<?php echo htmlspecialchars($imgSrc); ?>" 
+                                                 alt="<?php echo htmlspecialchars($post['title']); ?>"
+                                                 decoding="async">
+                                        <?php else: ?>
+                                            <div class="news-slide-placeholder">
+                                                <i class="fas fa-newspaper"></i>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
-                                <?php endif; ?>
-                            </div>
+                                    <div class="news-slide-text">
+                                        <h3 class="news-slide-title">
+                                            <a href="<?php echo $base_path; ?>post.php?slug=<?php echo $post['slug']; ?>">
+                                                <?php echo htmlspecialchars($post['title']); ?>
+                                            </a>
+                                        </h3>
+                                        <div class="news-slide-meta">
+                                            <span class="news-slide-date">
+                                                <i class="fas fa-calendar"></i>
+                                                <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <!-- Program Layout: Full image with overlay (original design) -->
+                                <div class="news-slide-meta">
+                                    <span class="news-slide-date">
+                                        <i class="fas fa-calendar"></i>
+                                        <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
+                                    </span>
+                                </div>
+                                <div class="news-slide-title-overlay">
+                                    <h3 class="news-slide-title">
+                                        <a href="<?php echo $base_path; ?>post.php?slug=<?php echo $post['slug']; ?>">
+                                            <?php echo htmlspecialchars($post['title']); ?>
+                                        </a>
+                                    </h3>
+                                </div>
+                                <div class="news-slide-image">
+                                    <?php if ($post['featured_image']): ?>
+                                        <?php 
+                                            $img = $post['featured_image'];
+                                            // Handle both absolute paths and relative paths
+                                            if (strpos($img, 'uploads/') === 0 || strpos($img, '../uploads/') === 0) {
+                                                $imgSrc = $base_path . $img;
+                                            } elseif (strpos($img, '/') === 0) {
+                                                $imgSrc = $img;
+                                            } else {
+                                                $imgSrc = $base_path . 'uploads/' . $img;
+                                            }
+                                        ?>
+                                        <img src="<?php echo htmlspecialchars($imgSrc); ?>" 
+                                             alt="<?php echo htmlspecialchars($post['title']); ?>"
+                                             decoding="async">
+                                    <?php else: ?>
+                                        <div class="news-slide-placeholder">
+                                            <i class="fas fa-newspaper"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
