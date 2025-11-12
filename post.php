@@ -189,6 +189,13 @@ include 'app/includes/header.php';
                         $allowedTags = '<p><br><strong><b><em><i><u><s><strike><del><ins><a><ul><ol><li><h1><h2><h3><h4><h5><h6><blockquote><pre><code><span><div><img><table><thead><tbody><tr><td><th>';
                         $content = strip_tags($content, $allowedTags);
                         
+                        // Remove leading/trailing whitespace and newlines from the content
+                        $content = trim($content);
+                        
+                        // Remove any leading <p> tags that might have only whitespace
+                        $content = preg_replace('/^<p[^>]*>\s*<\/p>/i', '', $content);
+                        $content = preg_replace('/^<p[^>]*>(\s+)/i', '<p>', $content);
+                        
                         // Process hashtags in HTML content
                         $processedContent = preg_replace(
                             '/(?<!\w)#([a-zA-Z0-9_]+)/',
