@@ -699,7 +699,11 @@ function getSetting($key, $default = null) {
     $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
     $stmt->execute([$key]);
     $result = $stmt->fetch();
-    return $result ? $result['setting_value'] : $default;
+    // Return the actual value even if it's an empty string, only use default if setting doesn't exist
+    if ($result !== false && isset($result['setting_value'])) {
+        return $result['setting_value'];
+    }
+    return $default;
 }
 
 // Set setting value

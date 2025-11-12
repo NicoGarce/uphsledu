@@ -23,7 +23,8 @@ if ($result['count'] == 0) {
 }
 
 // Get recent posts for homepage
-$recent_posts = getRecentPosts(6);
+$homepage_recent_posts = (int)getSetting('homepage_recent_posts', '6');
+$recent_posts = getRecentPosts($homepage_recent_posts);
 
 // Set page title
 $page_title = "Home";
@@ -562,7 +563,8 @@ include 'app/includes/header.php';
                 </div>
                 
                 <div class="facebook-feed">
-                    <a href="https://www.facebook.com/uphsl.info.ph" target="_blank" rel="noopener" class="facebook-header">
+                    <?php $facebook_url = getSetting('facebook_url', 'https://www.facebook.com/uphsl.info.ph'); ?>
+                    <a href="<?php echo htmlspecialchars($facebook_url); ?>" target="_blank" rel="noopener" class="facebook-header">
                         <h3 class="facebook-title">
                             <i class="fab fa-facebook"></i>
                             Follow Us on Facebook
@@ -570,7 +572,7 @@ include 'app/includes/header.php';
                         <p class="facebook-subtitle">Stay connected with our latest updates</p>
                     </a>
                     <div class="facebook-embed">
-                        <div class="fb-page" data-href="https://www.facebook.com/uphsl.info.ph" data-tabs="timeline" data-width="" data-height="650" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
+                        <div class="fb-page" data-href="<?php echo htmlspecialchars($facebook_url); ?>" data-tabs="timeline" data-width="" data-height="650" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
                     </div>
                 </div>
             </div>
