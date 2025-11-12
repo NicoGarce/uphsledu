@@ -634,6 +634,7 @@ body {
     $categoryId = 'Student Personnel Services'; // Pass category name, component will look it up
     $sectionTitle = 'Student Personnel Services News & Updates';
     $sectionDescription = 'Stay updated with the latest news and announcements from the Student Personnel Services.';
+    $isSupportService = true; // Use horizontal layout for support services
     include '../app/includes/news-carousel.php';
     ?>
 
