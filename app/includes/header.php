@@ -25,6 +25,7 @@ if (!$is_admin_page && !$is_auth_page && !$is_maintenance_page) {
         
         // Check if maintenance mode is enabled
         if (function_exists('getSetting')) {
+            // Check if maintenance mode is enabled
             $maintenance_mode = getSetting('maintenance_mode', '0');
             
             if ($maintenance_mode === '1') {
@@ -106,7 +107,7 @@ $base_path = $GLOBALS['base_path'];
       name="description"
       content="University of Perpetual Help System - Laguna, UPHSL, Perpetual Laguna"
     />
-    <title><?php echo (isset($page_title) && $page_title !== 'Home') ? $page_title . ' - ' : ''; ?>University of Perpetual Help System Laguna</title>
+    <title><?php echo (isset($page_title) && $page_title !== 'Home') ? $page_title . ' - ' : ''; ?><?php echo htmlspecialchars(getSetting('site_name', 'University of Perpetual Help System Laguna')); ?></title>
     <!-- Performance: speed up icon/font loading to prevent flash of text -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
@@ -180,7 +181,7 @@ $base_path = $GLOBALS['base_path'];
             <meta property="og:image:alt" content="<?php echo htmlspecialchars($og['title'] ?? ''); ?>">
         <?php endif; ?>
         <meta property="og:type" content="<?php echo htmlspecialchars($og['type'] ?? 'website'); ?>">
-        <meta property="og:site_name" content="<?php echo htmlspecialchars($og['site_name'] ?? 'University of Perpetual Help System Laguna'); ?>">
+        <meta property="og:site_name" content="<?php echo htmlspecialchars($og['site_name'] ?? getSetting('site_name', 'University of Perpetual Help System Laguna')); ?>">
         
         <?php if (!empty($og['article_author'])): ?>
             <meta property="article:author" content="<?php echo htmlspecialchars($og['article_author']); ?>">

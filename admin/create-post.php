@@ -555,8 +555,13 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                         Status
                     </label>
                     <select id="status" name="status" class="form-input">
-                        <option value="draft" <?php echo ($isEdit && $post['status'] === 'draft') || (isset($_POST['status']) && $_POST['status'] === 'draft') ? 'selected' : ''; ?>>Draft</option>
-                        <option value="published" <?php echo ($isEdit && $post['status'] === 'published') || (isset($_POST['status']) && $_POST['status'] === 'published') ? 'selected' : ''; ?>>Published</option>
+                        <?php 
+                        // Use default post status for new posts, or existing status for edits
+                        $defaultStatus = $isEdit ? ($post['status'] ?? 'draft') : getSetting('default_post_status', 'draft');
+                        $selectedStatus = isset($_POST['status']) ? $_POST['status'] : ($isEdit ? ($post['status'] ?? 'draft') : $defaultStatus);
+                        ?>
+                        <option value="draft" <?php echo $selectedStatus === 'draft' ? 'selected' : ''; ?>>Draft</option>
+                        <option value="published" <?php echo $selectedStatus === 'published' ? 'selected' : ''; ?>>Published</option>
                     </select>
                 </div>
                 

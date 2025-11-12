@@ -27,7 +27,8 @@ if (isset($categoryId) && !is_numeric($categoryId)) {
 }
 
 // Get recent posts for this category
-$category_posts = $categoryId ? getRecentPostsByCategory($categoryId, 5) : [];
+$news_carousel_posts = (int)getSetting('news_carousel_posts', '5');
+$category_posts = $categoryId ? getRecentPostsByCategory($categoryId, $news_carousel_posts) : [];
 
 // Get category name for display
 $categoryName = '';

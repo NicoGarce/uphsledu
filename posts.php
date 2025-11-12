@@ -29,10 +29,11 @@ if (!empty($category)) {
     }
 }
 
-// Get posts for current page with filters (12 posts per page)
-$posts = getPublishedPostsWithFilters($page, 12, $search, $category, $dateRange, $specificDate);
+// Get posts for current page with filters
+$posts_per_page = (int)getSetting('posts_per_page', '12');
+$posts = getPublishedPostsWithFilters($page, $posts_per_page, $search, $category, $dateRange, $specificDate);
 $totalPosts = getPublishedPostsCountWithFilters($search, $category, $dateRange, $specificDate);
-$totalPages = ceil($totalPosts / 12);
+$totalPages = ceil($totalPosts / $posts_per_page);
 
 // Get all categories from database for filter dropdown
 $allCategories = getAllCategories();

@@ -13,23 +13,35 @@
                     <div class="footer-logo-section">
                         <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="footer-logo">
                         <div class="university-details">
-                            <h3 class="university-name">University of Perpetual Help System Laguna</h3>
-                            <p class="university-tagline">Character Building is Nation Building</p>
+                            <h3 class="university-name"><?php echo htmlspecialchars(getSetting('site_name', 'University of Perpetual Help System Laguna')); ?></h3>
+                            <p class="university-tagline"><?php echo htmlspecialchars(getSetting('site_tagline', 'Character Building is Nation Building')); ?></p>
                         </div>
                     </div>
                     <div class="social-links">
-                        <a href="https://www.facebook.com/uphsl.info.ph" target="_blank" rel="noopener" class="social-link facebook" title="Follow us on Facebook">
+                        <?php $facebook_url = getSetting('facebook_url', 'https://www.facebook.com/uphsl.info.ph'); ?>
+                        <?php if (!empty($facebook_url)): ?>
+                        <a href="<?php echo htmlspecialchars($facebook_url); ?>" target="_blank" rel="noopener" class="social-link facebook" title="Follow us on Facebook">
                             <i class="fab fa-facebook"></i>
                         </a>
-                        <a href="https://www.youtube.com/@uphsltv1397" target="_blank" rel="noopener" class="social-link youtube" title="Subscribe to our YouTube">
+                        <?php endif; ?>
+                        <?php $youtube_url = getSetting('youtube_url', 'https://www.youtube.com/@uphsltv1397'); ?>
+                        <?php if (!empty($youtube_url)): ?>
+                        <a href="<?php echo htmlspecialchars($youtube_url); ?>" target="_blank" rel="noopener" class="social-link youtube" title="Subscribe to our YouTube">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="https://www.instagram.com/uphs.laguna" target="_blank" rel="noopener" class="social-link instagram" title="Follow us on Instagram">
+                        <?php endif; ?>
+                        <?php $instagram_url = getSetting('instagram_url', 'https://www.instagram.com/uphs.laguna'); ?>
+                        <?php if (!empty($instagram_url)): ?>
+                        <a href="<?php echo htmlspecialchars($instagram_url); ?>" target="_blank" rel="noopener" class="social-link instagram" title="Follow us on Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="https://tiktok.com/@uphs.laguna" target="_blank" rel="noopener" class="social-link tiktok" title="Follow us on TikTok">
+                        <?php endif; ?>
+                        <?php $tiktok_url = getSetting('tiktok_url', 'https://tiktok.com/@uphs.laguna'); ?>
+                        <?php if (!empty($tiktok_url)): ?>
+                        <a href="<?php echo htmlspecialchars($tiktok_url); ?>" target="_blank" rel="noopener" class="social-link tiktok" title="Follow us on TikTok">
                             <i class="fab fa-tiktok"></i>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -83,24 +95,39 @@
                 <div class="footer-section">
                     <h4 class="footer-subtitle">Contact Information</h4>
                     <div class="contact-details">
+                        <?php $contact_address = getSetting('contact_address', 'UPH Compound, National Highway, Sto. Niño, City of Biñan, Laguna'); ?>
+                        <?php if (!empty($contact_address)): ?>
                         <div class="contact-item">
                             <h5>Our Business Office</h5>
-                            <p>UPH Compound, National Highway,<br>
-                            Sto. Niño, City of Biñan, Laguna</p>
+                            <p><?php echo nl2br(htmlspecialchars($contact_address)); ?></p>
                         </div>
+                        <?php endif; ?>
                         
+                        <?php $contact_phone = getSetting('contact_phone', '02-779-5310'); ?>
+                        <?php if (!empty($contact_phone)): ?>
                         <div class="contact-item">
                             <h5>Phone</h5>
-                            <p><a href="tel:02-779-5310">02-779-5310</a></p>
+                            <p><a href="tel:<?php echo htmlspecialchars($contact_phone); ?>"><?php echo htmlspecialchars($contact_phone); ?></a></p>
                         </div>
+                        <?php endif; ?>
                         
+                        <?php 
+                        $contact_email_primary = getSetting('contact_email_primary', 'marketing@uphsl.edu.ph');
+                        $contact_email_secondary = getSetting('contact_email_secondary', 'info@uphsl.edu.ph');
+                        ?>
+                        <?php if (!empty($contact_email_primary) || !empty($contact_email_secondary)): ?>
                         <div class="contact-item">
                             <h5>Email</h5>
                             <ul class="email-links">
-                                <li><a href="mailto:marketing@uphsl.edu.ph">marketing@uphsl.edu.ph</a></li>
-                                <li><a href="mailto:info@uphsl.edu.ph">info@uphsl.edu.ph</a></li>
+                                <?php if (!empty($contact_email_primary)): ?>
+                                <li><a href="mailto:<?php echo htmlspecialchars($contact_email_primary); ?>"><?php echo htmlspecialchars($contact_email_primary); ?></a></li>
+                                <?php endif; ?>
+                                <?php if (!empty($contact_email_secondary)): ?>
+                                <li><a href="mailto:<?php echo htmlspecialchars($contact_email_secondary); ?>"><?php echo htmlspecialchars($contact_email_secondary); ?></a></li>
+                                <?php endif; ?>
                             </ul>
                         </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -108,7 +135,7 @@
             <!-- Footer Bottom -->
             <div class="footer-bottom">
                 <div class="footer-bottom-content">
-                    <p class="copyright">&copy; <?php echo date('Y'); ?> University of Perpetual Help System Laguna. All rights reserved.</p>
+                    <p class="copyright">&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars(getSetting('site_name', 'University of Perpetual Help System Laguna')); ?>. All rights reserved.</p>
                     <div class="footer-bottom-links">
                         <a href="<?php echo $base_path; ?>privacy-policy.php" class="footer-bottom-link">Privacy Policy</a>
                         <a href="<?php echo $base_path; ?>terms-of-service.php" class="footer-bottom-link">Terms of Service</a>
