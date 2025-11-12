@@ -39,6 +39,7 @@ include '../app/includes/header.php';
     $categoryId = 'Community Outreach Department'; // Pass category name, component will look it up
     $sectionTitle = 'Community Outreach Department News & Updates';
     $sectionDescription = 'Stay updated with the latest news and announcements from the Community Outreach Department.';
+    $facebookLink = 'https://www.facebook.com/uphslcod'; // Facebook page URL for COD
     include '../app/includes/news-carousel.php';
     ?>
 
