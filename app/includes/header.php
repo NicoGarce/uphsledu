@@ -10,6 +10,36 @@
 // Include path configuration
 require_once __DIR__ . '/../config/paths.php';
 
+// Check for maintenance mode (before any output)
+// Allow access to admin pages and auth pages even in maintenance mode
+$current_script = basename($_SERVER['PHP_SELF']);
+$is_admin_page = strpos($_SERVER['REQUEST_URI'], '/admin/') !== false;
+$is_auth_page = strpos($_SERVER['REQUEST_URI'], '/auth/') !== false;
+$is_maintenance_page = $current_script === 'maintenance.php';
+
+// Check if maintenance mode is enabled (only if not admin/auth/maintenance page)
+if (!$is_admin_page && !$is_auth_page && !$is_maintenance_page) {
+    try {
+        require_once __DIR__ . '/../config/database.php';
+        require_once __DIR__ . '/functions.php';
+        
+        // Check if maintenance mode is enabled
+        if (function_exists('getSetting')) {
+            $maintenance_mode = getSetting('maintenance_mode', '0');
+            
+            if ($maintenance_mode === '1') {
+                // Redirect to maintenance page
+                $maintenance_url = $GLOBALS['base_path'] . 'maintenance.php';
+                header('Location: ' . $maintenance_url);
+                exit;
+            }
+        }
+    } catch (Exception $e) {
+        // If there's an error, continue loading the page normally
+        error_log('Maintenance mode check error: ' . $e->getMessage());
+    }
+}
+
 // Get current page for active navigation highlighting
 // Handle both local and production environments
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
