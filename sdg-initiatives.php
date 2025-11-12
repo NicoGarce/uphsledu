@@ -1311,50 +1311,54 @@ function displaySdgPosts(goalNumber) {
                     <div class="sdg-post-content">
                         <div class="sdg-excerpt">
                             ${(() => {
-                                // Use excerpt if available
-                                if (post.excerpt && post.excerpt.trim()) {
-                                    return post.excerpt.trim();
-                                }
-                                
-                                // Extract first paragraph from content
+                                // Use excerpt field if available, otherwise extract from content
                                 let excerpt = '';
-                                const content = post.content || '';
                                 
-                                if (content) {
-                                    // Create temporary div to parse HTML
+                                // Prefer database excerpt field if it exists and is not empty
+                                if (post.excerpt && post.excerpt.trim() !== '') {
+                                    excerpt = post.excerpt.trim();
+                                } else if (post.content) {
+                                    // Create a temporary div to parse HTML
                                     const tempDiv = document.createElement('div');
-                                    tempDiv.innerHTML = content;
+                                    tempDiv.innerHTML = post.content;
                                     
                                     // Try to get first paragraph
-                                    const firstP = tempDiv.querySelector('p');
-                                    if (firstP) {
-                                        excerpt = firstP.textContent || firstP.innerText || '';
+                                    const firstParagraph = tempDiv.querySelector('p');
+                                    
+                                    if (firstParagraph) {
+                                        // Get text content from first paragraph
+                                        excerpt = firstParagraph.textContent || firstParagraph.innerText || '';
                                     } else {
-                                        // If no <p> tags, get first text node or strip HTML
-                                        const textContent = tempDiv.textContent || tempDiv.innerText || '';
-                                        // Get first sentence or first 200 characters
-                                        const firstSentence = textContent.split(/[.!?]/)[0];
-                                        excerpt = firstSentence.length > 0 && firstSentence.length <= 200 
-                                            ? firstSentence 
-                                            : textContent.substring(0, 200);
+                                        // If no paragraph tags, get all text content
+                                        excerpt = tempDiv.textContent || tempDiv.innerText || '';
                                     }
                                     
-                                    // Clean up the excerpt
+                                    // If still empty, try plain text extraction
+                                    if (!excerpt || excerpt.trim() === '') {
+                                        // Strip HTML tags manually
+                                        excerpt = post.content.replace(/<[^>]*>/g, '');
+                                        // Get first line or first 200 chars
+                                        const firstLine = excerpt.split('\n')[0];
+                                        excerpt = firstLine || excerpt.substring(0, 200);
+                                    }
+                                    
+                                    // Clean up whitespace
                                     excerpt = excerpt.trim().replace(/^[\s\u00A0]+/, '').replace(/\s+/g, ' ');
                                     
                                     // Limit to 200 characters
-                                    if (excerpt.length > 200) {
-                                        excerpt = excerpt.substring(0, 200).trim();
+                                    const maxLength = 200;
+                                    if (excerpt.length > maxLength) {
+                                        excerpt = excerpt.substring(0, maxLength);
                                         // Don't cut in the middle of a word
                                         const lastSpace = excerpt.lastIndexOf(' ');
-                                        if (lastSpace > 150) {
+                                        if (lastSpace > maxLength * 0.8) {
                                             excerpt = excerpt.substring(0, lastSpace);
                                         }
                                         excerpt += '...';
                                     }
                                 }
                                 
-                                return excerpt || 'No excerpt available.';
+                                return excerpt || 'No content available.';
                             })()}
                         </div>
                         <div style="text-align: center;">
