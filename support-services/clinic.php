@@ -23,7 +23,6 @@ include '../app/includes/header.php';
         $categoryId = 'University Clinic'; // Pass category name, component will look it up
         $sectionTitle = 'University Clinic News & Updates';
         $sectionDescription = 'Stay updated with the latest news and announcements from the University Clinic.';
-        $isSupportService = true; // Use horizontal layout for support services
         include '../app/includes/news-carousel.php';
         ?>
 

@@ -533,7 +533,6 @@ body {
     $categoryId = 'International & External Affairs'; // Pass category name, component will look it up
     $sectionTitle = 'International & External Affairs News & Updates';
     $sectionDescription = 'Stay updated with the latest news and announcements from the International & External Affairs department.';
-    $isSupportService = true; // Use horizontal layout for support services
     include '../app/includes/news-carousel.php';
     ?>
 
