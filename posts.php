@@ -105,13 +105,24 @@ include 'app/includes/header.php';
                         <select name="category" id="categoryFilter">
                             <option value="">All Categories</option>
                             <?php
-                            // Organize categories for display
+                            // Organize categories for display (deduplicate by name first)
                             $programCats = ['basic' => [], 'other' => []];
                             $supportCats = [];
                             $programNames = ['Senior High School', 'Junior High School', 'Grade School', 'Aviation', 'Arts & Sciences', 'Business & Accountancy', 'Computer Studies', 'Criminology', 'Education', 'Engineering & Architecture', 'International Hospitality Management', 'Maritime', 'Law/Juris Doctor', 'Graduate School'];
                             $supportNames = ['Careers', 'University Clinic', 'Community Outreach Department', 'International & External Affairs', 'Student Personnel Services', 'Library', 'Quality Assurance', 'Research'];
                             
+                            // Deduplicate categories by name (keep first occurrence)
+                            $seenNames = [];
+                            $uniqueCategories = [];
                             foreach ($allCategories as $cat) {
+                                if (!in_array($cat['name'], $seenNames)) {
+                                    $seenNames[] = $cat['name'];
+                                    $uniqueCategories[] = $cat;
+                                }
+                            }
+                            
+                            // Organize unique categories
+                            foreach ($uniqueCategories as $cat) {
                                 if (in_array($cat['name'], $programNames)) {
                                     if (in_array($cat['name'], ['Senior High School', 'Junior High School', 'Grade School'])) {
                                         $programCats['basic'][] = $cat;
