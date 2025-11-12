@@ -361,7 +361,6 @@ body {
     $categoryId = 'Library'; // Pass category name, component will look it up
     $sectionTitle = 'Library News & Updates';
     $sectionDescription = 'Stay updated with the latest news and announcements from the University Library.';
-    $isSupportService = true; // Use horizontal layout for support services
     include '../app/includes/news-carousel.php';
     ?>
 
