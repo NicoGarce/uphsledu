@@ -533,6 +533,13 @@ foreach ($allCategoriesRaw as $cat) {
         categorySelect.addEventListener('change', loadPosts);
         dateRangeSelect.addEventListener('change', loadPosts);
         
+        // Auto-refresh posts list if redirected after creating/editing a post
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            // Refresh the posts list to show the newly created/edited post
+            loadPosts();
+        }
+        
         function deletePost(postId) {
             document.getElementById('delete_post_id').value = postId;
             document.getElementById('deleteModal').style.display = 'block';
