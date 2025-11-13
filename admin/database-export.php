@@ -402,7 +402,7 @@ $dbSize = $dbSizeStmt->fetch()['size_mb'] ?? 0;
             padding: 15px;
             text-align: left;
             font-weight: 600;
-            color: #495057;
+            color:rgb(255, 255, 255);
             border-bottom: 2px solid #dee2e6;
         }
 
