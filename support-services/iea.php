@@ -553,43 +553,6 @@ body {
         </div>
     </section>
 
-    <!-- News & Updates Section -->
-    <section class="news-section">
-        <div class="container">
-            <h2 class="section-title">News & Updates</h2>
-            <div class="news-grid">
-                <div class="news-card">
-                    <div class="news-card-content">
-                        <h4>Commission on Higher Education (CHED) CALABARZON IZN Awards</h4>
-                        <p>The University of Perpetual Help System Laguna (UPHSL) emerged as one of the outstanding universities emerged among State Universities and Colleges (SUCs) and private Higher Education Institutions (HEIs) in Region IV-A during the "2023 Commission on Higher Education (CHED) CALABARZON IZN Awards".</p>
-                        <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-                <div class="news-card">
-                    <div class="news-card-content">
-                        <h4>29th National Crime Prevention Week WITH NAPOLCOM</h4>
-                        <p>The University of Perpetual Help System Laguna with the College of Criminology and the Office of International and External Affairs joins the NAPOLCOM in celebrating the 29th National Crime Prevention Week through series of lectures delivered by the University's external partners to the students of the institution.</p>
-                        <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-                <div class="news-card">
-                    <div class="news-card-content">
-                        <h4>5th Leadership and Management Perspectives (LAMP) in Higher Education</h4>
-                        <p>Dr. Josefa G. Carrillo, the Director for International and External Affairs of the University of Perpetual Help System Laguna (UPHSL) took the helm in representing the university in the 5th Leadership and Management Perspectives (LAMP) in Higher Education Summit held at Manila Central University in Caloocan City, Metro Manila.</p>
-                        <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-                <div class="news-card">
-                    <div class="news-card-content">
-                        <h4>Annual Institutional Job Fair 2023</h4>
-                        <p>The University of Perpetual Help System Laguna (UPHSL) hosted its highly anticipated Annual Job Fair. Dr. Josefa G. Carrillo, the Director for International and External Affairs, took the helm of this significant event, in a collaborative effort with the dedicated Alumni Department.</p>
-                        <a href="#" class="news-link">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Services Section -->
     <section id="services" class="services-section">
         <div class="container">
