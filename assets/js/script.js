@@ -40,7 +40,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // News Carousel functionality - supports multiple carousels
+    // Track initialized carousels to prevent double initialization
+    const initializedCarousels = new Set();
+    
     function initializeNewsCarousel(carouselId) {
+        // Prevent double initialization
+        if (initializedCarousels.has(carouselId)) {
+            return;
+        }
+        
         // Extract base ID (remove category suffix if present)
         const baseId = carouselId.replace(/^newsCarousel-/, 'newsCarousel');
         const suffix = carouselId.includes('-') ? carouselId.replace('newsCarousel-', '') : '';
@@ -53,6 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (newsCarousel && newsPrev && newsNext && newsDots) {
             const slides = newsCarousel.querySelectorAll('.news-slide');
             if (slides.length === 0) return; // No slides, skip initialization
+            
+            // Check if dots already exist (prevent double creation)
+            const existingDots = newsDots.querySelectorAll('.carousel-dot');
+            if (existingDots.length > 0) {
+                // Dots already exist, mark as initialized and return
+                initializedCarousels.add(carouselId);
+                return;
+            }
             
             let currentSlide = 0;
             let autoPlayInterval;
@@ -144,6 +160,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+            
+            // Mark as initialized after all setup is complete
+            initializedCarousels.add(carouselId);
         }
     }
     
