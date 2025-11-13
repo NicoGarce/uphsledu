@@ -336,6 +336,19 @@ $sdgGoals = [
                 closeDeleteModal();
             }
         }
+        
+        // Auto-refresh page if redirected after creating/editing a post to show new post immediately
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            // Remove success parameter and reload to show the newly created post
+            // Use a small delay to ensure the success message is visible first
+            setTimeout(function() {
+                urlParams.delete('success');
+                const newUrl = window.location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : '');
+                // Force a hard reload to bypass cache
+                window.location.href = newUrl;
+            }, 500);
+        }
     </script>
 
 <?php include '../app/includes/admin-footer.php'; ?>
