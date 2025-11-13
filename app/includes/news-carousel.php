@@ -538,15 +538,18 @@ if ($categoryId) {
             
             let currentSlide = 0;
             
-            // Create dots
+            // Create dots only if they don't already exist
             if (dotsContainer && slides.length > 1) {
-                slides.forEach((_, index) => {
-                    const dot = document.createElement('button');
-                    dot.className = 'carousel-dot';
-                    if (index === 0) dot.classList.add('active');
-                    dot.addEventListener('click', () => goToSlide(index));
-                    dotsContainer.appendChild(dot);
-                });
+                const existingDots = dotsContainer.querySelectorAll('.carousel-dot');
+                if (existingDots.length === 0) {
+                    slides.forEach((_, index) => {
+                        const dot = document.createElement('button');
+                        dot.className = 'carousel-dot';
+                        if (index === 0) dot.classList.add('active');
+                        dot.addEventListener('click', () => goToSlide(index));
+                        dotsContainer.appendChild(dot);
+                    });
+                }
             }
             
             function showSlide(index) {
