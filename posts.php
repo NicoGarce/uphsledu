@@ -251,27 +251,10 @@ include 'app/includes/header.php';
 
                     <!-- Pagination -->
                     <?php if ($totalPages > 1): ?>
-                        <?php
-                        // Build query string for pagination links
-                        $queryParams = [];
-                        if (!empty($search)) {
-                            $queryParams[] = 'search=' . urlencode($search);
-                        }
-                        if (!empty($category)) {
-                            $queryParams[] = 'category=' . urlencode($category);
-                        }
-                        if (!empty($dateRange)) {
-                            $queryParams[] = 'date_range=' . urlencode($dateRange);
-                        }
-                        if (!empty($specificDate)) {
-                            $queryParams[] = 'specific_date=' . urlencode($specificDate);
-                        }
-                        $queryString = !empty($queryParams) ? '&' . implode('&', $queryParams) : '';
-                        ?>
                         <div class="pagination-container">
                             <div class="pagination">
                                 <?php if ($page > 1): ?>
-                                    <a href="posts.php?page=<?php echo $page - 1; ?><?php echo $queryString; ?>" class="pagination-btn prev-btn">
+                                    <a href="#" class="pagination-btn prev-btn" data-page="<?php echo $page - 1; ?>">
                                         <i class="fas fa-chevron-left"></i>
                                         Previous
                                     </a>
@@ -283,15 +266,14 @@ include 'app/includes/header.php';
                                     $endPage = min($totalPages, $page + 2);
                                     
                                     if ($startPage > 1): ?>
-                                        <a href="posts.php?page=1<?php echo $queryString; ?>" class="pagination-number">1</a>
+                                        <a href="#" class="pagination-number" data-page="1">1</a>
                                         <?php if ($startPage > 2): ?>
                                             <span class="pagination-ellipsis">...</span>
                                         <?php endif; ?>
                                     <?php endif; ?>
 
                                     <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                                        <a href="posts.php?page=<?php echo $i; ?><?php echo $queryString; ?>" 
-                                           class="pagination-number <?php echo $i === $page ? 'active' : ''; ?>">
+                                        <a href="#" class="pagination-number <?php echo $i === $page ? 'active' : ''; ?>" data-page="<?php echo $i; ?>">
                                             <?php echo $i; ?>
                                         </a>
                                     <?php endfor; ?>
@@ -300,14 +282,14 @@ include 'app/includes/header.php';
                                         <?php if ($endPage < $totalPages - 1): ?>
                                             <span class="pagination-ellipsis">...</span>
                                         <?php endif; ?>
-                                        <a href="posts.php?page=<?php echo $totalPages; ?><?php echo $queryString; ?>" class="pagination-number">
+                                        <a href="#" class="pagination-number" data-page="<?php echo $totalPages; ?>">
                                             <?php echo $totalPages; ?>
                                         </a>
                                     <?php endif; ?>
                                 </div>
 
                                 <?php if ($page < $totalPages): ?>
-                                    <a href="posts.php?page=<?php echo $page + 1; ?><?php echo $queryString; ?>" class="pagination-btn next-btn">
+                                    <a href="#" class="pagination-btn next-btn" data-page="<?php echo $page + 1; ?>">
                                         Next
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -343,7 +325,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchResults = document.getElementById('searchResults');
     const filterBtn = document.querySelector('.filter-btn');
     
-    let currentPage = 1;
+    // Initialize current page from PHP
+    let currentPage = <?php echo $page; ?>;
     let isLoading = false;
     
     // Search with AJAX
@@ -354,9 +337,11 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPage = page;
         
         // Show loading state
-        const originalBtnText = filterBtn.innerHTML;
-        filterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
-        filterBtn.disabled = true;
+        const originalBtnText = filterBtn ? filterBtn.innerHTML : '';
+        if (filterBtn) {
+            filterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+            filterBtn.disabled = true;
+        }
         
         // Add loading overlay to results
         searchResults.style.opacity = '0.6';
@@ -370,6 +355,10 @@ document.addEventListener('DOMContentLoaded', function() {
             page: page
         });
         
+        // Update URL without page reload
+        const newUrl = `posts.php?${params.toString()}`;
+        window.history.pushState({ page: page }, '', newUrl);
+        
         fetch(`ajax-search.php?${params}`)
             .then(response => {
                 if (!response.ok) {
@@ -380,6 +369,21 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     searchResults.innerHTML = data.html;
+                    
+                    // Scroll to top of results smoothly after a brief delay to ensure DOM is updated
+                    setTimeout(() => {
+                        const postsContent = document.querySelector('.posts-content');
+                        if (postsContent) {
+                            const offset = 120; // Offset from top for header
+                            const elementPosition = postsContent.getBoundingClientRect().top;
+                            const offsetPosition = elementPosition + window.pageYOffset - offset;
+                            
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }, 50);
                     
                     // Re-attach pagination event listeners
                     attachPaginationListeners();
@@ -413,8 +417,10 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .finally(() => {
                 isLoading = false;
-                filterBtn.innerHTML = originalBtnText;
-                filterBtn.disabled = false;
+                if (filterBtn) {
+                    filterBtn.innerHTML = originalBtnText;
+                    filterBtn.disabled = false;
+                }
                 searchResults.style.opacity = '1';
                 searchResults.style.pointerEvents = 'auto';
             });
@@ -424,19 +430,38 @@ document.addEventListener('DOMContentLoaded', function() {
     function attachPaginationListeners() {
         const paginationLinks = document.querySelectorAll('.pagination-number, .pagination-btn');
         paginationLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Only handle AJAX pagination if data-page attribute exists
-                if (this.dataset.page) {
-                    e.preventDefault();
-                    const page = parseInt(this.dataset.page);
-                    if (!isNaN(page)) {
-                        performSearch(page);
-                    }
+            // Remove existing listeners to prevent duplicates
+            const newLink = link.cloneNode(true);
+            link.parentNode.replaceChild(newLink, link);
+            
+            newLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = parseInt(this.dataset.page);
+                if (!isNaN(page) && page !== currentPage) {
+                    performSearch(page);
                 }
-                // If no data-page attribute, let the link navigate normally (for initial page load)
             });
         });
     }
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function(event) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = parseInt(urlParams.get('page')) || 1;
+        const search = urlParams.get('search') || '';
+        const category = urlParams.get('category') || '';
+        const dateRange = urlParams.get('date_range') || '';
+        const specificDate = urlParams.get('specific_date') || '';
+        
+        // Update form values
+        searchInput.value = search;
+        if (categoryFilter) categoryFilter.value = category;
+        dateRangeFilter.value = dateRange;
+        specificDateFilter.value = specificDate;
+        
+        // Perform search with the page from URL
+        performSearch(page);
+    });
     
     // Search input with debounce
     let searchTimeout;
@@ -468,11 +493,22 @@ document.addEventListener('DOMContentLoaded', function() {
         performSearch(1); // Reset to page 1 when filtering
     });
     
+    // Prevent form submission and use AJAX instead
+    const filterForm = document.getElementById('filterForm');
+    if (filterForm) {
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            performSearch(1);
+        });
+    }
+    
     // Manual filter button
-    filterBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        performSearch(1);
-    });
+    if (filterBtn) {
+        filterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            performSearch(1);
+        });
+    }
     
     // Clear filters button
     const clearBtn = document.getElementById('clearFilters');
