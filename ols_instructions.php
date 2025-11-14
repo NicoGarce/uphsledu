@@ -11,6 +11,17 @@ session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';
 
+// Check if OLS Instructions or Online Services section is in maintenance
+if (isSectionInMaintenance('online-services', 'ols-instructions') || isSectionInMaintenance('online-services')) {
+    $page_title = "Online Services - Maintenance";
+    $base_path = '';
+    include 'app/includes/header.php';
+    if (displaySectionMaintenance('online-services', $base_path, 'ols-instructions')) {
+        include 'app/includes/footer.php';
+        exit;
+    }
+}
+
 // Set page title
 $page_title = "Online Services Instructions";
 

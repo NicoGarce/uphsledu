@@ -7,6 +7,21 @@
  * @description Main programs page listing all available programs at UPHSL
  */
 
+session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
+
+// Check if Programs section or Programs Index is in maintenance
+if (isSectionInMaintenance('programs', 'programs-index') || isSectionInMaintenance('programs')) {
+    $page_title = "Programs - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('programs', $base_path, 'programs-index')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 $page_title = "Academic Programs";
 $base_path = '../';
 

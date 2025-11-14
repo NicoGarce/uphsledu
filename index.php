@@ -22,6 +22,27 @@ if ($result['count'] == 0) {
     exit();
 }
 
+// Check if Home section is in maintenance
+if (isSectionInMaintenance('home')) {
+    $page_title = "Home - Maintenance";
+    $base_path = '';
+    include 'app/includes/header.php';
+    $maintenance_message = getSectionMaintenanceMessage('home');
+    ?>
+    <main class="main-content" style="min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 4rem 2rem;">
+        <div class="maintenance-message" style="text-align: center; max-width: 600px; padding: 3rem; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <i class="fas fa-tools" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1.5rem;"></i>
+            <h1 style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;">Under Maintenance</h1>
+            <p style="font-size: 1.1rem; color: #666; line-height: 1.6; margin-bottom: 2rem;"><?php echo htmlspecialchars($maintenance_message); ?></p>
+            <a href="<?php echo $base_path; ?>index.php" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                <i class="fas fa-refresh"></i>
+                Refresh Page
+            </a>
+        </div>
+    </main>
+    <?php include 'app/includes/footer.php'; ?>
+    <?php exit; }
+
 // Get recent posts for homepage
 $homepage_recent_posts = (int)getSetting('homepage_recent_posts', '6');
 $recent_posts = getRecentPosts($homepage_recent_posts);

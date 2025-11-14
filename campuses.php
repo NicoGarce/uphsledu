@@ -7,6 +7,20 @@
  * @description Displays information about all UPHSL campus locations and facilities
  */
 session_start();
+require_once 'app/config/database.php';
+require_once 'app/includes/functions.php';
+
+// Check if Campuses section is in maintenance
+if (isSectionInMaintenance('campuses')) {
+    $page_title = "Campuses - Maintenance";
+    $base_path = '';
+    include 'app/includes/header.php';
+    if (displaySectionMaintenance('campuses', $base_path)) {
+        include 'app/includes/footer.php';
+        exit;
+    }
+}
+
 $page_title = "JONELTA Campuses - UPHSL";
 
 // Set base path for assets

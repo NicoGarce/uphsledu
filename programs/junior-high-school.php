@@ -11,6 +11,17 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Check if this sub-page or Programs section is in maintenance
+if (isSectionInMaintenance('programs', 'junior-high-school') || isSectionInMaintenance('programs')) {
+    $page_title = "Junior High School - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('programs', $base_path, 'junior-high-school')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 // Set page title
 $page_title = "Junior High School";
 

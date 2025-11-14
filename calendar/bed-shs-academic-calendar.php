@@ -11,6 +11,17 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Check if this sub-page or Calendar section is in maintenance
+if (isSectionInMaintenance('calendar', 'bed-shs-academic-calendar') || isSectionInMaintenance('calendar')) {
+    $page_title = "BED & SHS Academic Calendar - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('calendar', $base_path, 'bed-shs-academic-calendar')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 // Set page title
 $page_title = "BED & SHS Academic Calendar";
 $base_path = '../';

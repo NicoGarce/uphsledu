@@ -11,6 +11,17 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Check if this sub-page or Programs section is in maintenance
+if (isSectionInMaintenance('programs', 'engineering-architecture') || isSectionInMaintenance('programs')) {
+    $page_title = "Engineering & Architecture - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('programs', $base_path, 'engineering-architecture')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 // Set page title
 $page_title = "Engineering & Architecture";
 
