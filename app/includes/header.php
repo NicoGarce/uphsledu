@@ -1449,10 +1449,10 @@ $navbar_items_config = [
                                 </div>
                             <?php else: ?>
                                 <?php if (isNavbarItemVisible('enrollment', 'enrollment-college')): ?>
-                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfuxQtL77zIZ13Zqzk951FiIrSpGApccIFyp_Gr6faD1vtVng/closedform" class="dropdown-link disabled" onclick="return false;">Enrollment for College & Graduate School & Juris Doctor</a>
+                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfuxQtL77zIZ13Zqzk951FiIrSpGApccIFyp_Gr6faD1vtVng/closedform" class="dropdown-link" onclick="return false;">Enrollment for College & Graduate School & Juris Doctor</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('enrollment', 'enrollment-shs')): ?>
-                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfh2CKtB6Nmz0CeDvWKaTETuNCbaFiZiuo2UdQ0u5t4zJtgvQ/closedform" class="dropdown-link disabled" onclick="return false;">Enrollment for Senior High School</a>
+                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfh2CKtB6Nmz0CeDvWKaTETuNCbaFiZiuo2UdQ0u5t4zJtgvQ/closedform" class="dropdown-link" onclick="return false;">Enrollment for Senior High School</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -1771,10 +1771,10 @@ $navbar_items_config = [
                         </div>
                     <?php else: ?>
                         <?php if (isNavbarItemVisible('enrollment', 'enrollment-college')): ?>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfuxQtL77zIZ13Zqzk951FiIrSpGApccIFyp_Gr6faD1vtVng/closedform" class="mobile-dropdown-link disabled" onclick="return false;">Enrollment for College & Graduate School & Juris Doctor</a>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfuxQtL77zIZ13Zqzk951FiIrSpGApccIFyp_Gr6faD1vtVng/closedform" class="mobile-dropdown-link" onclick="return false;">Enrollment for College & Graduate School & Juris Doctor</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('enrollment', 'enrollment-shs')): ?>
-                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfh2CKtB6Nmz0CeDvWKaTETuNCbaFiZiuo2UdQ0u5t4zJtgvQ/closedform" class="mobile-dropdown-link disabled" onclick="return false;">Enrollment for Senior High School</a>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfh2CKtB6Nmz0CeDvWKaTETuNCbaFiZiuo2UdQ0u5t4zJtgvQ/closedform" class="mobile-dropdown-link" onclick="return false;">Enrollment for Senior High School</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
