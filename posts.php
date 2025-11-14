@@ -347,7 +347,27 @@ document.addEventListener('DOMContentLoaded', function() {
         searchResults.style.opacity = '0.6';
         searchResults.style.pointerEvents = 'none';
         
-        const params = new URLSearchParams({
+        // Build URL parameters, only including non-empty values
+        const urlParams = new URLSearchParams();
+        
+        if (searchInput.value.trim()) {
+            urlParams.append('search', searchInput.value.trim());
+        }
+        if (categoryFilter && categoryFilter.value) {
+            urlParams.append('category', categoryFilter.value);
+        }
+        if (dateRangeFilter.value) {
+            urlParams.append('date_range', dateRangeFilter.value);
+        }
+        if (specificDateFilter.value) {
+            urlParams.append('specific_date', specificDateFilter.value);
+        }
+        if (page > 1) {
+            urlParams.append('page', page);
+        }
+        
+        // Build params for AJAX request (always include page for server)
+        const ajaxParams = new URLSearchParams({
             search: searchInput.value,
             category: categoryFilter ? categoryFilter.value : '',
             date_range: dateRangeFilter.value,
@@ -355,11 +375,12 @@ document.addEventListener('DOMContentLoaded', function() {
             page: page
         });
         
-        // Update URL without page reload
-        const newUrl = `posts.php?${params.toString()}`;
+        // Update URL without page reload (only include non-empty params)
+        const queryString = urlParams.toString();
+        const newUrl = queryString ? `posts.php?${queryString}` : 'posts.php';
         window.history.pushState({ page: page }, '', newUrl);
         
-        fetch(`ajax-search.php?${params}`)
+        fetch(`ajax-search.php?${ajaxParams}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
