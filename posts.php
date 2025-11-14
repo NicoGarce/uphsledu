@@ -375,9 +375,9 @@ document.addEventListener('DOMContentLoaded', function() {
             page: page
         });
         
-        // Update URL without page reload (only include non-empty params)
+        // Update URL without page reload (only include non-empty params, hide .php extension)
         const queryString = urlParams.toString();
-        const newUrl = queryString ? `posts.php?${queryString}` : 'posts.php';
+        const newUrl = queryString ? `posts?${queryString}` : 'posts';
         window.history.pushState({ page: page }, '', newUrl);
         
         fetch(`ajax-search.php?${ajaxParams}`)
