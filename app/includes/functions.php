@@ -741,5 +741,122 @@ function setSetting($key, $value, $type = 'text', $description = null, $userId =
         return false;
     }
 }
+
+// Check if a section is in maintenance mode (checks both main section and sub-page)
+function isSectionInMaintenance($sectionKey, $subKey = null) {
+    // Check main section first - if main section is enabled, all sub-pages are in maintenance
+    $maintenance_enabled = getSetting("section_maintenance_{$sectionKey}", '0');
+    if ($maintenance_enabled === '1') {
+        return true;
+    }
+    
+    // If main section is not enabled, check sub-page if provided
+    if ($subKey !== null) {
+        $subMaintenance = getSetting("section_maintenance_{$sectionKey}_{$subKey}", '0');
+        if ($subMaintenance === '1') {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Get section maintenance message (checks both main section and sub-page)
+function getSectionMaintenanceMessage($sectionKey, $defaultMessage = null, $subKey = null) {
+    // Check sub-page first if provided
+    if ($subKey !== null) {
+        $subMessage = getSetting("section_maintenance_message_{$sectionKey}_{$subKey}", null);
+        if ($subMessage !== null) {
+            return $subMessage;
+        }
+    }
+    
+    $sections = [
+        'home' => 'Home',
+        'programs' => 'Programs',
+        'online-services' => 'Online Services',
+        'support-services' => 'Support Services',
+        'campuses' => 'Campuses',
+        'about' => 'About',
+        'online-payment' => 'Online Payment',
+        'calendar' => 'Calendar',
+        'enrollment' => 'Enrollment',
+        'sdg-initiatives' => 'SDG Initiatives',
+        'posts' => 'Posts',
+        'post' => 'Post'
+    ];
+    
+    $sectionName = $sections[$sectionKey] ?? 'This section';
+    $default = $defaultMessage ?? "The {$sectionName} section is currently under maintenance. Please check back soon.";
+    
+    return getSetting("section_maintenance_message_{$sectionKey}", $default);
+}
+
+// Check if navbar item is visible
+function isNavbarItemVisible($itemKey, $subItemKey = null) {
+    // Check main item first - if main item is disabled, all sub-items are hidden
+    $itemVisible = getSetting("navbar_item_{$itemKey}", '1');
+    if ($itemVisible !== '1') {
+        return false; // Main item is disabled
+    }
+    
+    // If sub-item is specified, check sub-item visibility
+    if ($subItemKey !== null) {
+        $subItemVisible = getSetting("navbar_item_{$itemKey}_{$subItemKey}", '1');
+        return $subItemVisible === '1';
+    }
+    
+    // Main item is visible
+    return true;
+}
+
+// Check if all sub-items for a navbar item are disabled
+function areAllNavbarSubItemsDisabled($itemKey, $subItems) {
+    // If main item is disabled, return false (main item won't show anyway)
+    $itemVisible = getSetting("navbar_item_{$itemKey}", '1');
+    if ($itemVisible !== '1') {
+        return false;
+    }
+    
+    // If no sub-items, return false
+    if (empty($subItems)) {
+        return false;
+    }
+    
+    // Check if all sub-items are disabled
+    $allDisabled = true;
+    foreach ($subItems as $subKey => $subName) {
+        $subItemVisible = getSetting("navbar_item_{$itemKey}_{$subKey}", '1');
+        if ($subItemVisible === '1') {
+            $allDisabled = false;
+            break;
+        }
+    }
+    
+    return $allDisabled;
+}
+
+// Display section maintenance message
+function displaySectionMaintenance($sectionKey, $base_path = '', $subKey = null) {
+    if (!isSectionInMaintenance($sectionKey, $subKey)) {
+        return false;
+    }
+    
+    $maintenance_message = getSectionMaintenanceMessage($sectionKey, null, $subKey);
+    ?>
+    <main class="main-content" style="min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 4rem 2rem;">
+        <div class="maintenance-message" style="text-align: center; max-width: 600px; padding: 3rem; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <i class="fas fa-tools" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1.5rem;"></i>
+            <h1 style="font-size: 2rem; color: var(--primary-color); margin-bottom: 1rem;">Under Maintenance</h1>
+            <p style="font-size: 1.1rem; color: #666; line-height: 1.6; margin-bottom: 2rem;"><?php echo htmlspecialchars($maintenance_message); ?></p>
+            <a href="<?php echo $base_path; ?>index.php" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                <i class="fas fa-home"></i>
+                Go to Homepage
+            </a>
+        </div>
+    </main>
+    <?php
+    return true;
+}
 ?>
 

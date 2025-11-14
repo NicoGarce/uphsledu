@@ -11,6 +11,17 @@ session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';
 
+// Check if SDG Initiatives section is in maintenance
+if (isSectionInMaintenance('sdg-initiatives')) {
+    $page_title = "SDG Initiatives - Maintenance";
+    $base_path = '';
+    include 'app/includes/header.php';
+    if (displaySectionMaintenance('sdg-initiatives', $base_path)) {
+        include 'app/includes/footer.php';
+        exit;
+    }
+}
+
 // Set page title
 $page_title = "SDG Initiatives";
 $base_path = '';

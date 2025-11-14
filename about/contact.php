@@ -11,6 +11,17 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Check if this sub-page or About section is in maintenance
+if (isSectionInMaintenance('about', 'contact') || isSectionInMaintenance('about')) {
+    $page_title = "Contact Us - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('about', $base_path, 'contact')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 // Set page title
 $page_title = "Contact Us";
 $base_path = '../';

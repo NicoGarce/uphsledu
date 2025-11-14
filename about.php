@@ -12,6 +12,17 @@ require_once 'app/config/database.php';
 require_once 'app/config/paths.php';
 require_once 'app/includes/functions.php';
 
+// Check if About Index or About section is in maintenance
+if (isSectionInMaintenance('about', 'about-index') || isSectionInMaintenance('about')) {
+    $page_title = "About - Maintenance";
+    $base_path = $GLOBALS['base_path'];
+    include 'app/includes/header.php';
+    if (displaySectionMaintenance('about', $base_path, 'about-index')) {
+        include 'app/includes/footer.php';
+        exit;
+    }
+}
+
 // Set page title
 $page_title = "About University of Perpetual Help System Laguna";
 

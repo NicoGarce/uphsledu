@@ -9,6 +9,18 @@
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+
+// Check if this sub-page or Support Services section is in maintenance
+if (isSectionInMaintenance('support-services', 'cod') || isSectionInMaintenance('support-services')) {
+    $page_title = "Community Outreach Department - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('support-services', $base_path, 'cod')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 $page_title = "Community Outreach Department - UPHSL";
 $base_path = '../';
 

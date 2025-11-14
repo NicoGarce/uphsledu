@@ -10,6 +10,17 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Check if this sub-page or Support Services section is in maintenance
+if (isSectionInMaintenance('support-services', 'library') || isSectionInMaintenance('support-services')) {
+    $page_title = "University Library - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('support-services', $base_path, 'library')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 $base_path = '../';
 $page_title = "University Library - UPHSL";
 include '../app/includes/header.php';

@@ -1,4 +1,74 @@
 <?php
+session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
+
+// Check if this sub-page or Online Payment section is in maintenance
+if (isSectionInMaintenance('online-payment', 'payment-main') || isSectionInMaintenance('online-payment')) {
+    $maintenance_message = getSectionMaintenanceMessage('online-payment', null, 'payment-main');
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Online Payment - Maintenance</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+                background: #f5f5f5;
+            }
+            .maintenance-container {
+                text-align: center;
+                max-width: 600px;
+                padding: 3rem;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            }
+            .maintenance-icon {
+                font-size: 4rem;
+                color: #1c4da1;
+                margin-bottom: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+                color: #1c4da1;
+                margin-bottom: 1rem;
+            }
+            p {
+                font-size: 1.1rem;
+                color: #666;
+                line-height: 1.6;
+                margin-bottom: 2rem;
+            }
+            .btn {
+                display: inline-block;
+                padding: 0.75rem 1.5rem;
+                background: #1c4da1;
+                color: white;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="maintenance-container">
+            <div class="maintenance-icon">🔧</div>
+            <h1>Under Maintenance</h1>
+            <p><?php echo htmlspecialchars($maintenance_message); ?></p>
+            <a href="../index.php" class="btn">Go to Homepage</a>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
 
 ob_start();
 

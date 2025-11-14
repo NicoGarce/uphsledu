@@ -7,6 +7,20 @@
  * @description Main support services page listing all available support services at UPHSL
  */
 session_start();
+require_once '../app/config/database.php';
+require_once '../app/includes/functions.php';
+
+// Check if Support Services Index or Support Services section is in maintenance
+if (isSectionInMaintenance('support-services', 'support-services-index') || isSectionInMaintenance('support-services')) {
+    $page_title = "Support Services - Maintenance";
+    $base_path = '../';
+    include '../app/includes/header.php';
+    if (displaySectionMaintenance('support-services', $base_path, 'support-services-index')) {
+        include '../app/includes/footer.php';
+        exit;
+    }
+}
+
 $page_title = "Support Services";
 $base_path = '../';
 
