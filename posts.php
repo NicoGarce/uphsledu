@@ -251,10 +251,27 @@ include 'app/includes/header.php';
 
                     <!-- Pagination -->
                     <?php if ($totalPages > 1): ?>
+                        <?php
+                        // Build query string for pagination links
+                        $queryParams = [];
+                        if (!empty($search)) {
+                            $queryParams[] = 'search=' . urlencode($search);
+                        }
+                        if (!empty($category)) {
+                            $queryParams[] = 'category=' . urlencode($category);
+                        }
+                        if (!empty($dateRange)) {
+                            $queryParams[] = 'date_range=' . urlencode($dateRange);
+                        }
+                        if (!empty($specificDate)) {
+                            $queryParams[] = 'specific_date=' . urlencode($specificDate);
+                        }
+                        $queryString = !empty($queryParams) ? '&' . implode('&', $queryParams) : '';
+                        ?>
                         <div class="pagination-container">
                             <div class="pagination">
                                 <?php if ($page > 1): ?>
-                                    <a href="posts.php?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-btn prev-btn">
+                                    <a href="posts.php?page=<?php echo $page - 1; ?><?php echo $queryString; ?>" class="pagination-btn prev-btn">
                                         <i class="fas fa-chevron-left"></i>
                                         Previous
                                     </a>
@@ -266,14 +283,14 @@ include 'app/includes/header.php';
                                     $endPage = min($totalPages, $page + 2);
                                     
                                     if ($startPage > 1): ?>
-                                        <a href="posts.php?page=1&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-number">1</a>
+                                        <a href="posts.php?page=1<?php echo $queryString; ?>" class="pagination-number">1</a>
                                         <?php if ($startPage > 2): ?>
                                             <span class="pagination-ellipsis">...</span>
                                         <?php endif; ?>
                                     <?php endif; ?>
 
                                     <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                                        <a href="posts.php?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" 
+                                        <a href="posts.php?page=<?php echo $i; ?><?php echo $queryString; ?>" 
                                            class="pagination-number <?php echo $i === $page ? 'active' : ''; ?>">
                                             <?php echo $i; ?>
                                         </a>
@@ -283,14 +300,14 @@ include 'app/includes/header.php';
                                         <?php if ($endPage < $totalPages - 1): ?>
                                             <span class="pagination-ellipsis">...</span>
                                         <?php endif; ?>
-                                        <a href="posts.php?page=<?php echo $totalPages; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-number">
+                                        <a href="posts.php?page=<?php echo $totalPages; ?><?php echo $queryString; ?>" class="pagination-number">
                                             <?php echo $totalPages; ?>
                                         </a>
                                     <?php endif; ?>
                                 </div>
 
                                 <?php if ($page < $totalPages): ?>
-                                    <a href="posts.php?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&date_range=<?php echo urlencode($dateRange); ?>" class="pagination-btn next-btn">
+                                    <a href="posts.php?page=<?php echo $page + 1; ?><?php echo $queryString; ?>" class="pagination-btn next-btn">
                                         Next
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
@@ -408,11 +425,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const paginationLinks = document.querySelectorAll('.pagination-number, .pagination-btn');
         paginationLinks.forEach(link => {
             link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const page = parseInt(this.dataset.page);
-                if (!isNaN(page)) {
-                    performSearch(page);
+                // Only handle AJAX pagination if data-page attribute exists
+                if (this.dataset.page) {
+                    e.preventDefault();
+                    const page = parseInt(this.dataset.page);
+                    if (!isNaN(page)) {
+                        performSearch(page);
+                    }
                 }
+                // If no data-page attribute, let the link navigate normally (for initial page load)
             });
         });
     }
