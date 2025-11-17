@@ -1058,6 +1058,8 @@ $navbar_items_config = [
                     let icon = 'fas fa-file-alt';
                     if (result.type === 'post') {
                         icon = 'fas fa-newspaper';
+                    } else if (result.type === 'career') {
+                        icon = 'fas fa-briefcase';
                     } else if (result.type === 'external') {
                         icon = 'fas fa-external-link-alt';
                     }
@@ -1109,6 +1111,8 @@ $navbar_items_config = [
                     let icon = 'fas fa-file-alt';
                     if (result.type === 'post') {
                         icon = 'fas fa-newspaper';
+                    } else if (result.type === 'career') {
+                        icon = 'fas fa-briefcase';
                     } else if (result.type === 'external') {
                         icon = 'fas fa-external-link-alt';
                     }

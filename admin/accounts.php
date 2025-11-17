@@ -361,7 +361,7 @@ $users = $stmt->fetchAll();
                             <label for="role" class="form-label">Role</label>
                             <select id="role" name="role" class="form-input" required>
                                 <option value="">Select Role</option>
-                                <option value="user">User</option>
+                                <option value="hr">HR</option>
                                 <option value="author">Author</option>
                                 <option value="admin">Admin</option>
                                 <option value="super_admin">Super Admin</option>

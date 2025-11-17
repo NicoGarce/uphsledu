@@ -750,6 +750,504 @@ include 'app/includes/header.php';
         </div>
     </section>
 
+    <!-- Career Opportunities Section -->
+    <section class="careers-section" id="careers" style="padding: 4rem 2rem; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); position: relative;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-briefcase"></i> Career Opportunities
+                </h2>
+                <p class="section-description">Join our team and make a difference at the University of Perpetual Help System Laguna</p>
+            </div>
+
+            <?php
+            // Get published career postings (limit to 6 for homepage)
+            $careerPostings = getPublishedCareerPostings(6);
+            ?>
+
+            <?php if (empty($careerPostings)): ?>
+                <div style="text-align: center; padding: 3rem 2rem; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <i class="fas fa-briefcase" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #666; margin-bottom: 0.5rem;">No Job Postings Available</h3>
+                    <p style="color: #999;">Check back soon for new career opportunities.</p>
+                </div>
+            <?php else: ?>
+                <div class="careers-carousel-wrapper" style="position: relative; margin-bottom: 2rem;">
+                    <div class="careers-carousel-container" style="overflow: hidden; position: relative;">
+                        <div class="careers-carousel-track" id="careersCarouselTrack" style="display: flex; transition: transform 0.5s ease-in-out; gap: 1.5rem;">
+                            <?php foreach ($careerPostings as $posting): ?>
+                                <div class="career-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; min-width: 280px; max-width: 280px; flex-shrink: 0;">
+                                    <div class="career-header" style="margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f0f0f0;">
+                                        <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 0.5rem; line-height: 1.3;">
+                                            <a href="career.php?slug=<?php echo htmlspecialchars($posting['slug']); ?>" style="color: inherit; text-decoration: none;">
+                                                <?php echo htmlspecialchars($posting['position']); ?>
+                                            </a>
+                                        </h3>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; font-size: 0.75rem; color: #666;">
+                                            <span style="display: flex; align-items: center; gap: 0.375rem;">
+                                                <i class="fas fa-map-marker-alt" style="color: var(--primary-color); font-size: 0.7rem;"></i>
+                                                <?php echo htmlspecialchars($posting['location']); ?>
+                                            </span>
+                                            <span style="display: flex; align-items: center; gap: 0.375rem;">
+                                                <i class="fas fa-clock" style="color: var(--primary-color); font-size: 0.7rem;"></i>
+                                                <?php echo htmlspecialchars($posting['employment_type']); ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="career-footer" style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem; border-top: 1px solid #f0f0f0; margin-top: 1rem;">
+                                        <span style="font-size: 0.7rem; color: #999;">
+                                            <i class="fas fa-calendar" style="font-size: 0.65rem;"></i>
+                                            <?php echo formatDate($posting['published_at'] ?: $posting['created_at']); ?>
+                                        </span>
+                                        <a href="career.php?slug=<?php echo htmlspecialchars($posting['slug']); ?>" 
+                                           class="btn btn-primary" 
+                                           style="padding: 0.35rem 0.9rem; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 0.375rem;">
+                                            View
+                                            <i class="fas fa-arrow-right" style="font-size: 0.7rem;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <?php if (count($careerPostings) > 1): ?>
+                        <button class="career-carousel-btn career-carousel-prev" aria-label="Previous careers" style="position: absolute; left: -20px; top: 50%; transform: translateY(-50%); background: white; border: 2px solid var(--primary-color); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;">
+                            <i class="fas fa-chevron-left" style="color: var(--primary-color); font-size: 1rem;"></i>
+                        </button>
+                        <button class="career-carousel-btn career-carousel-next" aria-label="Next careers" style="position: absolute; right: -20px; top: 50%; transform: translateY(-50%); background: white; border: 2px solid var(--primary-color); border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;">
+                            <i class="fas fa-chevron-right" style="color: var(--primary-color); font-size: 1rem;"></i>
+                        </button>
+                    <?php endif; ?>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="support-services/careers.php" class="btn btn-primary" style="padding: 0.75rem 2rem; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-briefcase"></i>
+                        View All Career Opportunities
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <style>
+        .careers-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--alt-color-1), var(--secondary-color));
+        }
+
+        .careers-section .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .careers-section .section-title {
+            color: var(--primary-color);
+            font-family: 'Barlow Semi Condensed', sans-serif;
+        }
+
+        .careers-section .section-title i {
+            color: var(--alt-color-1);
+            margin-right: 0.5rem;
+        }
+
+        .careers-carousel-wrapper {
+            padding: 0 3rem;
+        }
+
+        .careers-carousel-container {
+            padding: 1rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .career-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .career-carousel-btn:hover {
+            background: var(--primary-color) !important;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .career-carousel-btn:hover i {
+            color: white !important;
+        }
+
+        @media (max-width: 968px) {
+            .careers-carousel-wrapper {
+                padding: 0 2.5rem;
+            }
+
+            .career-carousel-btn {
+                width: 40px !important;
+                height: 40px !important;
+            }
+
+            .career-carousel-prev {
+                left: -15px !important;
+            }
+
+            .career-carousel-next {
+                right: -15px !important;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .careers-carousel-wrapper {
+                padding: 0 1rem;
+            }
+
+            .career-card {
+                min-width: calc(50% - 0.75rem) !important;
+                max-width: calc(50% - 0.75rem) !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .careers-section {
+                padding: 3rem 1.5rem !important;
+            }
+
+            .careers-section .section-header {
+                margin-bottom: 2rem;
+            }
+
+            .careers-section .section-title {
+                font-size: 1.5rem !important;
+            }
+
+            .careers-section .section-description {
+                font-size: 1rem !important;
+                padding: 0 1rem;
+            }
+
+            .careers-carousel-wrapper {
+                padding: 0 0.5rem;
+            }
+
+            .careers-carousel-container {
+                padding: 0.5rem 0;
+                justify-content: flex-start;
+            }
+
+            .career-card {
+                min-width: calc(100% - 1rem) !important;
+                max-width: calc(100% - 1rem) !important;
+                padding: 1.25rem !important;
+            }
+
+            .career-carousel-btn {
+                display: none !important;
+            }
+
+            .careers-carousel-track {
+                gap: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .careers-section {
+                padding: 2.5rem 1rem !important;
+            }
+
+            .careers-section .section-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .careers-section .section-title {
+                font-size: 1.3rem !important;
+            }
+
+            .careers-section .section-title i {
+                font-size: 1.1rem;
+            }
+
+            .careers-section .section-description {
+                font-size: 0.9rem !important;
+            }
+
+            .careers-carousel-wrapper {
+                padding: 0 0.25rem;
+            }
+
+            .career-card {
+                min-width: calc(100% - 0.5rem) !important;
+                max-width: calc(100% - 0.5rem) !important;
+                padding: 1rem !important;
+            }
+
+            .career-card h3 {
+                font-size: 1rem !important;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const track = document.getElementById('careersCarouselTrack');
+            const cards = track ? track.querySelectorAll('.career-card') : [];
+            const prevBtn = document.querySelector('.career-carousel-prev');
+            const nextBtn = document.querySelector('.career-carousel-next');
+            
+            if (!track || cards.length === 0) return;
+            
+            // Determine cards per view based on screen size
+            function getCardsPerView() {
+                if (window.innerWidth <= 768) return 1;
+                if (window.innerWidth <= 968) return 2;
+                return 3;
+            }
+            
+            // Calculate card width dynamically
+            function getCardWidth() {
+                if (window.innerWidth <= 768) {
+                    // On mobile, get actual card width from DOM
+                    const firstCard = cards[0];
+                    if (firstCard) {
+                        return firstCard.offsetWidth;
+                    }
+                    // Fallback calculation
+                    const wrapper = document.querySelector('.careers-carousel-wrapper');
+                    if (wrapper) {
+                        return wrapper.offsetWidth - 16; // 1rem = 16px
+                    }
+                    return window.innerWidth - 16;
+                }
+                
+                const wrapper = document.querySelector('.careers-carousel-wrapper');
+                if (!wrapper) return 280;
+                
+                const wrapperWidth = wrapper.offsetWidth;
+                const cardsPerView = getCardsPerView();
+                const gap = 24;
+                const padding = window.innerWidth <= 968 ? 16 : 48;
+                
+                return (wrapperWidth - padding - (gap * (cardsPerView - 1))) / cardsPerView;
+            }
+            
+            // Calculate offset to center cards
+            function getCenteredOffset() {
+                const wrapper = document.querySelector('.careers-carousel-wrapper');
+                const container = document.querySelector('.careers-carousel-container');
+                if (!wrapper || !container) return 0;
+                
+                const wrapperWidth = wrapper.offsetWidth;
+                const containerWidth = container.offsetWidth;
+                const cardsPerView = getCardsPerView();
+                const gap = window.innerWidth <= 768 ? 16 : 24;
+                const cardWidth = getCardWidth();
+                
+                // On mobile, center the single visible card
+                if (window.innerWidth <= 768) {
+                    const cardWithGap = cardWidth + gap;
+                    const availableWidth = containerWidth;
+                    return (availableWidth - cardWidth) / 2;
+                }
+                
+                // For tablet/desktop, use padding offset
+                const padding = window.innerWidth <= 968 ? 16 : 48;
+                
+                // If showing all cards or less, center them
+                if (cards.length <= cardsPerView) {
+                    const totalCardsWidth = (cards.length * cardWidth) + (gap * (cards.length - 1));
+                    return (wrapperWidth - totalCardsWidth) / 2;
+                }
+                
+                return padding / 2;
+            }
+            
+            let currentIndex = 0;
+            let cardsPerView = getCardsPerView();
+            let cardWidth = getCardWidth();
+            let isDragging = false;
+            let startX = 0;
+            let currentX = 0;
+            let initialOffset = 0;
+            let autoSlideInterval = null;
+            
+            function updateCarousel(smooth = true) {
+                const gap = window.innerWidth <= 768 ? 16 : 24;
+                
+                // If all cards fit, just center them
+                if (cards.length <= cardsPerView) {
+                    const centeredOffset = getCenteredOffset();
+                    track.style.transition = smooth ? 'transform 0.5s ease-in-out' : 'none';
+                    track.style.transform = `translateX(${centeredOffset}px)`;
+                    return;
+                }
+                
+                // For mobile, center each card as we slide
+                if (window.innerWidth <= 768) {
+                    // Recalculate card width to ensure accuracy
+                    cardWidth = getCardWidth();
+                    const container = document.querySelector('.careers-carousel-container');
+                    if (!container) return;
+                    
+                    const containerWidth = container.offsetWidth;
+                    const centeredOffset = (containerWidth - cardWidth) / 2;
+                    const slideOffset = currentIndex * (cardWidth + gap);
+                    const offset = centeredOffset - slideOffset;
+                    
+                    track.style.transition = smooth ? 'transform 0.5s ease-in-out' : 'none';
+                    track.style.transform = `translateX(${offset}px)`;
+                    return;
+                }
+                
+                // For tablet/desktop, use normal sliding with padding
+                const padding = window.innerWidth <= 968 ? 16 : 48;
+                const offset = (padding / 2) - (currentIndex * (cardWidth + gap));
+                track.style.transition = smooth ? 'transform 0.5s ease-in-out' : 'none';
+                track.style.transform = `translateX(${offset}px)`;
+            }
+            
+            function nextSlide() {
+                cardsPerView = getCardsPerView();
+                const maxIndex = Math.max(0, cards.length - cardsPerView);
+                currentIndex = (currentIndex + 1) % (maxIndex + 1);
+                if (maxIndex === 0) currentIndex = 0;
+                updateCarousel();
+            }
+            
+            function prevSlide() {
+                cardsPerView = getCardsPerView();
+                const maxIndex = Math.max(0, cards.length - cardsPerView);
+                currentIndex = (currentIndex - 1 + (maxIndex + 1)) % (maxIndex + 1);
+                if (maxIndex === 0) currentIndex = 0;
+                updateCarousel();
+            }
+            
+            function startAutoSlide() {
+                if (cards.length <= cardsPerView) return;
+                if (autoSlideInterval) clearInterval(autoSlideInterval);
+                autoSlideInterval = setInterval(nextSlide, 5000);
+            }
+            
+            function stopAutoSlide() {
+                if (autoSlideInterval) {
+                    clearInterval(autoSlideInterval);
+                    autoSlideInterval = null;
+                }
+            }
+            
+            // Initialize carousel
+            function initCarousel() {
+                cardsPerView = getCardsPerView();
+                cardWidth = getCardWidth();
+                currentIndex = 0;
+                updateCarousel(false);
+                
+                // Only enable carousel if there are more cards than visible
+                if (cards.length <= cardsPerView) {
+                    stopAutoSlide();
+                    if (prevBtn) prevBtn.style.display = 'none';
+                    if (nextBtn) nextBtn.style.display = 'none';
+                    return;
+                }
+                
+                if (prevBtn) prevBtn.style.display = 'flex';
+                if (nextBtn) nextBtn.style.display = 'flex';
+                
+                // Only auto-slide on desktop
+                if (window.innerWidth > 768) {
+                    startAutoSlide();
+                } else {
+                    stopAutoSlide();
+                }
+            }
+            
+            // Event listeners
+            if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoSlide(); prevSlide(); startAutoSlide(); });
+            if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoSlide(); nextSlide(); startAutoSlide(); });
+            
+            // Pause on hover (desktop only)
+            const wrapper = document.querySelector('.careers-carousel-wrapper');
+            if (wrapper) {
+                wrapper.addEventListener('mouseenter', stopAutoSlide);
+                wrapper.addEventListener('mouseleave', () => {
+                    if (window.innerWidth > 768) startAutoSlide();
+                });
+            }
+            
+            // Touch/swipe support for mobile
+            if (track) {
+                track.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    startX = e.touches[0].clientX;
+                    currentX = startX;
+                    
+                    // Get current transform value
+                    const currentTransform = track.style.transform;
+                    const match = currentTransform.match(/translateX\(([^)]+)\)/);
+                    
+                    // Calculate initial offset based on current position
+                    if (window.innerWidth <= 768) {
+                        const container = document.querySelector('.careers-carousel-container');
+                        const containerWidth = container ? container.offsetWidth : 0;
+                        const centeredOffset = (containerWidth - cardWidth) / 2;
+                        const slideOffset = currentIndex * (cardWidth + 16);
+                        initialOffset = centeredOffset - slideOffset;
+                    } else {
+                        initialOffset = match ? parseFloat(match[1]) : 0;
+                    }
+                    
+                    track.style.transition = 'none';
+                    stopAutoSlide();
+                }, { passive: true });
+                
+                track.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    currentX = e.touches[0].clientX;
+                    const diff = currentX - startX;
+                    const offset = initialOffset + diff;
+                    track.style.transform = `translateX(${offset}px)`;
+                }, { passive: true });
+                
+                track.addEventListener('touchend', () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    
+                    const diff = startX - currentX;
+                    const threshold = 50;
+                    
+                    if (Math.abs(diff) > threshold) {
+                        if (diff > 0) {
+                            nextSlide();
+                        } else {
+                            prevSlide();
+                        }
+                    } else {
+                        updateCarousel();
+                    }
+                    
+                    // Resume auto-slide on desktop after a delay
+                    if (window.innerWidth > 768) {
+                        setTimeout(startAutoSlide, 2000);
+                    }
+                }, { passive: true });
+            }
+            
+            // Handle window resize
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    initCarousel();
+                }, 250);
+            });
+            
+            // Initialize on load
+            initCarousel();
+        });
+    </script>
+
     <!-- Features Section -->
     <section class="features">
         <div class="container">

@@ -21,6 +21,8 @@ if (isAuthor()) {
     redirect('author-dashboard.php');
 }
 
+// HR users can access dashboard (no redirect needed)
+
 $user = getUserById($_SESSION['user_id']);
 $userRole = $_SESSION['user_role'];
 
@@ -66,6 +68,7 @@ if (!isset($success)) $success = '';
 // Get dashboard data based on user role
 $stats = [];
 $recentPosts = [];
+$recentCareers = [];
 
 if ($userRole === 'super_admin' || $userRole === 'admin') {
     // Admin dashboard data
@@ -89,6 +92,28 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
     
     // Recent posts (all authors)
     $recentPosts = getAllPosts();
+    
+} elseif ($userRole === 'hr') {
+    // HR dashboard data - career postings
+    $pdo = getDBConnection();
+    
+    // User's career postings
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM careers_postings WHERE author_id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $stats['total_careers'] = $stmt->fetch()['count'];
+    
+    // Published career postings
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM careers_postings WHERE author_id = ? AND status = 'published'");
+    $stmt->execute([$_SESSION['user_id']]);
+    $stats['published_careers'] = $stmt->fetch()['count'];
+    
+    // Draft career postings
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM careers_postings WHERE author_id = ? AND status = 'draft'");
+    $stmt->execute([$_SESSION['user_id']]);
+    $stats['draft_careers'] = $stmt->fetch()['count'];
+    
+    // Recent career postings (user's only)
+    $recentCareers = getAllCareerPostings($_SESSION['user_id']);
     
 } else {
     // Author/User dashboard data

@@ -66,6 +66,29 @@ try {
         ];
     }
     
+    // Search published career postings
+    $careersSql = "SELECT 'career' as type, id, position as title, slug, published_at as date, 'careers' as category
+                   FROM careers_postings 
+                   WHERE status = 'published' 
+                   AND (position LIKE ? OR job_description LIKE ? OR location LIKE ?)
+                   ORDER BY published_at DESC 
+                   LIMIT 5";
+    
+    $careersStmt = $pdo->prepare($careersSql);
+    $careersStmt->execute([$searchTerm, $searchTerm, $searchTerm]);
+    $careers = $careersStmt->fetchAll();
+    
+    // Add careers to results
+    foreach ($careers as $career) {
+        $results[] = [
+            'type' => 'career',
+            'title' => $career['title'],
+            'url' => "career.php?slug=" . $career['slug'],
+            'date' => formatDate($career['date']),
+            'category' => 'Career'
+        ];
+    }
+    
     // Search public pages (actual navbar pages from codebase)
     $publicPages = [
         // Main Navigation
