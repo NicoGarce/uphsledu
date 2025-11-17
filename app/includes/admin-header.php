@@ -50,7 +50,10 @@ $base_path = $GLOBALS['base_path'];
             </div>
             <div class="nav-menu">
                 <a href="../" class="nav-link">Home</a>
-                <?php if (isAuthor()): ?>
+                <?php if (isHR()): ?>
+                    <a href="dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
+                    <a href="careers.php" class="nav-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers Posting</a>
+                <?php elseif (isAuthor()): ?>
                     <a href="author-dashboard.php" class="nav-link <?php echo ($current_page == 'author-dashboard') ? 'active' : ''; ?>">Dashboard</a>
                 <?php elseif (isAdmin() || isSuperAdmin()): ?>
                     <a href="dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
@@ -59,6 +62,9 @@ $base_path = $GLOBALS['base_path'];
                     <a href="posts.php" class="nav-link <?php echo ($current_page == 'posts') ? 'active' : ''; ?>">Post Management</a>
                     <a href="sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
                     <a href="sdg-full-report.php" class="nav-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">SDG Full Report</a>
+                <?php endif; ?>
+                <?php if (isHR() || isSuperAdmin()): ?>
+                    <a href="careers.php" class="nav-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers Posting</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>
                     <a href="accounts.php" class="nav-link icon-only <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>" title="Account Management">
@@ -110,7 +116,16 @@ $base_path = $GLOBALS['base_path'];
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-section-title">Main</div>
-                    <?php if (isAuthor()): ?>
+                    <?php if (isHR()): ?>
+                    <a href="dashboard.php" class="sidebar-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="../" class="sidebar-link">
+                        <i class="fas fa-home"></i>
+                        <span>View Website</span>
+                    </a>
+                    <?php elseif (isAuthor()): ?>
                     <a href="author-dashboard.php" class="sidebar-link <?php echo ($current_page == 'author-dashboard') ? 'active' : ''; ?>">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
@@ -121,11 +136,23 @@ $base_path = $GLOBALS['base_path'];
                         <span>Dashboard</span>
                     </a>
                     <?php endif; ?>
+                    <?php if (!isHR()): ?>
                     <a href="../" class="sidebar-link">
                         <i class="fas fa-home"></i>
                         <span>View Website</span>
                     </a>
+                    <?php endif; ?>
                 </div>
+                
+                <?php if (isHR() || isSuperAdmin()): ?>
+                <div class="nav-section">
+                    <div class="nav-section-title">Careers</div>
+                    <a href="careers.php" class="sidebar-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Careers Posting</span>
+                    </a>
+                </div>
+                <?php endif; ?>
                 
                 <?php if (isAuthor() || isAdmin() || isSuperAdmin()): ?>
                 <div class="nav-section">

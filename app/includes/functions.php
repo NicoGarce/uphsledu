@@ -222,6 +222,11 @@ function isAuthor() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'author';
 }
 
+// Check if user is HR
+function isHR() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'hr';
+}
+
 // Redirect function
 function redirect($url) {
     header("Location: $url");
@@ -537,6 +542,13 @@ function incrementSDGPostViews($postId) {
     $stmt->execute([$postId]);
 }
 
+// Increment career posting views
+function incrementCareerPostingViews($careerId) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("UPDATE careers_postings SET views = views + 1 WHERE id = ?");
+    $stmt->execute([$careerId]);
+}
+
 // Get published posts with search and filters
 function getPublishedPostsWithFilters($page = 1, $limit = 12, $search = '', $category = '', $dateRange = '', $specificDate = '') {
     $pdo = getDBConnection();
@@ -676,18 +688,18 @@ function getPublishedPostsCountWithFilters($search = '', $category = '', $dateRa
 }
 
 // Get date range condition for SQL
-function getDateRangeCondition($dateRange) {
+function getDateRangeCondition($dateRange, $dateColumn = 'p.published_at') {
     $today = date('Y-m-d');
     
     switch ($dateRange) {
         case 'today':
-            return "DATE(p.published_at) = '$today'";
+            return "DATE($dateColumn) = '$today'";
         case 'week':
-            return "p.published_at >= DATE_SUB('$today', INTERVAL 1 WEEK)";
+            return "$dateColumn >= DATE_SUB('$today', INTERVAL 1 WEEK)";
         case 'month':
-            return "p.published_at >= DATE_SUB('$today', INTERVAL 1 MONTH)";
+            return "$dateColumn >= DATE_SUB('$today', INTERVAL 1 MONTH)";
         case 'year':
-            return "p.published_at >= DATE_SUB('$today', INTERVAL 1 YEAR)";
+            return "$dateColumn >= DATE_SUB('$today', INTERVAL 1 YEAR)";
         default:
             return null;
     }
@@ -857,6 +869,267 @@ function displaySectionMaintenance($sectionKey, $base_path = '', $subKey = null)
     </main>
     <?php
     return true;
+}
+
+// Get all career postings
+function getAllCareerPostings($authorId = null, $status = null) {
+    $pdo = getDBConnection();
+    $sql = "
+        SELECT cp.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM careers_postings cp 
+        JOIN users u ON cp.author_id = u.id 
+    ";
+    $params = [];
+    $conditions = [];
+    
+    if ($authorId) {
+        $conditions[] = "cp.author_id = ?";
+        $params[] = $authorId;
+    }
+    
+    if ($status) {
+        $conditions[] = "cp.status = ?";
+        $params[] = $status;
+    }
+    
+    if (!empty($conditions)) {
+        $sql .= " WHERE " . implode(" AND ", $conditions);
+    }
+    
+    $sql .= " ORDER BY cp.published_at DESC, cp.created_at DESC";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll();
+}
+
+// Get published career postings
+function getPublishedCareerPostings($limit = 10) {
+    $pdo = getDBConnection();
+    $limit = (int)$limit;
+    $stmt = $pdo->prepare("
+        SELECT cp.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM careers_postings cp 
+        JOIN users u ON cp.author_id = u.id 
+        WHERE cp.status = 'published' 
+        ORDER BY cp.published_at DESC, cp.created_at DESC 
+        LIMIT :limit
+    ");
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+// Get published career postings with pagination
+function getPublishedCareerPostingsPaginated($page = 1, $limit = 12) {
+    $pdo = getDBConnection();
+    $offset = ($page - 1) * $limit;
+    
+    // Cast to integers to prevent SQL injection
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    
+    $stmt = $pdo->prepare("
+        SELECT cp.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM careers_postings cp 
+        JOIN users u ON cp.author_id = u.id 
+        WHERE cp.status = 'published' 
+        ORDER BY cp.published_at DESC, cp.created_at DESC 
+        LIMIT :limit OFFSET :offset
+    ");
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+// Get total count of published career postings
+function getPublishedCareerPostingsCount() {
+    $pdo = getDBConnection();
+    $stmt = $pdo->query("SELECT COUNT(*) as count FROM careers_postings WHERE status = 'published'");
+    $result = $stmt->fetch();
+    return $result['count'];
+}
+
+// Get published career postings with filters
+function getPublishedCareerPostingsWithFilters($page = 1, $limit = 12, $search = '', $location = '', $employmentType = '', $dateRange = '', $specificDate = '') {
+    $pdo = getDBConnection();
+    $offset = ($page - 1) * $limit;
+    
+    // Cast to integers to prevent SQL injection
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    
+    $sql = "
+        SELECT cp.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM careers_postings cp 
+        JOIN users u ON cp.author_id = u.id 
+        WHERE cp.status = 'published'
+    ";
+    
+    $params = [];
+    
+    // Add search condition
+    if (!empty($search)) {
+        $sql .= " AND (cp.position LIKE ? OR cp.job_description LIKE ? OR cp.location LIKE ?)";
+        $searchTerm = "%{$search}%";
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+    }
+    
+    // Add location filter
+    if (!empty($location)) {
+        $sql .= " AND cp.location LIKE ?";
+        $params[] = "%{$location}%";
+    }
+    
+    // Add employment type filter
+    if (!empty($employmentType)) {
+        $sql .= " AND cp.employment_type = ?";
+        $params[] = $employmentType;
+    }
+    
+    // Add date range filter
+    if (!empty($dateRange)) {
+        $dateCondition = getDateRangeCondition($dateRange, 'cp.published_at');
+        if ($dateCondition) {
+            $sql .= " AND " . $dateCondition;
+        }
+    }
+    
+    // Add specific date filter
+    if (!empty($specificDate)) {
+        $sql .= " AND DATE(cp.published_at) = ?";
+        $params[] = $specificDate;
+    }
+    
+    $sql .= " ORDER BY cp.published_at DESC, cp.created_at DESC LIMIT ? OFFSET ?";
+    
+    $stmt = $pdo->prepare($sql);
+    
+    // Bind all parameters
+    $paramIndex = 1;
+    foreach ($params as $param) {
+        $stmt->bindValue($paramIndex, $param);
+        $paramIndex++;
+    }
+    
+    // Bind LIMIT and OFFSET as integers
+    $stmt->bindValue($paramIndex, (int)$limit, PDO::PARAM_INT);
+    $paramIndex++;
+    $stmt->bindValue($paramIndex, (int)$offset, PDO::PARAM_INT);
+    
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+// Get total count of published career postings with filters
+function getPublishedCareerPostingsCountWithFilters($search = '', $location = '', $employmentType = '', $dateRange = '', $specificDate = '') {
+    $pdo = getDBConnection();
+    
+    $sql = "SELECT COUNT(*) as count FROM careers_postings cp WHERE cp.status = 'published'";
+    $params = [];
+    
+    // Add search condition
+    if (!empty($search)) {
+        $sql .= " AND (cp.position LIKE ? OR cp.job_description LIKE ? OR cp.location LIKE ?)";
+        $searchTerm = "%{$search}%";
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+        $params[] = $searchTerm;
+    }
+    
+    // Add location filter
+    if (!empty($location)) {
+        $sql .= " AND cp.location LIKE ?";
+        $params[] = "%{$location}%";
+    }
+    
+    // Add employment type filter
+    if (!empty($employmentType)) {
+        $sql .= " AND cp.employment_type = ?";
+        $params[] = $employmentType;
+    }
+    
+    // Add date range filter
+    if (!empty($dateRange)) {
+        $dateCondition = getDateRangeCondition($dateRange, 'cp.published_at');
+        if ($dateCondition) {
+            $sql .= " AND " . $dateCondition;
+        }
+    }
+    
+    // Add specific date filter
+    if (!empty($specificDate)) {
+        $sql .= " AND DATE(cp.published_at) = ?";
+        $params[] = $specificDate;
+    }
+    
+    $stmt = $pdo->prepare($sql);
+    if (!empty($params)) {
+        $stmt->execute($params);
+    } else {
+        $stmt->execute();
+    }
+    $result = $stmt->fetch();
+    return $result['count'];
+}
+
+// Get all unique locations from published career postings
+function getCareerLocations() {
+    $pdo = getDBConnection();
+    $stmt = $pdo->query("SELECT DISTINCT location FROM careers_postings WHERE status = 'published' ORDER BY location ASC");
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+// Get all unique employment types from published career postings
+function getCareerEmploymentTypes() {
+    $pdo = getDBConnection();
+    $stmt = $pdo->query("SELECT DISTINCT employment_type FROM careers_postings WHERE status = 'published' ORDER BY employment_type ASC");
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+// Get career posting by ID
+function getCareerPostingById($id) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("
+        SELECT cp.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM careers_postings cp 
+        JOIN users u ON cp.author_id = u.id 
+        WHERE cp.id = ?
+    ");
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+}
+
+// Get career posting by slug
+function getCareerPostingBySlug($slug) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("
+        SELECT cp.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM careers_postings cp 
+        JOIN users u ON cp.author_id = u.id 
+        WHERE cp.slug = ? AND cp.status = 'published'
+    ");
+    $stmt->execute([$slug]);
+    return $stmt->fetch();
+}
+
+// Check if slug exists for careers postings
+function careerSlugExists($slug, $excludeId = null) {
+    return slugExists($slug, 'careers_postings', $excludeId);
+}
+
+// Generate unique slug for career posting
+function generateUniqueCareerSlug($position, $excludeId = null) {
+    return generateUniqueSlug($position, 'careers_postings', $excludeId);
 }
 ?>
 
