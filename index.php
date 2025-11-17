@@ -774,7 +774,7 @@ include 'app/includes/header.php';
             <?php else: ?>
                 <div class="careers-carousel-wrapper" style="position: relative; margin-bottom: 2rem;">
                     <div class="careers-carousel-container" style="overflow: hidden; position: relative;">
-                        <div class="careers-carousel-track" id="careersCarouselTrack" style="display: flex; transition: transform 0.5s ease-in-out; gap: 1.5rem;">
+                        <div class="careers-carousel-track <?php echo count($careerPostings) <= 3 ? 'few-cards' : ''; ?>" id="careersCarouselTrack" style="display: flex; transition: transform 0.5s ease-in-out; gap: 1.5rem;">
                             <?php foreach ($careerPostings as $posting): ?>
                                 <div class="career-card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; min-width: 280px; max-width: 280px; flex-shrink: 0;">
                                     <div class="career-header" style="margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f0f0f0;">
@@ -865,6 +865,62 @@ include 'app/includes/header.php';
             padding: 1rem 0;
             display: flex;
             justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .careers-carousel-track {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            width: 100%;
+        }
+        
+        /* When there are 1-3 cards, make them responsive and centered (desktop only) */
+        @media (min-width: 769px) {
+            .careers-carousel-track.few-cards {
+                justify-content: center !important;
+                transform: translateX(0) !important;
+            }
+            
+            /* Make cards responsive when there are fewer cards on desktop */
+            .careers-carousel-track.few-cards .career-card {
+                min-width: auto !important;
+                max-width: 350px !important;
+                flex: 0 0 auto;
+            }
+        }
+        
+        /* On mobile, always allow scrolling - don't center */
+        @media (max-width: 768px) {
+            .careers-carousel-track.few-cards {
+                justify-content: flex-start !important;
+            }
+        }
+        
+        /* When there are 2 cards, make them slightly larger */
+        .careers-carousel-track.few-cards:has(.career-card:nth-child(2):last-child) .career-card,
+        .careers-carousel-wrapper:has(.career-card:nth-child(2):last-child) .career-card {
+            max-width: 400px !important;
+        }
+        
+        /* When there are 3 cards, keep them at a good size */
+        .careers-carousel-track.few-cards:has(.career-card:nth-child(3):last-child) .career-card,
+        .careers-carousel-wrapper:has(.career-card:nth-child(3):last-child) .career-card {
+            max-width: 320px !important;
+        }
+        
+        /* Fallback for browsers without :has() support */
+        .careers-carousel-track.few-cards .career-card:nth-child(1):last-child {
+            max-width: 450px !important;
+        }
+        
+        .careers-carousel-track.few-cards .career-card:nth-child(2):last-child {
+            max-width: 400px !important;
+        }
+        
+        .careers-carousel-track.few-cards .career-card:nth-child(3):last-child {
+            max-width: 320px !important;
         }
 
         .career-card:hover {
@@ -1075,17 +1131,22 @@ include 'app/includes/header.php';
             
             function updateCarousel(smooth = true) {
                 const gap = window.innerWidth <= 768 ? 16 : 24;
+                const isMobile = window.innerWidth <= 768;
                 
-                // If all cards fit, just center them
-                if (cards.length <= cardsPerView) {
-                    const centeredOffset = getCenteredOffset();
-                    track.style.transition = smooth ? 'transform 0.5s ease-in-out' : 'none';
-                    track.style.transform = `translateX(${centeredOffset}px)`;
+                // On mobile, always allow scrolling if there are multiple cards
+                // On desktop, only center if all cards fit
+                if (!isMobile && cards.length <= cardsPerView) {
+                    track.style.transition = 'none';
+                    track.style.transform = 'translateX(0)';
+                    track.style.justifyContent = 'center';
                     return;
                 }
                 
+                // Reset justify-content for carousel mode
+                track.style.justifyContent = 'flex-start';
+                
                 // For mobile, center each card as we slide
-                if (window.innerWidth <= 768) {
+                if (isMobile) {
                     // Recalculate card width to ensure accuracy
                     cardWidth = getCardWidth();
                     const container = document.querySelector('.careers-carousel-container');
@@ -1142,15 +1203,34 @@ include 'app/includes/header.php';
                 cardsPerView = getCardsPerView();
                 cardWidth = getCardWidth();
                 currentIndex = 0;
-                updateCarousel(false);
+                const isMobile = window.innerWidth <= 768;
                 
                 // Only enable carousel if there are more cards than visible
-                if (cards.length <= cardsPerView) {
+                // On mobile, always allow scrolling if there are 2+ cards
+                if (!isMobile && cards.length <= cardsPerView) {
                     stopAutoSlide();
                     if (prevBtn) prevBtn.style.display = 'none';
                     if (nextBtn) nextBtn.style.display = 'none';
+                    // Let CSS flexbox center the cards - don't use transform
+                    track.style.transition = 'none';
+                    track.style.transform = 'translateX(0)';
+                    track.style.justifyContent = 'center';
                     return;
                 }
+                
+                // On mobile with 2+ cards, or desktop with 4+ cards, enable carousel
+                if (isMobile && cards.length <= 1) {
+                    stopAutoSlide();
+                    if (prevBtn) prevBtn.style.display = 'none';
+                    if (nextBtn) nextBtn.style.display = 'none';
+                    track.style.transition = 'none';
+                    track.style.transform = 'translateX(0)';
+                    track.style.justifyContent = 'center';
+                    return;
+                }
+                
+                // Initialize carousel mode
+                updateCarousel(false);
                 
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
