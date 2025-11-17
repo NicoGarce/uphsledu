@@ -94,26 +94,23 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
     $recentPosts = getAllPosts();
     
 } elseif ($userRole === 'hr') {
-    // HR dashboard data - career postings
+    // HR dashboard data - all career postings
     $pdo = getDBConnection();
     
-    // User's career postings
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM careers_postings WHERE author_id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
+    // All career postings
+    $stmt = $pdo->query("SELECT COUNT(*) as count FROM careers_postings");
     $stats['total_careers'] = $stmt->fetch()['count'];
     
     // Published career postings
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM careers_postings WHERE author_id = ? AND status = 'published'");
-    $stmt->execute([$_SESSION['user_id']]);
+    $stmt = $pdo->query("SELECT COUNT(*) as count FROM careers_postings WHERE status = 'published'");
     $stats['published_careers'] = $stmt->fetch()['count'];
     
     // Draft career postings
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM careers_postings WHERE author_id = ? AND status = 'draft'");
-    $stmt->execute([$_SESSION['user_id']]);
+    $stmt = $pdo->query("SELECT COUNT(*) as count FROM careers_postings WHERE status = 'draft'");
     $stats['draft_careers'] = $stmt->fetch()['count'];
     
-    // Recent career postings (user's only)
-    $recentCareers = getAllCareerPostings($_SESSION['user_id']);
+    // Recent career postings (all)
+    $recentCareers = getAllCareerPostings();
     
 } else {
     // Author/User dashboard data
@@ -174,35 +171,69 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                 </div>
             <?php endif; ?>
             
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-newspaper"></i>
+            <?php if ($userRole === 'hr'): ?>
+                <!-- HR Career Postings Stats -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number"><?php echo isset($stats['total_careers']) ? $stats['total_careers'] : 0; ?></h3>
+                        <p class="stat-label">Total Career Postings</p>
+                    </div>
                 </div>
-                <div class="stat-content">
-                    <h3 class="stat-number"><?php echo $stats['total_posts']; ?></h3>
-                    <p class="stat-label">Total Posts</p>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number"><?php echo isset($stats['published_careers']) ? $stats['published_careers'] : 0; ?></h3>
+                        <p class="stat-label">Published</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number"><?php echo isset($stats['draft_careers']) ? $stats['draft_careers'] : 0; ?></h3>
+                        <p class="stat-label">Drafts</p>
+                    </div>
                 </div>
-                <div class="stat-content">
-                    <h3 class="stat-number"><?php echo $stats['published_posts']; ?></h3>
-                    <p class="stat-label">Published</p>
+            <?php else: ?>
+                <!-- Posts Stats for Admin/Author -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number"><?php echo isset($stats['total_posts']) ? $stats['total_posts'] : 0; ?></h3>
+                        <p class="stat-label">Total Posts</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-edit"></i>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number"><?php echo isset($stats['published_posts']) ? $stats['published_posts'] : 0; ?></h3>
+                        <p class="stat-label">Published</p>
+                    </div>
                 </div>
-                <div class="stat-content">
-                    <h3 class="stat-number"><?php echo $stats['draft_posts']; ?></h3>
-                    <p class="stat-label">Drafts</p>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number"><?php echo isset($stats['draft_posts']) ? $stats['draft_posts'] : 0; ?></h3>
+                        <p class="stat-label">Drafts</p>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <!-- Messages -->
@@ -224,6 +255,17 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
         <div class="dashboard-section">
             <h2 class="section-title">Quick Actions</h2>
             <div class="quick-actions">
+                <?php if (isHR()): ?>
+                    <a href="create-career.php" class="action-card">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Create Career Posting</span>
+                    </a>
+                    <a href="careers.php" class="action-card">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Manage Careers</span>
+                    </a>
+                <?php endif; ?>
+                
                 <?php if (isAuthor() || isAdmin() || isSuperAdmin()): ?>
                     <a href="posts.php" class="action-card">
                         <i class="fas fa-edit"></i>
@@ -251,61 +293,219 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
         </div>
 
 
-        <!-- Recent Posts -->
-        <div class="dashboard-section">
-            <h2 class="section-title">Recent Posts</h2>
-            <?php if (!empty($recentPosts)): ?>
-                <div class="posts-list">
-                    <?php foreach (array_slice($recentPosts, 0, 5) as $post): ?>
-                        <div class="post-item">
-                            <div class="post-info">
-                                <h3 class="post-title">
-                                    <a href="post.php?id=<?php echo $post['id']; ?>">
-                                        <?php echo htmlspecialchars($post['title']); ?>
-                                    </a>
-                                </h3>
-                                <div class="post-meta">
-                                    <span class="post-status status-<?php echo $post['status']; ?>">
-                                        <?php echo ucfirst($post['status']); ?>
-                                    </span>
-                                    <span class="post-date">
-                                        <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
-                                    </span>
-                                    <?php if ($userRole === 'super_admin' || $userRole === 'admin'): ?>
-                                        <span class="post-author">
-                                            by University of Perpetual Help System Laguna
+        <?php if ($userRole === 'hr'): ?>
+            <!-- Recent Career Postings for HR -->
+            <div class="dashboard-section">
+                <h2 class="section-title">Recent Career Postings</h2>
+                <?php if (!empty($recentCareers)): ?>
+                    <div class="posts-list">
+                        <?php foreach (array_slice($recentCareers, 0, 5) as $career): ?>
+                            <div class="post-item">
+                                <div class="post-info">
+                                    <h3 class="post-title">
+                                        <a href="create-career.php?edit=<?php echo $career['id']; ?>">
+                                            <?php echo htmlspecialchars($career['position']); ?>
+                                        </a>
+                                    </h3>
+                                    <div class="post-meta">
+                                        <span class="post-status status-<?php echo $career['status']; ?>">
+                                            <?php echo ucfirst($career['status']); ?>
                                         </span>
-                                    <?php endif; ?>
+                                        <span class="post-category">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <?php echo htmlspecialchars($career['location']); ?>
+                                        </span>
+                                        <span class="post-category">
+                                            <i class="fas fa-clock"></i>
+                                            <?php echo htmlspecialchars($career['employment_type']); ?>
+                                        </span>
+                                        <span class="post-date">
+                                            <?php echo formatDate($career['published_at'] ?: $career['created_at']); ?>
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="post-actions">
-                                <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-secondary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?')">
-                                    <input type="hidden" name="action" value="delete_post">
-                                    <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
-                                    <button type="submit" class="btn btn-sm btn-danger">
+                                <div class="post-actions">
+                                    <a href="create-career.php?edit=<?php echo $career['id']; ?>" class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteCareer(<?php echo $career['id']; ?>)" title="Delete Posting">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                </form>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <div class="empty-state">
-                    <i class="fas fa-newspaper"></i>
-                    <h3>No posts yet</h3>
-                    <p>Start creating amazing content!</p>
-                    <?php if (isAuthor()): ?>
-                        <a href="create-post.php" class="btn btn-primary">Create Your First Post</a>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-        </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <i class="fas fa-briefcase"></i>
+                        <h3>No career postings yet</h3>
+                        <p>Start creating career opportunities!</p>
+                        <a href="create-career.php" class="btn btn-primary">Create Your First Career Posting</a>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php else: ?>
+            <!-- Recent Posts -->
+            <div class="dashboard-section">
+                <h2 class="section-title">Recent Posts</h2>
+                <?php if (!empty($recentPosts)): ?>
+                    <div class="posts-list">
+                        <?php foreach (array_slice($recentPosts, 0, 5) as $post): ?>
+                            <div class="post-item">
+                                <div class="post-info">
+                                    <h3 class="post-title">
+                                        <a href="post.php?id=<?php echo $post['id']; ?>">
+                                            <?php echo htmlspecialchars($post['title']); ?>
+                                        </a>
+                                    </h3>
+                                    <div class="post-meta">
+                                        <span class="post-status status-<?php echo $post['status']; ?>">
+                                            <?php echo ucfirst($post['status']); ?>
+                                        </span>
+                                        <span class="post-date">
+                                            <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
+                                        </span>
+                                        <?php if ($userRole === 'super_admin' || $userRole === 'admin'): ?>
+                                            <span class="post-author">
+                                                by University of Perpetual Help System Laguna
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="post-actions">
+                                    <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                        <input type="hidden" name="action" value="delete_post">
+                                        <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper"></i>
+                        <h3>No posts yet</h3>
+                        <p>Start creating amazing content!</p>
+                        <?php if (isAuthor()): ?>
+                            <a href="create-post.php" class="btn btn-primary">Create Your First Post</a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
+        <?php if ($userRole === 'hr'): ?>
+            <!-- Delete Confirmation Modal for Careers -->
+            <div id="deleteModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Delete Career Posting</h3>
+                        <span class="close" onclick="closeDeleteModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this career posting? This action cannot be undone.</p>
+                    </div>
+                    <form id="deleteForm" method="POST" action="careers.php">
+                        <input type="hidden" name="action" value="delete_career">
+                        <input type="hidden" name="career_id" id="delete_career_id">
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Delete Posting</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <script>
+                function deleteCareer(careerId) {
+                    document.getElementById('delete_career_id').value = careerId;
+                    document.getElementById('deleteModal').style.display = 'block';
+                }
+                
+                function closeDeleteModal() {
+                    document.getElementById('deleteModal').style.display = 'none';
+                }
+                
+                // Close modal when clicking outside
+                window.onclick = function(event) {
+                    const deleteModal = document.getElementById('deleteModal');
+                    if (event.target === deleteModal) {
+                        closeDeleteModal();
+                    }
+                }
+            </script>
+            
+            <style>
+                .modal {
+                    display: none;
+                    position: fixed;
+                    z-index: 1000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    overflow: auto;
+                    background-color: rgba(0,0,0,0.5);
+                }
+                .modal-content {
+                    background-color: #fefefe;
+                    margin: auto;
+                    padding: 0;
+                    border: 1px solid #888;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                    width: 90%;
+                    max-width: 500px;
+                    position: relative;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+                .modal-header {
+                    padding: 20px;
+                    border-bottom: 1px solid #dee2e6;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    background: #1c4da1;
+                    border-radius: 8px 8px 0 0;
+                }
+                .modal-header h3 {
+                    margin: 0;
+                    color: white;
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                }
+                .modal-body {
+                    padding: 20px;
+                }
+                .close {
+                    color: white;
+                    font-size: 28px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    line-height: 1;
+                }
+                .close:hover,
+                .close:focus {
+                    color: #f0f0f0;
+                    opacity: 0.8;
+                }
+                .modal-actions {
+                    display: flex;
+                    gap: 10px;
+                    justify-content: flex-end;
+                    margin-top: 20px;
+                }
+            </style>
+        <?php endif; ?>
+        
         <script src="../assets/js/script.js"></script>
         
         <script>

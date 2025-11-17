@@ -34,15 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $careerId = $_POST['career_id'];
         
         try {
-            if (isHR() && !isSuperAdmin()) {
-                // HR can only delete their own postings
-                $stmt = $pdo->prepare("DELETE FROM careers_postings WHERE id = ? AND author_id = ?");
-                $stmt->execute([$careerId, $_SESSION['user_id']]);
-            } else {
-                // Admins and Super Admins can delete any posting
-                $stmt = $pdo->prepare("DELETE FROM careers_postings WHERE id = ?");
-                $stmt->execute([$careerId]);
-            }
+            // HR, Admins, and Super Admins can delete any posting
+            $stmt = $pdo->prepare("DELETE FROM careers_postings WHERE id = ?");
+            $stmt->execute([$careerId]);
             
             if ($stmt->rowCount() > 0) {
                 $success = "Career posting deleted successfully!";
@@ -77,11 +71,8 @@ $sql = "
 
 $params = [];
 
-// Filter by author if user is HR (super admins can see all)
-if (isHR() && !isSuperAdmin()) {
-    $sql .= " AND cp.author_id = ?";
-    $params[] = $_SESSION['user_id'];
-}
+// HR accounts can see all career postings (no filter needed)
+// Only filter if needed for other roles in the future
 
 // Search filter
 if (!empty($search)) {
