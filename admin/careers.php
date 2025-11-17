@@ -47,6 +47,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $error = "Error deleting career posting: " . $e->getMessage();
         }
     }
+    
+    // Handle bulk actions
+    if ($_POST['action'] === 'bulk_action') {
+        $selectedIds = $_POST['selected_ids'] ?? '';
+        $bulkAction = $_POST['bulk_action_type'] ?? '';
+        $password = $_POST['password'] ?? '';
+        
+        // Verify password
+        if (empty($password) || !verifyUserPassword($_SESSION['user_id'], $password)) {
+            $error = "Invalid password. Please try again.";
+        } elseif (empty($selectedIds)) {
+            $error = "No items selected.";
+        } elseif (empty($bulkAction)) {
+            $error = "No action selected.";
+        } else {
+            try {
+                $pdo->beginTransaction();
+                // Handle JSON array from JavaScript
+                if (is_string($selectedIds)) {
+                    $decoded = json_decode($selectedIds, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        $selectedIds = $decoded;
+                    } else {
+                        $error = "Invalid selection data.";
+                        $pdo->rollBack();
+                    }
+                }
+                if (!is_array($selectedIds) || empty($selectedIds)) {
+                    if (empty($error)) {
+                        $error = "No valid items selected.";
+                    }
+                    if ($pdo->inTransaction()) {
+                        $pdo->rollBack();
+                    }
+                } else {
+                    $ids = array_map('intval', $selectedIds);
+                    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                    
+                    switch ($bulkAction) {
+                        case 'delete':
+                            $stmt = $pdo->prepare("DELETE FROM careers_postings WHERE id IN ($placeholders)");
+                            $stmt->execute($ids);
+                            $success = count($ids) . " career posting(s) deleted successfully!";
+                            break;
+                        case 'archive':
+                            $stmt = $pdo->prepare("UPDATE careers_postings SET status = 'archived' WHERE id IN ($placeholders)");
+                            $stmt->execute($ids);
+                            $success = count($ids) . " career posting(s) archived successfully!";
+                            break;
+                        case 'draft':
+                            $stmt = $pdo->prepare("UPDATE careers_postings SET status = 'draft', published_at = NULL WHERE id IN ($placeholders)");
+                            $stmt->execute($ids);
+                            $success = count($ids) . " career posting(s) moved to draft successfully!";
+                            break;
+                        case 'publish':
+                            $now = date('Y-m-d H:i:s');
+                            $stmt = $pdo->prepare("UPDATE careers_postings SET status = 'published', published_at = COALESCE(published_at, ?) WHERE id IN ($placeholders)");
+                            $stmt->execute(array_merge([$now], $ids));
+                            $success = count($ids) . " career posting(s) published successfully!";
+                            break;
+                        default:
+                            $error = "Invalid action selected.";
+                    }
+                    
+                    $pdo->commit();
+                }
+            } catch (PDOException $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                $error = "Error performing bulk action: " . $e->getMessage();
+            }
+        }
+    }
 }
 
 // Get filter parameters
@@ -198,70 +272,121 @@ $careers = $stmt->fetchAll();
             <div class="section-header">
                 <h2 class="section-title">All Career Postings (<span id="careerCount"><?php echo count($careers); ?></span>)</h2>
             </div>
-            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 20px;">
-                <a href="create-career.php" class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Create New Posting
-                </a>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="checkbox" id="selectAll" style="width: 18px; height: 18px; cursor: pointer;" title="Select All">
+                    <label for="selectAll" style="margin: 0; cursor: pointer; font-weight: 500;">Select All</label>
+                    <span id="selectedCount" style="margin-left: 0.5rem; color: var(--primary-color); font-weight: 600; display: none;">0 selected</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <select id="bulkActionSelect" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; display: none;">
+                        <option value="">Bulk Actions</option>
+                        <option value="publish">Publish</option>
+                        <option value="draft">Move to Draft</option>
+                        <option value="archive">Archive</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary" id="applyBulkAction" style="display: none;">
+                        <i class="fas fa-check"></i>
+                        Apply
+                    </button>
+                    <a href="create-career.php" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Create New Posting
+                    </a>
+                </div>
             </div>
             
             <div class="posts-list" id="careersList">
                 <?php foreach ($careers as $career): ?>
                     <div class="post-item">
-                        <div class="post-info">
-                            <h3 class="post-title">
-                                <a href="create-career.php?edit=<?php echo $career['id']; ?>">
-                                    <?php echo htmlspecialchars($career['position']); ?>
-                                </a>
-                            </h3>
-                            <div class="post-meta">
-                                <span class="post-status status-<?php echo $career['status']; ?>">
-                                    <?php echo ucfirst($career['status']); ?>
-                                </span>
-                                <span class="post-category">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <?php echo htmlspecialchars($career['location']); ?>
-                                </span>
-                                <span class="post-category">
-                                    <i class="fas fa-clock"></i>
-                                    <?php echo htmlspecialchars($career['employment_type']); ?>
-                                </span>
-                                <span class="post-date">
-                                    <i class="fas fa-calendar"></i>
-                                    Created: <?php echo date('M j, Y', strtotime($career['created_at'])); ?>
-                                </span>
-                                <?php if ($career['published_at']): ?>
-                                    <span class="post-date">
-                                        <i class="fas fa-clock"></i>
-                                        Published: <?php echo date('M j, Y', strtotime($career['published_at'])); ?>
-                                    </span>
-                                <?php else: ?>
-                                    <span class="post-date text-muted">
-                                        <i class="fas fa-clock"></i>
-                                        Not published
-                                    </span>
-                                <?php endif; ?>
-                                <span class="post-author">
-                                    <i class="fas fa-user"></i>
-                                    by <?php echo htmlspecialchars($career['author_name']); ?>
-                                </span>
+                        <div style="display: flex; align-items: flex-start; gap: 1rem; width: 100%;">
+                            <input type="checkbox" class="career-checkbox" value="<?php echo $career['id']; ?>" style="width: 18px; height: 18px; cursor: pointer; margin-top: 0.5rem; flex-shrink: 0;">
+                            <div style="flex: 1;">
+                                <div class="post-info">
+                                    <h3 class="post-title">
+                                        <a href="create-career.php?edit=<?php echo $career['id']; ?>">
+                                            <?php echo htmlspecialchars($career['position']); ?>
+                                        </a>
+                                    </h3>
+                                    <div class="post-meta">
+                                        <span class="post-status status-<?php echo $career['status']; ?>">
+                                            <?php echo ucfirst($career['status']); ?>
+                                        </span>
+                                        <span class="post-category">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <?php echo htmlspecialchars($career['location']); ?>
+                                        </span>
+                                        <span class="post-category">
+                                            <i class="fas fa-clock"></i>
+                                            <?php echo htmlspecialchars($career['employment_type']); ?>
+                                        </span>
+                                        <span class="post-date">
+                                            <i class="fas fa-calendar"></i>
+                                            Created: <?php echo date('M j, Y', strtotime($career['created_at'])); ?>
+                                        </span>
+                                        <?php if ($career['published_at']): ?>
+                                            <span class="post-date">
+                                                <i class="fas fa-clock"></i>
+                                                Published: <?php echo date('M j, Y', strtotime($career['published_at'])); ?>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="post-date text-muted">
+                                                <i class="fas fa-clock"></i>
+                                                Not published
+                                            </span>
+                                        <?php endif; ?>
+                                        <span class="post-author">
+                                            <i class="fas fa-user"></i>
+                                            by <?php echo htmlspecialchars($career['author_name']); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="post-actions">
+                                    <a href="create-career.php?edit=<?php echo $career['id']; ?>" class="btn btn-sm btn-primary" title="Edit Posting">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <?php if ($career['status'] === 'published'): ?>
+                                    <button class="btn btn-sm btn-info" onclick="copyCareerLink('<?php echo $career['slug']; ?>')" title="Copy Link">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <?php endif; ?>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteCareer(<?php echo $career['id']; ?>)" title="Delete Posting">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="post-actions">
-                            <a href="create-career.php?edit=<?php echo $career['id']; ?>" class="btn btn-sm btn-primary" title="Edit Posting">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <?php if ($career['status'] === 'published'): ?>
-                            <button class="btn btn-sm btn-info" onclick="copyCareerLink('<?php echo $career['slug']; ?>')" title="Copy Link">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                            <?php endif; ?>
-                            <button class="btn btn-sm btn-danger" onclick="deleteCareer(<?php echo $career['id']; ?>)" title="Delete Posting">
-                                <i class="fas fa-trash"></i>
-                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Action Password Modal -->
+    <div id="bulkActionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="bulkActionTitle">Bulk Action</h3>
+                <span class="close" onclick="closeBulkActionModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="bulkActionMessage">Please enter your password to confirm this action.</p>
+                <form id="bulkActionForm" method="POST">
+                    <input type="hidden" name="action" value="bulk_action">
+                    <input type="hidden" name="bulk_action_type" id="bulkActionType">
+                    <input type="hidden" name="selected_ids" id="bulkSelectedIds">
+                    <div style="margin-bottom: 1rem;">
+                        <label for="bulkPassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                        <input type="password" id="bulkPassword" name="password" required 
+                               style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                               placeholder="Enter your password">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeBulkActionModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -355,33 +480,52 @@ $careers = $stmt->fetchAll();
                 
                 html += `
                     <div class="post-item">
-                        <div class="post-info">
-                            <h3 class="post-title">
-                                <a href="create-career.php?edit=${career.id}">${escapeHtml(career.position)}</a>
-                            </h3>
-                            <div class="post-meta">
-                                <span class="post-status status-${career.status}">${capitalizeFirst(career.status)}</span>
-                                <span class="post-category"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(career.location)}</span>
-                                <span class="post-category"><i class="fas fa-clock"></i> ${escapeHtml(career.employment_type)}</span>
-                                <span class="post-date"><i class="fas fa-calendar"></i> Created: ${career.created_date}</span>
-                                ${publishedDate}
-                                <span class="post-author"><i class="fas fa-user"></i> by ${escapeHtml(career.author_name)}</span>
+                        <div style="display: flex; align-items: flex-start; gap: 1rem; width: 100%;">
+                            <input type="checkbox" class="career-checkbox" value="${career.id}" style="width: 18px; height: 18px; cursor: pointer; margin-top: 0.5rem; flex-shrink: 0;">
+                            <div style="flex: 1; display: flex; align-items: center; justify-content: space-between;">
+                                <div class="post-info">
+                                    <h3 class="post-title">
+                                        <a href="create-career.php?edit=${career.id}">${escapeHtml(career.position)}</a>
+                                    </h3>
+                                    <div class="post-meta">
+                                        <span class="post-status status-${career.status}">${capitalizeFirst(career.status)}</span>
+                                        <span class="post-category"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(career.location)}</span>
+                                        <span class="post-category"><i class="fas fa-clock"></i> ${escapeHtml(career.employment_type)}</span>
+                                        <span class="post-date"><i class="fas fa-calendar"></i> Created: ${career.created_date}</span>
+                                        ${publishedDate}
+                                        <span class="post-author"><i class="fas fa-user"></i> by ${escapeHtml(career.author_name)}</span>
+                                    </div>
+                                </div>
+                                <div class="post-actions">
+                                    <a href="create-career.php?edit=${career.id}" class="btn btn-sm btn-primary" title="Edit Posting">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    ${copyButton}
+                                    <button class="btn btn-sm btn-danger" onclick="deleteCareer(${career.id})" title="Delete Posting">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="post-actions">
-                            <a href="create-career.php?edit=${career.id}" class="btn btn-sm btn-primary" title="Edit Posting">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            ${copyButton}
-                            <button class="btn btn-sm btn-danger" onclick="deleteCareer(${career.id})" title="Delete Posting">
-                                <i class="fas fa-trash"></i>
-                            </button>
                         </div>
                     </div>
                 `;
             });
             
             careersList.innerHTML = html;
+            
+            // Re-attach bulk action listeners after AJAX update
+            const newCheckboxes = document.querySelectorAll('.career-checkbox');
+            newCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (selectAllCheckbox) {
+                        selectAllCheckbox.checked = Array.from(document.querySelectorAll('.career-checkbox')).every(cb => cb.checked);
+                    }
+                    updateBulkActionUI();
+                });
+            });
+            
+            // Update bulk action UI
+            updateBulkActionUI();
         }
         
         // Helper functions
@@ -427,6 +571,87 @@ $careers = $stmt->fetchAll();
         if (urlParams.has('success')) {
             // Refresh the careers list to show the newly created/edited career
             loadCareers();
+        }
+        
+        // Bulk Actions
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const careerCheckboxes = document.querySelectorAll('.career-checkbox');
+        const bulkActionSelect = document.getElementById('bulkActionSelect');
+        const applyBulkActionBtn = document.getElementById('applyBulkAction');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        
+        function updateBulkActionUI() {
+            const selected = Array.from(careerCheckboxes).filter(cb => cb.checked);
+            const count = selected.length;
+            
+            if (count > 0) {
+                selectedCountSpan.textContent = count + ' selected';
+                selectedCountSpan.style.display = 'inline';
+                bulkActionSelect.style.display = 'inline-block';
+                applyBulkActionBtn.style.display = 'inline-block';
+            } else {
+                selectedCountSpan.style.display = 'none';
+                bulkActionSelect.style.display = 'none';
+                applyBulkActionBtn.style.display = 'none';
+                bulkActionSelect.value = '';
+            }
+        }
+        
+        // Select All functionality
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                careerCheckboxes.forEach(cb => cb.checked = this.checked);
+                updateBulkActionUI();
+            });
+        }
+        
+        // Individual checkbox change
+        careerCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = Array.from(careerCheckboxes).every(cb => cb.checked);
+                }
+                updateBulkActionUI();
+            });
+        });
+        
+        // Apply bulk action
+        if (applyBulkActionBtn) {
+            applyBulkActionBtn.addEventListener('click', function() {
+                const selected = Array.from(careerCheckboxes).filter(cb => cb.checked);
+                const action = bulkActionSelect.value;
+                
+                if (selected.length === 0) {
+                    alert('Please select at least one career posting.');
+                    return;
+                }
+                
+                if (!action) {
+                    alert('Please select an action.');
+                    return;
+                }
+                
+                const selectedIds = selected.map(cb => cb.value);
+                const actionNames = {
+                    'delete': 'Delete',
+                    'archive': 'Archive',
+                    'draft': 'Move to Draft',
+                    'publish': 'Publish'
+                };
+                
+                document.getElementById('bulkActionType').value = action;
+                document.getElementById('bulkSelectedIds').value = JSON.stringify(selectedIds);
+                document.getElementById('bulkActionTitle').textContent = actionNames[action] + ' Career Postings';
+                document.getElementById('bulkActionMessage').textContent = 
+                    `You are about to ${actionNames[action].toLowerCase()} ${selectedIds.length} career posting(s). Please enter your password to confirm.`;
+                document.getElementById('bulkPassword').value = '';
+                document.getElementById('bulkActionModal').style.display = 'block';
+            });
+        }
+        
+        function closeBulkActionModal() {
+            document.getElementById('bulkActionModal').style.display = 'none';
+            document.getElementById('bulkPassword').value = '';
         }
         
         function deleteCareer(careerId) {
@@ -524,7 +749,11 @@ $careers = $stmt->fetchAll();
         
         // Close modal when clicking outside
         window.onclick = function(event) {
+            const bulkModal = document.getElementById('bulkActionModal');
             const deleteModal = document.getElementById('deleteModal');
+            if (event.target === bulkModal) {
+                closeBulkActionModal();
+            }
             if (event.target === deleteModal) {
                 closeDeleteModal();
             }

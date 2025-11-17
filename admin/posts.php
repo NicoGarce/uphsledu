@@ -63,6 +63,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
     
+    // Handle bulk actions
+    if ($_POST['action'] === 'bulk_action') {
+        $selectedIds = $_POST['selected_ids'] ?? '';
+        $bulkAction = $_POST['bulk_action_type'] ?? '';
+        $password = $_POST['password'] ?? '';
+        
+        // Verify password
+        if (empty($password) || !verifyUserPassword($_SESSION['user_id'], $password)) {
+            $error = "Invalid password. Please try again.";
+        } elseif (empty($selectedIds)) {
+            $error = "No items selected.";
+        } elseif (empty($bulkAction)) {
+            $error = "No action selected.";
+        } else {
+            try {
+                $pdo->beginTransaction();
+                // Handle JSON array from JavaScript
+                if (is_string($selectedIds)) {
+                    $decoded = json_decode($selectedIds, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        $selectedIds = $decoded;
+                    } else {
+                        $error = "Invalid selection data.";
+                        $pdo->rollBack();
+                    }
+                }
+                if (!is_array($selectedIds) || empty($selectedIds)) {
+                    if (empty($error)) {
+                        $error = "No valid items selected.";
+                    }
+                    if ($pdo->inTransaction()) {
+                        $pdo->rollBack();
+                    }
+                } else {
+                    $ids = array_map('intval', $selectedIds);
+                    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                    
+                    switch ($bulkAction) {
+                        case 'delete':
+                            $stmt = $pdo->prepare("DELETE FROM posts WHERE id IN ($placeholders)");
+                            $stmt->execute($ids);
+                            $success = count($ids) . " post(s) deleted successfully!";
+                            break;
+                        case 'draft':
+                            $stmt = $pdo->prepare("UPDATE posts SET status = 'draft', published_at = NULL WHERE id IN ($placeholders)");
+                            $stmt->execute($ids);
+                            $success = count($ids) . " post(s) moved to draft successfully!";
+                            break;
+                        case 'publish':
+                            $now = date('Y-m-d H:i:s');
+                            $stmt = $pdo->prepare("UPDATE posts SET status = 'published', published_at = COALESCE(published_at, ?) WHERE id IN ($placeholders)");
+                            $stmt->execute(array_merge([$now], $ids));
+                            $success = count($ids) . " post(s) published successfully!";
+                            break;
+                        default:
+                            $error = "Invalid action selected.";
+                    }
+                    
+                    $pdo->commit();
+                }
+            } catch (PDOException $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                $error = "Error performing bulk action: " . $e->getMessage();
+            }
+        }
+    }
+    
 }
 
 // Get filter parameters
@@ -274,20 +343,40 @@ foreach ($allCategoriesRaw as $cat) {
             <div class="section-header">
                 <h2 class="section-title">All Posts (<span id="postCount"><?php echo count($posts); ?></span>)</h2>
             </div>
-            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 20px;">
-                <button type="button" class="btn btn-info" id="openPdfBrowser" title="Browse PDF Files">
-                    <i class="fas fa-file-pdf"></i>
-                    Browse PDFs
-                </button>
-                <a href="create-post.php" class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Create New Post
-                </a>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="checkbox" id="selectAll" style="width: 18px; height: 18px; cursor: pointer;" title="Select All">
+                    <label for="selectAll" style="margin: 0; cursor: pointer; font-weight: 500;">Select All</label>
+                    <span id="selectedCount" style="margin-left: 0.5rem; color: var(--primary-color); font-weight: 600; display: none;">0 selected</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <select id="bulkActionSelect" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; display: none;">
+                        <option value="">Bulk Actions</option>
+                        <option value="publish">Publish</option>
+                        <option value="draft">Move to Draft</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary" id="applyBulkAction" style="display: none;">
+                        <i class="fas fa-check"></i>
+                        Apply
+                    </button>
+                    <button type="button" class="btn btn-info" id="openPdfBrowser" title="Browse PDF Files">
+                        <i class="fas fa-file-pdf"></i>
+                        Browse PDFs
+                    </button>
+                    <a href="create-post.php" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Create New Post
+                    </a>
+                </div>
             </div>
             
         <div class="posts-list" id="postsList">
             <?php foreach ($posts as $post): ?>
                 <div class="post-item">
+                    <div style="display: flex; align-items: flex-start; gap: 1rem; width: 100%;">
+                        <input type="checkbox" class="post-checkbox" value="<?php echo $post['id']; ?>" style="width: 18px; height: 18px; cursor: pointer; margin-top: 0.5rem; flex-shrink: 0;">
+                        <div style="flex: 1;">
                     <div class="post-info">
                         <h3 class="post-title">
                             <a href="create-post.php?edit=<?php echo $post['id']; ?>">
@@ -336,12 +425,41 @@ foreach ($allCategoriesRaw as $cat) {
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
+                        </div>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
         </div>
     </div>
 
+    <!-- Bulk Action Password Modal -->
+    <div id="bulkActionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="bulkActionTitle">Bulk Action</h3>
+                <span class="close" onclick="closeBulkActionModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="bulkActionMessage">Please enter your password to confirm this action.</p>
+                <form id="bulkActionForm" method="POST">
+                    <input type="hidden" name="action" value="bulk_action">
+                    <input type="hidden" name="bulk_action_type" id="bulkActionType">
+                    <input type="hidden" name="selected_ids" id="bulkSelectedIds">
+                    <div style="margin-bottom: 1rem;">
+                        <label for="bulkPassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                        <input type="password" id="bulkPassword" name="password" required 
+                               style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                               placeholder="Enter your password">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeBulkActionModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="modal">
@@ -540,6 +658,86 @@ foreach ($allCategoriesRaw as $cat) {
             loadPosts();
         }
         
+        // Bulk Actions
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const postCheckboxes = document.querySelectorAll('.post-checkbox');
+        const bulkActionSelect = document.getElementById('bulkActionSelect');
+        const applyBulkActionBtn = document.getElementById('applyBulkAction');
+        const selectedCountSpan = document.getElementById('selectedCount');
+        
+        function updateBulkActionUI() {
+            const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
+            const count = selected.length;
+            
+            if (count > 0) {
+                selectedCountSpan.textContent = count + ' selected';
+                selectedCountSpan.style.display = 'inline';
+                bulkActionSelect.style.display = 'inline-block';
+                applyBulkActionBtn.style.display = 'inline-block';
+            } else {
+                selectedCountSpan.style.display = 'none';
+                bulkActionSelect.style.display = 'none';
+                applyBulkActionBtn.style.display = 'none';
+                bulkActionSelect.value = '';
+            }
+        }
+        
+        // Select All functionality
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                postCheckboxes.forEach(cb => cb.checked = this.checked);
+                updateBulkActionUI();
+            });
+        }
+        
+        // Individual checkbox change
+        postCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (selectAllCheckbox) {
+                    selectAllCheckbox.checked = Array.from(postCheckboxes).every(cb => cb.checked);
+                }
+                updateBulkActionUI();
+            });
+        });
+        
+        // Apply bulk action
+        if (applyBulkActionBtn) {
+            applyBulkActionBtn.addEventListener('click', function() {
+                const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
+                const action = bulkActionSelect.value;
+                
+                if (selected.length === 0) {
+                    alert('Please select at least one post.');
+                    return;
+                }
+                
+                if (!action) {
+                    alert('Please select an action.');
+                    return;
+                }
+                
+                const selectedIds = selected.map(cb => cb.value);
+                const actionNames = {
+                    'delete': 'Delete',
+                    'draft': 'Move to Draft',
+                    'publish': 'Publish'
+                };
+                
+                document.getElementById('bulkActionType').value = action;
+                document.getElementById('bulkSelectedIds').value = JSON.stringify(selectedIds);
+                document.getElementById('bulkActionTitle').textContent = actionNames[action] + ' Posts';
+                document.getElementById('bulkActionMessage').textContent = 
+                    `You are about to ${actionNames[action].toLowerCase()} ${selectedIds.length} post(s). Please enter your password to confirm.`;
+                document.getElementById('bulkPassword').value = '';
+                document.getElementById('bulkActionModal').style.display = 'block';
+            });
+        }
+        
+        function closeBulkActionModal() {
+            document.getElementById('bulkActionModal').style.display = 'none';
+            document.getElementById('bulkPassword').value = '';
+        }
+        
         function deletePost(postId) {
             document.getElementById('delete_post_id').value = postId;
             document.getElementById('deleteModal').style.display = 'block';
@@ -648,8 +846,11 @@ foreach ($allCategoriesRaw as $cat) {
         
         // Close modals when clicking outside
         window.onclick = function(event) {
+            const bulkModal = document.getElementById('bulkActionModal');
             const deleteModal = document.getElementById('deleteModal');
-            
+            if (event.target === bulkModal) {
+                closeBulkActionModal();
+            }
             if (event.target === deleteModal) {
                 closeDeleteModal();
             }
@@ -853,13 +1054,10 @@ foreach ($allCategoriesRaw as $cat) {
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             width: 90%;
-            max-width: 900px;
+            max-width: 500px;
             position: relative;
             top: 50%;
             transform: translateY(-50%);
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
         }
 
         .modal-header {
