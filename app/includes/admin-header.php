@@ -63,7 +63,7 @@ $base_path = $GLOBALS['base_path'];
                     <a href="sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
                     <a href="sdg-full-report.php" class="nav-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">SDG Full Report</a>
                 <?php endif; ?>
-                <?php if (isHR() || isSuperAdmin()): ?>
+                <?php if (isSuperAdmin() && !isHR()): ?>
                     <a href="careers.php" class="nav-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers Posting</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>

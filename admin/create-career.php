@@ -35,17 +35,8 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     $careerId = (int)$_GET['edit'];
     
     // Get the career posting data
-    if (isHR() && !isSuperAdmin()) {
-        // HR can only edit their own postings
-        $career = getCareerPostingById($careerId);
-        if ($career && $career['author_id'] != $_SESSION['user_id']) {
-            $error = 'You do not have permission to edit this posting';
-            $career = null;
-        }
-    } else {
-        // Admins and Super Admins can edit any posting
-        $career = getCareerPostingById($careerId);
-    }
+    // HR, Admins, and Super Admins can edit any posting
+    $career = getCareerPostingById($careerId);
     
     if (!$career) {
         $error = 'Career posting not found or you do not have permission to edit it';
@@ -75,27 +66,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if ($isEdit && $careerId > 0) {
                 // Update existing career posting
-                if (isHR() && !isSuperAdmin()) {
-                    // HR can only update their own postings
-                    $stmt = $pdo->prepare("
-                        UPDATE careers_postings 
-                        SET position = ?, location = ?, employment_type = ?, job_description = ?, 
-                            requirements = ?, application_details = ?, status = ?, published_at = ?, 
-                            updated_at = CURRENT_TIMESTAMP 
-                        WHERE id = ? AND author_id = ?
-                    ");
-                    $stmt->execute([$position, $location, $employmentType, $jobDescription, $requirements, $applicationDetails, $status, $publishedDate, $careerId, $_SESSION['user_id']]);
-                } else {
-                    // Admins and Super Admins can update any posting
-                    $stmt = $pdo->prepare("
-                        UPDATE careers_postings 
-                        SET position = ?, location = ?, employment_type = ?, job_description = ?, 
-                            requirements = ?, application_details = ?, status = ?, published_at = ?, 
-                            updated_at = CURRENT_TIMESTAMP 
-                        WHERE id = ?
-                    ");
-                    $stmt->execute([$position, $location, $employmentType, $jobDescription, $requirements, $applicationDetails, $status, $publishedDate, $careerId]);
-                }
+                // HR, Admins, and Super Admins can update any posting
+                $stmt = $pdo->prepare("
+                    UPDATE careers_postings 
+                    SET position = ?, location = ?, employment_type = ?, job_description = ?, 
+                        requirements = ?, application_details = ?, status = ?, published_at = ?, 
+                        updated_at = CURRENT_TIMESTAMP 
+                    WHERE id = ?
+                ");
+                $stmt->execute([$position, $location, $employmentType, $jobDescription, $requirements, $applicationDetails, $status, $publishedDate, $careerId]);
                 
                 if ($stmt->rowCount() === 0) {
                     throw new Exception('Career posting not found or you do not have permission to edit it');

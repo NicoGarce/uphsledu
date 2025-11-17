@@ -48,11 +48,8 @@ try {
     
     $params = [];
     
-    // Filter by author if user is HR (super admins can see all)
-    if (isHR() && !isSuperAdmin()) {
-        $sql .= " AND cp.author_id = ?";
-        $params[] = $_SESSION['user_id'];
-    }
+    // HR accounts can see all career postings (no filter needed)
+    // Only filter if needed for other roles in the future
     
     // Search filter
     if (!empty($search)) {
