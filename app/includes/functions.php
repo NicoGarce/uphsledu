@@ -186,6 +186,15 @@ function getUserById($id) {
     return $stmt->fetch();
 }
 
+// Verify user password for bulk actions
+function verifyUserPassword($userId, $password) {
+    $user = getUserById($userId);
+    if (!$user) {
+        return false;
+    }
+    return password_verify($password, $user['password']);
+}
+
 // Get user by email
 function getUserByEmail($email) {
     $pdo = getDBConnection();
