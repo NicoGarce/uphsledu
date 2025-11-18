@@ -423,25 +423,25 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                         <span class="close" onclick="closeDeleteModal()">&times;</span>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to delete this career posting? This action cannot be undone.</p>
+                        <p>Please enter your password to confirm this action.</p>
+                        <form id="deleteForm" method="POST" action="careers.php">
+                            <?php echo CSRF::field(); ?>
+                            <input type="hidden" name="action" value="delete_career">
+                            <input type="hidden" name="career_id" id="delete_career_id">
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label for="deletePassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                                <input type="password" id="deletePassword" name="password" required 
+                                       style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                                       placeholder="Enter your password" autocomplete="current-password">
+                            </div>
+                            
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Delete Posting</button>
+                            </div>
+                        </form>
                     </div>
-                    <form id="deleteForm" method="POST" action="careers.php">
-                        <?php echo CSRF::field(); ?>
-                        <input type="hidden" name="action" value="delete_career">
-                        <input type="hidden" name="career_id" id="delete_career_id">
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <label for="deletePassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
-                            <input type="password" id="deletePassword" name="password" required 
-                                   style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
-                                   placeholder="Enter your password to confirm deletion" autocomplete="current-password">
-                        </div>
-                        
-                        <div class="modal-actions">
-                            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-                            <button type="submit" class="btn btn-danger">Delete Posting</button>
-                        </div>
-                    </form>
                 </div>
             </div>
             

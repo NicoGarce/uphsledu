@@ -422,17 +422,9 @@ $users = $stmt->fetchAll();
                                     <i class="fas fa-key"></i>
                                 </button>
                                 <?php if ($account['id'] != $_SESSION['user_id']): ?>
-                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account? You will need to enter your password.')">
-                                        <?php echo CSRF::field(); ?>
-                                        <input type="hidden" name="action" value="delete_user">
-                                        <input type="hidden" name="user_id" value="<?php echo $account['id']; ?>">
-                                        <input type="password" name="password" placeholder="Password" required 
-                                               style="padding: 0.25rem 0.5rem; margin-right: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.875rem; width: 120px;"
-                                               autocomplete="current-password">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="openDeleteAccountModal(<?php echo $account['id']; ?>, '<?php echo htmlspecialchars($account['first_name'] . ' ' . $account['last_name'], ENT_QUOTES); ?>')" title="Delete Account">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -513,6 +505,36 @@ $users = $stmt->fetchAll();
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
                         <button type="submit" class="btn btn-primary">Update User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div id="deleteAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Account</h3>
+                <span class="close" onclick="closeDeleteAccountModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Please enter your password to confirm this action.</p>
+                <form id="deleteAccountForm" method="POST">
+                    <?php echo CSRF::field(); ?>
+                    <input type="hidden" name="action" value="delete_user">
+                    <input type="hidden" name="user_id" id="delete_account_id">
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label for="deleteAccountPassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                        <input type="password" id="deleteAccountPassword" name="password" required 
+                               style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                               placeholder="Enter your password" autocomplete="current-password">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeDeleteAccountModal()">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete Account</button>
                     </div>
                 </form>
             </div>
@@ -980,10 +1002,23 @@ $users = $stmt->fetchAll();
             }
         }
 
+        // Delete Account Modal Functions
+        function openDeleteAccountModal(userId, userName) {
+            document.getElementById('delete_account_id').value = userId;
+            document.getElementById('deleteAccountModal').style.display = 'block';
+            document.getElementById('deleteAccountPassword').focus();
+        }
+
+        function closeDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').style.display = 'none';
+            document.getElementById('deleteAccountForm').reset();
+        }
+
         // Close modals when clicking outside
         window.onclick = function(event) {
             const passwordModal = document.getElementById('passwordModal');
             const editModal = document.getElementById('editModal');
+            const deleteAccountModal = document.getElementById('deleteAccountModal');
             const resetPasswordVerifyModal = document.getElementById('resetPasswordVerifyModal');
             const resetPasswordModal = document.getElementById('resetPasswordModal');
             const passwordDisplayModal = document.getElementById('passwordDisplayModal');
@@ -993,6 +1028,9 @@ $users = $stmt->fetchAll();
             }
             if (event.target === editModal) {
                 closeEditModal();
+            }
+            if (event.target === deleteAccountModal) {
+                closeDeleteAccountModal();
             }
             if (event.target === resetPasswordVerifyModal) {
                 closeResetPasswordVerifyModal();
