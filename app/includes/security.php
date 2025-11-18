@@ -423,7 +423,7 @@ class SecurityHeaders {
         
         // Content Security Policy (basic)
         // Allow Font Awesome fonts from cdnjs.cloudflare.com, Quill editor from cdn.quilljs.com, and Facebook SDK
-        $csp = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.quilljs.com https://fonts.googleapis.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.quilljs.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; img-src 'self' data: https: https://*.fbcdn.net; frame-src 'self' https://www.facebook.com https://web.facebook.com https://www.google.com; connect-src 'self' https://www.facebook.com https://web.facebook.com https://connect.facebook.net https://staticxx.facebook.com;";
+        $csp = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.quilljs.com https://fonts.googleapis.com https://maps.googleapis.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.quilljs.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; img-src 'self' data: https: https://*.fbcdn.net; frame-src 'self' https://www.facebook.com https://web.facebook.com https://www.google.com; connect-src 'self' https://www.facebook.com https://web.facebook.com https://connect.facebook.net https://staticxx.facebook.com https://maps.googleapis.com;";
         header("Content-Security-Policy: $csp");
         
         // HSTS (if HTTPS)
