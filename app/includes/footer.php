@@ -17,7 +17,7 @@
                             <p class="university-tagline"><?php echo htmlspecialchars(getSetting('site_tagline', 'Character Building is Nation Building')); ?></p>
                         </div>
                     </div>
-                    <div class="social-links">
+                    <div class="social-links" style="margin-top: 15px;">
                         <?php $facebook_url = getSetting('facebook_url', 'https://www.facebook.com/uphsl.info.ph'); ?>
                         <?php if (!empty($facebook_url)): ?>
                         <a href="<?php echo htmlspecialchars($facebook_url); ?>" target="_blank" rel="noopener" class="social-link facebook" title="Follow us on Facebook">
@@ -128,6 +128,13 @@
                             </ul>
                         </div>
                         <?php endif; ?>
+                    </div>
+                </div>
+                
+                <!-- COR Certificate Section -->
+                <div class="footer-section">
+                    <div class="cor-certificate" style="text-align: center;">
+                        <img src="<?php echo $base_path; ?>assets/images/COR.png" alt="National Privacy Commission - Data Protection Officer/Data Processing System Registered" class="cor-image" style="max-width: 120px; height: auto; display: block; margin: 0 auto;">
                     </div>
                 </div>
             </div>

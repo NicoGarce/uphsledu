@@ -137,15 +137,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!CSRF::verify()) {
         $error = 'Security token mismatch. Please refresh the page and try again.';
     } else {
-        error_log("Form submitted - POST data: " . print_r($_POST, true));
-        error_log("Form submitted - FILES data: " . print_r($_FILES, true));
-        
+    error_log("Form submitted - POST data: " . print_r($_POST, true));
+    error_log("Form submitted - FILES data: " . print_r($_FILES, true));
+    
         $title = Validator::sanitize($_POST['title'], 'string');
         $content = $_POST['content']; // Rich text content - sanitized on output
         $status = Validator::sanitize($_POST['status'] ?? 'draft', 'string');
         $excerpt = Validator::sanitize($_POST['excerpt'] ?? '', 'string');
         $publishedDate = Validator::sanitize($_POST['published_date'] ?? null, 'string');
-        $categoryId = isset($_POST['category']) && is_numeric($_POST['category']) ? (int)$_POST['category'] : null;
+    $categoryId = isset($_POST['category']) && is_numeric($_POST['category']) ? (int)$_POST['category'] : null;
     $isEdit = isset($_POST['is_edit']) && $_POST['is_edit'] === '1';
     $postId = isset($_POST['post_id']) ? (int)$_POST['post_id'] : 0;
     
@@ -370,8 +370,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("PDO Exception in post creation: " . $e->getMessage());
             $error = 'Failed to create post. Please try again.';
             }
+            }
         }
-    }
     }
 }
 ?>

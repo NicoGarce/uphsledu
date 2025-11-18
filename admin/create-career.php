@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->rollBack();
             $error = 'Failed to save career posting. Please try again.';
         }
-    }
+        }
     }
 }
 ?>

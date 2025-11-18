@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if (!CSRF::verify()) {
         $error = 'Security token mismatch. Please refresh the page and try again.';
     } else {
-        try {
+    try {
         $selectedPdf = Validator::sanitize($_POST['selected_pdf'] ?? '', 'string');
         
         if (empty($selectedPdf)) {
@@ -84,8 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
         
         $success = 'SDG Full Report PDF set successfully!';
-        } catch (Exception $e) {
-            $error = $e->getMessage();
+    } catch (Exception $e) {
+        $error = $e->getMessage();
         }
     }
 }
