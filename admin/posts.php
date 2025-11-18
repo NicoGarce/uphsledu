@@ -632,30 +632,39 @@ foreach ($allCategoriesRaw as $cat) {
             initializeCheckboxes();
         }
         
+        // Global function to update bulk action UI
+        function updateBulkActionUI() {
+            const postCheckboxes = document.querySelectorAll('.post-checkbox');
+            const bulkActionSelect = document.getElementById('bulkActionSelect');
+            const applyBulkActionBtn = document.getElementById('applyBulkAction');
+            const selectedCountSpan = document.getElementById('selectedCount');
+            
+            if (!bulkActionSelect || !applyBulkActionBtn || !selectedCountSpan) {
+                return;
+            }
+            
+            const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
+            const count = selected.length;
+            
+            if (count > 0) {
+                selectedCountSpan.textContent = count + ' selected';
+                selectedCountSpan.style.display = 'inline';
+                bulkActionSelect.style.display = 'inline-block';
+                applyBulkActionBtn.style.display = 'inline-block';
+            } else {
+                selectedCountSpan.style.display = 'none';
+                bulkActionSelect.style.display = 'none';
+                applyBulkActionBtn.style.display = 'none';
+                bulkActionSelect.value = '';
+            }
+        }
+        
         // Function to initialize checkbox event listeners
         function initializeCheckboxes() {
             const selectAllCheckbox = document.getElementById('selectAll');
             const postCheckboxes = document.querySelectorAll('.post-checkbox');
             const bulkActionSelect = document.getElementById('bulkActionSelect');
             const applyBulkActionBtn = document.getElementById('applyBulkAction');
-            const selectedCountSpan = document.getElementById('selectedCount');
-            
-            function updateBulkActionUI() {
-                const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
-                const count = selected.length;
-                
-                if (count > 0) {
-                    selectedCountSpan.textContent = count + ' selected';
-                    selectedCountSpan.style.display = 'inline';
-                    bulkActionSelect.style.display = 'inline-block';
-                    applyBulkActionBtn.style.display = 'inline-block';
-                } else {
-                    selectedCountSpan.style.display = 'none';
-                    bulkActionSelect.style.display = 'none';
-                    applyBulkActionBtn.style.display = 'none';
-                    bulkActionSelect.value = '';
-                }
-            }
             
             // Select All functionality
             if (selectAllCheckbox) {
