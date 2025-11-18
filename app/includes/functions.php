@@ -7,6 +7,9 @@
  * @description Core utility functions for the UPHSL website including database operations, user management, and content handling
  */
 
+// Include security features
+require_once __DIR__ . '/security.php';
+
 // Utility functions for the blog
 
 // Get recent posts (excludes categorized posts - only shows general/university-wide posts)
@@ -242,9 +245,9 @@ function redirect($url) {
     exit();
 }
 
-// Sanitize input
-function sanitizeInput($input) {
-    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+// Sanitize input (uses new Validator class)
+function sanitizeInput($input, $type = 'string') {
+    return Validator::sanitize($input, $type);
 }
 
 // Validate email
@@ -387,28 +390,59 @@ function optimizeImage($filePath, $mimeType) {
 
 // Upload file
 function uploadFile($file, $uploadDir = 'uploads/') {
+    // Validate upload directory path to prevent directory traversal
+    $uploadDir = rtrim($uploadDir, '/') . '/';
+    $uploadDir = realpath(dirname(__DIR__) . '/' . $uploadDir) . '/';
+    
     if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
+        // Use secure directory permissions (0755 instead of 0777)
+        if (!mkdir($uploadDir, 0755, true)) {
+            return ['success' => false, 'message' => 'Failed to create upload directory'];
+        }
+    }
+    
+    // Validate file upload
+    if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        return ['success' => false, 'message' => 'Invalid file upload'];
     }
     
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     $maxSize = 10 * 1024 * 1024; // 10MB
     
-    if (!in_array($file['type'], $allowedTypes)) {
-        return ['success' => false, 'message' => 'Invalid file type'];
-    }
-    
+    // Validate file size
     if ($file['size'] > $maxSize) {
         return ['success' => false, 'message' => 'File too large'];
     }
     
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = uniqid() . '.' . $extension;
+    // Validate file extension
+    $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if (!in_array($extension, $allowedExtensions)) {
+        return ['success' => false, 'message' => 'Invalid file extension'];
+    }
+    
+    // Verify actual file content using getimagesize (more secure than trusting MIME type)
+    $imageInfo = @getimagesize($file['tmp_name']);
+    if ($imageInfo === false) {
+        return ['success' => false, 'message' => 'File is not a valid image'];
+    }
+    
+    // Verify MIME type matches actual file content
+    $detectedMime = $imageInfo['mime'];
+    if (!in_array($detectedMime, $allowedTypes)) {
+        return ['success' => false, 'message' => 'Invalid file type detected'];
+    }
+    
+    // Generate secure filename
+    $filename = uniqid() . '_' . time() . '.' . $extension;
     $filepath = $uploadDir . $filename;
+    
+    // Ensure filename doesn't contain path traversal
+    $filepath = realpath($uploadDir) . '/' . basename($filename);
     
     if (move_uploaded_file($file['tmp_name'], $filepath)) {
         // Optimize the uploaded image
-        optimizeImage($filepath, $file['type']);
+        optimizeImage($filepath, $detectedMime);
         return ['success' => true, 'filename' => $filename, 'filepath' => $filepath];
     } else {
         return ['success' => false, 'message' => 'Upload failed'];

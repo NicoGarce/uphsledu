@@ -7,9 +7,9 @@
  * @description Administrative interface for creating new career postings
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and has appropriate role (HR, Admin, or Super Admin)
 if (!isLoggedIn() || (!isHR() && !isAdmin() && !isSuperAdmin())) {
@@ -47,14 +47,18 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $position = sanitizeInput($_POST['position']);
-    $location = sanitizeInput($_POST['location']);
-    $employmentType = sanitizeInput($_POST['employment_type']);
-    $jobDescription = $_POST['job_description'];
-    $requirements = $_POST['requirements'];
-    $applicationDetails = $_POST['application_details'];
-    $status = $_POST['status'];
-    $publishedDate = $_POST['published_date'] ?? null;
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } else {
+        $position = Validator::sanitize($_POST['position'], 'string');
+        $location = Validator::sanitize($_POST['location'], 'string');
+        $employmentType = Validator::sanitize($_POST['employment_type'], 'string');
+        $jobDescription = $_POST['job_description']; // Rich text - sanitized on output
+        $requirements = $_POST['requirements']; // Rich text - sanitized on output
+        $applicationDetails = $_POST['application_details']; // Rich text - sanitized on output
+        $status = Validator::sanitize($_POST['status'] ?? 'draft', 'string');
+        $publishedDate = Validator::sanitize($_POST['published_date'] ?? null, 'string');
     $isEdit = isset($_POST['is_edit']) && $_POST['is_edit'] === '1';
     $careerId = isset($_POST['career_id']) ? (int)$_POST['career_id'] : 0;
     
@@ -110,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Failed to save career posting. Please try again.';
         }
     }
+    }
 }
 ?>
 
@@ -143,6 +148,7 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
         <?php endif; ?>
 
         <form method="POST" class="editor-form">
+            <?php echo CSRF::field(); ?>
             <?php if ($isEdit): ?>
                 <input type="hidden" name="is_edit" value="1">
                 <input type="hidden" name="career_id" value="<?php echo $career['id']; ?>">

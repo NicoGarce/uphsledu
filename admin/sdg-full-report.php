@@ -7,9 +7,9 @@
  * @description Administrative interface for managing SDG Full Report PDF
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Helper function to convert PHP ini size to bytes
 function return_bytes($val) {
@@ -52,8 +52,12 @@ $error = null;
 
 // Handle setting PDF from existing file
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'set_existing_pdf') {
-    try {
-        $selectedPdf = $_POST['selected_pdf'] ?? '';
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } else {
+        try {
+        $selectedPdf = Validator::sanitize($_POST['selected_pdf'] ?? '', 'string');
         
         if (empty($selectedPdf)) {
             throw new Exception('No PDF file selected.');
@@ -80,8 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
         
         $success = 'SDG Full Report PDF set successfully!';
-    } catch (Exception $e) {
-        $error = $e->getMessage();
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
     }
 }
 
@@ -132,14 +137,14 @@ include '../app/includes/admin-header.php';
         <?php if ($success): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i>
-                <?php echo htmlspecialchars($success); ?>
+                <?php echo XSS::clean($success); ?>
             </div>
         <?php endif; ?>
 
         <?php if ($error): ?>
             <div class="alert alert-error">
                 <i class="fas fa-exclamation-circle"></i>
-                <?php echo htmlspecialchars($error); ?>
+                <?php echo XSS::clean($error); ?>
             </div>
         <?php endif; ?>
 
@@ -151,6 +156,7 @@ include '../app/includes/admin-header.php';
             </div>
             
             <form method="POST" class="form-container">
+                <?php echo CSRF::field(); ?>
                 <input type="hidden" name="action" value="set_existing_pdf">
                 
                 <div class="form-group">
@@ -161,8 +167,8 @@ include '../app/includes/admin-header.php';
                     <select name="selected_pdf" id="selected_pdf" class="form-control" required>
                         <option value="">-- Select a PDF file --</option>
                         <?php foreach ($availablePdfs as $pdf): ?>
-                            <option value="<?php echo htmlspecialchars($pdf); ?>" <?php echo ($currentPdfPath && basename($currentPdfPath) === $pdf) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($pdf); ?>
+                            <option value="<?php echo XSS::escapeAttr($pdf); ?>" <?php echo ($currentPdfPath && basename($currentPdfPath) === $pdf) ? 'selected' : ''; ?>>
+                                <?php echo XSS::clean($pdf); ?>
                                 <?php 
                                 $pdfFullPath = $pdfDir . $pdf;
                                 if (file_exists($pdfFullPath)) {
@@ -195,7 +201,7 @@ include '../app/includes/admin-header.php';
                 <div class="current-pdf-info">
                     <div class="pdf-info-item">
                         <strong>File Path:</strong>
-                        <span><?php echo htmlspecialchars($currentPdfPath); ?></span>
+                        <span><?php echo XSS::clean($currentPdfPath); ?></span>
                     </div>
                     <div class="pdf-info-item">
                         <strong>File Size:</strong>
@@ -206,11 +212,11 @@ include '../app/includes/admin-header.php';
                         <span><?php echo date('F j, Y g:i A', filemtime(dirname(__DIR__) . '/' . $currentPdfPath)); ?></span>
                     </div>
                     <div class="pdf-actions">
-                        <a href="../<?php echo htmlspecialchars($currentPdfPath); ?>" target="_blank" class="btn btn-secondary">
+                        <a href="../<?php echo XSS::escapeAttr($currentPdfPath); ?>" target="_blank" class="btn btn-secondary">
                             <i class="fas fa-eye"></i>
                             View PDF
                         </a>
-                        <a href="../<?php echo htmlspecialchars($currentPdfPath); ?>" download class="btn btn-info">
+                        <a href="../<?php echo XSS::escapeAttr($currentPdfPath); ?>" download class="btn btn-info">
                             <i class="fas fa-download"></i>
                             Download PDF
                         </a>
@@ -221,8 +227,8 @@ include '../app/includes/admin-header.php';
                     <i class="fas fa-exclamation-triangle"></i>
                     <?php if ($currentPdfPath): ?>
                         <p><strong>No PDF file found at the specified path.</strong></p>
-                        <p>Expected path: <code><?php echo htmlspecialchars($currentPdfPath); ?></code></p>
-                        <p>Full path checked: <code><?php echo htmlspecialchars($fullPath); ?></code></p>
+                        <p>Expected path: <code><?php echo XSS::clean($currentPdfPath); ?></code></p>
+                        <p>Full path checked: <code><?php echo XSS::clean($fullPath); ?></code></p>
                         <p style="margin-top: 1rem;">Please upload a new PDF file to update the path.</p>
                     <?php else: ?>
                         <p><strong>No SDG Full Report PDF has been set yet.</strong></p>
@@ -232,9 +238,9 @@ include '../app/includes/admin-header.php';
                     <?php if ($debugSetting): ?>
                         <div style="margin-top: 1rem; padding: 1rem; background: #e9ecef; border-radius: 4px; font-size: 0.9rem;">
                             <strong>Debug Info (Database):</strong><br>
-                            Setting Key: <?php echo htmlspecialchars($debugSetting['setting_key']); ?><br>
-                            Setting Value: <code><?php echo htmlspecialchars($debugSetting['setting_value']); ?></code><br>
-                            Last Updated: <?php echo htmlspecialchars($debugSetting['updated_at']); ?>
+                            Setting Key: <?php echo XSS::clean($debugSetting['setting_key']); ?><br>
+                            Setting Value: <code><?php echo XSS::clean($debugSetting['setting_value']); ?></code><br>
+                            Last Updated: <?php echo XSS::clean($debugSetting['updated_at']); ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -244,7 +250,7 @@ include '../app/includes/admin-header.php';
                         <strong>Available PDF files in directory:</strong>
                         <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
                             <?php foreach ($availablePdfs as $pdf): ?>
-                                <li><?php echo htmlspecialchars($pdf); ?></li>
+                                <li><?php echo XSS::clean($pdf); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>

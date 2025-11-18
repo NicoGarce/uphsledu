@@ -7,9 +7,9 @@
  * @description Displays individual blog posts and news articles for the UPHSL website
  */
 
-session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if Post section is in maintenance
 if (isSectionInMaintenance('post')) {
@@ -129,7 +129,7 @@ include 'app/includes/header.php';
         <div class="post-content">
             <!-- Post Header -->
             <header class="post-header">
-                <h1 class="post-title"><?php echo htmlspecialchars($post['title']); ?></h1>
+                <h1 class="post-title"><?php echo XSS::clean($post['title']); ?></h1>
                 <div class="post-meta">
                     <div class="post-author">
                         <i class="fas fa-user"></i>
@@ -155,8 +155,8 @@ include 'app/includes/header.php';
                             <div class="slider-container">
                                 <?php foreach ($images as $index => $image): ?>
                                     <div class="slide <?php echo $index === 0 ? 'active' : ''; ?>">
-                                        <img src="<?php echo htmlspecialchars($image['image_path']); ?>" 
-                                             alt="<?php echo htmlspecialchars($image['image_alt'] ?? $post['title']); ?>"
+                                        <img src="<?php echo XSS::escapeAttr($image['image_path']); ?>" 
+                                             alt="<?php echo XSS::escapeAttr($image['image_alt'] ?? $post['title']); ?>"
                                              class="slide-image"
                                              decoding="async">
                                     </div>
@@ -182,8 +182,8 @@ include 'app/includes/header.php';
                     <?php else: ?>
                         <!-- Single Image -->
                         <div class="single-image">
-                            <img src="<?php echo htmlspecialchars($images[0]['image_path']); ?>" 
-                                 alt="<?php echo htmlspecialchars($images[0]['image_alt'] ?? $post['title']); ?>"
+                            <img src="<?php echo XSS::escapeAttr($images[0]['image_path']); ?>" 
+                                 alt="<?php echo XSS::escapeAttr($images[0]['image_alt'] ?? $post['title']); ?>"
                                  class="featured-image"
                                  decoding="async">
                         </div>

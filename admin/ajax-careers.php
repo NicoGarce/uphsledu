@@ -7,24 +7,41 @@
  * @description AJAX endpoint for admin career search and filtering
  */
 
-session_start();
+// Disable error display for clean JSON output
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+
+// Start output buffering to catch any accidental output
+ob_start();
+
+// Define constant to skip security headers for AJAX endpoints
+define('SKIP_SECURITY_HEADERS', true);
+
+// Set content type to JSON first (before any includes that might output)
+header('Content-Type: application/json');
+
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
+
+// Clear any accidental output
+ob_clean();
 
 // Check if user is logged in and has appropriate permissions
 if (!isLoggedIn() || (!isHR() && !isAdmin() && !isSuperAdmin())) {
+    ob_clean();
     http_response_code(403);
-    echo json_encode(['error' => 'Unauthorized']);
+    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+    ob_end_flush();
     exit;
 }
 
-// Set content type to JSON
-header('Content-Type: application/json');
-
 // Only allow GET requests
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    ob_clean();
     http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
+    echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+    ob_end_flush();
     exit;
 }
 
@@ -113,18 +130,35 @@ try {
         ];
     }
     
-    echo json_encode([
+    $response = [
         'success' => true,
         'careers' => $formattedCareers,
         'count' => count($formattedCareers)
-    ]);
+    ];
     
+    // Ensure no output before JSON
+    ob_clean();
+    echo json_encode($response);
+    ob_end_flush();
+    exit;
+    
+} catch (PDOException $e) {
+    ob_clean();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error occurred'
+    ]);
+    ob_end_flush();
+    exit;
 } catch (Exception $e) {
+    ob_clean();
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'error' => 'An error occurred: ' . $e->getMessage()
     ]);
+    ob_end_flush();
+    exit;
 }
-?>
 

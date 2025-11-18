@@ -7,9 +7,9 @@
  * @description Administrative interface for managing website settings (Super Admin only)
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and is super admin only
 if (!isLoggedIn() || !isSuperAdmin()) {
@@ -30,7 +30,10 @@ $success = '';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && $_POST['action'] === 'save_general_settings') {
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } elseif (isset($_POST['action']) && $_POST['action'] === 'save_general_settings') {
         // Require password verification for saving settings
         $password = $_POST['settings_password'] ?? '';
         
@@ -41,20 +44,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Password verified, proceed with saving settings
             $settings_map = [
-            'site_name' => ['type' => 'text', 'value' => sanitizeInput($_POST['site_name'] ?? 'University of Perpetual Help System Laguna')],
-            'site_tagline' => ['type' => 'text', 'value' => sanitizeInput($_POST['site_tagline'] ?? 'Character Building is Nation Building')],
-            'contact_address' => ['type' => 'text', 'value' => sanitizeInput($_POST['contact_address'] ?? 'UPH Compound, National Highway, Sto. Niño, City of Biñan, Laguna')],
-            'contact_phone' => ['type' => 'text', 'value' => sanitizeInput($_POST['contact_phone'] ?? '02-779-5310')],
-            'contact_email_primary' => ['type' => 'text', 'value' => sanitizeInput($_POST['contact_email_primary'] ?? 'marketing@uphsl.edu.ph')],
-            'contact_email_secondary' => ['type' => 'text', 'value' => sanitizeInput($_POST['contact_email_secondary'] ?? 'info@uphsl.edu.ph')],
-            'facebook_url' => ['type' => 'text', 'value' => sanitizeInput($_POST['facebook_url'] ?? 'https://www.facebook.com/uphsl.info.ph')],
-            'youtube_url' => ['type' => 'text', 'value' => sanitizeInput($_POST['youtube_url'] ?? 'https://www.youtube.com/@uphsltv1397')],
-            'instagram_url' => ['type' => 'text', 'value' => sanitizeInput($_POST['instagram_url'] ?? 'https://www.instagram.com/uphs.laguna')],
-            'tiktok_url' => ['type' => 'text', 'value' => sanitizeInput($_POST['tiktok_url'] ?? 'https://tiktok.com/@uphs.laguna')],
+            'site_name' => ['type' => 'text', 'value' => Validator::sanitize($_POST['site_name'] ?? 'University of Perpetual Help System Laguna', 'string')],
+            'site_tagline' => ['type' => 'text', 'value' => Validator::sanitize($_POST['site_tagline'] ?? 'Character Building is Nation Building', 'string')],
+            'contact_address' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_address'] ?? 'UPH Compound, National Highway, Sto. Niño, City of Biñan, Laguna', 'string')],
+            'contact_phone' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_phone'] ?? '02-779-5310', 'string')],
+            'contact_email_primary' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_email_primary'] ?? 'marketing@uphsl.edu.ph', 'email')],
+            'contact_email_secondary' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_email_secondary'] ?? 'info@uphsl.edu.ph', 'email')],
+            'facebook_url' => ['type' => 'text', 'value' => Validator::sanitize($_POST['facebook_url'] ?? 'https://www.facebook.com/uphsl.info.ph', 'url')],
+            'youtube_url' => ['type' => 'text', 'value' => Validator::sanitize($_POST['youtube_url'] ?? 'https://www.youtube.com/@uphsltv1397', 'url')],
+            'instagram_url' => ['type' => 'text', 'value' => Validator::sanitize($_POST['instagram_url'] ?? 'https://www.instagram.com/uphs.laguna', 'url')],
+            'tiktok_url' => ['type' => 'text', 'value' => Validator::sanitize($_POST['tiktok_url'] ?? 'https://tiktok.com/@uphs.laguna', 'url')],
             'posts_per_page' => ['type' => 'integer', 'value' => (int)($_POST['posts_per_page'] ?? 12)],
             'homepage_recent_posts' => ['type' => 'integer', 'value' => (int)($_POST['homepage_recent_posts'] ?? 6)],
             'news_carousel_posts' => ['type' => 'integer', 'value' => (int)($_POST['news_carousel_posts'] ?? 5)],
-            'default_post_status' => ['type' => 'text', 'value' => sanitizeInput($_POST['default_post_status'] ?? 'draft')]
+            'default_post_status' => ['type' => 'text', 'value' => Validator::sanitize($_POST['default_post_status'] ?? 'draft', 'string')]
         ];
         
             $saved_count = 0;
@@ -72,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif (isset($_POST['action']) && $_POST['action'] === 'toggle_maintenance') {
         $maintenance_mode = isset($_POST['maintenance_mode']) ? '1' : '0';
-        $maintenance_message = sanitizeInput($_POST['maintenance_message'] ?? 'We are currently performing scheduled maintenance. Please check back soon.');
+        $maintenance_message = Validator::sanitize($_POST['maintenance_message'] ?? 'We are currently performing scheduled maintenance. Please check back soon.', 'string');
         $current_mode = getSetting('maintenance_mode', '0');
         
         // If enabling maintenance mode (was off, now turning on), require password verification
@@ -136,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($sections_config as $key => $section) {
                 // Save main section
                 $maintenance_enabled = isset($_POST["section_maintenance_{$key}"]) ? '1' : '0';
-                $maintenance_message = sanitizeInput($_POST["section_maintenance_message_{$key}"] ?? "The {$section['name']} section is currently under maintenance. Please check back soon.");
+                $maintenance_message = Validator::sanitize($_POST["section_maintenance_message_{$key}"] ?? "The {$section['name']} section is currently under maintenance. Please check back soon.", 'string');
                 
                 if (setSetting("section_maintenance_{$key}", $maintenance_enabled, 'boolean', "Enable/disable maintenance mode for {$section['name']} section", $_SESSION['user_id'])) {
                     setSetting("section_maintenance_message_{$key}", $maintenance_message, 'text', "Maintenance message for {$section['name']} section", $_SESSION['user_id']);
@@ -146,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Save sub-pages
                 foreach ($section['subpages'] as $subKey) {
                     $subMaintenanceEnabled = isset($_POST["section_maintenance_{$key}_{$subKey}"]) ? '1' : '0';
-                    $subMaintenanceMessage = sanitizeInput($_POST["section_maintenance_message_{$key}_{$subKey}"] ?? "This page is currently under maintenance. Please check back soon.");
+                    $subMaintenanceMessage = Validator::sanitize($_POST["section_maintenance_message_{$key}_{$subKey}"] ?? "This page is currently under maintenance. Please check back soon.", 'string');
                     
                     if (setSetting("section_maintenance_{$key}_{$subKey}", $subMaintenanceEnabled, 'boolean', "Enable/disable maintenance mode for {$section['name']} - {$subKey}", $_SESSION['user_id'])) {
                         setSetting("section_maintenance_message_{$key}_{$subKey}", $subMaintenanceMessage, 'text', "Maintenance message for {$section['name']} - {$subKey}", $_SESSION['user_id']);
@@ -596,14 +599,14 @@ foreach ($sections as $key => $section) {
         <?php if ($error): ?>
             <div class="alert alert-error">
                 <i class="fas fa-exclamation-circle"></i>
-                <?php echo htmlspecialchars($error); ?>
+                <?php echo XSS::clean($error); ?>
             </div>
         <?php endif; ?>
 
         <?php if ($success): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check-circle"></i>
-                <?php echo htmlspecialchars($success); ?>
+                <?php echo XSS::clean($success); ?>
             </div>
         <?php endif; ?>
 
@@ -619,6 +622,7 @@ foreach ($sections as $key => $section) {
                 </div>
                 
                 <form method="POST" action="" class="settings-form">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="save_general_settings">
                     
                     <div class="form-group">
@@ -626,7 +630,7 @@ foreach ($sections as $key => $section) {
                             <i class="fas fa-university"></i>
                             Site Name
                         </label>
-                        <input type="text" name="site_name" id="site_name" class="form-input" value="<?php echo htmlspecialchars($site_name); ?>" required>
+                        <input type="text" name="site_name" id="site_name" class="form-input" value="<?php echo XSS::escapeAttr($site_name); ?>" required>
                         <small class="form-help">The official name of the university displayed in headers, footers, and page titles.</small>
                     </div>
                     
@@ -635,7 +639,7 @@ foreach ($sections as $key => $section) {
                             <i class="fas fa-quote-left"></i>
                             Site Tagline
                         </label>
-                        <input type="text" name="site_tagline" id="site_tagline" class="form-input" value="<?php echo htmlspecialchars($site_tagline); ?>">
+                        <input type="text" name="site_tagline" id="site_tagline" class="form-input" value="<?php echo XSS::escapeAttr($site_tagline); ?>">
                         <small class="form-help">A short tagline or motto displayed in the footer and other areas.</small>
                     </div>
                     
@@ -679,6 +683,7 @@ foreach ($sections as $key => $section) {
                 </div>
                 
                 <form method="POST" action="" class="settings-form">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="save_general_settings">
                     
                     <div class="form-group">
@@ -686,7 +691,7 @@ foreach ($sections as $key => $section) {
                             <i class="fas fa-map-marker-alt"></i>
                             Address
                         </label>
-                        <textarea name="contact_address" id="contact_address" class="form-textarea" rows="3"><?php echo htmlspecialchars($contact_address); ?></textarea>
+                        <textarea name="contact_address" id="contact_address" class="form-textarea" rows="3"><?php echo XSS::clean($contact_address); ?></textarea>
                         <small class="form-help">Physical address of the university displayed in the footer.</small>
                     </div>
                     
@@ -695,7 +700,7 @@ foreach ($sections as $key => $section) {
                             <i class="fas fa-phone"></i>
                             Phone Number
                         </label>
-                        <input type="text" name="contact_phone" id="contact_phone" class="form-input" value="<?php echo htmlspecialchars($contact_phone); ?>">
+                        <input type="text" name="contact_phone" id="contact_phone" class="form-input" value="<?php echo XSS::escapeAttr($contact_phone); ?>">
                         <small class="form-help">Main contact phone number displayed in the footer.</small>
                     </div>
                     
@@ -704,7 +709,7 @@ foreach ($sections as $key => $section) {
                             <i class="fas fa-envelope"></i>
                             Primary Email
                         </label>
-                        <input type="email" name="contact_email_primary" id="contact_email_primary" class="form-input" value="<?php echo htmlspecialchars($contact_email_primary); ?>">
+                        <input type="email" name="contact_email_primary" id="contact_email_primary" class="form-input" value="<?php echo XSS::escapeAttr($contact_email_primary); ?>">
                         <small class="form-help">Primary contact email address (e.g., marketing@uphsl.edu.ph).</small>
                     </div>
                     
@@ -713,7 +718,7 @@ foreach ($sections as $key => $section) {
                             <i class="fas fa-envelope-open"></i>
                             Secondary Email
                         </label>
-                        <input type="email" name="contact_email_secondary" id="contact_email_secondary" class="form-input" value="<?php echo htmlspecialchars($contact_email_secondary); ?>">
+                        <input type="email" name="contact_email_secondary" id="contact_email_secondary" class="form-input" value="<?php echo XSS::escapeAttr($contact_email_secondary); ?>">
                         <small class="form-help">Secondary contact email address (e.g., info@uphsl.edu.ph).</small>
                     </div>
                     
@@ -757,6 +762,7 @@ foreach ($sections as $key => $section) {
                 </div>
                 
                 <form method="POST" action="" class="settings-form">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="save_general_settings">
                     
                     <div class="form-group">
@@ -764,7 +770,7 @@ foreach ($sections as $key => $section) {
                             <i class="fab fa-facebook"></i>
                             Facebook URL
                         </label>
-                        <input type="url" name="facebook_url" id="facebook_url" class="form-input" value="<?php echo htmlspecialchars($facebook_url); ?>" placeholder="https://www.facebook.com/yourpage">
+                        <input type="url" name="facebook_url" id="facebook_url" class="form-input" value="<?php echo XSS::escapeAttr($facebook_url); ?>" placeholder="https://www.facebook.com/yourpage">
                         <small class="form-help">Facebook page URL used in footer, news carousel, and homepage.</small>
                     </div>
                     
@@ -773,7 +779,7 @@ foreach ($sections as $key => $section) {
                             <i class="fab fa-youtube"></i>
                             YouTube URL
                         </label>
-                        <input type="url" name="youtube_url" id="youtube_url" class="form-input" value="<?php echo htmlspecialchars($youtube_url); ?>" placeholder="https://www.youtube.com/@channel">
+                        <input type="url" name="youtube_url" id="youtube_url" class="form-input" value="<?php echo XSS::escapeAttr($youtube_url); ?>" placeholder="https://www.youtube.com/@channel">
                         <small class="form-help">YouTube channel URL.</small>
                     </div>
                     
@@ -782,7 +788,7 @@ foreach ($sections as $key => $section) {
                             <i class="fab fa-instagram"></i>
                             Instagram URL
                         </label>
-                        <input type="url" name="instagram_url" id="instagram_url" class="form-input" value="<?php echo htmlspecialchars($instagram_url); ?>" placeholder="https://www.instagram.com/username">
+                        <input type="url" name="instagram_url" id="instagram_url" class="form-input" value="<?php echo XSS::escapeAttr($instagram_url); ?>" placeholder="https://www.instagram.com/username">
                         <small class="form-help">Instagram profile URL.</small>
                     </div>
                     
@@ -791,7 +797,7 @@ foreach ($sections as $key => $section) {
                             <i class="fab fa-tiktok"></i>
                             TikTok URL
                         </label>
-                        <input type="url" name="tiktok_url" id="tiktok_url" class="form-input" value="<?php echo htmlspecialchars($tiktok_url); ?>" placeholder="https://tiktok.com/@username">
+                        <input type="url" name="tiktok_url" id="tiktok_url" class="form-input" value="<?php echo XSS::escapeAttr($tiktok_url); ?>" placeholder="https://tiktok.com/@username">
                         <small class="form-help">TikTok profile URL.</small>
                     </div>
                     
@@ -835,6 +841,7 @@ foreach ($sections as $key => $section) {
                 </div>
                 
                 <form method="POST" action="" class="settings-form">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="save_general_settings">
                     
                     <div class="form-group">
@@ -842,7 +849,7 @@ foreach ($sections as $key => $section) {
                             <i class="fas fa-list"></i>
                             Posts Per Page
                         </label>
-                        <input type="number" name="posts_per_page" id="posts_per_page" class="form-input" value="<?php echo htmlspecialchars($posts_per_page); ?>" min="1" max="50" required>
+                        <input type="number" name="posts_per_page" id="posts_per_page" class="form-input" value="<?php echo XSS::escapeAttr($posts_per_page); ?>" min="1" max="50" required>
                         <small class="form-help">Number of posts displayed per page on the posts listing page (default: 12).</small>
                     </div>
                     
@@ -904,6 +911,7 @@ foreach ($sections as $key => $section) {
                 </div>
                 
                 <form method="POST" action="" class="settings-form">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="save_general_settings">
                     
                     <div class="form-group">
@@ -958,6 +966,7 @@ foreach ($sections as $key => $section) {
                 </div>
                 
                 <form method="POST" action="" class="settings-form" id="section-maintenance-form" novalidate>
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="save_section_maintenance">
                     
                     <!-- Master Toggle All Switch -->
@@ -1087,6 +1096,7 @@ foreach ($sections as $key => $section) {
                 </div>
                 
                 <form method="POST" action="" class="settings-form" id="navbar-visibility-form" novalidate>
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="save_navbar_visibility">
                     
                     <!-- Master Toggle All Switch -->

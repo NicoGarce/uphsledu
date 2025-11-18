@@ -7,9 +7,21 @@
  * @description AJAX endpoint for admin post search and filtering
  */
 
-session_start();
+// Start output buffering to catch any accidental output
+ob_start();
+
+// Define constant to skip security headers for AJAX endpoints
+define('SKIP_SECURITY_HEADERS', true);
+
+// Set content type to JSON first (before any includes that might output)
+header('Content-Type: application/json');
+
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
+
+// Clear any accidental output
+ob_clean();
 
 // Check if user is logged in and has appropriate permissions
 if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
@@ -17,9 +29,6 @@ if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
-
-// Set content type to JSON
-header('Content-Type: application/json');
 
 // Only allow GET requests
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {

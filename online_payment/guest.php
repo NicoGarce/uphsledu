@@ -82,11 +82,22 @@ include "dbconnect.php";
 	//$transid = "UPHSL" . date("HismdY");
 	$transid = $_POST["campid"] ."_". date("HismdY");
     //header("Location: payment.php?payee=&transid=$transid");
-	header("Location: payment.php?payee=&transid=$transid&locno=".$_POST["locno"]."&gtrno=".$_POST["gtrn"]);
+	$locno = urlencode($_POST["locno"] ?? '');
+	$gtrn = urlencode($_POST["gtrn"] ?? '');
+	header("Location: payment.php?payee=&transid=" . urlencode($transid) . "&locno=$locno&gtrno=$gtrn");
      } else {
       $totalrec = 0;
-      $sql="select count(*) as totalrec from tblgtrn where locno='".$_POST["locno"]."' and gtrno='".$_POST["gtrn"]."' and is_valid=1";
-	  $result = mysqli_query($con, $sql);	   
+      // Use prepared statement to prevent SQL injection
+      $stmt = mysqli_prepare($con, "SELECT COUNT(*) as totalrec FROM tblgtrn WHERE locno=? AND gtrno=? AND is_valid=1");
+      if ($stmt) {
+        $locno = $_POST["locno"] ?? '';
+        $gtrn = $_POST["gtrn"] ?? '';
+        mysqli_stmt_bind_param($stmt, "ss", $locno, $gtrn);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+      } else {
+        $result = false;
+      }	   
 	  while ($row = mysqli_fetch_array($result)) {	
 	    $totalrec = $row["totalrec"];
 	  }
@@ -95,7 +106,9 @@ include "dbconnect.php";
 	//$transid = "UPHSL" . date("HismdY");
 	$transid = $_POST["campid"] ."_". date("HismdY");
     //header("Location: payment.php?payee=&transid=$transid");
-	header("Location: payment.php?payee=&transid=$transid&locno=".$_POST["locno"]."&gtrno=".$_POST["gtrn"]);
+	$locno = urlencode($_POST["locno"] ?? '');
+	$gtrn = urlencode($_POST["gtrn"] ?? '');
+	header("Location: payment.php?payee=&transid=" . urlencode($transid) . "&locno=$locno&gtrno=$gtrn");
 	 } else {
 	?>
 	 <div style="padding:20px; background-color:#FF0000; color:#FFFFFF; font-size:30px; font-weight:bold" align="center">Entered transaction reference no. does<br>not exist or is not validated</div>

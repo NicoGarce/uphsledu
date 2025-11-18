@@ -311,7 +311,7 @@ if (isset($_POST['submit'])) {
     <tr>
         <td align="right"><strong>Student Name:</strong></td>
         <td>
-            <input type="text" name="payee_name" id="payee_name" style="padding: 10px; font-size: 14px" size="80" maxlength="80" required value="<?php if (isset($_GET["payee"])) {echo $_GET["payee"]; } ?>" > 
+            <input type="text" name="payee_name" id="payee_name" style="padding: 10px; font-size: 14px" size="80" maxlength="80" required value="<?php if (isset($_GET["payee"])) {echo htmlspecialchars($_GET["payee"], ENT_QUOTES, 'UTF-8'); } ?>" > 
             (please add a <strong>Contact No.</strong> for transaction reference)<br>
             <span style="color: #666; font-size: 12px;">Example: Juan Dela Cruz / 09123456789</span>
         </td>

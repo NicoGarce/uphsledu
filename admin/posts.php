@@ -7,9 +7,9 @@
  * @description Administrative interface for managing blog posts and news articles
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and has appropriate permissions
 if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
@@ -30,7 +30,10 @@ $error = '';
 
 // Handle post updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'update_post') {
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } elseif ($_POST['action'] === 'update_post') {
         $postId = $_POST['post_id'];
         $title = $_POST['title'];
         $content = $_POST['content'];
@@ -583,32 +586,126 @@ foreach ($allCategoriesRaw as $cat) {
                 
                 html += `
                     <div class="post-item">
-                        <div class="post-info">
-                            <h3 class="post-title">
-                                <a href="create-post.php?edit=${post.id}">${escapeHtml(post.title)}</a>
-                            </h3>
-                            <div class="post-meta">
-                                <span class="post-status status-${post.status}">${capitalizeFirst(post.status)}</span>
-                                <span class="post-category"><i class="fas fa-folder"></i> ${escapeHtml(post.category_name)}</span>
-                                <span class="post-date"><i class="fas fa-calendar"></i> Created: ${post.created_date}</span>
-                                ${publishedDate}
-                                <span class="post-author"><i class="fas fa-user"></i> by ${escapeHtml(post.author_name)}</span>
+                        <div style="display: flex; align-items: flex-start; gap: 1rem; width: 100%;">
+                            <input type="checkbox" class="post-checkbox" value="${post.id}" style="width: 18px; height: 18px; cursor: pointer; margin-top: 0.5rem; flex-shrink: 0;">
+                            <div style="flex: 1;">
+                                <div class="post-info">
+                                    <h3 class="post-title">
+                                        <a href="create-post.php?edit=${post.id}">${escapeHtml(post.title)}</a>
+                                    </h3>
+                                    <div class="post-meta">
+                                        <span class="post-status status-${post.status}">${capitalizeFirst(post.status)}</span>
+                                        <span class="post-category"><i class="fas fa-folder"></i> ${escapeHtml(post.category_name)}</span>
+                                        <span class="post-date"><i class="fas fa-calendar"></i> Created: ${post.created_date}</span>
+                                        ${publishedDate}
+                                        <span class="post-author"><i class="fas fa-user"></i> by ${escapeHtml(post.author_name)}</span>
+                                    </div>
+                                </div>
+                                <div class="post-actions">
+                                    <a href="create-post.php?edit=${post.id}" class="btn btn-sm btn-primary" title="Edit Post">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    ${copyButton}
+                                    <button class="btn btn-sm btn-danger" onclick="deletePost(${post.id})" title="Delete Post">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="post-actions">
-                            <a href="create-post.php?edit=${post.id}" class="btn btn-sm btn-primary" title="Edit Post">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            ${copyButton}
-                            <button class="btn btn-sm btn-danger" onclick="deletePost(${post.id})" title="Delete Post">
-                                <i class="fas fa-trash"></i>
-                            </button>
                         </div>
                     </div>
                 `;
             });
             
             postsList.innerHTML = html;
+            
+            // Re-initialize checkboxes after content is loaded
+            initializeCheckboxes();
+        }
+        
+        // Function to initialize checkbox event listeners
+        function initializeCheckboxes() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const postCheckboxes = document.querySelectorAll('.post-checkbox');
+            const bulkActionSelect = document.getElementById('bulkActionSelect');
+            const applyBulkActionBtn = document.getElementById('applyBulkAction');
+            const selectedCountSpan = document.getElementById('selectedCount');
+            
+            function updateBulkActionUI() {
+                const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
+                const count = selected.length;
+                
+                if (count > 0) {
+                    selectedCountSpan.textContent = count + ' selected';
+                    selectedCountSpan.style.display = 'inline';
+                    bulkActionSelect.style.display = 'inline-block';
+                    applyBulkActionBtn.style.display = 'inline-block';
+                } else {
+                    selectedCountSpan.style.display = 'none';
+                    bulkActionSelect.style.display = 'none';
+                    applyBulkActionBtn.style.display = 'none';
+                    bulkActionSelect.value = '';
+                }
+            }
+            
+            // Select All functionality
+            if (selectAllCheckbox) {
+                // Remove old event listeners by cloning
+                const newSelectAll = selectAllCheckbox.cloneNode(true);
+                selectAllCheckbox.parentNode.replaceChild(newSelectAll, selectAllCheckbox);
+                
+                newSelectAll.addEventListener('change', function() {
+                    postCheckboxes.forEach(cb => cb.checked = this.checked);
+                    updateBulkActionUI();
+                });
+            }
+            
+            // Individual checkbox change
+            postCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const selectAll = document.getElementById('selectAll');
+                    if (selectAll) {
+                        selectAll.checked = Array.from(postCheckboxes).every(cb => cb.checked);
+                    }
+                    updateBulkActionUI();
+                });
+            });
+            
+            // Update bulk action button handler
+            if (applyBulkActionBtn) {
+                // Remove old event listeners
+                const newApplyBtn = applyBulkActionBtn.cloneNode(true);
+                applyBulkActionBtn.parentNode.replaceChild(newApplyBtn, applyBulkActionBtn);
+                
+                newApplyBtn.addEventListener('click', function() {
+                    const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
+                    const action = bulkActionSelect.value;
+                    
+                    if (selected.length === 0) {
+                        alert('Please select at least one post.');
+                        return;
+                    }
+                    
+                    if (!action) {
+                        alert('Please select an action.');
+                        return;
+                    }
+                    
+                    const selectedIds = selected.map(cb => cb.value);
+                    const actionNames = {
+                        'publish': 'Publish',
+                        'draft': 'Move to Draft',
+                        'delete': 'Delete'
+                    };
+                    
+                    document.getElementById('bulkActionType').value = action;
+                    document.getElementById('bulkSelectedIds').value = JSON.stringify(selectedIds);
+                    document.getElementById('bulkActionTitle').textContent = actionNames[action] + ' Posts';
+                    document.getElementById('bulkActionMessage').textContent = 
+                        `You are about to ${actionNames[action].toLowerCase()} ${selectedIds.length} post(s). Please enter your password to confirm.`;
+                    document.getElementById('bulkPassword').value = '';
+                    document.getElementById('bulkActionModal').style.display = 'block';
+                });
+            }
         }
         
         // Helper functions
@@ -658,51 +755,15 @@ foreach ($allCategoriesRaw as $cat) {
             loadPosts();
         }
         
-        // Bulk Actions
-        const selectAllCheckbox = document.getElementById('selectAll');
-        const postCheckboxes = document.querySelectorAll('.post-checkbox');
-        const bulkActionSelect = document.getElementById('bulkActionSelect');
+        // Initialize checkboxes on page load
+        initializeCheckboxes();
+        
+        // Apply bulk action (keep existing handler for initial load)
         const applyBulkActionBtn = document.getElementById('applyBulkAction');
-        const selectedCountSpan = document.getElementById('selectedCount');
-        
-        function updateBulkActionUI() {
-            const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
-            const count = selected.length;
-            
-            if (count > 0) {
-                selectedCountSpan.textContent = count + ' selected';
-                selectedCountSpan.style.display = 'inline';
-                bulkActionSelect.style.display = 'inline-block';
-                applyBulkActionBtn.style.display = 'inline-block';
-            } else {
-                selectedCountSpan.style.display = 'none';
-                bulkActionSelect.style.display = 'none';
-                applyBulkActionBtn.style.display = 'none';
-                bulkActionSelect.value = '';
-            }
-        }
-        
-        // Select All functionality
-        if (selectAllCheckbox) {
-            selectAllCheckbox.addEventListener('change', function() {
-                postCheckboxes.forEach(cb => cb.checked = this.checked);
-                updateBulkActionUI();
-            });
-        }
-        
-        // Individual checkbox change
-        postCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                if (selectAllCheckbox) {
-                    selectAllCheckbox.checked = Array.from(postCheckboxes).every(cb => cb.checked);
-                }
-                updateBulkActionUI();
-            });
-        });
-        
-        // Apply bulk action
-        if (applyBulkActionBtn) {
+        if (applyBulkActionBtn && !applyBulkActionBtn.hasAttribute('data-initialized')) {
+            applyBulkActionBtn.setAttribute('data-initialized', 'true');
             applyBulkActionBtn.addEventListener('click', function() {
+                const postCheckboxes = document.querySelectorAll('.post-checkbox');
                 const selected = Array.from(postCheckboxes).filter(cb => cb.checked);
                 const action = bulkActionSelect.value;
                 

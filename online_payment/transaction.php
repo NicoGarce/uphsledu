@@ -4,8 +4,17 @@ include "dbconnect.php";
 $curdate = date("Y-m-d"); 
 
 if (isset($_GET["refno"])) {
-  $sql = "update return_data set receipt_no ='".$_GET["orno"]."',postdate=now() where refno = '".$_GET["refno"]."'";	   
-  $result = mysqli_query($con, $sql);
+  // Use prepared statement to prevent SQL injection
+  $stmt = mysqli_prepare($con, "UPDATE return_data SET receipt_no=?, postdate=NOW() WHERE refno=?");
+  if ($stmt) {
+    $orno = $_GET["orno"] ?? '';
+    $refno = $_GET["refno"] ?? '';
+    mysqli_stmt_bind_param($stmt, "ss", $orno, $refno);
+    $result = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+  } else {
+    $result = false;
+  }
 }
 
 //if (isset($_GET["verifycsv"])) {
@@ -59,7 +68,7 @@ if (isset($_GET["refno"])) {
 <form name="frmmain" method="post">
     <tr>
       <td height="79"  colspan="5" align="center" ><u><strong>Online Payment Transaction List</strong></u></td>
-      <td height="79" align="left" colspan="2">Starting Date: <input type="text" name="dfrom" size="12" maxlength="12" value="<?php if(isset($_POST["dfrom"])) {echo $_POST["dfrom"];} else {echo $curdate;} ?>" > <font size="2px">(yyyy-mm-dd)</font><br>Ending Date: <input type="text" name="dto" size="12" maxlength="12" value="<?php if(isset($_POST["dto"])) {echo $_POST["dto"];} else {echo $curdate;} ?>" > <font size="2px">(yyyy-mm-dd)</font></td>
+      <td height="79" align="left" colspan="2">Starting Date: <input type="text" name="dfrom" size="12" maxlength="12" value="<?php if(isset($_POST["dfrom"])) {echo htmlspecialchars($_POST["dfrom"], ENT_QUOTES, 'UTF-8');} else {echo htmlspecialchars($curdate, ENT_QUOTES, 'UTF-8');} ?>" > <font size="2px">(yyyy-mm-dd)</font><br>Ending Date: <input type="text" name="dto" size="12" maxlength="12" value="<?php if(isset($_POST["dto"])) {echo htmlspecialchars($_POST["dto"], ENT_QUOTES, 'UTF-8');} else {echo htmlspecialchars($curdate, ENT_QUOTES, 'UTF-8');} ?>" > <font size="2px">(yyyy-mm-dd)</font></td>
       <td height="79" align="left"><input type="submit" name="btnrefresh" value="Refresh List" style="padding: 5px; background-color: green; color: white; border-radius: 5px;"></td>
     </tr>
  </form>	  
@@ -74,13 +83,31 @@ if (isset($_GET["refno"])) {
 	  <td align="center"><strong>Set Date</strong></td>
     </tr>
  <?php 
-	$add = "";  
-	if(isset($_POST["dfrom"])) {
-	 $add = " and transdate between '".$_POST["dfrom"]."' and date_add('".$_POST["dto"]."', interval 1 day) and transdate is not null "	;
-	} 
+	// Use prepared statement to prevent SQL injection
+	$sql = "SELECT * FROM return_data WHERE (txnid LIKE 'UPHB_%' OR txnid LIKE 'UPHMU_%') AND status='Success'";
+	$params = [];
+	$types = "";
 	
-	$sql = "select * from return_data where (txnid like 'UPHB_%' or txnid like 'UPHMU_%') and status='Success' ".$add." order by transdate";	   
-    $result = mysqli_query($con, $sql);
+	if(isset($_POST["dfrom"]) && isset($_POST["dto"])) {
+		$sql .= " AND transdate BETWEEN ? AND DATE_ADD(?, INTERVAL 1 DAY) AND transdate IS NOT NULL";
+		$params[] = $_POST["dfrom"];
+		$params[] = $_POST["dto"];
+		$types .= "ss";
+	}
+	
+	$sql .= " ORDER BY transdate";
+	
+	$stmt = mysqli_prepare($con, $sql);
+	if ($stmt && !empty($params)) {
+		mysqli_stmt_bind_param($stmt, $types, ...$params);
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+	} elseif ($stmt) {
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+	} else {
+		$result = mysqli_query($con, $sql);
+	}
 	$cnt=0;
 	while ($r=mysqli_fetch_array($result)) {
   ?>	  
@@ -98,17 +125,17 @@ if (isset($_GET["refno"])) {
 			}
 		  }
 		?>>
-	  <td align="left" style="font-size: 12px"><?php echo $r["transdate"];?></td>
-      <td align="left" style="font-size: 12px"><?php echo $r["txnid"];?></td>
-      <td align="center" style="font-size: 12px"><?php echo $r["refno"];?></td>
-      <td align="center" style="font-size: 12px <?php if($r["status"]=='Success') ?>"><?php echo $r["status"];?></td>
-      <td align="center" style="font-size: 12px"><?php echo $r["amount"];?></td>
-      <td align="center" style="font-size: 12px"><?php echo $r["message"];?></td>
+	  <td align="left" style="font-size: 12px"><?php echo htmlspecialchars($r["transdate"] ?? '', ENT_QUOTES, 'UTF-8');?></td>
+      <td align="left" style="font-size: 12px"><?php echo htmlspecialchars($r["txnid"] ?? '', ENT_QUOTES, 'UTF-8');?></td>
+      <td align="center" style="font-size: 12px"><?php echo htmlspecialchars($r["refno"] ?? '', ENT_QUOTES, 'UTF-8');?></td>
+      <td align="center" style="font-size: 12px <?php if($r["status"]=='Success') ?>"><?php echo htmlspecialchars($r["status"] ?? '', ENT_QUOTES, 'UTF-8');?></td>
+      <td align="center" style="font-size: 12px"><?php echo htmlspecialchars($r["amount"] ?? '', ENT_QUOTES, 'UTF-8');?></td>
+      <td align="center" style="font-size: 12px"><?php echo htmlspecialchars($r["message"] ?? '', ENT_QUOTES, 'UTF-8');?></td>
 	  <td align="center" style="font-size: 12px"><?php if (is_null($r["receipt_no"])) {?> 
-		  <a href="javascript:getor('<?php echo $r["refno"]; ?>')">Set</a>
-		  <?php } else { echo $r["receipt_no"]; } ?>
+		  <a href="javascript:getor(<?php echo json_encode($r["refno"] ?? ''); ?>)">Set</a>
+		  <?php } else { echo htmlspecialchars($r["receipt_no"], ENT_QUOTES, 'UTF-8'); } ?>
 	  </td>
-	<td align="center" style="font-size: 12px"><?php echo $r["postdate"];?></td>	
+	<td align="center" style="font-size: 12px"><?php echo htmlspecialchars($r["postdate"] ?? '', ENT_QUOTES, 'UTF-8');?></td>	
     </tr>
 <?php 	
 	}  

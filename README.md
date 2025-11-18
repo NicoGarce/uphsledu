@@ -30,6 +30,16 @@ This is a comprehensive educational website for the University of Perpetual Help
 - ✅ **SDG Initiatives**: Interactive SDG goals with modals
 - ✅ **Support Services**: Organized service pages with navigation
 
+### **🔒 Security Features (Laravel-like)**
+- ✅ **CSRF Protection**: Cross-Site Request Forgery protection for all forms
+- ✅ **XSS Prevention**: Comprehensive XSS protection and output escaping
+- ✅ **SQL Injection Prevention**: Prepared statements and query sanitization
+- ✅ **Rate Limiting**: Protection against brute force attacks
+- ✅ **Session Security**: Secure session management with regeneration
+- ✅ **Security Headers**: CSP, HSTS, X-Frame-Options, and more
+- ✅ **Input Validation**: Comprehensive input validation and sanitization
+- ✅ **Password Security**: Strong password requirements and hashing
+
 ## Prerequisites
 
 Before installing the UPHSL Education Website, ensure you have the following installed on your system:
@@ -43,7 +53,7 @@ Before installing the UPHSL Education Website, ensure you have the following ins
 ### **PHP Extensions**
 - PDO MySQL
 - GD (for image processing)
-- OpenSSL
+- OpenSSL (for encryption)
 - Mbstring
 - Fileinfo
 - JSON
@@ -522,6 +532,109 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 #### **AJAX Debugging**
 Check browser console for JavaScript errors and network tab for AJAX requests.
 
+## Security Features
+
+The website includes comprehensive Laravel-like security features to protect against common web vulnerabilities.
+
+### **Implemented Security Features**
+
+1. **CSRF Protection**
+   - All forms are protected with CSRF tokens
+   - Automatic token generation and verification
+   - Token expiration and regeneration
+
+2. **XSS Prevention**
+   - Output escaping for all user-generated content
+   - HTML sanitization functions
+   - JavaScript and attribute escaping
+
+3. **SQL Injection Prevention**
+   - Prepared statements for all database queries
+   - Query parameter binding
+   - LIKE query escaping
+
+4. **Rate Limiting**
+   - Login attempt limiting (5 attempts per 15 minutes)
+   - Configurable rate limits per endpoint
+   - Automatic retry-after calculation
+
+5. **Session Security**
+   - Secure session cookies (HttpOnly, SameSite)
+   - Session ID regeneration
+   - Session timeout (30 minutes)
+   - Automatic session cleanup
+
+6. **Security Headers**
+   - Content Security Policy (CSP)
+   - X-Frame-Options
+   - X-XSS-Protection
+   - X-Content-Type-Options
+   - HSTS (when using HTTPS)
+   - Referrer Policy
+
+7. **Input Validation**
+   - Email validation
+   - Password strength validation
+   - String length validation
+   - Numeric validation
+   - Comprehensive sanitization
+
+8. **Password Security**
+   - Strong password requirements
+   - Secure password hashing (password_hash)
+   - Password verification
+
+### **Using Security Features**
+
+See `SECURITY.md` for detailed documentation on using all security features.
+
+**Quick Example:**
+```php
+// In forms
+<form method="POST">
+    <?php echo CSRF::field(); ?>
+    <!-- form fields -->
+</form>
+
+// In form processing
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!CSRF::verify()) {
+        die('CSRF token mismatch');
+    }
+    // Process form...
+}
+
+// Output escaping
+echo XSS::clean($userInput);
+
+// Rate limiting
+$key = 'login_' . $_SERVER['REMOTE_ADDR'];
+if (!RateLimiter::check($key, 5, 900)) {
+    die('Too many attempts');
+}
+```
+
+### **Security Configuration**
+
+Security settings can be configured in `app/config/security.php`:
+- CSRF token lifetime
+- Rate limiting thresholds
+- Session timeout
+- Password requirements
+- Security headers
+- Content Security Policy
+
+### **Security Checklist**
+
+- ✅ CSRF protection on all forms
+- ✅ XSS protection on all output
+- ✅ SQL injection prevention
+- ✅ Rate limiting on sensitive endpoints
+- ✅ Secure session management
+- ✅ Security headers configured
+- ✅ Input validation and sanitization
+- ✅ Password hashing
+
 ## Migration Notes
 
 - All path references have been updated to work with current structure
@@ -532,6 +645,7 @@ Check browser console for JavaScript errors and network tab for AJAX requests.
 - AJAX search functionality implemented
 - Mobile optimization completed
 - Performance enhancements applied
+- **Security features added (2025)**
 
 ## Support
 

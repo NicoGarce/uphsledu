@@ -7,9 +7,9 @@
  * @description Administrative interface for managing SDG initiatives posts
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and has appropriate permissions
 if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
@@ -35,7 +35,10 @@ if (isset($_GET['success'])) {
 
 // Handle post updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'update_post') {
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } elseif ($_POST['action'] === 'update_post') {
         $postId = $_POST['post_id'];
         $title = $_POST['title'];
         $content = $_POST['content'];

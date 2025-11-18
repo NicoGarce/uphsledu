@@ -7,7 +7,6 @@
  * @description User authentication and login system for UPHSL website
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
@@ -28,30 +27,48 @@ if (hasFlashMessage('error')) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = sanitizeInput($_POST['username']);
-    $password = $_POST['password'];
-    
-    if (empty($username) || empty($password)) {
-        $error = 'Please fill in all fields';
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
     } else {
-        $user = getUserByUsername($username);
-        
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_role'] = $user['role'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['first_name'] = $user['first_name'];
-            
-            setFlashMessage('success', 'Welcome back, ' . $user['first_name'] . '!');
-            
-            // Redirect based on user role
-            if ($user['role'] === 'author') {
-                redirect('../admin/author-dashboard.php');
-            } else {
-                redirect('../admin/dashboard.php');
-            }
+        // Rate limiting for login attempts
+        $rateLimitKey = 'login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+        if (!RateLimiter::check($rateLimitKey, 5, 900)) {
+            $retryAfter = RateLimiter::retryAfter($rateLimitKey, 900);
+            $error = 'Too many login attempts. Please try again in ' . ceil($retryAfter / 60) . ' minutes.';
         } else {
-            $error = 'Invalid username or password';
+            $username = Validator::sanitize($_POST['username'], 'string');
+            $password = $_POST['password'];
+            
+            if (empty($username) || empty($password)) {
+                $error = 'Please fill in all fields';
+            } else {
+                $user = getUserByUsername($username);
+                
+                if ($user && password_verify($password, $user['password'])) {
+                    // Clear rate limit on successful login
+                    RateLimiter::clear($rateLimitKey);
+                    
+                    // Regenerate session ID on login
+                    SessionSecurity::regenerate();
+                    
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_role'] = $user['role'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['first_name'] = $user['first_name'];
+                    
+                    setFlashMessage('success', 'Welcome back, ' . $user['first_name'] . '!');
+                    
+                    // Redirect based on user role
+                    if ($user['role'] === 'author') {
+                        redirect('../admin/author-dashboard.php');
+                    } else {
+                        redirect('../admin/dashboard.php');
+                    }
+                } else {
+                    $error = 'Invalid username or password';
+                }
+            }
         }
     }
 }
@@ -101,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" class="auth-form">
+                <?php echo CSRF::field(); ?>
                 <div class="form-group">
                     <label for="username" class="form-label">
                         <i class="fas fa-user"></i>

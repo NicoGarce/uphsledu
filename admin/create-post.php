@@ -7,9 +7,9 @@
  * @description Administrative interface for creating new blog posts and news articles
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and has appropriate role
 if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
@@ -133,15 +133,19 @@ if (!isset($existingSdgTags)) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    error_log("Form submitted - POST data: " . print_r($_POST, true));
-    error_log("Form submitted - FILES data: " . print_r($_FILES, true));
-    
-    $title = sanitizeInput($_POST['title']);
-    $content = $_POST['content'];
-    $status = $_POST['status'];
-    $excerpt = sanitizeInput($_POST['excerpt'] ?? '');
-    $publishedDate = $_POST['published_date'] ?? null;
-    $categoryId = isset($_POST['category']) && is_numeric($_POST['category']) ? (int)$_POST['category'] : null;
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } else {
+        error_log("Form submitted - POST data: " . print_r($_POST, true));
+        error_log("Form submitted - FILES data: " . print_r($_FILES, true));
+        
+        $title = Validator::sanitize($_POST['title'], 'string');
+        $content = $_POST['content']; // Rich text content - sanitized on output
+        $status = Validator::sanitize($_POST['status'] ?? 'draft', 'string');
+        $excerpt = Validator::sanitize($_POST['excerpt'] ?? '', 'string');
+        $publishedDate = Validator::sanitize($_POST['published_date'] ?? null, 'string');
+        $categoryId = isset($_POST['category']) && is_numeric($_POST['category']) ? (int)$_POST['category'] : null;
     $isEdit = isset($_POST['is_edit']) && $_POST['is_edit'] === '1';
     $postId = isset($_POST['post_id']) ? (int)$_POST['post_id'] : 0;
     
@@ -262,10 +266,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $fileSize = $_FILES['images']['size'][$i];
                         $fileType = $_FILES['images']['type'][$i];
                         
-                        // Validate file type
-                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                        if (!in_array($fileType, $allowedTypes)) {
-                            throw new Exception("Invalid file type for $fileName. Only JPEG, PNG, GIF, and WebP are allowed.");
+                        // Validate file extension
+                        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                        if (!in_array($fileExtension, $allowedExtensions)) {
+                            throw new Exception("Invalid file extension for $fileName. Only JPEG, PNG, GIF, and WebP are allowed.");
                         }
                         
                         // Validate file size (10MB max)
@@ -273,15 +278,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             throw new Exception("File $fileName is too large. Maximum size is 10MB.");
                         }
                         
+                        // Verify actual file content using getimagesize (more secure than trusting MIME type)
+                        $imageInfo = @getimagesize($fileTmpName);
+                        if ($imageInfo === false) {
+                            throw new Exception("File $fileName is not a valid image.");
+                        }
+                        
+                        // Verify MIME type matches actual file content
+                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        $detectedMime = $imageInfo['mime'];
+                        if (!in_array($detectedMime, $allowedTypes)) {
+                            throw new Exception("Invalid file type detected for $fileName. Only JPEG, PNG, GIF, and WebP are allowed.");
+                        }
+                        
                         // Generate unique filename
-                        $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
                         $uniqueFileName = uniqid() . '_' . time() . '.' . $fileExtension;
                         $uploadPath = $uploadDir . $uniqueFileName;
+                        
+                        // Ensure filename doesn't contain path traversal
+                        $uploadPath = realpath($uploadDir) . '/' . basename($uniqueFileName);
                         
                         if (move_uploaded_file($fileTmpName, $uploadPath)) {
                             error_log("Image uploaded successfully: $uploadPath");
                             // Optimize image for better performance
-                            optimizeImage($uploadPath, $fileType);
+                            optimizeImage($uploadPath, $detectedMime);
                             // Store relative path in database (from root directory)
                             $relativePath = 'uploads/' . $uniqueFileName;
                             // Insert image record
@@ -352,6 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+    }
 }
 ?>
 
@@ -386,6 +407,7 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
         <?php endif; ?>
 
         <form method="POST" class="editor-form" enctype="multipart/form-data">
+            <?php echo CSRF::field(); ?>
             <?php if ($isEdit): ?>
                 <input type="hidden" name="is_edit" value="1">
                 <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
