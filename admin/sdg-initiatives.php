@@ -61,13 +61,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     } elseif ($_POST['action'] === 'delete_post') {
         $postId = $_POST['post_id'];
+        $password = $_POST['password'] ?? '';
         
-        try {
-            $stmt = $pdo->prepare("DELETE FROM sdg_initiatives_posts WHERE id = ?");
-            $stmt->execute([$postId]);
-            $success = "SDG Initiative post deleted successfully!";
-        } catch (PDOException $e) {
-            $error = "Error deleting post: " . $e->getMessage();
+        // Verify password
+        if (empty($password) || !verifyUserPassword($_SESSION['user_id'], $password)) {
+            $error = "Invalid password. Please try again.";
+        } else {
+            try {
+                $stmt = $pdo->prepare("DELETE FROM sdg_initiatives_posts WHERE id = ?");
+                $stmt->execute([$postId]);
+                $success = "SDG Initiative post deleted successfully!";
+            } catch (PDOException $e) {
+                $error = "Error deleting post: " . $e->getMessage();
+            }
         }
     } elseif ($_POST['action'] === 'bulk_action') {
         $selectedIds = $_POST['selected_ids'] ?? '';
@@ -334,6 +340,13 @@ $sdgGoals = [
                 <?php echo CSRF::field(); ?>
                 <input type="hidden" name="action" value="delete_post">
                 <input type="hidden" name="post_id" id="delete_post_id">
+                
+                <div style="margin-bottom: 1rem;">
+                    <label for="deletePassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                    <input type="password" id="deletePassword" name="password" required 
+                           style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                           placeholder="Enter your password to confirm deletion" autocomplete="current-password">
+                </div>
                 
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>

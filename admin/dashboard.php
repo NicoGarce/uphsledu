@@ -33,8 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $error = 'Security token mismatch. Please refresh the page and try again.';
     } else {
         $postId = (int)$_POST['post_id'];
+        $password = $_POST['password'] ?? '';
         
-        if ($postId > 0) {
+        // Verify password
+        if (empty($password) || !verifyUserPassword($_SESSION['user_id'], $password)) {
+            $error = "Invalid password. Please try again.";
+        } elseif ($postId > 0) {
         try {
             $pdo = getDBConnection();
             
@@ -57,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         } catch (PDOException $e) {
             $error = 'Failed to delete post';
         }
-    }
+        }
     }
 }
 
@@ -381,10 +385,13 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                                     <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-secondary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post? You will need to enter your password.')">
                                         <?php echo CSRF::field(); ?>
                                         <input type="hidden" name="action" value="delete_post">
                                         <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
+                                        <input type="password" name="password" placeholder="Password" required 
+                                               style="padding: 0.25rem 0.5rem; margin-right: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.875rem; width: 120px;"
+                                               autocomplete="current-password">
                                         <button type="submit" class="btn btn-sm btn-danger">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -422,6 +429,14 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                         <?php echo CSRF::field(); ?>
                         <input type="hidden" name="action" value="delete_career">
                         <input type="hidden" name="career_id" id="delete_career_id">
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label for="deletePassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                            <input type="password" id="deletePassword" name="password" required 
+                                   style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                                   placeholder="Enter your password to confirm deletion" autocomplete="current-password">
+                        </div>
+                        
                         <div class="modal-actions">
                             <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
                             <button type="submit" class="btn btn-danger">Delete Posting</button>

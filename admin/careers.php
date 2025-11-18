@@ -35,19 +35,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $error = 'Security token mismatch. Please refresh the page and try again.';
     } elseif ($_POST['action'] === 'delete_career') {
         $careerId = $_POST['career_id'];
+        $password = $_POST['password'] ?? '';
         
-        try {
-            // HR, Admins, and Super Admins can delete any posting
-            $stmt = $pdo->prepare("DELETE FROM careers_postings WHERE id = ?");
-            $stmt->execute([$careerId]);
-            
-            if ($stmt->rowCount() > 0) {
-                $success = "Career posting deleted successfully!";
-            } else {
-                $error = "Career posting not found or you do not have permission to delete it";
+        // Verify password
+        if (empty($password) || !verifyUserPassword($_SESSION['user_id'], $password)) {
+            $error = "Invalid password. Please try again.";
+        } else {
+            try {
+                // HR, Admins, and Super Admins can delete any posting
+                $stmt = $pdo->prepare("DELETE FROM careers_postings WHERE id = ?");
+                $stmt->execute([$careerId]);
+                
+                if ($stmt->rowCount() > 0) {
+                    $success = "Career posting deleted successfully!";
+                } else {
+                    $error = "Career posting not found or you do not have permission to delete it";
+                }
+            } catch (PDOException $e) {
+                $error = "Error deleting career posting: " . $e->getMessage();
             }
-        } catch (PDOException $e) {
-            $error = "Error deleting career posting: " . $e->getMessage();
         }
     } elseif ($_POST['action'] === 'bulk_action') {
         $selectedIds = $_POST['selected_ids'] ?? '';
@@ -406,6 +412,13 @@ $careers = $stmt->fetchAll();
                 <?php echo CSRF::field(); ?>
                 <input type="hidden" name="action" value="delete_career">
                 <input type="hidden" name="career_id" id="delete_career_id">
+                
+                <div style="margin-bottom: 1rem;">
+                    <label for="deletePassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                    <input type="password" id="deletePassword" name="password" required 
+                           style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                           placeholder="Enter your password to confirm deletion" autocomplete="current-password">
+                </div>
                 
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>

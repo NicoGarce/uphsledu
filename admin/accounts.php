@@ -84,8 +84,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif ($action === 'delete_user') {
         $userId = $_POST['user_id'];
+        $password = $_POST['password'] ?? '';
         
-        if ($userId && $userId != $_SESSION['user_id']) {
+        // Verify password
+        if (empty($password) || !verifyUserPassword($_SESSION['user_id'], $password)) {
+            $error = "Invalid password. Please try again.";
+        } elseif ($userId && $userId != $_SESSION['user_id']) {
             try {
                 $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
                 $stmt->execute([$userId]);
@@ -418,10 +422,13 @@ $users = $stmt->fetchAll();
                                     <i class="fas fa-key"></i>
                                 </button>
                                 <?php if ($account['id'] != $_SESSION['user_id']): ?>
-                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account?')">
+                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account? You will need to enter your password.')">
                                         <?php echo CSRF::field(); ?>
                                         <input type="hidden" name="action" value="delete_user">
                                         <input type="hidden" name="user_id" value="<?php echo $account['id']; ?>">
+                                        <input type="password" name="password" placeholder="Password" required 
+                                               style="padding: 0.25rem 0.5rem; margin-right: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.875rem; width: 120px;"
+                                               autocomplete="current-password">
                                         <button type="submit" class="btn btn-sm btn-danger">
                                             <i class="fas fa-trash"></i>
                                         </button>
