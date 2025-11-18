@@ -385,17 +385,9 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                                     <a href="create-post.php?edit=<?php echo $post['id']; ?>" class="btn btn-sm btn-secondary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post? You will need to enter your password.')">
-                                        <?php echo CSRF::field(); ?>
-                                        <input type="hidden" name="action" value="delete_post">
-                                        <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
-                                        <input type="password" name="password" placeholder="Password" required 
-                                               style="padding: 0.25rem 0.5rem; margin-right: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.875rem; width: 120px;"
-                                               autocomplete="current-password">
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <button class="btn btn-sm btn-danger" onclick="deletePost(<?php echo $post['id']; ?>)" title="Delete Post">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -413,6 +405,38 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
             </div>
         <?php endif; ?>
     </div>
+
+        <?php if ($userRole === 'super_admin' || $userRole === 'admin'): ?>
+            <!-- Delete Confirmation Modal for Posts -->
+            <div id="deletePostModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Delete Post</h3>
+                        <span class="close" onclick="closeDeletePostModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Please enter your password to confirm this action.</p>
+                        <form id="deletePostForm" method="POST">
+                            <?php echo CSRF::field(); ?>
+                            <input type="hidden" name="action" value="delete_post">
+                            <input type="hidden" name="post_id" id="delete_post_id">
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label for="deletePostPassword" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Password:</label>
+                                <input type="password" id="deletePostPassword" name="password" required 
+                                       style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+                                       placeholder="Enter your password" autocomplete="current-password">
+                            </div>
+                            
+                            <div class="modal-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeDeletePostModal()">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Delete Post</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <?php if ($userRole === 'hr'): ?>
             <!-- Delete Confirmation Modal for Careers -->
@@ -454,79 +478,104 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                 function closeDeleteModal() {
                     document.getElementById('deleteModal').style.display = 'none';
                 }
+            </script>
+        <?php endif; ?>
+        
+        <?php if ($userRole === 'super_admin' || $userRole === 'admin'): ?>
+            <script>
+                function deletePost(postId) {
+                    document.getElementById('delete_post_id').value = postId;
+                    document.getElementById('deletePostModal').style.display = 'block';
+                }
                 
-                // Close modal when clicking outside
-                window.onclick = function(event) {
-                    const deleteModal = document.getElementById('deleteModal');
-                    if (event.target === deleteModal) {
-                        closeDeleteModal();
-                    }
+                function closeDeletePostModal() {
+                    document.getElementById('deletePostModal').style.display = 'none';
+                    document.getElementById('deletePostPassword').value = '';
                 }
             </script>
-            
-            <style>
-                .modal {
-                    display: none;
-                    position: fixed;
-                    z-index: 1000;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    height: 100%;
-                    overflow: auto;
-                    background-color: rgba(0,0,0,0.5);
-                }
-                .modal-content {
-                    background-color: #fefefe;
-                    margin: auto;
-                    padding: 0;
-                    border: 1px solid #888;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                    width: 90%;
-                    max-width: 500px;
-                    position: relative;
-                    top: 50%;
-                    transform: translateY(-50%);
-                }
-                .modal-header {
-                    padding: 20px;
-                    border-bottom: 1px solid #dee2e6;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background: #1c4da1;
-                    border-radius: 8px 8px 0 0;
-                }
-                .modal-header h3 {
-                    margin: 0;
-                    color: white;
-                    font-size: 1.2rem;
-                    font-weight: 600;
-                }
-                .modal-body {
-                    padding: 20px;
-                }
-                .close {
-                    color: white;
-                    font-size: 28px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    line-height: 1;
-                }
-                .close:hover,
-                .close:focus {
-                    color: #f0f0f0;
-                    opacity: 0.8;
-                }
-                .modal-actions {
-                    display: flex;
-                    gap: 10px;
-                    justify-content: flex-end;
-                    margin-top: 20px;
-                }
-            </style>
         <?php endif; ?>
+        
+        <!-- Shared modal click-outside handler -->
+        <script>
+            // Close modals when clicking outside
+            window.onclick = function(event) {
+                const deleteModal = document.getElementById('deleteModal');
+                const deletePostModal = document.getElementById('deletePostModal');
+                
+                if (deleteModal && event.target === deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+                if (deletePostModal && event.target === deletePostModal) {
+                    deletePostModal.style.display = 'none';
+                    const passwordField = document.getElementById('deletePostPassword');
+                    if (passwordField) passwordField.value = '';
+                }
+            }
+        </script>
+        
+        <!-- Shared Modal Styles -->
+        <style>
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.5);
+            }
+            .modal-content {
+                background-color: #fefefe;
+                margin: auto;
+                padding: 0;
+                border: 1px solid #888;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                width: 90%;
+                max-width: 500px;
+                position: relative;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            .modal-header {
+                padding: 20px;
+                border-bottom: 1px solid #dee2e6;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #1c4da1;
+                border-radius: 8px 8px 0 0;
+            }
+            .modal-header h3 {
+                margin: 0;
+                color: white;
+                font-size: 1.2rem;
+                font-weight: 600;
+            }
+            .modal-body {
+                padding: 20px;
+            }
+            .close {
+                color: white;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+                line-height: 1;
+            }
+            .close:hover,
+            .close:focus {
+                color: #f0f0f0;
+                opacity: 0.8;
+            }
+            .modal-actions {
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+                margin-top: 20px;
+            }
+        </style>
         
         <script src="../assets/js/script.js"></script>
         
