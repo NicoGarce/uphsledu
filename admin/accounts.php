@@ -445,6 +445,7 @@ $users = $stmt->fetchAll();
             <div class="modal-body">
                 <p>Please enter your password to edit this user account:</p>
                 <form id="passwordForm">
+                    <?php echo CSRF::field(); ?>
                     <div class="form-group">
                         <label for="password" class="form-label">Your Password</label>
                         <input type="password" id="password" name="password" class="form-input" required>
@@ -467,6 +468,7 @@ $users = $stmt->fetchAll();
             </div>
             <div class="modal-body">
                 <form id="editForm" method="POST">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="update_user">
                     <input type="hidden" name="user_id" id="edit_user_id">
                     
@@ -525,6 +527,7 @@ $users = $stmt->fetchAll();
                 <p id="resetPasswordVerifyUserInfo" style="margin-bottom: 15px; color: #666;"></p>
                 <p style="margin-bottom: 15px; color: #666;">Please enter your password to confirm this action:</p>
                 <form id="resetPasswordVerifyForm">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="verify_reset_password">
                     <input type="hidden" name="user_id" id="verify_reset_user_id">
                     
@@ -557,6 +560,7 @@ $users = $stmt->fetchAll();
                     <div id="resetPasswordUserInfo" style="margin-top: 5px; font-weight: bold;"></div>
                 </div>
                 <form id="resetPasswordForm">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="reset_password">
                     <input type="hidden" name="user_id" id="reset_user_id">
                     <input type="hidden" name="admin_password" id="reset_admin_password">
@@ -709,12 +713,15 @@ $users = $stmt->fetchAll();
                 return;
             }
             
+            // Get CSRF token from the page
+            const csrfToken = document.querySelector('input[name="_token"]')?.value || '';
+            
             fetch('', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `action=verify_password&password=${encodeURIComponent(password)}&user_id=${currentEditUserId}`
+                body: `action=verify_password&password=${encodeURIComponent(password)}&user_id=${currentEditUserId}&_token=${encodeURIComponent(csrfToken)}`
             })
             .then(response => {
                 console.log('Response status:', response.status);

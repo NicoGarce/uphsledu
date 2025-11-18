@@ -59,9 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } catch (PDOException $e) {
             $error = "Error updating post: " . $e->getMessage();
         }
-    }
-    
-    if ($_POST['action'] === 'delete_post') {
+    } elseif ($_POST['action'] === 'delete_post') {
         $postId = $_POST['post_id'];
         
         try {
@@ -71,10 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } catch (PDOException $e) {
             $error = "Error deleting post: " . $e->getMessage();
         }
-    }
-    
-    // Handle bulk actions
-    if ($_POST['action'] === 'bulk_action') {
+    } elseif ($_POST['action'] === 'bulk_action') {
         $selectedIds = $_POST['selected_ids'] ?? '';
         $bulkAction = $_POST['bulk_action_type'] ?? '';
         $password = $_POST['password'] ?? '';
@@ -306,6 +301,7 @@ $sdgGoals = [
             <div class="modal-body">
                 <p id="bulkActionMessage">Please enter your password to confirm this action.</p>
                 <form id="bulkActionForm" method="POST">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="bulk_action">
                     <input type="hidden" name="bulk_action_type" id="bulkActionType">
                     <input type="hidden" name="selected_ids" id="bulkSelectedIds">
@@ -335,6 +331,7 @@ $sdgGoals = [
                 <p>Are you sure you want to delete this SDG initiative post? This action cannot be undone.</p>
             </div>
             <form id="deleteForm" method="POST">
+                <?php echo CSRF::field(); ?>
                 <input type="hidden" name="action" value="delete_post">
                 <input type="hidden" name="post_id" id="delete_post_id">
                 

@@ -49,10 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } catch (PDOException $e) {
             $error = "Error deleting career posting: " . $e->getMessage();
         }
-    }
-    
-    // Handle bulk actions
-    if ($_POST['action'] === 'bulk_action') {
+    } elseif ($_POST['action'] === 'bulk_action') {
         $selectedIds = $_POST['selected_ids'] ?? '';
         $bulkAction = $_POST['bulk_action_type'] ?? '';
         $password = $_POST['password'] ?? '';
@@ -376,6 +373,7 @@ $careers = $stmt->fetchAll();
             <div class="modal-body">
                 <p id="bulkActionMessage">Please enter your password to confirm this action.</p>
                 <form id="bulkActionForm" method="POST">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="bulk_action">
                     <input type="hidden" name="bulk_action_type" id="bulkActionType">
                     <input type="hidden" name="selected_ids" id="bulkSelectedIds">
@@ -405,6 +403,7 @@ $careers = $stmt->fetchAll();
                 <p>Are you sure you want to delete this career posting? This action cannot be undone.</p>
             </div>
             <form id="deleteForm" method="POST">
+                <?php echo CSRF::field(); ?>
                 <input type="hidden" name="action" value="delete_career">
                 <input type="hidden" name="career_id" id="delete_career_id">
                 

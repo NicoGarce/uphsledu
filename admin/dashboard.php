@@ -419,6 +419,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                         <p>Are you sure you want to delete this career posting? This action cannot be undone.</p>
                     </div>
                     <form id="deleteForm" method="POST" action="careers.php">
+                        <?php echo CSRF::field(); ?>
                         <input type="hidden" name="action" value="delete_career">
                         <input type="hidden" name="career_id" id="delete_career_id">
                         <div class="modal-actions">
