@@ -62,11 +62,12 @@ return [
     // Content Security Policy
     'csp' => [
         'default_src' => "'self'",
-        'script_src' => "'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.quilljs.com https://fonts.googleapis.com",
+        'script_src' => "'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.quilljs.com https://fonts.googleapis.com https://connect.facebook.net",
         'style_src' => "'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.quilljs.com https://fonts.googleapis.com",
         'font_src' => "'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:",
-        'img_src' => "'self' data: https:",
-        'connect_src' => "'self'",
+        'img_src' => "'self' data: https: https://*.fbcdn.net",
+        'frame_src' => "'self' https://www.facebook.com https://web.facebook.com",
+        'connect_src' => "'self' https://www.facebook.com https://web.facebook.com https://connect.facebook.net https://staticxx.facebook.com",
     ],
     
     // Allowed file upload types

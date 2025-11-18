@@ -10,6 +10,9 @@
 // Include path configuration
 require_once __DIR__ . '/../config/paths.php';
 
+// Include security features (CSRF, XSS, CSP, etc.)
+require_once __DIR__ . '/security.php';
+
 // Check for maintenance mode (before any output)
 // Allow access to admin pages and auth pages even in maintenance mode
 $current_script = basename($_SERVER['PHP_SELF']);

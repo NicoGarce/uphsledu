@@ -133,8 +133,12 @@
                 
                 <!-- COR Certificate Section -->
                 <div class="footer-section">
-                    <div class="cor-certificate" style="text-align: center;">
-                        <img src="<?php echo $base_path; ?>assets/images/COR.png" alt="National Privacy Commission - Data Protection Officer/Data Processing System Registered" class="cor-image" style="max-width: 120px; height: auto; display: block; margin: 0 auto;">
+                    <div class="cor-certificate" style="text-align: center; display: flex; align-items: center; justify-content: center; min-height: 150px;">
+                        <img src="<?php echo htmlspecialchars($base_path . 'assets/images/COR.png', ENT_QUOTES, 'UTF-8'); ?>" 
+                             alt="National Privacy Commission - Data Protection Officer/Data Processing System Registered" 
+                             class="cor-image" 
+                             style="max-width: 120px; height: auto; display: block; margin: 0 auto;"
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<p style=\'color: #999; font-size: 0.85rem;\'>COR Certificate</p>';">
                     </div>
                 </div>
             </div>
@@ -174,7 +178,7 @@
     
     <!-- Facebook SDK -->
     <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v24.0&appId=APP_ID"></script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v24.0"></script>
     
 </body>
 </html>
