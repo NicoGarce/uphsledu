@@ -7,9 +7,9 @@
  * @description Administrative interface for managing career postings
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and has appropriate permissions
 if (!isLoggedIn() || (!isHR() && !isAdmin() && !isSuperAdmin())) {
@@ -30,7 +30,10 @@ $error = '';
 
 // Handle career posting updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    if ($_POST['action'] === 'delete_career') {
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } elseif ($_POST['action'] === 'delete_career') {
         $careerId = $_POST['career_id'];
         
         try {
@@ -414,6 +417,8 @@ $careers = $stmt->fetchAll();
     </div>
 
     <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
         // AJAX Search and Filter
         let isLoading = false;
         let searchTimeout;
@@ -424,6 +429,99 @@ $careers = $stmt->fetchAll();
         const dateRangeSelect = document.getElementById('date_range');
         const careersList = document.getElementById('careersList');
         const careerCount = document.getElementById('careerCount');
+        
+        // Check if elements exist
+        if (!filterForm || !searchInput || !statusSelect || !dateRangeSelect || !careersList || !careerCount) {
+            console.error('Required elements not found');
+            return;
+        }
+        
+        // Function to initialize checkbox event listeners
+        function initializeCareerCheckboxes() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const careerCheckboxes = document.querySelectorAll('.career-checkbox');
+            const bulkActionSelect = document.getElementById('bulkActionSelect');
+            const applyBulkActionBtn = document.getElementById('applyBulkAction');
+            const selectedCountSpan = document.getElementById('selectedCount');
+            
+            function updateBulkActionUI() {
+                const selected = Array.from(careerCheckboxes).filter(cb => cb.checked);
+                const count = selected.length;
+                
+                if (count > 0) {
+                    selectedCountSpan.textContent = count + ' selected';
+                    selectedCountSpan.style.display = 'inline';
+                    bulkActionSelect.style.display = 'inline-block';
+                    applyBulkActionBtn.style.display = 'inline-block';
+                } else {
+                    selectedCountSpan.style.display = 'none';
+                    bulkActionSelect.style.display = 'none';
+                    applyBulkActionBtn.style.display = 'none';
+                    bulkActionSelect.value = '';
+                }
+            }
+            
+            // Select All functionality
+            if (selectAllCheckbox) {
+                // Remove old event listeners by cloning
+                const newSelectAll = selectAllCheckbox.cloneNode(true);
+                selectAllCheckbox.parentNode.replaceChild(newSelectAll, selectAllCheckbox);
+                
+                newSelectAll.addEventListener('change', function() {
+                    careerCheckboxes.forEach(cb => cb.checked = this.checked);
+                    updateBulkActionUI();
+                });
+            }
+            
+            // Individual checkbox change
+            careerCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const selectAll = document.getElementById('selectAll');
+                    if (selectAll) {
+                        selectAll.checked = Array.from(careerCheckboxes).every(cb => cb.checked);
+                    }
+                    updateBulkActionUI();
+                });
+            });
+            
+            // Update bulk action button handler
+            if (applyBulkActionBtn) {
+                // Remove old event listeners
+                const newApplyBtn = applyBulkActionBtn.cloneNode(true);
+                applyBulkActionBtn.parentNode.replaceChild(newApplyBtn, applyBulkActionBtn);
+                
+                newApplyBtn.addEventListener('click', function() {
+                    const selected = Array.from(careerCheckboxes).filter(cb => cb.checked);
+                    const action = bulkActionSelect.value;
+                    
+                    if (selected.length === 0) {
+                        alert('Please select at least one career posting.');
+                        return;
+                    }
+                    
+                    if (!action) {
+                        alert('Please select an action.');
+                        return;
+                    }
+                    
+                    const selectedIds = selected.map(cb => cb.value);
+                    const actionNames = {
+                        'delete': 'Delete',
+                        'archive': 'Archive',
+                        'draft': 'Move to Draft',
+                        'publish': 'Publish'
+                    };
+                    
+                    document.getElementById('bulkActionType').value = action;
+                    document.getElementById('bulkSelectedIds').value = JSON.stringify(selectedIds);
+                    document.getElementById('bulkActionTitle').textContent = actionNames[action] + ' Career Postings';
+                    document.getElementById('bulkActionMessage').textContent = 
+                        `You are about to ${actionNames[action].toLowerCase()} ${selectedIds.length} career posting(s). Please enter your password to confirm.`;
+                    document.getElementById('bulkPassword').value = '';
+                    document.getElementById('bulkActionModal').style.display = 'block';
+                });
+            }
+        }
         
         // Function to load careers via AJAX
         function loadCareers() {
@@ -440,7 +538,21 @@ $careers = $stmt->fetchAll();
             });
             
             fetch(`ajax-careers.php?${params}`)
-                .then(response => response.json())
+                .then(response => {
+                    // Check if response is OK
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    // Check content type
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        return response.text().then(text => {
+                            console.error('Non-JSON response:', text);
+                            throw new Error('Server returned non-JSON response');
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         renderCareers(data.careers);
@@ -451,8 +563,8 @@ $careers = $stmt->fetchAll();
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Error loading careers', 'error');
+                    console.error('Fetch Error:', error);
+                    showNotification('Error loading careers: ' + error.message, 'error');
                 })
                 .finally(() => {
                     isLoading = false;
@@ -513,19 +625,8 @@ $careers = $stmt->fetchAll();
             
             careersList.innerHTML = html;
             
-            // Re-attach bulk action listeners after AJAX update
-            const newCheckboxes = document.querySelectorAll('.career-checkbox');
-            newCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    if (selectAllCheckbox) {
-                        selectAllCheckbox.checked = Array.from(document.querySelectorAll('.career-checkbox')).every(cb => cb.checked);
-                    }
-                    updateBulkActionUI();
-                });
-            });
-            
-            // Update bulk action UI
-            updateBulkActionUI();
+            // Re-initialize checkboxes after content is loaded
+            initializeCareerCheckboxes();
         }
         
         // Helper functions
@@ -569,86 +670,18 @@ $careers = $stmt->fetchAll();
         // Auto-refresh careers list if redirected after creating/editing a career
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('success')) {
-            // Refresh the careers list to show the newly created/edited career
-            loadCareers();
+            // Small delay to ensure everything is ready before making AJAX call
+            setTimeout(function() {
+                // Refresh the careers list to show the newly created/edited career
+                loadCareers();
+            }, 100);
         }
         
-        // Bulk Actions
-        const selectAllCheckbox = document.getElementById('selectAll');
-        const careerCheckboxes = document.querySelectorAll('.career-checkbox');
-        const bulkActionSelect = document.getElementById('bulkActionSelect');
-        const applyBulkActionBtn = document.getElementById('applyBulkAction');
-        const selectedCountSpan = document.getElementById('selectedCount');
+        // Initialize checkboxes on page load
+        initializeCareerCheckboxes();
+        }); // End DOMContentLoaded
         
-        function updateBulkActionUI() {
-            const selected = Array.from(careerCheckboxes).filter(cb => cb.checked);
-            const count = selected.length;
-            
-            if (count > 0) {
-                selectedCountSpan.textContent = count + ' selected';
-                selectedCountSpan.style.display = 'inline';
-                bulkActionSelect.style.display = 'inline-block';
-                applyBulkActionBtn.style.display = 'inline-block';
-            } else {
-                selectedCountSpan.style.display = 'none';
-                bulkActionSelect.style.display = 'none';
-                applyBulkActionBtn.style.display = 'none';
-                bulkActionSelect.value = '';
-            }
-        }
-        
-        // Select All functionality
-        if (selectAllCheckbox) {
-            selectAllCheckbox.addEventListener('change', function() {
-                careerCheckboxes.forEach(cb => cb.checked = this.checked);
-                updateBulkActionUI();
-            });
-        }
-        
-        // Individual checkbox change
-        careerCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                if (selectAllCheckbox) {
-                    selectAllCheckbox.checked = Array.from(careerCheckboxes).every(cb => cb.checked);
-                }
-                updateBulkActionUI();
-            });
-        });
-        
-        // Apply bulk action
-        if (applyBulkActionBtn) {
-            applyBulkActionBtn.addEventListener('click', function() {
-                const selected = Array.from(careerCheckboxes).filter(cb => cb.checked);
-                const action = bulkActionSelect.value;
-                
-                if (selected.length === 0) {
-                    alert('Please select at least one career posting.');
-                    return;
-                }
-                
-                if (!action) {
-                    alert('Please select an action.');
-                    return;
-                }
-                
-                const selectedIds = selected.map(cb => cb.value);
-                const actionNames = {
-                    'delete': 'Delete',
-                    'archive': 'Archive',
-                    'draft': 'Move to Draft',
-                    'publish': 'Publish'
-                };
-                
-                document.getElementById('bulkActionType').value = action;
-                document.getElementById('bulkSelectedIds').value = JSON.stringify(selectedIds);
-                document.getElementById('bulkActionTitle').textContent = actionNames[action] + ' Career Postings';
-                document.getElementById('bulkActionMessage').textContent = 
-                    `You are about to ${actionNames[action].toLowerCase()} ${selectedIds.length} career posting(s). Please enter your password to confirm.`;
-                document.getElementById('bulkPassword').value = '';
-                document.getElementById('bulkActionModal').style.display = 'block';
-            });
-        }
-        
+        // Global functions (called from HTML onclick handlers)
         function closeBulkActionModal() {
             document.getElementById('bulkActionModal').style.display = 'none';
             document.getElementById('bulkPassword').value = '';

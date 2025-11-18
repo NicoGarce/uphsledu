@@ -7,9 +7,9 @@
  * @description Administrative interface for managing user accounts and system settings
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and is super admin only
 if (!isLoggedIn() || !isSuperAdmin()) {
@@ -35,15 +35,19 @@ if (isset($_GET['success'])) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    if ($action === 'create_user') {
-        $username = sanitizeInput($_POST['username']);
-        $email = sanitizeInput($_POST['email']);
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } else {
+        $action = $_POST['action'] ?? '';
+        
+        if ($action === 'create_user') {
+        $username = Validator::sanitize($_POST['username'], 'string');
+        $email = Validator::sanitize($_POST['email'], 'email');
         $password = $_POST['password'];
-        $firstName = sanitizeInput($_POST['first_name']);
-        $lastName = sanitizeInput($_POST['last_name']);
-        $role = sanitizeInput($_POST['role']);
+        $firstName = Validator::sanitize($_POST['first_name'], 'string');
+        $lastName = Validator::sanitize($_POST['last_name'], 'string');
+        $role = Validator::sanitize($_POST['role'], 'string');
         
         // Validation
         if (empty($username) || empty($email) || empty($password) || empty($firstName) || empty($lastName)) {
@@ -287,6 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
+    }
 }
 
 // Get all users
@@ -328,6 +333,7 @@ $users = $stmt->fetchAll();
             <h2 class="section-title">Create New Staff Account</h2>
             <div class="form-container">
                 <form method="POST" class="create-account-form">
+                    <?php echo CSRF::field(); ?>
                     <input type="hidden" name="action" value="create_user">
                     
                     <div class="form-row">
@@ -413,6 +419,7 @@ $users = $stmt->fetchAll();
                                 </button>
                                 <?php if ($account['id'] != $_SESSION['user_id']): ?>
                                     <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this account?')">
+                                        <?php echo CSRF::field(); ?>
                                         <input type="hidden" name="action" value="delete_user">
                                         <input type="hidden" name="user_id" value="<?php echo $account['id']; ?>">
                                         <button type="submit" class="btn btn-sm btn-danger">

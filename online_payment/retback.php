@@ -12,8 +12,19 @@ if ($_GET["status"]=="K") {$s="Chargeback";}
 if ($_GET["status"]=="V") {$s="Void";} 
 if ($_GET["status"]=="A") {$s="Authorized";}
 
-$sql = "update return_data set transdate=now(), refno='".$_GET["refno"]."', status='$s', amount=".$_GET["param1"].", message='".$_GET["param2"]."' where txnid = '".$_GET["txnid"]."'";	   
-$result = mysqli_query($con, $sql)
+// Use prepared statement to prevent SQL injection
+$stmt = mysqli_prepare($con, "UPDATE return_data SET transdate=NOW(), refno=?, status=?, amount=?, message=? WHERE txnid=?");
+if ($stmt) {
+    $refno = $_GET["refno"] ?? '';
+    $amount = floatval($_GET["param1"] ?? 0);
+    $message = $_GET["param2"] ?? '';
+    $txnid = $_GET["txnid"] ?? '';
+    mysqli_stmt_bind_param($stmt, "ssdss", $refno, $s, $amount, $message, $txnid);
+    $result = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+} else {
+    $result = false;
+}
 
 	
 
@@ -48,23 +59,23 @@ $result = mysqli_query($con, $sql)
     </tr>
     <tr>
       <td width="50%" align="right">Transaction No :.</td>
-      <td>&nbsp;<strong><?php echo $_GET["txnid"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($_GET["txnid"] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Reference No. :</td>
-      <td>&nbsp;<strong><?php echo $_GET["refno"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($_GET["refno"] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Status :</td>
-      <td>&nbsp;<strong><?php echo $s; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Amount :</td>
-      <td>&nbsp;<strong><?php echo $_GET["param1"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($_GET["param1"] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Description :</td>
-      <td>&nbsp;<strong><?php echo $_GET["param2"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($_GET["param2"] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td colspan="2"><hr></td>

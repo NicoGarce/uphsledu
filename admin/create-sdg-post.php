@@ -7,9 +7,9 @@
  * @description Administrative interface for creating new SDG initiative posts
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in and has appropriate role
 if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
@@ -78,15 +78,19 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    error_log("SDG Form submitted - POST data: " . print_r($_POST, true));
-    error_log("SDG Form submitted - FILES data: " . print_r($_FILES, true));
-    
-    $title = sanitizeInput($_POST['title']);
-    $content = $_POST['content'];
-    $status = $_POST['status'];
-    $excerpt = sanitizeInput($_POST['excerpt'] ?? '');
-    $publishedDate = $_POST['published_date'] ?? null;
-    $sdgNumber = (int)$_POST['sdg_number'];
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } else {
+        error_log("SDG Form submitted - POST data: " . print_r($_POST, true));
+        error_log("SDG Form submitted - FILES data: " . print_r($_FILES, true));
+        
+        $title = Validator::sanitize($_POST['title'], 'string');
+        $content = $_POST['content']; // Rich text content - sanitized on output
+        $status = Validator::sanitize($_POST['status'] ?? 'draft', 'string');
+        $excerpt = Validator::sanitize($_POST['excerpt'] ?? '', 'string');
+        $publishedDate = Validator::sanitize($_POST['published_date'] ?? null, 'string');
+        $sdgNumber = (int)$_POST['sdg_number'];
     $sdgTitle = $sdgGoals[$sdgNumber] ?? '';
     $isEdit = isset($_POST['is_edit']) && $_POST['is_edit'] === '1';
     $postId = isset($_POST['post_id']) ? (int)$_POST['post_id'] : 0;
@@ -179,10 +183,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $fileSize = $_FILES['images']['size'][$i];
                         $fileType = $_FILES['images']['type'][$i];
                         
-                        // Validate file type
-                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                        if (!in_array($fileType, $allowedTypes)) {
-                            throw new Exception("Invalid file type for $fileName. Only JPEG, PNG, GIF, and WebP are allowed.");
+                        // Validate file extension
+                        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                        if (!in_array($fileExtension, $allowedExtensions)) {
+                            throw new Exception("Invalid file extension for $fileName. Only JPEG, PNG, GIF, and WebP are allowed.");
                         }
                         
                         // Validate file size (10MB max)
@@ -190,15 +195,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             throw new Exception("File $fileName is too large. Maximum size is 10MB.");
                         }
                         
+                        // Verify actual file content using getimagesize (more secure than trusting MIME type)
+                        $imageInfo = @getimagesize($fileTmpName);
+                        if ($imageInfo === false) {
+                            throw new Exception("File $fileName is not a valid image.");
+                        }
+                        
+                        // Verify MIME type matches actual file content
+                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        $detectedMime = $imageInfo['mime'];
+                        if (!in_array($detectedMime, $allowedTypes)) {
+                            throw new Exception("Invalid file type detected for $fileName. Only JPEG, PNG, GIF, and WebP are allowed.");
+                        }
+                        
                         // Generate unique filename
-                        $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
                         $uniqueFileName = 'sdg_' . uniqid() . '_' . time() . '.' . $fileExtension;
                         $uploadPath = $uploadDir . $uniqueFileName;
+                        
+                        // Ensure filename doesn't contain path traversal
+                        $uploadPath = realpath($uploadDir) . '/' . basename($uniqueFileName);
                         
                         if (move_uploaded_file($fileTmpName, $uploadPath)) {
                             error_log("SDG Image uploaded successfully: $uploadPath");
                             // Optimize image for better performance
-                            optimizeImage($uploadPath, $fileType);
+                            optimizeImage($uploadPath, $detectedMime);
                             // Store relative path in database (from root directory)
                             $relativePath = 'uploads/' . $uniqueFileName;
                             // Insert image record
@@ -249,6 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Failed to create SDG initiative post. Please try again.';
         }
     }
+    }
 }
 ?>
 
@@ -283,6 +304,7 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
         <?php endif; ?>
 
         <form method="POST" class="editor-form" enctype="multipart/form-data">
+            <?php echo CSRF::field(); ?>
             <?php if ($isEdit): ?>
                 <input type="hidden" name="is_edit" value="1">
                 <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
@@ -328,8 +350,21 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                     <i class="fas fa-align-left"></i>
                     Content
                 </label>
-                <textarea id="content" name="content" class="form-textarea" 
-                          placeholder="Write your SDG initiative content here..." required><?php echo $isEdit ? htmlspecialchars($post['content']) : (isset($_POST['content']) ? htmlspecialchars($_POST['content']) : ''); ?></textarea>
+                <!-- Quill Editor Container -->
+                <div id="content-editor"></div>
+                <!-- Hidden textarea for form submission -->
+                <textarea id="content" name="content" class="form-textarea" required><?php 
+                    // For Quill, we need to decode HTML entities to show the actual HTML
+                    if ($isEdit && isset($post['content'])) {
+                        // Decode HTML entities so Quill can properly display the formatted content
+                        echo html_entity_decode($post['content'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    } elseif (isset($_POST['content'])) {
+                        echo html_entity_decode($_POST['content'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    }
+                ?></textarea>
+                <small class="form-help" style="display: block; margin-top: 8px; color: #6b7280; font-size: 0.875rem;">
+                    <i class="fas fa-info-circle"></i> Use the formatting toolbar above to add <strong>bold</strong>, <em>italic</em>, and other text formatting.
+                </small>
             </div>
 
             <div class="form-group">
@@ -413,7 +448,68 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
     </div>
 
     <script src="../assets/js/script.js"></script>
+    <!-- Quill Rich Text Editor (Free, No API Key Required) -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <style>
+        #content-editor {
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        .ql-editor {
+            min-height: 350px;
+            font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-size: 14px;
+        }
+        /* Hide the original textarea, we'll sync with it */
+        #content {
+            display: none;
+        }
+    </style>
     <script>
+        // Initialize Quill Editor when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Quill Editor
+            var quill = new Quill('#content-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        ['link', 'blockquote', 'code-block'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Write your SDG initiative content here...'
+            });
+
+            // Get initial content from textarea
+            var textarea = document.getElementById('content');
+            if (textarea && textarea.value) {
+                quill.root.innerHTML = textarea.value;
+            }
+
+            // Sync Quill content to textarea before form submission
+            var form = document.querySelector('.editor-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Get HTML content from Quill
+                    var htmlContent = quill.root.innerHTML;
+                    // Update the hidden textarea with the HTML content
+                    textarea.value = htmlContent;
+                });
+            }
+
+            // Also sync on content change (optional, for real-time sync)
+            quill.on('text-change', function() {
+                textarea.value = quill.root.innerHTML;
+            });
+        });
+        
         // Update SDG title when number changes
         function updateSdgTitle() {
             const sdgNumber = document.getElementById('sdg_number').value;

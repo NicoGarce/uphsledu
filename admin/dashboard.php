@@ -7,9 +7,9 @@
  * @description Main administrative dashboard for managing the UPHSL website content and users
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in
 if (!isLoggedIn()) {
@@ -28,9 +28,13 @@ $userRole = $_SESSION['user_role'];
 
 // Handle post deletion
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_post') {
-    $postId = (int)$_POST['post_id'];
-    
-    if ($postId > 0) {
+    // Verify CSRF token
+    if (!CSRF::verify()) {
+        $error = 'Security token mismatch. Please refresh the page and try again.';
+    } else {
+        $postId = (int)$_POST['post_id'];
+        
+        if ($postId > 0) {
         try {
             $pdo = getDBConnection();
             
@@ -53,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         } catch (PDOException $e) {
             $error = 'Failed to delete post';
         }
+    }
     }
 }
 
@@ -377,6 +382,7 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                        <?php echo CSRF::field(); ?>
                                         <input type="hidden" name="action" value="delete_post">
                                         <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
                                         <button type="submit" class="btn btn-sm btn-danger">

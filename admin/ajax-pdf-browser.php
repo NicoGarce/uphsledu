@@ -4,9 +4,9 @@
  * Returns list of PDF files in assets/documents/pdfs directory
  */
 
-session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Check if user is logged in
 if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
@@ -19,8 +19,20 @@ if (!isLoggedIn() || (!isAuthor() && !isAdmin() && !isSuperAdmin())) {
 $search = $_GET['search'] ?? '';
 $folder = $_GET['folder'] ?? '';
 
+// Sanitize folder parameter to prevent path traversal
+$folder = preg_replace('/[^a-zA-Z0-9_\-\.\/]/', '', $folder);
+if (strpos($folder, '..') !== false) {
+    $folder = '';
+}
+
 // Base path for PDFs
-$basePath = __DIR__ . '/../assets/documents/pdfs/';
+$basePath = realpath(__DIR__ . '/../assets/documents/pdfs/');
+if ($basePath === false) {
+    http_response_code(500);
+    echo json_encode(['error' => 'PDF directory not found']);
+    exit;
+}
+$basePath .= '/';
 $webBasePath = '../assets/documents/pdfs/';
 
 // Function to recursively get all PDF files

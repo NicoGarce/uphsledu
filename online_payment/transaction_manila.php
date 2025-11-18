@@ -57,7 +57,7 @@ if (isset($_GET["refno"])) {
 <form name="frmmain" method="post">
     <tr>
       <td height="79"  colspan="5" align="center" ><u><strong>Online Payment Transaction List</strong></u></td>
-      <td height="79" align="left" colspan="2">Starting Date: <input type="text" name="dfrom" size="12" maxlength="12" value="<?php if(isset($_POST["dfrom"])) {echo $_POST["dfrom"];} else {echo $curdate;} ?>" > <font size="2px">(yyyy-mm-dd)</font><br>Ending Date: <input type="text" name="dto" size="12" maxlength="12" value="<?php if(isset($_POST["dto"])) {echo $_POST["dto"];} else {echo $curdate;} ?>" > <font size="2px">(yyyy-mm-dd)</font></td>
+      <td height="79" align="left" colspan="2">Starting Date: <input type="text" name="dfrom" size="12" maxlength="12" value="<?php if(isset($_POST["dfrom"])) {echo htmlspecialchars($_POST["dfrom"], ENT_QUOTES, 'UTF-8');} else {echo htmlspecialchars($curdate, ENT_QUOTES, 'UTF-8');} ?>" > <font size="2px">(yyyy-mm-dd)</font><br>Ending Date: <input type="text" name="dto" size="12" maxlength="12" value="<?php if(isset($_POST["dto"])) {echo htmlspecialchars($_POST["dto"], ENT_QUOTES, 'UTF-8');} else {echo htmlspecialchars($curdate, ENT_QUOTES, 'UTF-8');} ?>" > <font size="2px">(yyyy-mm-dd)</font></td>
       <td height="79" align="left"><input type="submit" name="btnrefresh" value="Refresh List" style="padding: 5px; background-color: green; color: white; border-radius: 5px;"></td>
     </tr>
  </form>	  

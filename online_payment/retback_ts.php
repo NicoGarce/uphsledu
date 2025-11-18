@@ -1,17 +1,31 @@
 <?php 
 include "dbconnect.php";
 $s = "";
-if ($_GET["status"]=="S") {$s="Success";} 
-if ($_GET["status"]=="F") {$s="Failure";} 
-if ($_GET["status"]=="P") {$s="Pending";} 
-if ($_GET["status"]=="U") {$s="Unknown";} 
-if ($_GET["status"]=="R") {$s="Refund";} 
-if ($_GET["status"]=="K") {$s="Chargeback";} 
-if ($_GET["status"]=="V") {$s="Void";} 
-if ($_GET["status"]=="A") {$s="Authorized";}
+$status = $_GET["status"] ?? "";
+if ($status=="S") {$s="Success";} 
+if ($status=="F") {$s="Failure";} 
+if ($status=="P") {$s="Pending";} 
+if ($status=="U") {$s="Unknown";} 
+if ($status=="R") {$s="Refund";} 
+if ($status=="K") {$s="Chargeback";} 
+if ($status=="V") {$s="Void";} 
+if ($status=="A") {$s="Authorized";}
 
-$sql = "update return_data set transdate=now(), refno='".$_GET["refno"]."', status='$s', amount=".$_GET["param1"].", message='".$_GET["param2"]."' where txnid = '".$_GET["txnid"]."'";	   
-$result = mysqli_query($con, $sql)
+// Use prepared statements to prevent SQL injection
+$txnid = $_GET["txnid"] ?? "";
+$refno = $_GET["refno"] ?? "";
+$param1 = $_GET["param1"] ?? "0";
+$param2 = $_GET["param2"] ?? "";
+
+// Validate and sanitize amount
+$amount = is_numeric($param1) ? floatval($param1) : 0;
+
+$stmt = mysqli_prepare($con, "UPDATE return_data SET transdate=now(), refno=?, status=?, amount=?, message=? WHERE txnid=?");
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "ssdss", $refno, $s, $amount, $param2, $txnid);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+}
 
 	
 
@@ -44,23 +58,23 @@ $result = mysqli_query($con, $sql)
     </tr>
     <tr>
       <td width="50%" align="right">Transaction No :.</td>
-      <td>&nbsp;<strong><?php echo $_GET["txnid"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($txnid, ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Reference No. :</td>
-      <td>&nbsp;<strong><?php echo $_GET["refno"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($refno, ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Status :</td>
-      <td>&nbsp;<strong><?php echo $s; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Amount :</td>
-      <td>&nbsp;<strong><?php echo $_GET["param1"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($param1, ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td align="right">Message :</td>
-      <td>&nbsp;<strong><?php echo $_GET["param2"]; ?></strong></td>
+      <td>&nbsp;<strong><?php echo htmlspecialchars($param2, ENT_QUOTES, 'UTF-8'); ?></strong></td>
     </tr>
     <tr>
       <td colspan="2"><hr></td>

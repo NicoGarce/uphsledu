@@ -1,6 +1,6 @@
 <?php
-session_start();
 require_once '../app/includes/functions.php';
+// Session is automatically initialized by security.php
 
 // Clear all session variables
 $_SESSION = array();

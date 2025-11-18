@@ -271,7 +271,7 @@ if (isset($_GET["transid"])) {
 			<?php endforeach; ?>
 		  <tr>
 		  <td align="right"><strong>Payee Name</strong></td>
-		  <td><input type="text" name="payee_name" id="payee_name" style="padding: 10px; font-size: 14px" size="80" maxlength="80" required  onChange="updatedesc()"  value="<?php if (isset($_GET["payee"])) {echo $_GET["payee"];} ?>" <?php if (isset($_GET["payee"])) {echo " readonly ";}?>></td>
+		  <td><input type="text" name="payee_name" id="payee_name" style="padding: 10px; font-size: 14px" size="80" maxlength="80" required  onChange="updatedesc()"  value="<?php if (isset($_GET["payee"])) {echo htmlspecialchars($_GET["payee"], ENT_QUOTES, 'UTF-8');} ?>" <?php if (isset($_GET["payee"])) {echo " readonly ";}?>></td>
 	      </tr> 
 		</table>		
       
