@@ -80,7 +80,7 @@
                 <div class="footer-section">
                     <h4 class="footer-subtitle">Quick Links</h4>
                     <ul class="footer-links">
-                        <li><a href="<?php echo $base_path; ?>index.php">Home</a></li>
+                        <li><a href="<?php echo $base_path; ?>">Home</a></li>
                         <li><a href="<?php echo $base_path; ?>about">About</a></li>
                         <li><a href="<?php echo $base_path; ?>about/contact.php">Contact</a></li>
                         <li><a href="<?php echo $base_path; ?>programs.php">Programs</a></li>

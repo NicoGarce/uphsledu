@@ -1154,7 +1154,7 @@ $navbar_items_config = [
         <div class="nav-container">
             <!-- First Column: Logo -->
             <div class="nav-logo">
-        <a href="<?php echo $base_path; ?>index.php">
+        <a href="<?php echo $base_path; ?>">
             <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="logo-img">
         </a>
             </div>
@@ -1211,7 +1211,7 @@ $navbar_items_config = [
                 <div class="nav-menu" id="nav-menu">
                     <?php if (isNavbarItemVisible('home')): ?>
                     <div class="nav-item">
-                        <a href="<?php echo $base_path; ?>index.php" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+                        <a href="<?php echo $base_path; ?>" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
                     </div>
                     <?php endif; ?>
                     
@@ -1536,7 +1536,7 @@ $navbar_items_config = [
         <nav class="mobile-sidebar-menu">
             <?php if (isNavbarItemVisible('home')): ?>
             <div class="mobile-nav-item">
-                <a href="<?php echo $base_path; ?>index.php" class="mobile-nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+                <a href="<?php echo $base_path; ?>" class="mobile-nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
             </div>
             <?php endif; ?>
             
