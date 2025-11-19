@@ -12,6 +12,44 @@ require_once __DIR__ . '/security.php';
 
 // Utility functions for the blog
 
+// Get hero post (selected by super admin) or default to latest post
+function getHeroPost() {
+    $pdo = getDBConnection();
+    $heroPostId = getSetting('hero_post_id', '');
+    
+    // If a hero post is selected, try to get it
+    if (!empty($heroPostId) && is_numeric($heroPostId) && (int)$heroPostId > 0) {
+        $stmt = $pdo->prepare("
+            SELECT p.*, u.first_name, u.last_name, 
+                   CONCAT(u.first_name, ' ', u.last_name) as author_name
+            FROM posts p 
+            JOIN users u ON p.author_id = u.id 
+            WHERE p.id = ? AND p.status = 'published'
+        ");
+        $stmt->execute([(int)$heroPostId]);
+        $heroPost = $stmt->fetch();
+        
+        // If hero post exists and is published, return it (even if it has a category)
+        if ($heroPost) {
+            return $heroPost;
+        }
+    }
+    
+    // Otherwise, return the latest post (default behavior) - only university news (category_id IS NULL)
+    $stmt = $pdo->prepare("
+        SELECT p.*, u.first_name, u.last_name, 
+               CONCAT(u.first_name, ' ', u.last_name) as author_name
+        FROM posts p 
+        JOIN users u ON p.author_id = u.id 
+        WHERE p.status = 'published' 
+        AND p.category_id IS NULL
+        ORDER BY p.published_at DESC, p.created_at DESC 
+        LIMIT 1
+    ");
+    $stmt->execute();
+    return $stmt->fetch();
+}
+
 // Get recent posts (excludes categorized posts - only shows general/university-wide posts)
 function getRecentPosts($limit = 10) {
     $pdo = getDBConnection();

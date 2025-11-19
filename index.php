@@ -47,6 +47,9 @@ if (isSectionInMaintenance('home')) {
 $homepage_recent_posts = (int)getSetting('homepage_recent_posts', '6');
 $recent_posts = getRecentPosts($homepage_recent_posts);
 
+// Get hero post (selected by super admin or default to latest)
+$hero_post = getHeroPost();
+
 // Set page title
 $page_title = "Home";
 
@@ -421,19 +424,18 @@ include 'app/includes/header.php';
                     <!-- Slide 1: Latest News -->
                     <div class="hero-slide active">
                         <div class="hero-slide-content">
-                            <?php if (!empty($recent_posts)): ?>
-                                <?php $latest_post = $recent_posts[0]; ?>
+                            <?php if ($hero_post): ?>
                                 <div class="latest-post-card">
                                     <div class="post-meta">
                                         <span class="latest-label">Latest</span>
                                         <span class="post-date">
                                             <i class="fas fa-calendar"></i>
-                                            <?php echo formatDate($latest_post['published_at'] ?: $latest_post['created_at']); ?>
+                                            <?php echo formatDate($hero_post['published_at'] ?: $hero_post['created_at']); ?>
                                         </span>
                                     </div>
                                     <h2 class="latest-post-title">
-                                        <a href="post.php?slug=<?php echo $latest_post['slug']; ?>">
-                                            <?php echo htmlspecialchars($latest_post['title']); ?>
+                                        <a href="post.php?slug=<?php echo $hero_post['slug']; ?>">
+                                            <?php echo htmlspecialchars($hero_post['title']); ?>
                                         </a>
                                     </h2>
                                     <div class="hero-buttons">

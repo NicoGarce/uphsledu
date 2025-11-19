@@ -131,7 +131,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 if ($pdo->inTransaction()) {
                     $pdo->rollBack();
                 }
-                $error = "Error performing bulk action: " . $e->getMessage();
+                    $error = "Error performing bulk action: " . $e->getMessage();
+            }
+        }
+    } elseif ($_POST['action'] === 'set_hero_post' && isSuperAdmin()) {
+        // Only super admin can set hero post
+        $heroPostId = isset($_POST['hero_post_id']) ? (int)$_POST['hero_post_id'] : 0;
+        
+        if ($heroPostId === 0) {
+            // Clear hero post selection (set to empty)
+            if (setSetting('hero_post_id', '', 'integer', 'ID of the post to display on the hero banner', $_SESSION['user_id'])) {
+                $success = "Hero post cleared. Latest post will be shown by default.";
+            } else {
+                $error = "Error clearing hero post selection.";
+            }
+        } else {
+            // Verify the post exists and is published
+            $stmt = $pdo->prepare("SELECT id, status FROM posts WHERE id = ?");
+            $stmt->execute([$heroPostId]);
+            $post = $stmt->fetch();
+            
+            if ($post) {
+                if (setSetting('hero_post_id', (string)$heroPostId, 'integer', 'ID of the post to display on the hero banner', $_SESSION['user_id'])) {
+                    $success = "Hero post updated successfully!";
+                } else {
+                    $error = "Error saving hero post selection.";
+                }
+            } else {
+                $error = "Post not found.";
             }
         }
     }
@@ -250,6 +277,24 @@ foreach ($allCategoriesRaw as $cat) {
         $seenNames[] = $cat['name'];
     }
 }
+
+// Get current hero post ID (for super admin selector)
+$currentHeroPostId = isSuperAdmin() ? getSetting('hero_post_id', '') : '';
+// Convert to string for comparison
+$currentHeroPostId = (string)$currentHeroPostId;
+
+// Get all published posts for hero selector (only if super admin)
+$publishedPostsForHero = [];
+if (isSuperAdmin()) {
+    $stmt = $pdo->prepare("
+        SELECT id, title, status 
+        FROM posts 
+        WHERE status = 'published'
+        ORDER BY published_at DESC, created_at DESC
+    ");
+    $stmt->execute();
+    $publishedPostsForHero = $stmt->fetchAll();
+}
 ?>
 
 <?php include '../app/includes/admin-header.php'; ?>
@@ -276,6 +321,72 @@ foreach ($allCategoriesRaw as $cat) {
                 <i class="fas fa-exclamation-circle"></i>
                 <?php echo htmlspecialchars($error); ?>
             </div>
+        <?php endif; ?>
+
+        <!-- Hero Post Selector (Super Admin Only) -->
+        <?php if (isSuperAdmin()): ?>
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i>
+                    Hero Banner Post Selection
+                </h2>
+            </div>
+            <p style="color: var(--text-light); margin: 15px 30px 20px 30px; font-size: 0.95rem;">
+                Select which news post will be displayed on the home page hero banner. If no post is selected, the latest post will be shown by default.
+            </p>
+            <div style="background: white; padding: 25px 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb; margin: 0 30px;">
+                <form method="POST" id="heroPostForm" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                    <?php echo CSRF::field(); ?>
+                    <input type="hidden" name="action" value="set_hero_post">
+                    <div style="flex: 1; min-width: 300px;">
+                        <label for="hero_post_id" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-dark);">
+                            Select Hero Post:
+                        </label>
+                        <select name="hero_post_id" id="hero_post_id" class="form-input" style="width: 100%;">
+                            <option value="0">-- Use Latest Post (Default) --</option>
+                            <?php foreach ($publishedPostsForHero as $post): ?>
+                                <option value="<?php echo $post['id']; ?>" <?php echo ((string)$currentHeroPostId === (string)$post['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($post['title']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                        <i class="fas fa-save"></i>
+                        Save Hero Post
+                    </button>
+                </form>
+                <?php if (!empty($currentHeroPostId) && $currentHeroPostId !== '0' && $currentHeroPostId !== ''): ?>
+                    <?php 
+                    $heroPost = null;
+                    foreach ($publishedPostsForHero as $post) {
+                        if ((string)$post['id'] === (string)$currentHeroPostId) {
+                            $heroPost = $post;
+                            break;
+                        }
+                    }
+                    ?>
+                    <?php if ($heroPost): ?>
+                        <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                            <strong style="color: var(--primary-color); display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-check-circle"></i>
+                                Current Hero Post:
+                            </strong>
+                            <span style="color: var(--text-dark); margin-left: 28px; display: block; margin-top: 5px;"><?php echo htmlspecialchars($heroPost['title']); ?></span>
+                        </div>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid var(--alt-color-1);">
+                        <strong style="color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-info-circle"></i>
+                            Current Setting:
+                        </strong>
+                        <span style="color: var(--text-dark); margin-left: 28px; display: block; margin-top: 5px;">Using Latest Post (Default)</span>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
         <?php endif; ?>
 
         <!-- Search and Filters -->
