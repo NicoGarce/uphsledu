@@ -112,7 +112,9 @@ include 'app/includes/header.php';
         <!-- Search and Filter System -->
         <div class="posts-filter">
             <form method="GET" class="filter-form" id="filterForm">
-                <div class="filter-row">
+                <!-- Desktop: All in one row, Mobile: Search separate, filters collapsible -->
+                <div class="filter-row-main">
+                    <!-- Search Bar - Always Visible -->
                     <div class="search-group">
                         <div class="search-input-wrapper">
                             <i class="fas fa-search"></i>
@@ -122,7 +124,15 @@ include 'app/includes/header.php';
                         </div>
                     </div>
                     
+                    <!-- Filter Toggle Button (Mobile Only) -->
+                    <button type="button" class="filter-toggle-btn" id="filterToggleBtn" style="display: none; width: 100%; padding: 0.5rem; background: #f8f9fa; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; margin-bottom: 0.75rem; font-size: 0.8125rem; color: var(--text-dark); font-family: 'Barlow Semi Condensed', sans-serif;">
+                        <i class="fas fa-filter"></i>
+                        <span class="filter-toggle-text">Show Filters</span>
+                        <i class="fas fa-chevron-down filter-toggle-icon" style="float: right; transition: transform 0.3s ease;"></i>
+                    </button>
                     
+                    <!-- Filter Row - Collapsible on Mobile -->
+                    <div class="filter-row filter-row-collapsible">
                     <div class="filter-group">
                         <select name="category" id="categoryFilter">
                             <option value="">All Categories</option>
@@ -203,14 +213,15 @@ include 'app/includes/header.php';
                     </div>
                     
                     <div class="filter-actions">
-                        <button type="submit" class="filter-btn">
+                        <button type="submit" class="filter-btn" style="font-family: 'Barlow Semi Condensed', sans-serif;">
                             <i class="fas fa-filter"></i>
                             Filter
                         </button>
-                        <button type="button" class="clear-btn" id="clearFilters">
+                        <button type="button" class="clear-btn" id="clearFilters" style="font-family: 'Barlow Semi Condensed', sans-serif;">
                             <i class="fas fa-times"></i>
                             Clear
                         </button>
+                    </div>
                     </div>
                 </div>
             </form>
@@ -345,6 +356,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const specificDateFilter = document.getElementById('specificDateFilter');
     const searchResults = document.getElementById('searchResults');
     const filterBtn = document.querySelector('.filter-btn');
+    const filterToggleBtn = document.getElementById('filterToggleBtn');
+    const filterRow = document.querySelector('.filter-row-collapsible');
+    
+    // Mobile filter toggle functionality
+    if (filterToggleBtn && filterRow) {
+        // Check if any filters are active
+        const hasActiveFilters = (categoryFilter && categoryFilter.value) || dateRangeFilter.value || specificDateFilter.value;
+        
+        // If filters are active, expand by default
+        if (hasActiveFilters) {
+            filterRow.classList.add('expanded');
+            filterToggleBtn.classList.add('active');
+            filterToggleBtn.querySelector('.filter-toggle-text').textContent = 'Hide Filters';
+        }
+        
+        filterToggleBtn.addEventListener('click', function() {
+            filterRow.classList.toggle('expanded');
+            filterToggleBtn.classList.toggle('active');
+            
+            if (filterRow.classList.contains('expanded')) {
+                filterToggleBtn.querySelector('.filter-toggle-text').textContent = 'Hide Filters';
+            } else {
+                filterToggleBtn.querySelector('.filter-toggle-text').textContent = 'Show Filters';
+            }
+        });
+    }
     
     // Initialize current page from PHP
     let currentPage = <?php echo $page; ?>;

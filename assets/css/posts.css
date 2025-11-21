@@ -53,6 +53,21 @@
     line-height: 1.6;
 }
 
+@media (max-width: 768px) {
+    .posts-subtitle {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .posts-subtitle {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+}
+
 .posts-content {
     width: 100%;
 }
@@ -70,6 +85,13 @@
 
 .filter-form {
     width: 100%;
+}
+
+.filter-row-main {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .filter-row {
@@ -93,17 +115,20 @@
 .search-input-wrapper i {
     position: absolute;
     left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--text-light);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     z-index: 2;
+    pointer-events: none;
 }
 
 .search-input-wrapper input {
     width: 100%;
-    padding: 8px 10px 8px 35px;
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
     border: 1px solid #e2e8f0;
     border-radius: 5px;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
     transition: all 0.3s ease;
@@ -169,6 +194,47 @@
     align-items: center;
 }
 
+/* Filter Toggle Button */
+.filter-toggle-btn {
+    display: none;
+    width: 100%;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+}
+
+.filter-toggle-btn:hover {
+    background: #e9ecef;
+    border-color: var(--primary-color);
+}
+
+.filter-toggle-btn.active .filter-toggle-icon {
+    transform: rotate(180deg);
+}
+
+/* Collapsible Filter Row */
+.filter-row-collapsible {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* Default: visible on desktop */
+@media (min-width: 769px) {
+    .filter-row-collapsible {
+        max-height: none !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+        display: flex !important;
+    }
+}
+
 .filter-btn {
     display: flex;
     align-items: center;
@@ -179,7 +245,7 @@
     border: none;
     border-radius: 5px;
     font-size: 0.85rem;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Barlow Semi Condensed', sans-serif;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -202,7 +268,7 @@
     border-radius: 5px;
     text-decoration: none;
     font-size: 0.85rem;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Barlow Semi Condensed', sans-serif;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -565,7 +631,12 @@
         gap: 25px;
     }
     
-    
+    .filter-row-main {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+
     .filter-row {
         flex-direction: column;
         align-items: stretch;
@@ -575,6 +646,8 @@
     .search-group {
         min-width: auto;
         flex: 1;
+        margin-bottom: 0.75rem;
+        width: 100%;
     }
     
     .filter-group {
@@ -610,6 +683,81 @@
     .posts-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+    
+    .posts-filter {
+        padding: 0.75rem !important;
+    }
+
+    .filter-toggle-btn {
+        display: block !important;
+    }
+
+    .posts-filter .filter-row-main {
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+
+    .posts-filter .search-group {
+        margin-bottom: 0.5rem !important;
+        width: 100% !important;
+    }
+
+    .posts-filter .filter-row-collapsible {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.625rem !important;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        width: 100% !important;
+    }
+
+    .posts-filter .filter-row-collapsible.expanded {
+        max-height: 2000px;
+        opacity: 1;
+        margin-bottom: 0;
+        padding: 0;
+    }
+
+    .posts-filter .filter-group {
+        width: 100% !important;
+    }
+
+    .posts-filter .filter-group select,
+    .posts-filter .filter-group input[type="date"] {
+        width: 100% !important;
+        padding: 0.5rem !important;
+        font-size: 0.8125rem !important;
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    .posts-filter .search-input-wrapper input {
+        padding: 0.5rem 0.75rem 0.5rem 2.5rem !important;
+        font-size: 0.875rem !important;
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    .posts-filter .search-input-wrapper i {
+        left: 12px !important;
+        font-size: 0.875rem !important;
+    }
+
+    .posts-filter .filter-actions {
+        width: 100%;
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.25rem;
+    }
+
+    .posts-filter .filter-btn,
+    .posts-filter .clear-btn {
+        flex: 1;
+        padding: 0.5625rem 1rem !important;
+        font-size: 0.8125rem !important;
+        font-family: 'Barlow Semi Condensed', sans-serif !important;
     }
     
     .post-card-content {
@@ -648,6 +796,46 @@
 @media (max-width: 480px) {
     .posts-title {
         font-size: 1.5rem;
+    }
+    
+    .posts-filter {
+        padding: 0.625rem !important;
+    }
+
+    .filter-toggle-btn {
+        padding: 0.4375rem !important;
+        font-size: 0.75rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .posts-filter .filter-row-collapsible {
+        gap: 0.5rem !important;
+    }
+
+    .posts-filter .filter-group select,
+    .posts-filter .filter-group input[type="date"] {
+        padding: 0.5rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    .posts-filter .search-input-wrapper input {
+        padding: 0.5rem 0.75rem 0.5rem 2.5rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    .posts-filter .search-input-wrapper i {
+        left: 12px !important;
+        font-size: 0.8125rem !important;
+    }
+
+    .posts-filter .filter-actions {
+        gap: 0.5rem;
+    }
+
+    .posts-filter .filter-btn,
+    .posts-filter .clear-btn {
+        padding: 0.5rem 0.875rem !important;
+        font-size: 0.75rem !important;
     }
     
     .post-card-content {
