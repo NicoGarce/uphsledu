@@ -618,6 +618,20 @@ if (isSuperAdmin()) {
                 <span class="close" onclick="closePdfBrowser()">&times;</span>
             </div>
             <div class="modal-body" style="padding: 1.5rem;">
+                <!-- Upload PDF Section -->
+                <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 2px dashed #ddd;">
+                    <h4 style="margin: 0 0 0.75rem 0; font-size: 1rem; color: #333;">
+                        <i class="fas fa-upload"></i> Upload PDF
+                    </h4>
+                    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                        <input type="file" id="pdfFileInput" name="pdf" accept=".pdf" style="flex: 1; min-width: 200px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;">
+                        <button type="button" id="pdfUploadBtn" class="btn btn-primary" style="padding: 0.5rem 1rem; white-space: nowrap;">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                    </div>
+                    <div id="pdfUploadStatus" style="margin-top: 0.5rem; font-size: 0.85rem; display: none;"></div>
+                </div>
+                
                 <div style="margin-bottom: 1.5rem;">
                     <div class="search-input-wrapper" style="margin-bottom: 0;">
                         <i class="fas fa-search"></i>
@@ -1054,6 +1068,9 @@ if (isSuperAdmin()) {
         const pdfListContainer = document.getElementById('pdfListContainer');
         const pdfCount = document.getElementById('pdfCount');
         const openPdfBrowserBtn = document.getElementById('openPdfBrowser');
+        const pdfUploadBtn = document.getElementById('pdfUploadBtn');
+        const pdfFileInput = document.getElementById('pdfFileInput');
+        const pdfUploadStatus = document.getElementById('pdfUploadStatus');
 
         // Open PDF Browser
         if (openPdfBrowserBtn) {
@@ -1061,6 +1078,106 @@ if (isSuperAdmin()) {
                 pdfBrowserModal.style.display = 'block';
                 loadPDFs();
             });
+        }
+
+        // Handle PDF Upload Button Click
+        if (pdfUploadBtn) {
+            pdfUploadBtn.addEventListener('click', function() {
+                if (!pdfFileInput || !pdfFileInput.files || pdfFileInput.files.length === 0) {
+                    showUploadStatus('Please select a PDF file', 'error');
+                    return;
+                }
+
+                const file = pdfFileInput.files[0];
+                
+                // Validate file type
+                if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                    showUploadStatus('Please select a valid PDF file', 'error');
+                    return;
+                }
+
+                // Validate file size (max 50MB)
+                const maxSize = 50 * 1024 * 1024; // 50MB
+                if (file.size > maxSize) {
+                    showUploadStatus('File size exceeds 50MB limit', 'error');
+                    return;
+                }
+
+                // Upload file
+                const formData = new FormData();
+                formData.append('pdf', file);
+
+                showUploadStatus('Uploading...', 'uploading');
+                pdfUploadBtn.disabled = true;
+
+                console.log('Starting upload, file:', file.name, 'size:', file.size);
+                
+                fetch('ajax-pdf-upload.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Upload failed with status ' + response.status);
+                        }).catch(() => {
+                            throw new Error('Upload failed with status ' + response.status);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showUploadStatus('PDF uploaded successfully!', 'success');
+                        pdfFileInput.value = '';
+                        // Reload PDF list after a short delay
+                        setTimeout(() => {
+                            loadPDFs(pdfSearchInput ? pdfSearchInput.value : '');
+                            showUploadStatus('', '');
+                        }, 1500);
+                    } else {
+                        showUploadStatus(data.error || 'Upload failed', 'error');
+                    }
+                    pdfUploadBtn.disabled = false;
+                })
+                .catch(error => {
+                    showUploadStatus('Upload error: ' + error.message, 'error');
+                    console.error('Upload error:', error);
+                    pdfUploadBtn.disabled = false;
+                });
+            });
+        }
+
+        // Show upload status
+        function showUploadStatus(message, type) {
+            if (!pdfUploadStatus) return;
+            
+            if (!message) {
+                pdfUploadStatus.style.display = 'none';
+                return;
+            }
+
+            pdfUploadStatus.style.display = 'block';
+            pdfUploadStatus.textContent = message;
+            
+            // Remove existing classes
+            pdfUploadStatus.className = '';
+            
+            // Add appropriate styling based on type
+            if (type === 'success') {
+                pdfUploadStatus.style.color = '#28a745';
+                pdfUploadStatus.innerHTML = '<i class="fas fa-check-circle"></i> ' + message;
+            } else if (type === 'error') {
+                pdfUploadStatus.style.color = '#dc3545';
+                pdfUploadStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + message;
+            } else if (type === 'uploading') {
+                pdfUploadStatus.style.color = '#007bff';
+                pdfUploadStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + message;
+            }
         }
 
         // Close PDF Browser
