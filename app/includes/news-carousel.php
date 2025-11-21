@@ -159,12 +159,18 @@ if ($categoryId) {
         
         .news-section .section-title {
             font-size: 1.3rem !important;
-            margin-bottom: 0.5rem !important;
+            margin-bottom: 1.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+        
+        .news-section .section-title::after {
+            bottom: -8px !important;
         }
         
         .news-section .section-description {
             font-size: 0.85rem !important;
             line-height: 1.4 !important;
+            margin-top: 0.5rem !important;
         }
         
         .news-layout {
@@ -297,11 +303,17 @@ if ($categoryId) {
         
         .news-section .section-title {
             font-size: 1.1rem !important;
-            margin-bottom: 0.4rem !important;
+            margin-bottom: 1.2rem !important;
+            padding-bottom: 0.4rem !important;
+        }
+        
+        .news-section .section-title::after {
+            bottom: -6px !important;
         }
         
         .news-section .section-description {
             font-size: 0.75rem !important;
+            margin-top: 0.4rem !important;
         }
         
         .news-layout {
@@ -413,12 +425,18 @@ if ($categoryId) {
         
         .news-section .section-title {
             font-size: 1rem !important;
-            margin-bottom: 0.3rem !important;
+            margin-bottom: 1rem !important;
+            padding-bottom: 0.3rem !important;
+        }
+        
+        .news-section .section-title::after {
+            bottom: -5px !important;
         }
         
         .news-section .section-description {
             font-size: 0.7rem !important;
             line-height: 1.3 !important;
+            margin-top: 0.3rem !important;
         }
         
         .news-layout {

@@ -497,10 +497,63 @@ body {
     margin-right: auto;
 }
 
+/* News Section Header Styling for IEA */
+.news-section .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+}
+
+.news-section .section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-family: 'Barlow Semi Condensed', sans-serif;
+}
+
+.news-section .section-title i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.news-section .section-description {
+    font-size: 1.05rem;
+    color: #666;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+    font-family: 'Montserrat', sans-serif;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .section-title {
         font-size: 2rem;
+    }
+    
+    .news-section .section-header {
+        margin-bottom: 2rem;
+        padding: 0 0.5rem;
+    }
+    
+    .news-section .section-title {
+        font-size: 1.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .news-section .section-title i {
+        font-size: 1.5rem;
+    }
+    
+    .news-section .section-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
     }
     
     .mvp-grid,
@@ -519,6 +572,16 @@ body {
     
     .news-card-content {
         padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .news-section .section-title {
+        font-size: 1.3rem;
+    }
+    
+    .news-section .section-description {
+        font-size: 0.85rem;
     }
 }
 </style>
@@ -545,6 +608,7 @@ body {
     $categoryId = 'International & External Affairs'; // Pass category name, component will look it up
     $sectionTitle = 'International & External Affairs News & Updates';
     $sectionDescription = 'Stay updated with the latest news and announcements from the International & External Affairs department.';
+    $facebookLink = 'https://www.facebook.com/iexternalaffairs'; // Facebook page URL for IEA
     include '../app/includes/news-carousel.php';
     ?>
 
