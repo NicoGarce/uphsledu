@@ -205,7 +205,7 @@ include 'app/includes/header.php';
                     $hasHtmlTags = strip_tags($content) !== $content;
                     
                     if ($hasHtmlTags) {
-                        // Content already has HTML formatting (from TinyMCE)
+                        // Content already has HTML formatting (from TinyMCE or Quill)
                         // Sanitize to allow only safe HTML tags
                         $allowedTags = '<p><br><strong><b><em><i><u><s><strike><del><ins><a><ul><ol><li><h1><h2><h3><h4><h5><h6><blockquote><pre><code><span><div><img><table><thead><tbody><tr><td><th>';
                         $content = strip_tags($content, $allowedTags);
@@ -213,9 +213,21 @@ include 'app/includes/header.php';
                         // Remove leading/trailing whitespace and newlines from the content
                         $content = trim($content);
                         
+                        // Normalize paragraph spacing - remove empty paragraphs
+                        $content = preg_replace('/<p[^>]*>\s*<\/p>/i', '', $content);
+                        
+                        // Remove multiple consecutive <br> tags (more than one)
+                        $content = preg_replace('/(<br\s*\/?>){2,}/i', '<br>', $content);
+                        
+                        // Remove <br> tags at the start or end of paragraphs
+                        $content = preg_replace('/<p[^>]*>(\s*<br\s*\/?>\s*)+/i', '<p>', $content);
+                        $content = preg_replace('/(\s*<br\s*\/?>\s*)+<\/p>/i', '</p>', $content);
+                        
                         // Remove any leading <p> tags that might have only whitespace
-                        $content = preg_replace('/^<p[^>]*>\s*<\/p>/i', '', $content);
                         $content = preg_replace('/^<p[^>]*>(\s+)/i', '<p>', $content);
+                        
+                        // Normalize whitespace in paragraphs
+                        $content = preg_replace('/(\s+)<\/p>/i', '</p>', $content);
                         
                         // Process hashtags in HTML content
                         $processedContent = preg_replace(

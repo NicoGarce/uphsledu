@@ -632,6 +632,16 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
             font-family: -apple-system, BlinkMacSystemFont, 'San Francisco', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             font-size: 14px;
         }
+        /* Normalize paragraph spacing in Quill editor */
+        .ql-editor p {
+            margin-bottom: 1rem;
+            margin-top: 0;
+        }
+        .ql-editor p:empty {
+            display: none;
+            margin: 0;
+            padding: 0;
+        }
         /* Hide the original textarea, we'll sync with it */
         #content {
             display: none;
@@ -664,20 +674,39 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                 quill.root.innerHTML = textarea.value;
             }
 
+            // Function to normalize paragraph spacing in HTML
+            function normalizeParagraphSpacing(html) {
+                // Remove empty paragraphs
+                html = html.replace(/<p[^>]*>\s*<\/p>/gi, '');
+                // Remove multiple consecutive <br> tags
+                html = html.replace(/(<br\s*\/?>){2,}/gi, '<br>');
+                // Remove <br> tags at the start or end of paragraphs
+                html = html.replace(/<p[^>]*>(\s*<br\s*\/?>\s*)+/gi, '<p>');
+                html = html.replace(/(\s*<br\s*\/?>\s*)+<\/p>/gi, '</p>');
+                // Normalize whitespace in paragraphs
+                html = html.replace(/<p[^>]*>(\s+)/gi, '<p>');
+                html = html.replace(/(\s+)<\/p>/gi, '</p>');
+                return html;
+            }
+
             // Sync Quill content to textarea before form submission
             var form = document.querySelector('.editor-form');
             if (form) {
                 form.addEventListener('submit', function(e) {
                     // Get HTML content from Quill
                     var htmlContent = quill.root.innerHTML;
-                    // Update the hidden textarea with the HTML content
+                    // Normalize paragraph spacing
+                    htmlContent = normalizeParagraphSpacing(htmlContent);
+                    // Update the hidden textarea with the normalized HTML content
                     textarea.value = htmlContent;
                 });
             }
 
             // Also sync on content change (optional, for real-time sync)
             quill.on('text-change', function() {
-                textarea.value = quill.root.innerHTML;
+                var htmlContent = quill.root.innerHTML;
+                htmlContent = normalizeParagraphSpacing(htmlContent);
+                textarea.value = htmlContent;
             });
         });
     </script>
@@ -853,4 +882,6 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
     </script>
 
 <?php include '../app/includes/admin-footer.php'; ?>
+
+
 
