@@ -84,39 +84,41 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 // Handle export
-if (isset($_GET['export']) && $_GET['export'] === 'csv') {
-    // Export all filtered data to CSV
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="payment_monitoring_' . date('Y-m-d_His') . '.csv"');
-    
-    $output = fopen('php://output', 'w');
-    
-    // Add BOM for UTF-8
-    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
-    
-    // Headers
-    fputcsv($output, ['Transaction ID', 'Reference No.', 'Status', 'Description', 'Transaction Date', 'Amount']);
-    
-    // Get all data for export (no pagination)
-    $exportQuery = "SELECT txnid, refno, status, message, transdate, amount 
-                    FROM return_data 
-                    $whereClause 
-                    ORDER BY transdate DESC";
-    $exportResult = mysqli_query($con, $exportQuery);
-    
-    while ($row = mysqli_fetch_assoc($exportResult)) {
-        fputcsv($output, [
-            $row['txnid'],
-            $row['refno'],
-            $row['status'],
-            $row['message'],
-            $row['transdate'],
-            number_format($row['amount'], 2, '.', ',')
-        ]);
+if (isset($_GET['export'])) {
+    if ($_GET['export'] === 'csv') {
+        // Export all filtered data to CSV
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="payment_monitoring_' . date('Y-m-d_His') . '.csv"');
+        
+        $output = fopen('php://output', 'w');
+        
+        // Add BOM for UTF-8
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        // Headers
+        fputcsv($output, ['Transaction ID', 'Reference No.', 'Status', 'Description', 'Transaction Date', 'Amount']);
+        
+        // Get all data for export (no pagination)
+        $exportQuery = "SELECT txnid, refno, status, message, transdate, amount 
+                        FROM return_data 
+                        $whereClause 
+                        ORDER BY transdate DESC";
+        $exportResult = mysqli_query($con, $exportQuery);
+        
+        while ($row = mysqli_fetch_assoc($exportResult)) {
+            fputcsv($output, [
+                $row['txnid'],
+                $row['refno'],
+                $row['status'],
+                $row['message'],
+                $row['transdate'],
+                number_format($row['amount'], 2, '.', ',')
+            ]);
+        }
+        
+        fclose($output);
+        exit;
     }
-    
-    fclose($output);
-    exit;
 }
 
 // Get unique statuses for filter
@@ -128,6 +130,7 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
 }
 ?>
 <?php include '../app/includes/admin-header.php'; ?>
+
 
 <style>
     .monitoring-container {
@@ -222,6 +225,19 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
     
     .btn-success:hover {
         background: #218838;
+    }
+    
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        background: #c82333;
+    }
+    
+    .btn i {
+        font-size: 1rem;
     }
     
     .data-table-container {
@@ -406,9 +422,17 @@ while ($row = mysqli_fetch_assoc($statusResult)) {
                 <h4>Current Page</h4>
                 <div class="stat-value" id="page-info"><?php echo $page; ?> / <?php echo $totalPages; ?></div>
             </div>
-            <div>
-                <a href="#" id="export-csv-btn" class="btn btn-success">
-                    <i class="fas fa-download"></i> Export CSV
+            <div style="display: flex; gap: 0.5rem;">
+                <?php
+                $exportParams = [];
+                if (!empty($search)) $exportParams['search'] = $search;
+                if (!empty($statusFilter)) $exportParams['status'] = $statusFilter;
+                if (!empty($dateFrom)) $exportParams['date_from'] = $dateFrom;
+                if (!empty($dateTo)) $exportParams['date_to'] = $dateTo;
+                $exportQueryString = !empty($exportParams) ? '?' . http_build_query($exportParams) . '&' : '?';
+                ?>
+                <a href="payment-monitoring.php<?php echo $exportQueryString; ?>export=csv" id="export-csv-btn" class="btn btn-success" title="Export to CSV">
+                    <i class="fas fa-file-csv"></i>
                 </a>
             </div>
         </div>
@@ -604,9 +628,9 @@ function loadPayments(page = 1) {
             document.getElementById('total-records').textContent = parseInt(data.pagination.total_records).toLocaleString();
             document.getElementById('page-info').textContent = `${data.pagination.current_page} / ${data.pagination.total_pages}`;
             
-            // Update export link
-            const exportUrl = 'payment-monitoring.php?' + params.toString() + '&export=csv';
-            document.getElementById('export-csv-btn').href = exportUrl;
+            // Update export CSV link
+            const exportCsvUrl = 'payment-monitoring.php?' + params.toString() + '&export=csv';
+            document.getElementById('export-csv-btn').href = exportCsvUrl;
             
             // Update table
             const tbody = document.getElementById('payments-tbody');
@@ -725,11 +749,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateToInput = document.getElementById('filter-date-to');
     const clearBtn = document.getElementById('clear-filters');
     
+    // Set initial export URLs
+    function updateExportUrls() {
+        const params = new URLSearchParams({
+            search: searchInput.value,
+            status: statusSelect.value,
+            date_from: dateFromInput.value,
+            date_to: dateToInput.value
+        });
+        const exportCsvUrl = 'payment-monitoring.php?' + params.toString() + '&export=csv';
+        document.getElementById('export-csv-btn').href = exportCsvUrl;
+    }
+    
+    // Initialize export URLs
+    updateExportUrls();
+    
     // Debounced search input
     searchInput.addEventListener('input', function() {
         clearTimeout(filterTimeout);
         filterTimeout = setTimeout(() => {
             currentPage = 1;
+            updateExportUrls();
             loadPayments(1);
         }, 500);
     });
@@ -737,16 +777,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Immediate filter changes
     statusSelect.addEventListener('change', function() {
         currentPage = 1;
+        updateExportUrls();
         loadPayments(1);
     });
     
     dateFromInput.addEventListener('change', function() {
         currentPage = 1;
+        updateExportUrls();
         loadPayments(1);
     });
     
     dateToInput.addEventListener('change', function() {
         currentPage = 1;
+        updateExportUrls();
         loadPayments(1);
     });
     
@@ -757,6 +800,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dateFromInput.value = '';
         dateToInput.value = '';
         currentPage = 1;
+        updateExportUrls();
         loadPayments(1);
     });
     
