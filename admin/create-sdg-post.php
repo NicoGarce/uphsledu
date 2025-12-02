@@ -503,8 +503,28 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                 quill.root.innerHTML = textarea.value;
             }
 
+            // Function to normalize text spacing and remove irregular whitespace
+            function normalizeTextSpacing(text) {
+                // Replace non-breaking spaces (and other unicode spaces) with regular spaces
+                text = text.replace(/[\u00A0\u2000-\u200B\u202F\u205F\u3000]/g, ' ');
+                // Replace tabs with spaces
+                text = text.replace(/\t/g, ' ');
+                // Replace single line breaks (not double line breaks) with spaces
+                // This converts line breaks within sentences to spaces
+                text = text.replace(/([^\n])\n([^\n])/g, '$1 $2');
+                // Replace multiple consecutive spaces with single space
+                text = text.replace(/[ ]{2,}/g, ' ');
+                // Remove spaces at start/end
+                text = text.trim();
+                return text;
+            }
+
             // Function to normalize paragraph spacing in HTML
             function normalizeParagraphSpacing(html) {
+                // Replace non-breaking spaces with regular spaces
+                html = html.replace(/\u00A0/g, ' ');
+                // Replace tabs with spaces
+                html = html.replace(/\t/g, ' ');
                 // Remove empty paragraphs
                 html = html.replace(/<p[^>]*>\s*<\/p>/gi, '');
                 // Remove multiple consecutive <br> tags
@@ -512,11 +532,63 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                 // Remove <br> tags at the start or end of paragraphs
                 html = html.replace(/<p[^>]*>(\s*<br\s*\/?>\s*)+/gi, '<p>');
                 html = html.replace(/(\s*<br\s*\/?>\s*)+<\/p>/gi, '</p>');
+                // Normalize whitespace in text nodes - replace multiple spaces with single space
+                html = html.replace(/(?<=>)([^<]+)(?=<)/g, function(match) {
+                    // Normalize all types of whitespace
+                    match = match.replace(/[\u00A0\u2000-\u200B\u202F\u205F\u3000]/g, ' '); // Unicode spaces
+                    match = match.replace(/\t/g, ' '); // Tabs
+                    match = match.replace(/[ ]{2,}/g, ' '); // Multiple spaces
+                    return match.trim();
+                });
                 // Normalize whitespace in paragraphs
                 html = html.replace(/<p[^>]*>(\s+)/gi, '<p>');
                 html = html.replace(/(\s+)<\/p>/gi, '</p>');
                 return html;
             }
+
+            // Simple paste handler - intercept paste, normalize, and insert clean text
+            quill.root.addEventListener('paste', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Get plain text from clipboard
+                var clipboardData = e.clipboardData || window.clipboardData;
+                var pastedText = clipboardData.getData('text/plain');
+                
+                if (pastedText) {
+                    // Normalize spacing - remove extra spaces
+                    pastedText = normalizeTextSpacing(pastedText);
+                    
+                    // Get current selection
+                    var selection = quill.getSelection(true);
+                    if (!selection) {
+                        selection = { index: quill.getLength(), length: 0 };
+                    }
+                    
+                    // Delete selected text if any
+                    if (selection.length > 0) {
+                        quill.deleteText(selection.index, selection.length, 'user');
+                    }
+                    
+                    // Insert normalized text as plain text (no formatting)
+                    // Use null format to ensure it uses default editor formatting
+                    quill.insertText(selection.index, pastedText, null, 'user');
+                    
+                    // Remove any formatting that might have been applied
+                    quill.formatText(selection.index, pastedText.length, {
+                        color: false,
+                        background: false,
+                        font: false,
+                        size: false
+                    }, 'user');
+                    
+                    // Move cursor to end of inserted text
+                    quill.setSelection(selection.index + pastedText.length, 0, 'user');
+                    
+                    // Sync to textarea
+                    textarea.value = quill.root.innerHTML;
+                }
+            });
 
             // Sync Quill content to textarea before form submission
             var form = document.querySelector('.editor-form');
@@ -531,11 +603,9 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                 });
             }
 
-            // Also sync on content change (optional, for real-time sync)
+            // Sync on content change
             quill.on('text-change', function() {
-                var htmlContent = quill.root.innerHTML;
-                htmlContent = normalizeParagraphSpacing(htmlContent);
-                textarea.value = htmlContent;
+                textarea.value = quill.root.innerHTML;
             });
         });
         
