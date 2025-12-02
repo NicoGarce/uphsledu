@@ -299,41 +299,59 @@ if (isset($_POST["btnsubmit"]) && isset($_FILES["excel_file"])) {
                     
                     if ($result['success']) {
                         $success = "Successfully imported " . $result['imported'] . " student records to " . strtoupper($table) . " table.";
-                        if ($result['skipped'] > 0) {
-                            $success .= " " . $result['skipped'] . " records were skipped.";
+                        
+                        // Count different types of skipped records
+                        $duplicateCount = !empty($result['duplicateRecords']) ? count($result['duplicateRecords']) : 0;
+                        $errorCount = !empty($result['skippedRecords']) ? count($result['skippedRecords']) : 0;
+                        $totalSkipped = $duplicateCount + $errorCount;
+                        
+                        if ($totalSkipped > 0) {
+                            // Build summary with reasons
+                            $skipReasons = [];
+                            if ($duplicateCount > 0) {
+                                $skipReasons[] = $duplicateCount . " duplicate" . ($duplicateCount > 1 ? "s" : "");
+                            }
+                            if ($errorCount > 0) {
+                                $skipReasons[] = $errorCount . " error" . ($errorCount > 1 ? "s" : "");
+                            }
+                            
+                            if (!empty($skipReasons)) {
+                                $success .= " " . $totalSkipped . " record" . ($totalSkipped > 1 ? "s were" : " was") . " skipped (" . implode(", ", $skipReasons) . ").";
+                            } else {
+                                $success .= " " . $totalSkipped . " record" . ($totalSkipped > 1 ? "s were" : " was") . " skipped.";
+                            }
                             
                             // Create detailed message for browser dialog
                             $detailedMessage = "IMPORT SUMMARY:\n\n";
                             $detailedMessage .= "✅ Successfully imported: " . $result['imported'] . " new records\n";
-                            $detailedMessage .= "⚠️ Skipped records: " . $result['skipped'] . " total\n\n";
-                            
-                            // Count different types of skipped records
-                            $duplicateCount = !empty($result['duplicateRecords']) ? count($result['duplicateRecords']) : 0;
-                            $errorCount = !empty($result['skippedRecords']) ? count($result['skippedRecords']) : 0;
+                            $detailedMessage .= "⚠️ Skipped records: " . $totalSkipped . " total\n\n";
                             
                             if ($duplicateCount > 0) {
                                 $detailedMessage .= "📋 DUPLICATE RECORDS ({$duplicateCount}):\n";
-                                $detailedMessage .= "─────────────────────────\n";
-                                $duplicatesToShow = array_slice($result['duplicateRecords'], 0, 10);
+                                $detailedMessage .= "Reason: Student number already exists in database\n";
+                                $detailedMessage .= "─────────────────────────────────────────────\n";
+                                $duplicatesToShow = array_slice($result['duplicateRecords'], 0, 20);
                                 foreach ($duplicatesToShow as $duplicate) {
                                     $detailedMessage .= "• " . $duplicate . "\n";
                                 }
-                                if ($duplicateCount > 10) {
-                                    $detailedMessage .= "... and " . ($duplicateCount - 10) . " more duplicates\n";
+                                if ($duplicateCount > 20) {
+                                    $detailedMessage .= "... and " . ($duplicateCount - 20) . " more duplicates\n";
                                 }
                                 $detailedMessage .= "\n";
                             }
                             
                             if ($errorCount > 0) {
                                 $detailedMessage .= "❌ ERROR RECORDS ({$errorCount}):\n";
-                                $detailedMessage .= "─────────────────────────\n";
-                                $errorsToShow = array_slice($result['skippedRecords'], 0, 10);
+                                $detailedMessage .= "Reasons may include: Insufficient columns, empty required fields, database errors\n";
+                                $detailedMessage .= "─────────────────────────────────────────────\n";
+                                $errorsToShow = array_slice($result['skippedRecords'], 0, 20);
                                 foreach ($errorsToShow as $error) {
                                     $detailedMessage .= "• " . $error . "\n";
                                 }
-                                if ($errorCount > 10) {
-                                    $detailedMessage .= "... and " . ($errorCount - 10) . " more errors\n";
+                                if ($errorCount > 20) {
+                                    $detailedMessage .= "... and " . ($errorCount - 20) . " more errors\n";
                                 }
+                                $detailedMessage .= "\n";
                             }
                             
                             // Store detailed message for JavaScript alert
@@ -567,52 +585,88 @@ function processBatch($con, $table, $batchData, $lineNumbers = [], $studentNumbe
         return ['imported' => 0, 'skipped' => 0, 'duplicateRecords' => [], 'skippedRecords' => []];
     }
     
-    $values = implode(',', $batchData);
-    $sql = "INSERT IGNORE INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
-            VALUES {$values}";
-    
-    if (mysqli_query($con, $sql)) {
-        $imported = mysqli_affected_rows($con);
-        $skipped += (count($batchData) - $imported);
+    // First, check which student numbers already exist in the database
+    $studentNumsToCheck = array_filter($studentNumbers); // Remove empty values
+    if (!empty($studentNumsToCheck)) {
+        $escapedNumbers = array_map(function($num) use ($con) {
+            return "'" . mysqli_real_escape_string($con, $num) . "'";
+        }, $studentNumsToCheck);
         
-        // Track which records were skipped due to duplicates
-        if ((count($batchData) - $imported) > 0) {
-            // Since we can't easily determine which specific records were skipped in batch mode,
-            // we'll try individual inserts to identify the exact duplicates
-            foreach ($batchData as $index => $record) {
-                $individualSQL = "INSERT IGNORE INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
-                                 VALUES {$record}";
-                
-                if (mysqli_query($con, $individualSQL)) {
-                    if (mysqli_affected_rows($con) == 0) {
-                        // This record was skipped (duplicate)
-                        $lineNumber = isset($lineNumbers[$index]) ? $lineNumbers[$index] : 'Unknown';
-                        $studentNumber = isset($studentNumbers[$index]) ? $studentNumbers[$index] : 'Unknown';
-                        $duplicateRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' (duplicate)";
+        $checkSQL = "SELECT `stud_num` FROM `{$table}` WHERE `stud_num` IN (" . implode(',', $escapedNumbers) . ")";
+        $checkResult = mysqli_query($con, $checkSQL);
+        
+        $existingNumbers = [];
+        if ($checkResult) {
+            while ($row = mysqli_fetch_assoc($checkResult)) {
+                $existingNumbers[$row['stud_num']] = true;
+            }
+        }
+        
+        // Separate records into new and duplicate
+        $newBatchData = [];
+        $newLineNumbers = [];
+        $newStudentNumbers = [];
+        
+        foreach ($batchData as $index => $record) {
+            $studentNumber = isset($studentNumbers[$index]) ? $studentNumbers[$index] : '';
+            $lineNumber = isset($lineNumbers[$index]) ? $lineNumbers[$index] : 'Unknown';
+            
+            if (!empty($studentNumber) && isset($existingNumbers[$studentNumber])) {
+                // This is a duplicate
+                $duplicateRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' (duplicate)";
+                $skipped++;
+            } else {
+                // This is a new record
+                $newBatchData[] = $record;
+                $newLineNumbers[] = $lineNumber;
+                $newStudentNumbers[] = $studentNumber;
+            }
+        }
+        
+        // Only insert new records
+        if (!empty($newBatchData)) {
+            $values = implode(',', $newBatchData);
+            $sql = "INSERT INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
+                    VALUES {$values}";
+            
+            if (mysqli_query($con, $sql)) {
+                $imported = mysqli_affected_rows($con);
+            } else {
+                // If batch insert fails, try individual inserts to identify specific errors
+                foreach ($newBatchData as $index => $record) {
+                    $sql = "INSERT INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
+                            VALUES {$record}";
+                    
+                    $lineNumber = isset($newLineNumbers[$index]) ? $newLineNumbers[$index] : 'Unknown';
+                    $studentNumber = isset($newStudentNumbers[$index]) ? $newStudentNumbers[$index] : 'Unknown';
+                    
+                    if (mysqli_query($con, $sql)) {
+                        if (mysqli_affected_rows($con) > 0) {
+                            $imported++;
+                        } else {
+                            $skipped++;
+                            $duplicateRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' (duplicate)";
+                        }
+                    } else {
+                        $skipped++;
+                        $skippedRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' - Database error: " . mysqli_error($con);
                     }
                 }
             }
         }
     } else {
-        // If batch fails, try individual inserts
-        foreach ($batchData as $index => $record) {
-            $sql = "INSERT IGNORE INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
-                    VALUES {$record}";
-            
-            $lineNumber = isset($lineNumbers[$index]) ? $lineNumbers[$index] : 'Unknown';
-            $studentNumber = isset($studentNumbers[$index]) ? $studentNumbers[$index] : 'Unknown';
-            
-            if (mysqli_query($con, $sql)) {
-                if (mysqli_affected_rows($con) > 0) {
-                    $imported++;
-                } else {
-                    $skipped++;
-                    $duplicateRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' (duplicate)";
-                }
-            } else {
-                $skipped++;
-                $skippedRecords[] = "Row {$lineNumber}: Database error - " . mysqli_error($con);
-            }
+        // Fallback: if we can't check duplicates, use INSERT IGNORE
+        $values = implode(',', $batchData);
+        $sql = "INSERT IGNORE INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
+                VALUES {$values}";
+        
+        if (mysqli_query($con, $sql)) {
+            $imported = mysqli_affected_rows($con);
+            $skipped = count($batchData) - $imported;
+            // Can't identify specific duplicates in this case
+        } else {
+            $skipped = count($batchData);
+            $skippedRecords[] = "Batch insert failed: " . mysqli_error($con);
         }
     }
     
