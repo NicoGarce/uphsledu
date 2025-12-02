@@ -10,7 +10,9 @@ function mapCampusToTable($campid) {
         "UPHMU" => "medical_university", 
         "UPHG" => "gma",
         "UPHM" => "manila",
-        "PHCP" => "pangasinan"
+        "PHCP" => "pangasinan",
+        "UPHI" => "isabela",
+        "UPHR" => "roxas"
     ];
     return isset($map[$campid]) ? $map[$campid] : null;
 }
@@ -44,7 +46,7 @@ function createCampusTable($con, $tableName) {
 }
 
 function ensureCampusTablesExist($con) {
-    $campuses = ["UPHB", "UPHMU", "UPHG", "UPHM", "PHCP"];
+    $campuses = ["UPHB", "UPHMU", "UPHG", "UPHM", "PHCP", "UPHI", "UPHR"];
     $created_tables = [];
     $existing_tables = [];
     

@@ -64,6 +64,8 @@ include "dbconnect.php";
 			<option value="UPHG">GMA</option>
 			<option value="UPHM">Manila</option>
 			<option value="PHCP">Pangasinan</option>
+			<option value="UPHI">Isabela</option>
+			<option value="UPHR">Roxas</option>
 		</select>
 	</div>
 	<div>&nbsp;</div>

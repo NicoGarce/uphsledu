@@ -1143,6 +1143,8 @@ function simulateProgress() {
                         <option value="UPHG">🏢 GMA Campus</option>
                         <option value="UPHM">🏛️ Manila Campus</option>
                         <option value="PHCP">🏘️ Pangasinan Campus</option>
+                        <option value="UPHI">🏛️ Isabela Campus</option>
+                        <option value="UPHR">🏛️ Roxas Campus</option>
                     </select>
                 </div>
 

@@ -74,26 +74,13 @@ if (isSectionInMaintenance('online-payment', 'guestold-student')) {
 }
 
 	include "dbconnect.php";
+	include "campus_table_manager.php";
 
-	function mapCampusToTable($campid) {
-		$map = [
-			"UPHB" => "binan",
-			"UPHMU" => "medical_university",
-			"UPHG" => "gma",
-			"UPHM" => "manila",
-			"PHCP" => "pangasinan"
-		];
-		return isset($map[$campid]) ? $map[$campid] : null;
-	}
+	// Ensure all campus tables exist (including Isabela and Roxas)
+	ensureCampusTablesExist($con);
 
-	function tableExists($con, $tableName) {
-		if (trim($tableName) === '') { return false; }
-		$t = mysqli_real_escape_string($con, $tableName);
-		$sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name='".$t."' LIMIT 1";
-		$res = @mysqli_query($con, $sql);
-		if ($res && mysqli_fetch_row($res)) { return true; }
-		return false;
-	}
+	// Functions are now provided by campus_table_manager.php
+	// No need for local duplicates
 
 	function findStudentByNumber($con, $studentNumber, $campid) {
 		$studentNumber = trim($studentNumber);
@@ -756,6 +743,8 @@ function verifyStudent() {
                     <option value="UPHG">🏢 GMA Campus</option>
                     <option value="UPHM">🏛️ Manila Campus</option>
                     <option value="PHCP">🏘️ Pangasinan Campus</option>
+                    <option value="UPHI">🏛️ Isabela Campus</option>
+                    <option value="UPHR">🏛️ Roxas Campus</option>
 		</select>
 	</div>
 

@@ -76,6 +76,10 @@ if (isSectionInMaintenance('online-payment', 'guest')) {
 $_SESSION['isin'] = 'iamin';
 
 include "dbconnect.php";
+include "campus_table_manager.php";
+
+// Ensure all campus tables exist (including Isabela and Roxas)
+ensureCampusTablesExist($con);
  if (isset($_POST["btnsubmit"])) {
      if ($_POST["campid"]<>"UPHB") {
       date_default_timezone_set("Asia/Manila");
@@ -439,6 +443,8 @@ include "dbconnect.php";
                     <option value="UPHG">🏢 GMA Campus</option>
                     <option value="UPHM">🏛️ Manila Campus</option>
                     <option value="PHCP">🏘️ Pangasinan Campus</option>
+                    <option value="UPHI">🏛️ Isabela Campus</option>
+                    <option value="UPHR">🏛️ Roxas Campus</option>
 		</select>
 	</div>
 
