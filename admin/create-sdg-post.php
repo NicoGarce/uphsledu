@@ -533,16 +533,18 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                 html = html.replace(/<p[^>]*>(\s*<br\s*\/?>\s*)+/gi, '<p>');
                 html = html.replace(/(\s*<br\s*\/?>\s*)+<\/p>/gi, '</p>');
                 // Normalize whitespace in text nodes - replace multiple spaces with single space
+                // BUT preserve single spaces (don't trim them)
                 html = html.replace(/(?<=>)([^<]+)(?=<)/g, function(match) {
                     // Normalize all types of whitespace
                     match = match.replace(/[\u00A0\u2000-\u200B\u202F\u205F\u3000]/g, ' '); // Unicode spaces
                     match = match.replace(/\t/g, ' '); // Tabs
-                    match = match.replace(/[ ]{2,}/g, ' '); // Multiple spaces
-                    return match.trim();
+                    match = match.replace(/[ ]{2,}/g, ' '); // Multiple spaces to single space
+                    // DON'T trim - preserve leading/trailing single spaces
+                    return match;
                 });
-                // Normalize whitespace in paragraphs
-                html = html.replace(/<p[^>]*>(\s+)/gi, '<p>');
-                html = html.replace(/(\s+)<\/p>/gi, '</p>');
+                // Normalize whitespace in paragraphs - only remove excessive whitespace
+                html = html.replace(/<p[^>]*>(\s{2,})/gi, '<p>');
+                html = html.replace(/(\s{2,})<\/p>/gi, '</p>');
                 return html;
             }
 
