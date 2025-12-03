@@ -524,69 +524,6 @@ body {
         </div>
     </section>
 
-    <!-- News & Updates Section -->
-    <section class="content-section news-section">
-        <div class="container">
-            <h2 class="section-title">News & Updates</h2>
-            <div class="news-grid">
-                <div class="news-card">
-                    <div class="news-image">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="news-content">
-                        <h4>UPHSL GRADUATE STUDENTS MENTORED ON IMRD STRUCTURE, ENCOURAGED TO BE VISIBLE THROUGH PUBLICATIONS</h4>
-                        <p>In a significant move towards enhancing the research capabilities of the graduate students of the University of the Perpetual Help System Laguna (UPHSL), a webinar was launched by the UPHSL Research and Development Center in coordination with the UPHSL Graduate School focusing on the IMRD (Introduction, Methods, Results, and Discussion)</p>
-                        <a href="#" class="news-link">Click Here</a>
-                    </div>
-                </div>
-
-                <div class="news-card">
-                    <div class="news-image">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="news-content">
-                        <h4>3 UNIVERSITY RESEARCHERS WIN AT 2ND INTERNATIONAL CONFERENCE ON BUSINESS AND STEM EDUCATION</h4>
-                        <p>UPHSL Makes a Mark! Dr. Josefa Carrillo, Mary Easter Claire S. Perez, and Felbert Rosales celebrate their research wins at the 2nd International Conference on Business and STEM Education.</p>
-                        <a href="#" class="news-link">Click Here</a>
-                    </div>
-                </div>
-
-                <div class="news-card">
-                    <div class="news-image">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="news-content">
-                        <h4>Back-to-Back Publication Seminars Target to Boost Research Productivity of CBA, CIHM, CAS, and CoED Researchers</h4>
-                        <p>The Research and Development Center (R&DC) held consecutive publication seminars aimed at enhancing the research capabilities of its undergraduate students.</p>
-                        <a href="#" class="news-link">Click Here</a>
-                    </div>
-                </div>
-
-                <div class="news-card">
-                    <div class="news-image">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <div class="news-content">
-                        <h4>UNIVERSITY MENTORS ATTEND ON-SITE MASTERCLASS IN TEACHING RESEARCH 2024 AT DLSU</h4>
-                        <p>The university delegation was headed by Dr. Leomar S. Galicia with Ms. Jeanne Pauline M. Sarmiento and Reggie R. Mueden, forming the total of 201 on-site delegates from 78 HEIs and DEPEd schools in the country</p>
-                        <a href="#" class="news-link">Click Here</a>
-                    </div>
-                </div>
-
-                <div class="news-card">
-                    <div class="news-image">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="news-content">
-                        <h4>Perpetualite researchers achieve back-to-back publications in Quartile 3 Scopus Journal</h4>
-                        <p>A significant step to increase the publications of the university in high-impact journals, select university researchers published their papers in Journal of Lifestyle and SDGs Review, a Scopus-indexed journal, before the year 2024 ended and as the new year began, marking a substantial increase in the institutional research history.</p>
-                        <a href="#" class="news-link">Click Here</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Research by Department Section -->
     <section class="content-section research-section">
         <div class="container">
