@@ -148,7 +148,8 @@ $navbar_items_config = [
     'online-payment' => [
         'entrance-exam' => 'Entrance Exam',
         'new-enrollees' => 'New Enrollees',
-        'enrolled-students' => 'Enrolled Students'
+        'enrolled-students' => 'Enrolled Students',
+        'other-payments' => 'Other Payments'
     ],
     'calendar' => [
         'college-academic-calendar' => 'College Academic Calendar',
@@ -1417,6 +1418,9 @@ $navbar_items_config = [
                                 <?php if (isNavbarItemVisible('online-payment', 'enrolled-students')): ?>
                                 <a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank" class="dropdown-link">Enrolled Students</a>
                                 <?php endif; ?>
+                                <?php if (isNavbarItemVisible('online-payment', 'other-payments')): ?>
+                                <a href="https://uphsl.edu.ph/online_payment/guestold" target="_blank" class="dropdown-link">Other Payments</a>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1738,6 +1742,9 @@ $navbar_items_config = [
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('online-payment', 'enrolled-students')): ?>
                         <a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank" class="mobile-dropdown-link">Enrolled Students</a>
+                        <?php endif; ?>
+                        <?php if (isNavbarItemVisible('online-payment', 'other-payments')): ?>
+                        <a href="https://uphsl.edu.ph/online_payment/guestold" target="_blank" class="mobile-dropdown-link">Other Payments</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>

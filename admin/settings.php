@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ],
                 'campuses' => ['name' => 'Campuses', 'subpages' => []],
                 'about' => ['name' => 'About', 'subpages' => ['about-index', 'contact', 'environmental-policy', 'university-policy', 'map']],
-                'online-payment' => ['name' => 'Online Payment', 'subpages' => ['payment-main', 'guest', 'guest-exam', 'guestold-student']],
+                'online-payment' => ['name' => 'Online Payment', 'subpages' => ['payment-main', 'guest', 'guest-exam', 'guestold-student', 'guestold']],
                 'calendar' => ['name' => 'Calendar', 'subpages' => ['college-academic-calendar', 'bed-shs-academic-calendar']],
                 'enrollment' => ['name' => 'Enrollment', 'subpages' => ['enrollment-college', 'enrollment-shs']],
                 'sdg-initiatives' => ['name' => 'SDG Initiatives', 'subpages' => []],
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'support-services' => ['name' => 'Support Services', 'subitems' => ['alumni', 'careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance', 'research']],
             'campuses' => ['name' => 'Campuses', 'subitems' => []],
             'about' => ['name' => 'About', 'subitems' => ['about-us', 'contact', 'environmental-policy', 'university-policy', 'map']],
-            'online-payment' => ['name' => 'Online Payment', 'subitems' => ['entrance-exam', 'new-enrollees', 'enrolled-students']],
+            'online-payment' => ['name' => 'Online Payment', 'subitems' => ['entrance-exam', 'new-enrollees', 'enrolled-students', 'other-payments']],
             'calendar' => ['name' => 'Calendar', 'subitems' => ['college-academic-calendar', 'bed-shs-academic-calendar']],
             'enrollment' => ['name' => 'Enrollment', 'subitems' => ['enrollment-college', 'enrollment-shs']],
             'sdg-initiatives' => ['name' => 'SDG Initiatives', 'subitems' => ['sdg-1', 'sdg-2', 'sdg-3', 'sdg-4', 'sdg-5', 'sdg-6', 'sdg-7', 'sdg-8', 'sdg-9', 'sdg-10', 'sdg-11', 'sdg-12', 'sdg-13', 'sdg-14', 'sdg-15', 'sdg-16', 'sdg-17', 'sdg-full-report']]
@@ -271,7 +271,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'subitems' => [
                         'entrance-exam' => 'Entrance Exam',
                         'new-enrollees' => 'New Enrollees',
-                        'enrolled-students' => 'Enrolled Students'
+                        'enrolled-students' => 'Enrolled Students',
+                        'other-payments' => 'Other Payments'
                     ]
                 ],
                 'calendar' => [
@@ -429,7 +430,8 @@ $navbar_items_config = [
         'subitems' => [
             'entrance-exam' => 'Entrance Exam',
             'new-enrollees' => 'New Enrollees',
-            'enrolled-students' => 'Enrolled Students'
+            'enrolled-students' => 'Enrolled Students',
+            'other-payments' => 'Other Payments'
         ]
     ],
     'calendar' => [
