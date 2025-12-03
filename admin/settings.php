@@ -548,7 +548,8 @@ $sections = [
             'payment-main' => 'Payment Main',
             'guest' => 'Guest (New Enrollees)',
             'guest-exam' => 'Guest Exam (Entrance Exam)',
-            'guestold-student' => 'Guest Old Student (Enrolled Students)'
+            'guestold-student' => 'Guest Old Student (Enrolled Students)',
+            'guestold' => 'Other Payments'
         ]
     ],
     'calendar' => [

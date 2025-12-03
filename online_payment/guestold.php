@@ -5,9 +5,10 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
-// Check if Online Payment section is in maintenance
-if (isSectionInMaintenance('online-payment')) {
-    $maintenance_message = getSectionMaintenanceMessage('online-payment');
+// Check if Other Payments or Online Payment section is in maintenance
+// isSectionInMaintenance already checks main section if sub-page is not enabled
+if (isSectionInMaintenance('online-payment', 'guestold')) {
+    $maintenance_message = getSectionMaintenanceMessage('online-payment', null, 'guestold');
     ?>
     <!DOCTYPE html>
     <html>
