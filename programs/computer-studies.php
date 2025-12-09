@@ -360,6 +360,19 @@ include '../app/includes/header.php';
                 </div>
                 
                 <aside class="content-sidebar">
+                    <div class="sidebar-widget facebook-widget">
+                        <a href="https://www.facebook.com/UPHSLComputerStudies" target="_blank" rel="noopener" class="facebook-header">
+                            <h3 class="facebook-title">
+                                <i class="fab fa-facebook"></i>
+                                Follow Us on Facebook
+                            </h3>
+                            <p class="facebook-subtitle">Stay connected with our latest updates</p>
+                        </a>
+                        <div class="facebook-embed">
+                            <div class="fb-page" data-href="https://www.facebook.com/UPHSLComputerStudies" data-tabs="timeline" data-width="" data-height="500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
+                        </div>
+                    </div>
+                    
                     <div class="sidebar-widget">
                         <h3>Program Details</h3>
                         <ul>
@@ -412,6 +425,100 @@ include '../app/includes/header.php';
             </div>
         </div>
     </main>
+
+<style>
+/* Facebook Widget Styling for Sidebar */
+.facebook-widget {
+    padding: 0 !important;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.facebook-header {
+    display: block;
+    background: linear-gradient(135deg, #1877f2 0%, #0d5dbf 100%);
+    padding: 1.5rem;
+    border-radius: 12px 12px 0 0;
+    text-align: center;
+    text-decoration: none;
+    color: white !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.facebook-header:hover {
+    background: linear-gradient(135deg, #166fe5 0%, #0c5bb8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+    color: white !important;
+    text-decoration: none;
+}
+
+.facebook-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: white !important;
+}
+
+.facebook-title i {
+    font-size: 1.4rem;
+    color: white !important;
+}
+
+.facebook-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    color: white !important;
+}
+
+.facebook-embed {
+    background: white;
+    padding: 1rem;
+    border-radius: 0 0 12px 12px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure FB widget doesn't overflow container */
+.facebook-embed .fb-page,
+.facebook-embed .fb-page > span,
+.facebook-embed .fb-page iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .facebook-header {
+        padding: 1.2rem;
+    }
+    
+    .facebook-title {
+        font-size: 1.1rem;
+    }
+    
+    .facebook-title i {
+        font-size: 1.3rem;
+    }
+    
+    .facebook-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .facebook-embed {
+        padding: 0.75rem;
+        min-height: 350px;
+    }
+}
+</style>
 
 <?php
 // Include footer
