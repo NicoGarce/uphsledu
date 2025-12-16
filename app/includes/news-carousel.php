@@ -41,15 +41,19 @@ if ($categoryId) {
 <?php if (!empty($category_posts)): ?>
     <section class="news-section" style="padding: 60px 0; background: #f8f9fa;">
         <div class="container">
+            <?php if (!empty($sectionTitle)): ?>
             <div class="section-header">
                 <h2 class="section-title">
                     <i class="fas fa-newspaper"></i>
                     <?php echo htmlspecialchars($sectionTitle); ?>
                 </h2>
+                <?php if (!empty($sectionDescription)): ?>
                 <p class="section-description">
                     <?php echo htmlspecialchars($sectionDescription); ?>
                 </p>
+                <?php endif; ?>
             </div>
+            <?php endif; ?>
             
             <div class="news-layout" style="display: grid; grid-template-columns: <?php echo isset($facebookLink) && !empty($facebookLink) ? '2fr 1fr' : '1fr'; ?>; gap: 2rem; align-items: start;">
                 <div class="news-content">

@@ -499,13 +499,376 @@ body {
         </div>
     </section>
 
-    <!-- News Carousel Section -->
-    <?php
-    $categoryId = 'Research'; // Pass category name, component will look it up
-    $sectionTitle = 'Research News & Updates';
-    $sectionDescription = 'Stay updated with the latest news and announcements from the Research department.';
-    include '../app/includes/news-carousel.php';
-    ?>
+    <!-- News Carousel and Video Section -->
+    <section class="news-video-section">
+        <div class="container">
+            <!-- Shared Section Header -->
+            <div class="section-header">
+                <h2 class="section-title">Research News & Updates</h2>
+                <p class="section-description">
+                    Stay updated with the latest news and announcements from the Research department.
+                </p>
+            </div>
+            
+            <div class="news-video-layout" id="newsVideoLayout">
+                <!-- IRC 2025 Video -->
+                <div class="video-wrapper">
+                    <div class="video-container">
+                        <div class="video-header">
+                            <h3 class="video-title">International Conference on Multidisciplinary Research for Sustainable Development Goals</h3>
+                            <p class="video-subtitle">Advancing Knowledge Frontiers for a Sustainable Future</p>
+                        </div>
+                        <div class="video-player">
+                            <video controls autoplay muted loop playsinline>
+                                <source src="<?php echo $base_path; ?>assets/video/IRC 2025.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- News Carousel -->
+                <div class="news-carousel-wrapper" id="newsCarouselWrapper">
+                    <?php
+                    $categoryId = 'Research'; // Pass category name, component will look it up
+                    $sectionTitle = ''; // Empty to hide duplicate header
+                    $sectionDescription = ''; // Empty to hide duplicate description
+                    include '../app/includes/news-carousel.php';
+                    ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+    /* News and Video Layout */
+    .news-video-section {
+        padding: 60px 0;
+        background: #f8f9fa;
+    }
+    
+    .news-video-section .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+        position: relative;
+    }
+    
+    .news-video-section .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 15px;
+        position: relative;
+        display: block;
+        text-align: center;
+    }
+    
+    .news-video-section .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--alt-color-1));
+        border-radius: 2px;
+    }
+    
+    .news-video-section .section-description {
+        font-size: 1.2rem;
+        color: var(--text-light);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+        text-align: center;
+    }
+    
+    .news-video-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    /* Override news-section styling when inside our layout */
+    .news-video-layout .news-section {
+        padding: 0 !important;
+        background: transparent !important;
+    }
+    
+    /* Hide the duplicate section header from news-carousel.php */
+    .news-video-layout .news-section .section-header {
+        display: none;
+    }
+    
+    .news-carousel-wrapper {
+        width: 100%;
+        min-height: 100px;
+        overflow: hidden;
+    }
+    
+    /* Ensure news carousel maintains proper aspect ratio */
+    .news-carousel-wrapper .news-carousel-container {
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .news-carousel-wrapper .news-carousel {
+        width: 100%;
+        aspect-ratio: 16 / 9; /* Maintain proper aspect ratio for carousel */
+    }
+    
+    /* Hide news section container padding since we're in a custom layout */
+    .news-carousel-wrapper .news-section .container {
+        padding: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    .news-carousel-wrapper .news-section {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .news-carousel-wrapper .news-layout {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .news-carousel-wrapper .news-content {
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .video-wrapper {
+        width: 100%;
+        order: -1; /* Place video first (above news) */
+    }
+    
+    .video-container {
+        background: white;
+        border-radius: 20px;
+        padding: 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: box-shadow 0.3s ease;
+        overflow: hidden;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .video-container:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .video-header {
+        padding: 2rem 2rem 1.5rem 2rem;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .video-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.3px;
+        line-height: 1.4;
+        font-family: inherit;
+    }
+    
+    .video-subtitle {
+        font-size: 0.95rem;
+        color: #888;
+        margin: 0;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        font-style: italic;
+        font-family: inherit;
+    }
+    
+    .video-player {
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        background: transparent;
+    }
+    
+    .video-player video {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    
+    /* When news carousel is hidden/empty, video takes full width */
+    .news-video-layout.news-hidden {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .news-video-layout {
+            gap: 2.5rem;
+        }
+        
+        .video-header {
+            padding: 1.5rem 1.5rem 1rem 1.5rem;
+        }
+        
+        .video-title {
+            font-size: 1.15rem;
+            line-height: 1.4;
+        }
+        
+        .video-subtitle {
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .news-video-section {
+            padding: 40px 0 !important;
+        }
+        
+        .news-video-section .section-title {
+            font-size: 2rem;
+        }
+        
+        .news-video-section .section-description {
+            font-size: 1rem;
+        }
+        
+        .news-video-layout {
+            gap: 2rem;
+        }
+        
+        .news-video-section .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .video-container {
+            border-radius: 16px;
+        }
+        
+        .video-header {
+            padding: 1.25rem 1.25rem 0.875rem 1.25rem;
+        }
+        
+        .video-title {
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+        
+        .video-subtitle {
+            font-size: 0.85rem;
+        }
+        
+        /* Fix news carousel alignment on mobile */
+        .news-carousel-wrapper .news-carousel-container {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        
+        .news-carousel-wrapper .news-section .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .news-video-section {
+            padding: 30px 0 !important;
+        }
+        
+        .news-video-section .section-title {
+            font-size: 1.75rem;
+        }
+        
+        .news-video-section .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .video-container {
+            border-radius: 12px;
+        }
+        
+        .video-header {
+            padding: 1rem 1rem 0.75rem 1rem;
+        }
+        
+        .video-title {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        
+        .video-subtitle {
+            font-size: 0.8rem;
+        }
+        
+        /* Fix news carousel alignment on small mobile */
+        .news-carousel-wrapper .news-carousel-container {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        
+        .news-carousel-wrapper .news-section .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+    }
+    </style>
+    
+    <script>
+    // Adjust layout when news carousel is hidden
+    document.addEventListener('DOMContentLoaded', function() {
+        const layout = document.getElementById('newsVideoLayout');
+        const newsWrapper = document.getElementById('newsCarouselWrapper');
+        
+        function checkNewsVisibility() {
+            if (!layout || !newsWrapper) return;
+            
+            const newsSection = newsWrapper.querySelector('.news-section');
+            
+            // Check if news section exists and is visible
+            if (!newsSection || newsSection.offsetParent === null || newsSection.style.display === 'none') {
+                // News carousel is hidden - video takes full width
+                layout.classList.add('news-hidden');
+            } else {
+                // News carousel is visible - stacked layout
+                layout.classList.remove('news-hidden');
+            }
+        }
+        
+        // Check on load (with a small delay to ensure DOM is ready)
+        setTimeout(checkNewsVisibility, 100);
+        
+        // Check on resize
+        window.addEventListener('resize', checkNewsVisibility);
+        
+        // Use MutationObserver to watch for changes in news section visibility
+        if (newsWrapper) {
+            const observer = new MutationObserver(function() {
+                checkNewsVisibility();
+            });
+            
+            observer.observe(newsWrapper, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['style', 'class']
+            });
+        }
+    });
+    </script>
 
     <!-- Mission and Vision Section -->
     <section class="content-section mission-vision-section">
