@@ -42,13 +42,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $publishedDate = $_POST['published_date'];
         
         try {
+            // Generate new slug based on updated title
+            $slug = generateUniqueSlug($title, 'posts', $postId);
+            
             $stmt = $pdo->prepare("
                 UPDATE posts 
-                SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?
+                SET title = ?, slug = ?, content = ?, excerpt = ?, status = ?, published_at = ?
                 WHERE id = ?
             ");
-            $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $postId]);
-            $success = "Post updated successfully!";
+            $stmt->execute([$title, $slug, $content, $excerpt, $status, $publishedDate, $postId]);
+            $success = "Post Updated Successfully";
         } catch (PDOException $e) {
             $error = "Error updating post: " . $e->getMessage();
         }

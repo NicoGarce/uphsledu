@@ -177,23 +177,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("Transaction started");
             
             if ($isEdit && $postId > 0) {
+                // Generate new slug based on updated title
+                $slug = generateUniqueSlug($title, 'posts', $postId);
+                
                 // Update existing post - different query based on user role
                 if (isAuthor()) {
                     // Authors can only update their own posts
                     $stmt = $pdo->prepare("
                         UPDATE posts 
-                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, category_id = ?, updated_at = CURRENT_TIMESTAMP 
+                        SET title = ?, slug = ?, content = ?, excerpt = ?, status = ?, published_at = ?, category_id = ?, updated_at = CURRENT_TIMESTAMP 
                         WHERE id = ? AND author_id = ?
                     ");
-                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $categoryId, $postId, $_SESSION['user_id']]);
+                    $stmt->execute([$title, $slug, $content, $excerpt, $status, $publishedDate, $categoryId, $postId, $_SESSION['user_id']]);
                 } else {
                     // Admins and Super Admins can update any post
                     $stmt = $pdo->prepare("
                         UPDATE posts 
-                        SET title = ?, content = ?, excerpt = ?, status = ?, published_at = ?, category_id = ?, updated_at = CURRENT_TIMESTAMP 
+                        SET title = ?, slug = ?, content = ?, excerpt = ?, status = ?, published_at = ?, category_id = ?, updated_at = CURRENT_TIMESTAMP 
                         WHERE id = ?
                     ");
-                    $stmt->execute([$title, $content, $excerpt, $status, $publishedDate, $categoryId, $postId]);
+                    $stmt->execute([$title, $slug, $content, $excerpt, $status, $publishedDate, $categoryId, $postId]);
                 }
                 
                 if ($stmt->rowCount() === 0) {
@@ -352,7 +355,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Set success message and redirect to post management
             if ($isEdit) {
-                $successMsg = urlencode('Post updated successfully!');
+                $successMsg = urlencode('Post Updated Successfully');
             } else {
                 $successMsg = urlencode('Post created successfully!');
             }
