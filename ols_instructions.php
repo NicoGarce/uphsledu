@@ -632,6 +632,72 @@ include 'app/includes/header.php';
                                             </div>
                                         </div>
                                         
+                                        <h4>GTI Online Grades Access Troubleshooting:</h4>
+                                        <div class="troubleshooting-section">
+                                            <p style="margin-bottom: 1rem; color: #666; font-size: 0.95rem;"><i class="fas fa-info-circle"></i> Click on the image below to view in full screen</p>
+                                            <div class="gti-troubleshooting-guide">
+                                                <div class="gti-troubleshooting-image">
+                                                    <img src="assets/images/GTI/GTI TS.jpg" alt="GTI Online Grades Access Troubleshooting Guide" class="troubleshooting-image gti-modal-image" style="cursor: pointer; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                                </div>
+                                                
+                                                <div class="gti-troubleshooting-steps" style="margin-top: 2rem;">
+                                                    <h5><i class="fas fa-list-ol"></i> Step-by-Step Troubleshooting Guide:</h5>
+                                                    
+                                                    <div class="troubleshooting-step-card" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #2563eb;">
+                                                        <h6 style="margin-top: 0; margin-bottom: 0.75rem; color: #2563eb; font-size: 1.1rem;">
+                                                            <i class="fas fa-1"></i> Clear Cache from your browser's settings
+                                                        </h6>
+                                                        <ul style="margin-bottom: 0; padding-left: 1.5rem;">
+                                                            <li>Open your browser's settings menu</li>
+                                                            <li>Navigate to "Delete browsing data" or "Clear browsing data"</li>
+                                                            <li>Select "All time" from the time range dropdown</li>
+                                                            <li>Check the box for <strong>"Cached images and files"</strong></li>
+                                                            <li>Click "Delete data" to clear the cache</li>
+                                                        </ul>
+                                                        <p style="margin-top: 0.75rem; margin-bottom: 0; font-size: 0.9rem; color: #666; font-style: italic;">
+                                                            <i class="fas fa-info-circle"></i> This will free up storage space and may cause some sites to load more slowly on your next visit, but it will help resolve access issues with GTI.
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div class="troubleshooting-step-card" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #2563eb;">
+                                                        <h6 style="margin-top: 0; margin-bottom: 0.75rem; color: #2563eb; font-size: 1.1rem;">
+                                                            <i class="fas fa-2"></i> Close the browser you are using
+                                                        </h6>
+                                                        <ul style="margin-bottom: 0; padding-left: 1.5rem;">
+                                                            <li>Completely close all browser windows and tabs</li>
+                                                            <li>Make sure the browser application is fully closed (not just minimized)</li>
+                                                        </ul>
+                                                    </div>
+                                                    
+                                                    <div class="troubleshooting-step-card" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #2563eb;">
+                                                        <h6 style="margin-top: 0; margin-bottom: 0.75rem; color: #2563eb; font-size: 1.1rem;">
+                                                            <i class="fas fa-3"></i> Reopen the browser, then try to access the site via the link
+                                                        </h6>
+                                                        <ul style="margin-bottom: 0; padding-left: 1.5rem;">
+                                                            <li>Open your browser again</li>
+                                                            <li>Navigate to: <a href="http://gti-binan.uphsl.edu.ph:8339" target="_blank" style="color: #2563eb; font-weight: 600;">http://gti-binan.uphsl.edu.ph:8339</a></li>
+                                                            <li>Alternatively, scan the QR code shown in the troubleshooting guide above with your mobile device to access the GTI portal directly</li>
+                                                            <li>Enter your login credentials and try accessing your grades again</li>
+                                                        </ul>
+                                                    </div>
+                                                    
+                                                    <div class="troubleshooting-note" style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
+                                                        <p style="margin: 0; color: #856404;">
+                                                            <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> If you continue to experience issues after following these steps, please contact the ITS Office for further assistance.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- GTI Troubleshooting Image Modal -->
+                                        <div id="gti-modal" class="gallery-modal">
+                                            <span class="gallery-close">&times;</span>
+                                            <div class="gallery-modal-content">
+                                                <img id="gti-modal-image" src="assets/images/GTI/GTI TS.jpg" alt="GTI Online Grades Access Troubleshooting Guide">
+                                            </div>
+                                        </div>
+                                        
                                         <h4>Account Access Problems:</h4>
                                         <div class="access-issues">
                                             <div class="access-issue">
@@ -725,19 +791,66 @@ include 'app/includes/header.php';
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabPanes = document.querySelectorAll('.tab-pane');
             
+            // Function to switch to a specific tab
+            function switchToTab(tabName) {
+                // Remove active class from all buttons and panes
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                
+                // Find and activate the target tab button
+                const targetButton = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
+                const targetPane = document.getElementById(tabName + '-tab');
+                
+                if (targetButton && targetPane) {
+                    targetButton.classList.add('active');
+                    targetPane.classList.add('active');
+                    
+                    // Scroll to tabs section smoothly
+                    const tabsContainer = document.querySelector('.tabs-container');
+                    if (tabsContainer) {
+                        tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    return true;
+                }
+                return false;
+            }
+            
+            // Check URL hash on page load
+            function checkUrlHash() {
+                const hash = window.location.hash.substring(1); // Remove the # symbol
+                if (hash) {
+                    // Valid tab names
+                    const validTabs = ['gti', 'moodle', 'google', 'microsoft', 'payment', 'troubleshooting'];
+                    if (validTabs.includes(hash)) {
+                        switchToTab(hash);
+                    }
+                }
+            }
+            
+            // Handle tab button clicks
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const targetTab = this.getAttribute('data-tab');
                     
-                    // Remove active class from all buttons and panes
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    // Switch to the tab
+                    switchToTab(targetTab);
                     
-                    // Add active class to clicked button and corresponding pane
-                    this.classList.add('active');
-                    document.getElementById(targetTab + '-tab').classList.add('active');
+                    // Update URL hash without scrolling (we already scrolled in switchToTab)
+                    if (history.pushState) {
+                        history.pushState(null, null, '#' + targetTab);
+                    } else {
+                        window.location.hash = targetTab;
+                    }
                 });
             });
+            
+            // Handle browser back/forward buttons
+            window.addEventListener('hashchange', function() {
+                checkUrlHash();
+            });
+            
+            // Check hash on initial page load
+            checkUrlHash();
             
             // Gallery Modal Functionality
             const galleryImages = document.querySelectorAll('.gallery-image');
@@ -857,6 +970,43 @@ include 'app/includes/header.php';
                         showPrevImage();
                     }
                 }
+            }
+            
+            // GTI Troubleshooting Image Modal Functionality
+            const gtiModalImage = document.querySelector('.gti-modal-image');
+            const gtiModal = document.getElementById('gti-modal');
+            const gtiModalClose = gtiModal ? gtiModal.querySelector('.gallery-close') : null;
+            
+            if (gtiModalImage && gtiModal) {
+                // Make image clickable
+                gtiModalImage.addEventListener('click', function() {
+                    gtiModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                // Close modal
+                if (gtiModalClose) {
+                    gtiModalClose.addEventListener('click', function() {
+                        gtiModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    });
+                }
+                
+                // Close modal when clicking outside the image
+                gtiModal.addEventListener('click', function(e) {
+                    if (e.target === gtiModal) {
+                        gtiModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+                
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && gtiModal.style.display === 'flex') {
+                        gtiModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
             }
         });
     </script>
