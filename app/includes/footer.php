@@ -114,8 +114,9 @@
                         <?php 
                         $contact_email_primary = getSetting('contact_email_primary', 'marketing@uphsl.edu.ph');
                         $contact_email_secondary = getSetting('contact_email_secondary', 'info@uphsl.edu.ph');
+                        $contact_email_tertiary = getSetting('contact_email_tertiary', '');
                         ?>
-                        <?php if (!empty($contact_email_primary) || !empty($contact_email_secondary)): ?>
+                        <?php if (!empty($contact_email_primary) || !empty($contact_email_secondary) || !empty($contact_email_tertiary)): ?>
                         <div class="contact-item">
                             <h5>Email</h5>
                             <ul class="email-links">
@@ -124,6 +125,9 @@
                                 <?php endif; ?>
                                 <?php if (!empty($contact_email_secondary)): ?>
                                 <li><a href="mailto:<?php echo htmlspecialchars($contact_email_secondary); ?>"><?php echo htmlspecialchars($contact_email_secondary); ?></a></li>
+                                <?php endif; ?>
+                                <?php if (!empty($contact_email_tertiary)): ?>
+                                <li><a href="mailto:<?php echo htmlspecialchars($contact_email_tertiary); ?>"><?php echo htmlspecialchars($contact_email_tertiary); ?></a></li>
                                 <?php endif; ?>
                             </ul>
                         </div>

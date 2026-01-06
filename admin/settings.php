@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'contact_phone' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_phone'] ?? '02-779-5310', 'string')],
             'contact_email_primary' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_email_primary'] ?? 'marketing@uphsl.edu.ph', 'email')],
             'contact_email_secondary' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_email_secondary'] ?? 'info@uphsl.edu.ph', 'email')],
+            'contact_email_tertiary' => ['type' => 'text', 'value' => Validator::sanitize($_POST['contact_email_tertiary'] ?? '', 'email')],
             'facebook_url' => ['type' => 'text', 'value' => Validator::sanitize($_POST['facebook_url'] ?? 'https://www.facebook.com/uphsl.info.ph', 'url')],
             'youtube_url' => ['type' => 'text', 'value' => Validator::sanitize($_POST['youtube_url'] ?? 'https://www.youtube.com/@uphsltv1397', 'url')],
             'instagram_url' => ['type' => 'text', 'value' => Validator::sanitize($_POST['instagram_url'] ?? 'https://www.instagram.com/uphs.laguna', 'url')],
@@ -357,6 +358,7 @@ $contact_address = getSetting('contact_address', 'UPH Compound, National Highway
 $contact_phone = getSetting('contact_phone', '02-779-5310');
 $contact_email_primary = getSetting('contact_email_primary', 'marketing@uphsl.edu.ph');
 $contact_email_secondary = getSetting('contact_email_secondary', 'info@uphsl.edu.ph');
+$contact_email_tertiary = getSetting('contact_email_tertiary', '');
 $facebook_url = getSetting('facebook_url', 'https://www.facebook.com/uphsl.info.ph');
 $youtube_url = getSetting('youtube_url', 'https://www.youtube.com/@uphsltv1397');
 $instagram_url = getSetting('instagram_url', 'https://www.instagram.com/uphs.laguna');
@@ -723,6 +725,15 @@ foreach ($sections as $key => $section) {
                         </label>
                         <input type="email" name="contact_email_secondary" id="contact_email_secondary" class="form-input" value="<?php echo XSS::escapeAttr($contact_email_secondary); ?>">
                         <small class="form-help">Secondary contact email address (e.g., info@uphsl.edu.ph).</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact_email_tertiary" class="form-label">
+                            <i class="fas fa-envelope-square"></i>
+                            Tertiary Email
+                        </label>
+                        <input type="email" name="contact_email_tertiary" id="contact_email_tertiary" class="form-input" value="<?php echo XSS::escapeAttr($contact_email_tertiary); ?>">
+                        <small class="form-help">Tertiary contact email address (optional).</small>
                     </div>
                     
                     <div class="form-group" id="contact-password-verification-group" style="display: none;">
