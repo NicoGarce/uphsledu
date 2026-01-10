@@ -7,6 +7,7 @@
  * @description Redirects about/index.php to about.php
  */
 
+ 
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';

@@ -7,6 +7,7 @@
  * @description Contact information for the University of Perpetual Help System Laguna
  */
 
+ 
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';

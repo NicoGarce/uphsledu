@@ -7,6 +7,7 @@
  * @description University regulations, codes of conduct and policies for UPHSL
  */
 
+ 
 session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
