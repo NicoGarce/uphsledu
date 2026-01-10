@@ -22,7 +22,7 @@ if (isSectionInMaintenance('about', 'about-index') || isSectionInMaintenance('ab
         exit;
     }
 }
-
+// Update
 // Set page title
 $page_title = "About University of Perpetual Help System Laguna";
 
