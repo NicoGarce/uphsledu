@@ -17,6 +17,16 @@ if (ini_get("session.use_cookies")) {
 // Destroy the session
 session_destroy();
 
+// Clear JWT cookie if present
+$isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+setcookie('access_token', '', [
+    'expires' => time() - 3600,
+    'path' => '/',
+    'secure' => $isSecure,
+    'httponly' => true,
+    'samesite' => 'Strict'
+]);
+
 // Set logout message
 session_start();
 setFlashMessage('success', 'You have been successfully logged out.');

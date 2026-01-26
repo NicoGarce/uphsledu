@@ -9,6 +9,7 @@
 
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
+require_once __DIR__ . '/jwt.php';
 
 // Redirect if already logged in
 if (isLoggedIn()) {
@@ -57,8 +58,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['first_name'] = $user['first_name'];
                     
+                    // Generate JWT and set as HttpOnly cookie (for API usage)
+                    $jwtToken = generate_jwt_for_user($user, 3600);
+                    $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+                    // PHP 7.3+ options array for setcookie
+                    $cookieOptions = [
+                        'expires' => time() + 3600,
+                        'path' => '/',
+                        'secure' => $isSecure,
+                        'httponly' => true,
+                        'samesite' => 'Strict'
+                    ];
+                    setcookie('access_token', $jwtToken, $cookieOptions);
+
                     setFlashMessage('success', 'Welcome back, ' . $user['first_name'] . '!');
-                    
+
+                    // If this is an AJAX/API request, return JSON with token
+                    $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ||
+                              (!empty($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
+
+                    if ($isAjax) {
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'success' => true,
+                            'token' => $jwtToken,
+                            'user' => [
+                                'id' => $user['id'],
+                                'username' => $user['username'],
+                                'first_name' => $user['first_name'],
+                                'role' => $user['role']
+                            ]
+                        ]);
+                        exit();
+                    }
+
                     // Redirect based on user role
                     if ($user['role'] === 'author') {
                         redirect('../admin/author-dashboard.php');
