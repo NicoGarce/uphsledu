@@ -68,66 +68,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['export'])) {
     }
     
     if ($exportType === 'full_sql') {
-        // Export full database as SQL
+        // Stream full database as SQL to avoid memory exhaustion
+        set_time_limit(0);
+        @ini_set('memory_limit', '-1');
+
         $prefix = ($dbSource === 'online_payment') ? 'online_payment_backup' : 'uphsledu_backup';
         $filename = $prefix . '_' . date('Y-m-d_His') . '.sql';
-        
+
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
-        
-        $output = "-- UPHSL Database Backup\n";
-        $output .= "-- Generated: " . date('Y-m-d H:i:s') . "\n";
-        $output .= "-- Database: " . $dbName . "\n\n";
-        $output .= "SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";\n";
-        $output .= "SET time_zone = \"+00:00\";\n\n";
-        
-        // Get all tables
-        $tables = [];
-        $stmt = $pdo_export->query("SHOW TABLES");
-        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-            $tables[] = $row[0];
-        }
-        
-        foreach ($tables as $table) {
-            // Get table structure
-            $output .= "\n-- --------------------------------------------------------\n";
-            $output .= "-- Table structure for table `$table`\n";
-            $output .= "-- --------------------------------------------------------\n\n";
-            $output .= "DROP TABLE IF EXISTS `$table`;\n";
-            
-            $stmt = $pdo_export->query("SHOW CREATE TABLE `$table`");
-            $createTable = $stmt->fetch(PDO::FETCH_ASSOC);
-            $output .= $createTable['Create Table'] . ";\n\n";
-            
-            // Get table data
-            $output .= "-- Dumping data for table `$table`\n\n";
-            
-            $stmt = $pdo_export->query("SELECT * FROM `$table`");
-            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            if (count($rows) > 0) {
-                $columns = array_keys($rows[0]);
-                $columnList = '`' . implode('`, `', $columns) . '`';
-                
-                foreach ($rows as $row) {
+
+        try {
+            echo "-- UPHSL Database Backup\n";
+            echo "-- Generated: " . date('Y-m-d H:i:s') . "\n";
+            echo "-- Database: " . $dbName . "\n\n";
+            echo "SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";\n";
+            echo "SET time_zone = \"+00:00\";\n\n";
+
+            // Get all tables
+            $tables = [];
+            $stmt = $pdo_export->query("SHOW TABLES");
+            while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+                $tables[] = $row[0];
+            }
+
+            foreach ($tables as $table) {
+                // Table header
+                echo "\n-- --------------------------------------------------------\n";
+                echo "-- Table structure for table `$table`\n";
+                echo "-- --------------------------------------------------------\n\n";
+                echo "DROP TABLE IF EXISTS `$table`;\n";
+
+                // Show create table
+                $stmt = $pdo_export->query("SHOW CREATE TABLE `$table`");
+                $createRow = $stmt->fetch(PDO::FETCH_ASSOC);
+                $createSql = '';
+                if ($createRow) {
+                    if (isset($createRow['Create Table'])) {
+                        $createSql = $createRow['Create Table'];
+                    } else {
+                        // Fallback to numeric index
+                        $createRowNum = $stmt->fetch(PDO::FETCH_NUM);
+                        $createSql = $createRowNum[1] ?? '';
+                    }
+                }
+                if ($createSql) {
+                    echo $createSql . ";\n\n";
+                }
+
+                // Dump data rows streaming
+                echo "-- Dumping data for table `$table`\n\n";
+                $dataStmt = $pdo_export->query("SELECT * FROM `$table`", PDO::FETCH_ASSOC);
+                $first = true;
+                $columns = [];
+                while ($row = $dataStmt->fetch(PDO::FETCH_ASSOC)) {
+                    if ($first) {
+                        $columns = array_keys($row);
+                        $columnList = '`' . implode('`, `', $columns) . '`';
+                        $first = false;
+                    }
+
                     $values = [];
                     foreach ($row as $value) {
                         if ($value === null) {
                             $values[] = 'NULL';
                         } else {
-                            $value = $pdo_export->quote($value);
-                            $values[] = $value;
+                            $values[] = $pdo_export->quote($value);
                         }
                     }
-                    $output .= "INSERT INTO `$table` ($columnList) VALUES (" . implode(', ', $values) . ");\n";
+
+                    echo "INSERT INTO `$table` ($columnList) VALUES (" . implode(', ', $values) . ");\n";
+                    // Flush to output buffer so large exports don't accumulate
+                    if (function_exists('ob_flush')) { @ob_flush(); }
+                    if (function_exists('flush')) { @flush(); }
                 }
+
+                echo "\n";
             }
-            $output .= "\n";
+
+            exit;
+        } catch (PDOException $e) {
+            error_log('Database export error: ' . $e->getMessage());
+            // If headers already sent, the browser will get partial response; still stop execution
+            header('HTTP/1.1 500 Internal Server Error');
+            echo 'An error occurred during export. Please check server logs or contact the administrator.';
+            exit;
         }
-        
-        echo $output;
-        exit;
-        
+
     } elseif ($exportType === 'table_sql' && $tableName) {
         // Export single table as SQL
         $prefix = ($dbSource === 'online_payment') ? 'online_payment' : 'uphsledu';
