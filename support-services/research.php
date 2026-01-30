@@ -502,31 +502,44 @@ body {
     <!-- News Carousel and Video Section -->
     <section class="news-video-section">
         <div class="container">
-            <!-- Shared Section Header -->
+            <!-- Shared Section Header 
             <div class="section-header">
                 <h2 class="section-title">Research News & Updates</h2>
                 <p class="section-description">
                     Stay updated with the latest news and announcements from the Research department.
                 </p>
-            </div>
+            </div>-->
             
             <div class="news-video-layout" id="newsVideoLayout">
-                <!-- IRC 2025 Video -->
-                <div class="video-wrapper">
-                    <div class="video-container">
-                        <div class="video-header">
-                            <h3 class="video-title">International Conference on Multidisciplinary Research for Sustainable Development Goals</h3>
-                            <p class="video-subtitle">Advancing Knowledge Frontiers for a Sustainable Future</p>
+                <div class="video-pdf-flex">
+                    <!-- IRC 2025 Video -->
+                    <div class="video-wrapper">
+                        <div class="video-container">
+                            <div class="video-header">
+                                <h3 class="video-title">International Conference on Multidisciplinary Research for Sustainable Development Goals</h3>
+                                <p class="video-subtitle">Advancing Knowledge Frontiers for a Sustainable Future</p>
+                            </div>
+                            <div class="video-player">
+                                <video controls autoplay muted loop playsinline>
+                                    <source src="<?php echo $base_path; ?>assets/video/IRC 2025.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
                         </div>
-                        <div class="video-player">
-                            <video controls autoplay muted loop playsinline>
-                                <source src="<?php echo $base_path; ?>assets/video/IRC 2025.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
+                    </div>
+                    <!-- PDF Preview: UPHSL Research Agenda -->
+                    <div class="pdf-preview-wrapper">
+                        <div class="pdf-preview-container">
+                            <div class="pdf-preview-header">
+                                <h3 class="pdf-preview-title">UPHSL Research Agenda</h3>
+                                <a href="<?php echo $base_path; ?>assets/documents/pdfs/UPHSL_Research_Agenda.pdf" target="_blank" class="pdf-download-link">Download PDF</a>
+                            </div>
+                            <div class="pdf-preview-frame">
+                                <iframe src="<?php echo $base_path; ?>assets/documents/pdfs/UPHSL_Research_Agenda.pdf#toolbar=1&navpanes=0&scrollbar=1" width="100%" height="500px" style="border:1px solid #ccc; border-radius:10px; min-height:350px;" allowfullscreen loading="lazy"></iframe>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
                 <!-- News Carousel -->
                 <div class="news-carousel-wrapper" id="newsCarouselWrapper">
                     <?php
@@ -590,6 +603,110 @@ body {
         gap: 3rem;
         max-width: 1200px;
         margin: 0 auto;
+    }
+    .video-pdf-flex {
+        display: flex;
+        flex-direction: row;
+        gap: 2.5rem;
+        width: 100%;
+        align-items: stretch;
+    }
+    .video-wrapper {
+        flex: 0 0 60%;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        height: 100%;
+    }
+    .pdf-preview-wrapper {
+        flex: 0 0 40%;
+        min-width: 0;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        overflow: hidden;
+    }
+    .pdf-preview-container {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        padding: 1.5rem 1rem 1rem 1rem;
+        width: 100%;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+    .pdf-preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .pdf-preview-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color, #2c5aa0);
+        margin: 0;
+    }
+    .pdf-download-link {
+        font-size: 0.95rem;
+        color: var(--secondary-color, #ffc63e);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+    .pdf-download-link:hover {
+        color: var(--primary-color, #2c5aa0);
+        text-decoration: underline;
+    }
+    .pdf-preview-frame {
+        width: 100%;
+        min-height: 350px;
+        margin-top: 0.5rem;
+        overflow: auto;
+    }
+    .pdf-preview-frame iframe {
+        border-radius: 12px;
+        width: 100%;
+        max-width: 100%;
+        display: block;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    @media (max-width: 1024px) {
+        .video-pdf-flex {
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .video-wrapper,
+        .pdf-preview-wrapper {
+            max-width: 100%;
+            flex-basis: 100% !important;
+        }
+        .pdf-preview-frame iframe {
+            height: 350px !important;
+        }
+    }
+    @media (max-width: 768px) {
+        .video-pdf-flex {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .pdf-preview-frame iframe {
+            height: 250px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .pdf-preview-container {
+            padding: 1rem 0.5rem 0.5rem 0.5rem;
+        }
+        .pdf-preview-frame iframe {
+            height: 180px !important;
+        }
     }
     
     /* Override news-section styling when inside our layout */
@@ -659,6 +776,7 @@ body {
         width: 100%;
         display: flex;
         flex-direction: column;
+        height: 100%;
     }
     
     .video-container:hover {
@@ -696,12 +814,19 @@ body {
         position: relative;
         overflow: hidden;
         background: transparent;
+        flex: 1 1 auto;
+        display: flex;
+        align-items: stretch;
+        height: 100%;
     }
     
     .video-player video {
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover;
         display: block;
+        border-radius: 0 0 20px 20px;
+        background: #000;
     }
     
     /* When news carousel is hidden/empty, video takes full width */
