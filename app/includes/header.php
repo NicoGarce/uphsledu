@@ -7,6 +7,13 @@
  * @description Common header template for all pages on the UPHSL website
  */
 
+// Prevent direct access to this include file: return a 404 and mark noindex
+if (isset($_SERVER['SCRIPT_FILENAME']) && realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'])) {
+    http_response_code(404);
+    header('X-Robots-Tag: noindex, nofollow', true);
+    exit;
+}
+
 // Include path configuration
 require_once __DIR__ . '/../config/paths.php';
 
