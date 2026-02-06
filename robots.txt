@@ -8,9 +8,6 @@ Disallow: /uploads/
 Disallow: /online_payment/
 Disallow: /deploy-to-production.php
 Disallow: /ols_instructions.php
-Disallow: /app/
-Disallow: /app/includes/
-Disallow: /app/config/
 
 # Allow main pages
 Allow: /

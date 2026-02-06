@@ -7,13 +7,6 @@
  * @description Common header template for all pages on the UPHSL website
  */
 
-// Prevent direct access to this include file: return a 404 and mark noindex
-if (isset($_SERVER['SCRIPT_FILENAME']) && realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'])) {
-    http_response_code(404);
-    header('X-Robots-Tag: noindex, nofollow', true);
-    exit;
-}
-
 // Include path configuration
 require_once __DIR__ . '/../config/paths.php';
 
@@ -1225,7 +1218,7 @@ $navbar_items_config = [
                     
                     <?php if (isNavbarItemVisible('programs')): ?>
                     <div class="nav-item dropdown">
-                        <a href="<?php echo $base_path; ?>programs.php" class="nav-link dropdown-toggle <?php 
+                        <a href="<?php echo $base_path; ?>programs/" class="nav-link dropdown-toggle <?php 
                             $is_programs_active = ($current_page == 'programs' || strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school']));
                             echo $is_programs_active ? 'active' : '';
                         ?>" style="<?php echo $is_programs_active ? 'background: rgba(255, 198, 62, 0.2) !important; color: #ffc63e !important;' : ''; ?>">Programs <i class="fas fa-chevron-down desktop-chevron"></i></a>
@@ -1242,49 +1235,49 @@ $navbar_items_config = [
                                     <a href="#" class="dropdown-link dropdown-parent">Basic Education <i class="fas fa-chevron-down submenu-chevron"></i></a>
                                     <div class="submenu-dropdown">
                                         <?php if (isNavbarItemVisible('programs', 'senior-high-school')): ?>
-                                        <a href="<?php echo $base_path; ?>programs/senior-high-school.php" class="submenu-link <?php echo ($current_page == 'senior-high-school') ? 'active' : ''; ?>">Senior High School</a>
+                                        <a href="<?php echo $base_path; ?>programs/senior-high-school/" class="submenu-link <?php echo ($current_page == 'senior-high-school') ? 'active' : ''; ?>">Senior High School</a>
                                         <?php endif; ?>
                                         <?php if (isNavbarItemVisible('programs', 'junior-high-school')): ?>
-                                        <a href="<?php echo $base_path; ?>programs/junior-high-school.php" class="submenu-link <?php echo ($current_page == 'junior-high-school') ? 'active' : ''; ?>">Junior High School</a>
+                                        <a href="<?php echo $base_path; ?>programs/junior-high-school/" class="submenu-link <?php echo ($current_page == 'junior-high-school') ? 'active' : ''; ?>">Junior High School</a>
                                         <?php endif; ?>
                                         <?php if (isNavbarItemVisible('programs', 'grade-school')): ?>
-                                        <a href="<?php echo $base_path; ?>programs/grade-school.php" class="submenu-link <?php echo ($current_page == 'grade-school') ? 'active' : ''; ?>">Grade School</a>
+                                        <a href="<?php echo $base_path; ?>programs/grade-school/" class="submenu-link <?php echo ($current_page == 'grade-school') ? 'active' : ''; ?>">Grade School</a>
                                         <?php endif; ?>
                                     </div>
                                 </div>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'aviation')): ?>
-                                <a href="<?php echo $base_path; ?>programs/aviation.php" class="dropdown-link <?php echo ($current_page == 'aviation') ? 'active' : ''; ?>">Aviation</a>
+                                <a href="<?php echo $base_path; ?>programs/aviation/" class="dropdown-link <?php echo ($current_page == 'aviation') ? 'active' : ''; ?>">Aviation</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'arts-sciences')): ?>
-                                <a href="<?php echo $base_path; ?>programs/arts-sciences.php" class="dropdown-link <?php echo ($current_page == 'arts-sciences') ? 'active' : ''; ?>">Arts & Sciences</a>
+                                <a href="<?php echo $base_path; ?>programs/arts-sciences/" class="dropdown-link <?php echo ($current_page == 'arts-sciences') ? 'active' : ''; ?>">Arts & Sciences</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'business-accountancy')): ?>
-                                <a href="<?php echo $base_path; ?>programs/business-accountancy.php" class="dropdown-link <?php echo ($current_page == 'business-accountancy') ? 'active' : ''; ?>">Business & Accountancy</a>
+                                <a href="<?php echo $base_path; ?>programs/business-accountancy/" class="dropdown-link <?php echo ($current_page == 'business-accountancy') ? 'active' : ''; ?>">Business & Accountancy</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'computer-studies')): ?>
-                                <a href="<?php echo $base_path; ?>programs/computer-studies.php" class="dropdown-link <?php echo ($current_page == 'computer-studies') ? 'active' : ''; ?>">Computer Studies</a>
+                                <a href="<?php echo $base_path; ?>programs/computer-studies/" class="dropdown-link <?php echo ($current_page == 'computer-studies') ? 'active' : ''; ?>">Computer Studies</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'criminology')): ?>
-                                <a href="<?php echo $base_path; ?>programs/criminology.php" class="dropdown-link <?php echo ($current_page == 'criminology') ? 'active' : ''; ?>">Criminology</a>
+                                <a href="<?php echo $base_path; ?>programs/criminology/" class="dropdown-link <?php echo ($current_page == 'criminology') ? 'active' : ''; ?>">Criminology</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'education')): ?>
-                                <a href="<?php echo $base_path; ?>programs/education.php" class="dropdown-link <?php echo ($current_page == 'education') ? 'active' : ''; ?>">Education</a>
+                                <a href="<?php echo $base_path; ?>programs/education/" class="dropdown-link <?php echo ($current_page == 'education') ? 'active' : ''; ?>">Education</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'engineering-architecture')): ?>
-                                <a href="<?php echo $base_path; ?>programs/engineering-architecture.php" class="dropdown-link <?php echo ($current_page == 'engineering-architecture') ? 'active' : ''; ?>">Engineering & Architecture</a>
+                                <a href="<?php echo $base_path; ?>programs/engineering-architecture/" class="dropdown-link <?php echo ($current_page == 'engineering-architecture') ? 'active' : ''; ?>">Engineering & Architecture</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'hospitality-management')): ?>
-                                <a href="<?php echo $base_path; ?>programs/hospitality-management.php" class="dropdown-link <?php echo ($current_page == 'hospitality-management') ? 'active' : ''; ?>">International Hospitality Management</a>
+                                <a href="<?php echo $base_path; ?>programs/hospitality-management/" class="dropdown-link <?php echo ($current_page == 'hospitality-management') ? 'active' : ''; ?>">International Hospitality Management</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'maritime')): ?>
-                                <a href="<?php echo $base_path; ?>programs/maritime.php" class="dropdown-link <?php echo ($current_page == 'maritime') ? 'active' : ''; ?>">Maritime</a>
+                                <a href="<?php echo $base_path; ?>programs/maritime/" class="dropdown-link <?php echo ($current_page == 'maritime') ? 'active' : ''; ?>">Maritime</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'law')): ?>
-                                <a href="<?php echo $base_path; ?>programs/law.php" class="dropdown-link <?php echo ($current_page == 'law') ? 'active' : ''; ?>">Law/Juris Doctor</a>
+                                <a href="<?php echo $base_path; ?>programs/law/" class="dropdown-link <?php echo ($current_page == 'law') ? 'active' : ''; ?>">Law/Juris Doctor</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'graduate-school')): ?>
-                                <a href="<?php echo $base_path; ?>programs/graduate-school.php" class="dropdown-link <?php echo ($current_page == 'graduate-school') ? 'active' : ''; ?>">Graduate School</a>
+                                <a href="<?php echo $base_path; ?>programs/graduate-school/" class="dropdown-link <?php echo ($current_page == 'graduate-school') ? 'active' : ''; ?>">Graduate School</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -1303,8 +1296,8 @@ $navbar_items_config = [
                                 </div>
                             <?php else: ?>
                                 <?php if (isNavbarItemVisible('online-services', 'instructions')): ?>
-                                <a href="<?php echo $base_path; ?>ols_instructions.php" class="dropdown-link <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Instructions</a>
-                                <?php endif; ?>
+                                    <a href="<?php echo $base_path; ?>ols_instructions/" class="dropdown-link <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Instructions</a>
+                                    <?php endif; ?>
                                 <?php if (isNavbarItemVisible('online-services', 'gti-online-grades')): ?>
                                 <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">GTI Online Grades</a>
                                 <?php endif; ?>
@@ -1340,28 +1333,28 @@ $navbar_items_config = [
                                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="dropdown-link">Alumni</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'careers')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/careers.php" class="dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
+                                <a href="<?php echo $base_path; ?>support-services/careers/" class="dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'clinic')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/clinic.php" class="dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
+                                <a href="<?php echo $base_path; ?>support-services/clinic/" class="dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'cod')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/cod.php" class="dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
+                                <a href="<?php echo $base_path; ?>support-services/cod/" class="dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'iea')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/iea.php" class="dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
+                                <a href="<?php echo $base_path; ?>support-services/iea/" class="dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'sps')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/sps.php" class="dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Student Personnel Services</a>
+                                <a href="<?php echo $base_path; ?>support-services/sps/" class="dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Student Personnel Services</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'library')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/library.php" class="dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>
+                                <a href="<?php echo $base_path; ?>support-services/library/" class="dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'quality-assurance')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/quality-assurance.php" class="dropdown-link <?php echo ($current_page == 'quality-assurance') ? 'active' : ''; ?>">Quality Assurance</a>
+                                <a href="<?php echo $base_path; ?>support-services/quality-assurance/" class="dropdown-link <?php echo ($current_page == 'quality-assurance') ? 'active' : ''; ?>">Quality Assurance</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'research')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/research.php" class="dropdown-link <?php echo ($current_page == 'research') ? 'active' : ''; ?>">Research</a>
+                                <a href="<?php echo $base_path; ?>support-services/research/" class="dropdown-link <?php echo ($current_page == 'research') ? 'active' : ''; ?>">Research</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -1370,7 +1363,7 @@ $navbar_items_config = [
                     
                     <?php if (isNavbarItemVisible('campuses')): ?>
                     <div class="nav-item">
-                        <a href="<?php echo $base_path; ?>campuses.php" class="nav-link <?php echo ($current_page == 'campuses') ? 'active' : ''; ?>">Campuses</a>
+                        <a href="<?php echo $base_path; ?>campuses/" class="nav-link <?php echo ($current_page == 'campuses') ? 'active' : ''; ?>">Campuses</a>
                     </div>
                     <?php endif; ?>
                     
@@ -1389,16 +1382,16 @@ $navbar_items_config = [
                                 <a href="<?php echo $base_path; ?>about" class="dropdown-link <?php echo ($current_page == 'about') ? 'active' : ''; ?>">About Us</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('about', 'contact')): ?>
-                                <a href="<?php echo $base_path; ?>about/contact.php" class="dropdown-link <?php echo ($current_page == 'contact') ? 'active' : ''; ?>">Contact Us</a>
+                                <a href="<?php echo $base_path; ?>about/contact/" class="dropdown-link <?php echo ($current_page == 'contact') ? 'active' : ''; ?>">Contact Us</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('about', 'environmental-policy')): ?>
-                                <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="dropdown-link <?php echo ($current_page == 'environmental-policy') ? 'active' : ''; ?>">Environmental Policy</a>
+                                <a href="<?php echo $base_path; ?>about/environmental-policy/" class="dropdown-link <?php echo ($current_page == 'environmental-policy') ? 'active' : ''; ?>">Environmental Policy</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('about', 'university-policy')): ?>
-                                <a href="<?php echo $base_path; ?>about/university-policy.php" class="dropdown-link <?php echo ($current_page == 'university-policy') ? 'active' : ''; ?>">University Policy</a>
+                                <a href="<?php echo $base_path; ?>about/university-policy/" class="dropdown-link <?php echo ($current_page == 'university-policy') ? 'active' : ''; ?>">University Policy</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('about', 'map')): ?>
-                                <a href="<?php echo $base_path; ?>about/map.php" class="dropdown-link <?php echo ($current_page == 'map') ? 'active' : ''; ?>">Map</a>
+                                <a href="<?php echo $base_path; ?>about/map/" class="dropdown-link <?php echo ($current_page == 'map') ? 'active' : ''; ?>">Map</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -1445,10 +1438,10 @@ $navbar_items_config = [
                                 </div>
                             <?php else: ?>
                                 <?php if (isNavbarItemVisible('calendar', 'college-academic-calendar')): ?>
-                                <a href="<?php echo $base_path; ?>calendar/college-academic-calendar.php" class="dropdown-link <?php echo ($current_page == 'college-academic-calendar') ? 'active' : ''; ?>">College Academic Calendar</a>
+                                <a href="<?php echo $base_path; ?>calendar/college-academic-calendar/" class="dropdown-link <?php echo ($current_page == 'college-academic-calendar') ? 'active' : ''; ?>">College Academic Calendar</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('calendar', 'bed-shs-academic-calendar')): ?>
-                                <a href="<?php echo $base_path; ?>calendar/bed-shs-academic-calendar.php" class="dropdown-link <?php echo ($current_page == 'bed-shs-academic-calendar') ? 'active' : ''; ?>">BED & SHS Academic Calendar</a>
+                                <a href="<?php echo $base_path; ?>calendar/bed-shs-academic-calendar/" class="dropdown-link <?php echo ($current_page == 'bed-shs-academic-calendar') ? 'active' : ''; ?>">BED & SHS Academic Calendar</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -1501,7 +1494,7 @@ $navbar_items_config = [
                     ?>
                     <?php if (isNavbarItemVisible('sdg-initiatives')): ?>
                     <div class="nav-item dropdown">
-                        <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="nav-link dropdown-toggle <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <a href="<?php echo $base_path; ?>sdg-initiatives/" class="nav-link dropdown-toggle <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives <i class="fas fa-chevron-down desktop-chevron"></i></a>
                         <div class="dropdown-menu sdg-dropdown-menu">
                             <?php 
                             $sdg_subitems = isset($navbar_items_config['sdg-initiatives']) ? $navbar_items_config['sdg-initiatives'] : [];
@@ -1512,11 +1505,11 @@ $navbar_items_config = [
                             <?php else: ?>
                                 <?php for ($i = 1; $i <= 17; $i++): ?>
                                     <?php if (isNavbarItemVisible('sdg-initiatives', 'sdg-' . $i)): ?>
-                                    <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=<?php echo $i; ?>" class="dropdown-link">SDG <?php echo $i; ?>: <?php echo $sdgTitles[$i]; ?></a>
+                                    <a href="<?php echo $base_path; ?>sdg-initiatives/?sdg=<?php echo $i; ?>" class="dropdown-link">SDG <?php echo $i; ?>: <?php echo $sdgTitles[$i]; ?></a>
                                     <?php endif; ?>
                                 <?php endfor; ?>
                                 <?php if (isNavbarItemVisible('sdg-initiatives', 'sdg-full-report')): ?>
-                                <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=report" class="dropdown-link">SDG Full Report</a>
+                                <a href="<?php echo $base_path; ?>sdg-initiatives/?sdg=report" class="dropdown-link">SDG Full Report</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -1553,7 +1546,7 @@ $navbar_items_config = [
             
             <?php if (isNavbarItemVisible('programs')): ?>
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="<?php echo $base_path; ?>programs.php" class="mobile-nav-link mobile-dropdown-toggle <?php echo ($current_page == 'programs' || strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school'])) ? 'active' : ''; ?>">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="<?php echo $base_path; ?>programs/" class="mobile-nav-link mobile-dropdown-toggle <?php echo ($current_page == 'programs' || strpos($current_page, 'programs') !== false || in_array($current_page, ['senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school'])) ? 'active' : ''; ?>">Programs <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <?php 
                     $programs_subitems = isset($navbar_items_config['programs']) ? $navbar_items_config['programs'] : [];
@@ -1567,49 +1560,49 @@ $navbar_items_config = [
                             <a href="#" class="mobile-dropdown-link mobile-dropdown-parent">Basic Education <i class="fas fa-chevron-right mobile-submenu-chevron"></i></a>
                             <div class="mobile-submenu-dropdown">
                                 <?php if (isNavbarItemVisible('programs', 'senior-high-school')): ?>
-                                <a href="<?php echo $base_path; ?>programs/senior-high-school.php" class="mobile-submenu-link <?php echo ($current_page == 'senior-high-school') ? 'active' : ''; ?>">Senior High School</a>
+                                <a href="<?php echo $base_path; ?>programs/senior-high-school/" class="mobile-submenu-link <?php echo ($current_page == 'senior-high-school') ? 'active' : ''; ?>">Senior High School</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'junior-high-school')): ?>
-                                <a href="<?php echo $base_path; ?>programs/junior-high-school.php" class="mobile-submenu-link <?php echo ($current_page == 'junior-high-school') ? 'active' : ''; ?>">Junior High School</a>
+                                <a href="<?php echo $base_path; ?>programs/junior-high-school/" class="mobile-submenu-link <?php echo ($current_page == 'junior-high-school') ? 'active' : ''; ?>">Junior High School</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('programs', 'grade-school')): ?>
-                                <a href="<?php echo $base_path; ?>programs/grade-school.php" class="mobile-submenu-link <?php echo ($current_page == 'grade-school') ? 'active' : ''; ?>">Grade School</a>
+                                <a href="<?php echo $base_path; ?>programs/grade-school/" class="mobile-submenu-link <?php echo ($current_page == 'grade-school') ? 'active' : ''; ?>">Grade School</a>
                                 <?php endif; ?>
                             </div>
                         </div>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'aviation')): ?>
-                        <a href="<?php echo $base_path; ?>programs/aviation.php" class="mobile-dropdown-link <?php echo ($current_page == 'aviation') ? 'active' : ''; ?>">Aviation</a>
+                        <a href="<?php echo $base_path; ?>programs/aviation/" class="mobile-dropdown-link <?php echo ($current_page == 'aviation') ? 'active' : ''; ?>">Aviation</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'arts-sciences')): ?>
-                        <a href="<?php echo $base_path; ?>programs/arts-sciences.php" class="mobile-dropdown-link <?php echo ($current_page == 'arts-sciences') ? 'active' : ''; ?>">Arts & Sciences</a>
+                        <a href="<?php echo $base_path; ?>programs/arts-sciences/" class="mobile-dropdown-link <?php echo ($current_page == 'arts-sciences') ? 'active' : ''; ?>">Arts & Sciences</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'business-accountancy')): ?>
-                        <a href="<?php echo $base_path; ?>programs/business-accountancy.php" class="mobile-dropdown-link <?php echo ($current_page == 'business-accountancy') ? 'active' : ''; ?>">Business & Accountancy</a>
+                        <a href="<?php echo $base_path; ?>programs/business-accountancy/" class="mobile-dropdown-link <?php echo ($current_page == 'business-accountancy') ? 'active' : ''; ?>">Business & Accountancy</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'computer-studies')): ?>
-                        <a href="<?php echo $base_path; ?>programs/computer-studies.php" class="mobile-dropdown-link <?php echo ($current_page == 'computer-studies') ? 'active' : ''; ?>">Computer Studies</a>
+                        <a href="<?php echo $base_path; ?>programs/computer-studies/" class="mobile-dropdown-link <?php echo ($current_page == 'computer-studies') ? 'active' : ''; ?>">Computer Studies</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'criminology')): ?>
-                        <a href="<?php echo $base_path; ?>programs/criminology.php" class="mobile-dropdown-link <?php echo ($current_page == 'criminology') ? 'active' : ''; ?>">Criminology</a>
+                        <a href="<?php echo $base_path; ?>programs/criminology/" class="mobile-dropdown-link <?php echo ($current_page == 'criminology') ? 'active' : ''; ?>">Criminology</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'education')): ?>
-                        <a href="<?php echo $base_path; ?>programs/education.php" class="mobile-dropdown-link <?php echo ($current_page == 'education') ? 'active' : ''; ?>">Education</a>
+                        <a href="<?php echo $base_path; ?>programs/education/" class="mobile-dropdown-link <?php echo ($current_page == 'education') ? 'active' : ''; ?>">Education</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'engineering-architecture')): ?>
-                        <a href="<?php echo $base_path; ?>programs/engineering-architecture.php" class="mobile-dropdown-link <?php echo ($current_page == 'engineering-architecture') ? 'active' : ''; ?>">Engineering & Architecture</a>
+                        <a href="<?php echo $base_path; ?>programs/engineering-architecture/" class="mobile-dropdown-link <?php echo ($current_page == 'engineering-architecture') ? 'active' : ''; ?>">Engineering & Architecture</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'hospitality-management')): ?>
-                        <a href="<?php echo $base_path; ?>programs/hospitality-management.php" class="mobile-dropdown-link <?php echo ($current_page == 'hospitality-management') ? 'active' : ''; ?>">International Hospitality Management</a>
+                        <a href="<?php echo $base_path; ?>programs/hospitality-management/" class="mobile-dropdown-link <?php echo ($current_page == 'hospitality-management') ? 'active' : ''; ?>">International Hospitality Management</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'maritime')): ?>
-                        <a href="<?php echo $base_path; ?>programs/maritime.php" class="mobile-dropdown-link <?php echo ($current_page == 'maritime') ? 'active' : ''; ?>">Maritime</a>
+                        <a href="<?php echo $base_path; ?>programs/maritime/" class="mobile-dropdown-link <?php echo ($current_page == 'maritime') ? 'active' : ''; ?>">Maritime</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'law')): ?>
-                        <a href="<?php echo $base_path; ?>programs/law.php" class="mobile-dropdown-link <?php echo ($current_page == 'law') ? 'active' : ''; ?>">Law/Juris Doctor</a>
+                        <a href="<?php echo $base_path; ?>programs/law/" class="mobile-dropdown-link <?php echo ($current_page == 'law') ? 'active' : ''; ?>">Law/Juris Doctor</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('programs', 'graduate-school')): ?>
-                        <a href="<?php echo $base_path; ?>programs/graduate-school.php" class="mobile-dropdown-link <?php echo ($current_page == 'graduate-school') ? 'active' : ''; ?>">Graduate School</a>
+                        <a href="<?php echo $base_path; ?>programs/graduate-school/" class="mobile-dropdown-link <?php echo ($current_page == 'graduate-school') ? 'active' : ''; ?>">Graduate School</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -1628,7 +1621,7 @@ $navbar_items_config = [
                         </div>
                     <?php else: ?>
                         <?php if (isNavbarItemVisible('online-services', 'instructions')): ?>
-                        <a href="<?php echo $base_path; ?>ols_instructions.php" class="mobile-dropdown-link <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Instructions</a>
+                        <a href="<?php echo $base_path; ?>ols_instructions/" class="mobile-dropdown-link <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Instructions</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('online-services', 'gti-online-grades')): ?>
                         <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">GTI Online Grades</a>
@@ -1665,28 +1658,28 @@ $navbar_items_config = [
                         <a href="https://docs.google.com/forms/d/e/1FAIpQLSea8-O2OuuKWgZ17XgKkyLQ7dDOawW31a8vq1nTWDRREODVMQ/viewform" target="_blank" class="mobile-dropdown-link">Alumni</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'careers')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/careers.php" class="mobile-dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
+                        <a href="<?php echo $base_path; ?>support-services/careers/" class="mobile-dropdown-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'clinic')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/clinic.php" class="mobile-dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
+                        <a href="<?php echo $base_path; ?>support-services/clinic/" class="mobile-dropdown-link <?php echo ($current_page == 'clinic') ? 'active' : ''; ?>">University Clinic</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'cod')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/cod.php" class="mobile-dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
+                        <a href="<?php echo $base_path; ?>support-services/cod/" class="mobile-dropdown-link <?php echo ($current_page == 'cod') ? 'active' : ''; ?>">Community Outreach Department</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'iea')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/iea.php" class="mobile-dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
+                        <a href="<?php echo $base_path; ?>support-services/iea/" class="mobile-dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'sps')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/sps.php" class="mobile-dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Student Personnel Services</a>
+                        <a href="<?php echo $base_path; ?>support-services/sps/" class="mobile-dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Student Personnel Services</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'library')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/library.php" class="mobile-dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>
+                        <a href="<?php echo $base_path; ?>support-services/library/" class="mobile-dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'quality-assurance')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/quality-assurance.php" class="mobile-dropdown-link <?php echo ($current_page == 'quality-assurance') ? 'active' : ''; ?>">Quality Assurance</a>
+                        <a href="<?php echo $base_path; ?>support-services/quality-assurance/" class="mobile-dropdown-link <?php echo ($current_page == 'quality-assurance') ? 'active' : ''; ?>">Quality Assurance</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'research')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/research.php" class="mobile-dropdown-link <?php echo ($current_page == 'research') ? 'active' : ''; ?>">Research</a>
+                        <a href="<?php echo $base_path; ?>support-services/research/" class="mobile-dropdown-link <?php echo ($current_page == 'research') ? 'active' : ''; ?>">Research</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -1695,7 +1688,7 @@ $navbar_items_config = [
             
             <?php if (isNavbarItemVisible('campuses')): ?>
             <div class="mobile-nav-item">
-                <a href="<?php echo $base_path; ?>campuses.php" class="mobile-nav-link <?php echo ($current_page == 'campuses') ? 'active' : ''; ?>">Campuses</a>
+                <a href="<?php echo $base_path; ?>campuses/" class="mobile-nav-link <?php echo ($current_page == 'campuses') ? 'active' : ''; ?>">Campuses</a>
             </div>
             <?php endif; ?>
             
@@ -1714,16 +1707,16 @@ $navbar_items_config = [
                         <a href="<?php echo $base_path; ?>about" class="mobile-dropdown-link <?php echo ($current_page == 'about') ? 'active' : ''; ?>">About Us</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('about', 'contact')): ?>
-                        <a href="<?php echo $base_path; ?>about/contact.php" class="mobile-dropdown-link <?php echo ($current_page == 'contact') ? 'active' : ''; ?>">Contact Us</a>
+                        <a href="<?php echo $base_path; ?>about/contact/" class="mobile-dropdown-link <?php echo ($current_page == 'contact') ? 'active' : ''; ?>">Contact Us</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('about', 'environmental-policy')): ?>
-                        <a href="<?php echo $base_path; ?>about/environmental-policy.php" class="mobile-dropdown-link <?php echo ($current_page == 'environmental-policy') ? 'active' : ''; ?>">Environmental Policy</a>
+                        <a href="<?php echo $base_path; ?>about/environmental-policy/" class="mobile-dropdown-link <?php echo ($current_page == 'environmental-policy') ? 'active' : ''; ?>">Environmental Policy</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('about', 'university-policy')): ?>
-                        <a href="<?php echo $base_path; ?>about/university-policy.php" class="mobile-dropdown-link <?php echo ($current_page == 'university-policy') ? 'active' : ''; ?>">University Policy</a>
+                        <a href="<?php echo $base_path; ?>about/university-policy/" class="mobile-dropdown-link <?php echo ($current_page == 'university-policy') ? 'active' : ''; ?>">University Policy</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('about', 'map')): ?>
-                        <a href="<?php echo $base_path; ?>about/map.php" class="mobile-dropdown-link <?php echo ($current_page == 'map') ? 'active' : ''; ?>">Map</a>
+                        <a href="<?php echo $base_path; ?>about/map/" class="mobile-dropdown-link <?php echo ($current_page == 'map') ? 'active' : ''; ?>">Map</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -1770,10 +1763,10 @@ $navbar_items_config = [
                         </div>
                     <?php else: ?>
                         <?php if (isNavbarItemVisible('calendar', 'college-academic-calendar')): ?>
-                        <a href="<?php echo $base_path; ?>calendar/college-academic-calendar.php" class="mobile-dropdown-link <?php echo ($current_page == 'college-academic-calendar') ? 'active' : ''; ?>">College Academic Calendar</a>
+                        <a href="<?php echo $base_path; ?>calendar/college-academic-calendar/" class="mobile-dropdown-link <?php echo ($current_page == 'college-academic-calendar') ? 'active' : ''; ?>">College Academic Calendar</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('calendar', 'bed-shs-academic-calendar')): ?>
-                        <a href="<?php echo $base_path; ?>calendar/bed-shs-academic-calendar.php" class="mobile-dropdown-link <?php echo ($current_page == 'bed-shs-academic-calendar') ? 'active' : ''; ?>">BED & SHS Academic Calendar</a>
+                        <a href="<?php echo $base_path; ?>calendar/bed-shs-academic-calendar/" class="mobile-dropdown-link <?php echo ($current_page == 'bed-shs-academic-calendar') ? 'active' : ''; ?>">BED & SHS Academic Calendar</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -1804,7 +1797,7 @@ $navbar_items_config = [
             
             <?php if (isNavbarItemVisible('sdg-initiatives')): ?>
             <div class="mobile-nav-item mobile-dropdown">
-                <a href="<?php echo $base_path; ?>sdg-initiatives.php" class="mobile-nav-link mobile-dropdown-toggle <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <a href="<?php echo $base_path; ?>sdg-initiatives/" class="mobile-nav-link mobile-dropdown-toggle <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives <i class="fas fa-chevron-down mobile-chevron"></i></a>
                 <div class="mobile-dropdown-menu">
                     <?php 
                     $sdg_subitems = isset($navbar_items_config['sdg-initiatives']) ? $navbar_items_config['sdg-initiatives'] : [];
@@ -1816,11 +1809,11 @@ $navbar_items_config = [
                         <?php
                         for ($i = 1; $i <= 17; $i++): ?>
                             <?php if (isNavbarItemVisible('sdg-initiatives', 'sdg-' . $i)): ?>
-                            <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=<?php echo $i; ?>" class="mobile-dropdown-link">SDG <?php echo $i; ?>: <?php echo $sdgTitles[$i]; ?></a>
+                            <a href="<?php echo $base_path; ?>sdg-initiatives/?sdg=<?php echo $i; ?>" class="mobile-dropdown-link">SDG <?php echo $i; ?>: <?php echo $sdgTitles[$i]; ?></a>
                             <?php endif; ?>
                         <?php endfor; ?>
                         <?php if (isNavbarItemVisible('sdg-initiatives', 'sdg-full-report')): ?>
-                        <a href="<?php echo $base_path; ?>sdg-initiatives.php?sdg=report" class="mobile-dropdown-link">SDG Full Report</a>
+                        <a href="<?php echo $base_path; ?>sdg-initiatives/?sdg=report" class="mobile-dropdown-link">SDG Full Report</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>

@@ -38,12 +38,13 @@ Options -Indexes
     Deny from all
 </Files>
 
-# Remove .php extension from URLs
-# External redirect from .php to non-.php (301 permanent redirect)
-# Exclude AJAX endpoints from redirect (they need to keep .php extension for POST requests)
-RewriteCond %{THE_REQUEST} \s/+(.*)\.php[\s?] [NC]
+# Redirect public .php requests to clean, trailing-slash URLs
+# Exclude internal paths (admin, auth, app, online_payment, uploads, ajax, api)
+RewriteCond %{REQUEST_URI} !^/(admin|auth|app|online_payment|uploads|ajax|api)/ [NC]
+# Exclude AJAX endpoints that include ajax- in THE_REQUEST
 RewriteCond %{THE_REQUEST} !ajax- [NC]
-RewriteRule ^ /%1 [R=301,L]
+RewriteCond %{THE_REQUEST} \s/+(.*)\.php[\s?] [NC]
+RewriteRule ^ /%1/ [R=301,L]
 
 # Internal rewrite to add .php extension for files that exist
 RewriteCond %{REQUEST_FILENAME} !-d
