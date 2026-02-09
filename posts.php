@@ -234,8 +234,23 @@ include 'app/includes/header.php';
                         <?php foreach ($posts as $post): ?>
                             <article class="post-card">
                                 <div class="post-card-image">
-                                    <?php if ($post['featured_image']): ?>
-                                        <img src="<?php echo htmlspecialchars($post['featured_image']); ?>" 
+                                    <?php if (!empty($post['featured_image'])):
+                                        // Build absolute path when app is in a subdirectory (e.g. /uphsledu)
+                                        $featured = $post['featured_image'];
+                                        $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+                                        if ($scriptDir === '/' || $scriptDir === '.') {
+                                            $scriptDir = '';
+                                        }
+                                        if (strpos($featured, 'http') !== 0) {
+                                            if (strpos($featured, '/') === 0) {
+                                                // leading slash: prepend script dir if not root
+                                                $featured = ($scriptDir ? $scriptDir : '') . $featured;
+                                            } else {
+                                                $featured = ($scriptDir ? $scriptDir . '/' : '/') . $featured;
+                                            }
+                                        }
+                                    ?>
+                                        <img src="<?php echo htmlspecialchars($featured); ?>" 
                                              alt="<?php echo htmlspecialchars($post['title']); ?>"
                                              class="card-image"
                                              decoding="async">

@@ -44,21 +44,29 @@ RewriteCond %{REQUEST_URI} !^/(admin|auth|app|online_payment|uploads|ajax|api)/ 
 # Exclude AJAX endpoints that include ajax- in THE_REQUEST
 RewriteCond %{THE_REQUEST} !ajax- [NC]
 RewriteCond %{THE_REQUEST} \s/+(.*)\.php[\s?] [NC]
-RewriteRule ^ /%1/ [R=301,L]
+# Preserve the original query string when redirecting to the clean URL
+# Do not add a trailing slash (redirect to `/post` not `/post/`)
+RewriteRule ^ /%1 [R=301,L,QSA]
 
 # Internal rewrite to add .php extension for files that exist
+# Skip if the request already targets a .php resource to avoid rewrite loops
+RewriteCond %{REQUEST_URI} !\.php$
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^([^/]+)/?$ $1.php [L]
 
 # Handle subdirectories (like programs/, support-services/, etc.)
+# Skip if already targeting a .php resource
+RewriteCond %{REQUEST_URI} !\.php$
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^([^/]+)/([^/]+)/?$ $1/$2.php [L]
 
 # Handle deeper subdirectories (like programs/aviation, support-services/sps, etc.)
+# Skip if already targeting a .php resource
+RewriteCond %{REQUEST_URI} !\.php$
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME}.php -f

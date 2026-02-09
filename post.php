@@ -11,6 +11,12 @@ require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';
 // Session is automatically initialized by security.php
 
+// Enable detailed error reporting on localhost for debugging (temporary)
+if (php_sapi_name() !== 'cli' && (isset($_SERVER['REMOTE_ADDR']) && in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']) || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'localhost') !== false))) {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+}
 // Check if Post section is in maintenance
 if (isSectionInMaintenance('post')) {
     $page_title = "Post - Maintenance";
@@ -155,7 +161,21 @@ include 'app/includes/header.php';
                             <div class="slider-container">
                                 <?php foreach ($images as $index => $image): ?>
                                     <div class="slide <?php echo $index === 0 ? 'active' : ''; ?>">
-                                        <img src="<?php echo XSS::escapeAttr($image['image_path']); ?>" 
+                                        <?php
+                                        $imgPath = $image['image_path'] ?? '';
+                                        $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+                                        if ($scriptDir === '/' || $scriptDir === '.') {
+                                            $scriptDir = '';
+                                        }
+                                        if ($imgPath && strpos($imgPath, 'http') !== 0) {
+                                            if (strpos($imgPath, '/') === 0) {
+                                                $imgPath = ($scriptDir ? $scriptDir : '') . $imgPath;
+                                            } else {
+                                                $imgPath = ($scriptDir ? $scriptDir . '/' : '/') . $imgPath;
+                                            }
+                                        }
+                                        ?>
+                                        <img src="<?php echo XSS::escapeAttr($imgPath); ?>" 
                                              alt="<?php echo XSS::escapeAttr($image['image_alt'] ?? $post['title']); ?>"
                                              class="slide-image"
                                              decoding="async">
@@ -182,7 +202,21 @@ include 'app/includes/header.php';
                     <?php else: ?>
                         <!-- Single Image -->
                         <div class="single-image">
-                            <img src="<?php echo XSS::escapeAttr($images[0]['image_path']); ?>" 
+                            <?php
+                            $singleImg = $images[0]['image_path'] ?? '';
+                            $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+                            if ($scriptDir === '/' || $scriptDir === '.') {
+                                $scriptDir = '';
+                            }
+                            if ($singleImg && strpos($singleImg, 'http') !== 0) {
+                                if (strpos($singleImg, '/') === 0) {
+                                    $singleImg = ($scriptDir ? $scriptDir : '') . $singleImg;
+                                } else {
+                                    $singleImg = ($scriptDir ? $scriptDir . '/' : '/') . $singleImg;
+                                }
+                            }
+                            ?>
+                            <img src="<?php echo XSS::escapeAttr($singleImg); ?>" 
                                  alt="<?php echo XSS::escapeAttr($images[0]['image_alt'] ?? $post['title']); ?>"
                                  class="featured-image"
                                  decoding="async">
