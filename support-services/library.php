@@ -26,6 +26,34 @@ $page_title = "University Library - UPHSL";
 include '../app/includes/header.php';
 ?>
 
+<?php
+// Helper: list PDFs for a program slug and return JSON array string usable in data-pdfs
+function listProgramPdfsJson($slug, $base_path) {
+    $dir = __DIR__ . '/../assets/documents/library/programs/' . $slug . '/';
+    $items = [];
+    if (is_dir($dir)) {
+        $files = scandir($dir);
+        $pdfs = [];
+        foreach ($files as $f) {
+            if ($f === '.' || $f === '..') continue;
+            $full = $dir . $f;
+            if (!is_file($full)) continue;
+            $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
+            if ($ext !== 'pdf') continue;
+            $pdfs[] = ['file' => $f, 'mtime' => filemtime($full)];
+        }
+        // sort by modification time desc (newest first)
+        usort($pdfs, function($a, $b) { return $b['mtime'] <=> $a['mtime']; });
+        foreach ($pdfs as $p) {
+            $f = $p['file'];
+            $title = preg_replace('/[_\-]+/', ' ', pathinfo($f, PATHINFO_FILENAME));
+            $items[] = ['title' => $title, 'url' => $base_path . 'assets/documents/library/programs/' . $slug . '/' . rawurlencode($f)];
+        }
+    }
+    return json_encode($items);
+}
+?>
+
 <style>
 body {
     padding: 0 !important;
@@ -351,6 +379,135 @@ body {
         font-size: 2rem;
     }
 }
+
+/* Library Programs Section */
+.library-programs-section {
+    background: white;
+}
+
+.program-carousel-container {
+    max-width: 1100px;
+    margin: 2rem auto;
+    position: relative;
+    overflow: visible;
+}
+
+.program-carousel {
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.program-carousel-track {
+    display: flex;
+    transition: transform 0.6s ease;
+    will-change: transform;
+}
+
+.program-slide {
+    min-width: 100%;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 1.5rem;
+    align-items: center;
+    background: #fff;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.program-slide { cursor: pointer; }
+.program-slide:focus { outline: 3px solid rgba(28,77,161,0.12); outline-offset: 6px; }
+
+.program-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.program-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.program-text h4 {
+    margin-top: 0;
+    color: var(--primary-color);
+    font-size: 1.05rem;
+    margin-bottom: 0.4rem;
+}
+
+.program-text p {
+    margin: 0;
+    color: #555;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.program-text {
+    min-width: 0;
+    padding-right: 0.75rem;
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.98);
+    color: var(--primary-color);
+    border: 1px solid rgba(0,0,0,0.06);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(16,24,40,0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.carousel-nav:hover { transform: translateY(-50%) scale(1.04); box-shadow: 0 14px 40px rgba(16,24,40,0.12); }
+
+.carousel-prev { left: -28px; }
+.carousel-next { right: -28px; }
+
+.carousel-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(16,24,40,0.08);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(16,24,40,0.06);
+}
+
+.carousel-dot.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .program-slide {
+        grid-template-columns: 1fr;
+    }
+    .carousel-nav { width: 34px; height: 34px; border-radius: 8px; }
+    .carousel-prev { left: 8px; }
+    .carousel-next { right: 8px; }
+}
 </style>
 
 <main class="main-content">
@@ -367,6 +524,74 @@ body {
         </div>
     </section>
 
+    <script>
+    // Library Programs carousel
+    document.addEventListener('DOMContentLoaded', function() {
+        const track = document.getElementById('libraryProgramsTrack');
+        if (!track) return;
+
+        const slides = Array.from(track.children);
+        const prev = document.getElementById('programPrev');
+        const next = document.getElementById('programNext');
+        const dotsContainer = document.getElementById('programDots');
+
+        let idx = 0;
+        let intervalId = null;
+        const slideCount = slides.length;
+
+        function update() {
+            track.style.transform = `translateX(-${idx * 100}%)`;
+            // update dots
+            if (dotsContainer) {
+                const dots = Array.from(dotsContainer.children);
+                dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+            }
+        }
+
+        function goTo(i) {
+            idx = (i + slideCount) % slideCount;
+            update();
+        }
+
+        function nextSlide() { goTo(idx + 1); }
+        function prevSlide() { goTo(idx - 1); }
+
+        // create dots
+        if (dotsContainer && slideCount > 1) {
+            for (let i = 0; i < slideCount; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                btn.addEventListener('click', () => { goTo(i); resetInterval(); });
+                dotsContainer.appendChild(btn);
+            }
+        }
+
+        if (next) next.addEventListener('click', () => { nextSlide(); resetInterval(); });
+        if (prev) prev.addEventListener('click', () => { prevSlide(); resetInterval(); });
+
+        function startInterval() {
+            if (intervalId) return;
+            intervalId = setInterval(nextSlide, 5000);
+        }
+
+        function resetInterval() {
+            if (intervalId) { clearInterval(intervalId); intervalId = null; }
+            startInterval();
+        }
+
+        // pause on hover
+        const carousel = track.closest('.program-carousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', () => { if (intervalId) clearInterval(intervalId); intervalId = null; });
+            carousel.addEventListener('mouseleave', () => { startInterval(); });
+        }
+
+        // initial state
+        update();
+        if (slideCount > 1) startInterval();
+    });
+    </script>
+
     <!-- News Carousel Section -->
     <?php
     $categoryId = 'Library'; // Pass category name, component will look it up
@@ -374,6 +599,115 @@ body {
     $sectionDescription = 'Stay updated with the latest news and announcements from the University Library.';
     include '../app/includes/news-carousel.php';
     ?>
+
+    <!-- Library Programs Section -->
+    <section class="content-section library-programs-section">
+        <div class="container">
+            <h2 class="section-title">Library Programs</h2>
+            <div class="program-carousel-container">
+                <div class="program-carousel">
+                    <div class="program-carousel-track" id="libraryProgramsTrack">
+                        <?php
+                        // If site setting chooses DB source, render programs from DB; otherwise fall back to static slides above
+                        $useDB = getSetting('library_programs_source', 'static');
+                        if ($useDB === 'db') {
+                            try {
+                                $stmt = getDBConnection()->query("SELECT slug, title, description, image FROM library_programs ORDER BY created_at ASC");
+                                $rows = $stmt->fetchAll();
+                                foreach ($rows as $r) {
+                                    $slug = htmlspecialchars($r['slug']);
+                                    $title = htmlspecialchars($r['title']);
+                                    $desc = htmlspecialchars($r['description']);
+                                    $img = !empty($r['image']) ? $base_path . $r['image'] : ($base_path . 'assets/images/support-services/college-library/img/programs/placeholder.jpg');
+                                    $pdfsJson = listProgramPdfsJson($slug, $base_path);
+                                    echo "<div class=\"program-slide\" data-pdfs='" . htmlspecialchars($pdfsJson, ENT_QUOTES) . "'>";
+                                    echo "<div class=\"program-image\"><img src=\"{$img}\" alt=\"" . $title . "\"></div>";
+                                    echo "<div class=\"program-text\"><h4>" . $title . "</h4><p>" . $desc . "</p><div style=\"margin-top:0.75rem;\"><button type=\"button\" class=\"btn resources-btn\">Resources</button></div></div></div>";
+                                }
+                            } catch (Exception $e) {
+                                // fallback: nothing here, keep static slides below
+                            }
+                        } else {
+                            // static slides (kept as-is above)
+                        ?>
+                        <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("free-coffee", $base_path); ?>'>
+                            <div class="program-image">
+                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/free-coffee.jpg" alt="Free Coffee Program">
+                            </div>
+                            <div class="program-text">
+                                <h4>Free Coffee</h4>
+                                <p>The library offers complimentary coffee during study hours to foster a welcoming, focused atmosphere for students and staff. This small but meaningful amenity encourages longer study sessions, peer collaboration, and informal librarian-student interactions that increase resource discovery and support academic success across disciplines.</p>
+                                <div style="margin-top:0.75rem;">
+                                    <button type="button" class="btn resources-btn">Resources</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("seed-library", $base_path); ?>'>
+                            <div class="program-image">
+                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/seed-library.jpg" alt="Seed Library Program">
+                            </div>
+                            <div class="program-text">
+                                <h4>Seed Library Program</h4>
+                                <p>A curated collection of seeds available for students, faculty, and community members to borrow, plant, and return seeds from their harvests. The program promotes sustainable gardening, biodiversity awareness, and hands-on learning while supporting campus greening projects and offering workshops on seed saving and native planting techniques.</p>
+                                <div style="margin-top:0.75rem;">
+                                    <button type="button" class="btn resources-btn">Resources</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("community-outreach", $base_path); ?>'>
+                            <div class="program-image">
+                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/community-outreach.jpg" alt="Community Outreach Program">
+                            </div>
+                            <div class="program-text">
+                                <h4>Community Outreach Program</h4>
+                                <p>Library staff partner with local schools, NGOs, and community groups to deliver mobile library services, literacy workshops, and tailored resource sessions. Outreach expands access to information, fosters lifelong learning, and strengthens university-community ties through collaborative events, volunteer opportunities, and shared educational resources.</p>
+                                <div style="margin-top:0.75rem;">
+                                    <button type="button" class="btn resources-btn">Resources</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("international-conference", $base_path); ?>'>
+                            <div class="program-image">
+                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/international-conference.jpg" alt="International Collaborative Conference">
+                            </div>
+                            <div class="program-text">
+                                <h4>International Collaborative Conference</h4>
+                                <p>The library organizes an annual conference bringing together international scholars, librarians, and students to exchange research, best practices, and innovations in information services. The event features keynote speakers, panels, and networking aimed at building research collaborations and elevating the library's global engagement.</p>
+                                <div style="margin-top:0.75rem;">
+                                    <button type="button" class="btn resources-btn">Resources</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("newsletter-reports", $base_path); ?>'>
+                            <div class="program-image">
+                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/newsletter-reports.jpg" alt="Library Newsletter and Annual Reports">
+                            </div>
+                            <div class="program-text">
+                                <h4>Library Newsletter and Annual Reports</h4>
+                                <p>A periodic newsletter and comprehensive annual reports highlight library initiatives, program outcomes, acquisitions, and impact metrics. Distributed digitally and in print, these publications keep stakeholders informed, celebrate achievements, and guide strategic planning by presenting data-driven narratives about services and user engagement.</p>
+                                <div style="margin-top:0.75rem;">
+                                    <button type="button" class="btn resources-btn">Resources</button>
+                                </div>
+                            </div>
+                        </div>
+                        <?php } // end static fallback ?>
+                    </div>
+
+                    <button type="button" aria-label="Previous program" class="carousel-nav carousel-prev" id="programPrev">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" aria-label="Next program" class="carousel-nav carousel-next" id="programNext">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <div class="carousel-dots" id="programDots"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Mission and Vision Section -->
     <section class="content-section mission-vision-section">
@@ -391,6 +725,301 @@ body {
             </div>
         </div>
     </section>
+
+    <!-- Resources Modal -->
+    <div id="resourcesModal" class="rs-modal" aria-hidden="true">
+        <div class="rs-modal-backdrop"></div>
+        <div class="rs-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="rsModalTitle">
+            <header class="rs-modal-header">
+                <h3 id="rsModalTitle">Program Resources</h3>
+                <button type="button" id="rsModalClose" aria-label="Close resources">✕</button>
+            </header>
+            <div class="rs-modal-body">
+                <div id="rsResourcesGrid" class="rs-resources-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* Modal for resources */
+    .rs-modal { display: none; position: fixed; inset: 0; z-index: 1200; }
+    .rs-modal[aria-hidden="false"] { display: block; }
+    .rs-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+    .rs-modal-dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 95%; max-width: 1000px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(2,6,23,0.3); }
+    .rs-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
+    .rs-modal-header h3 { margin: 0; font-size: 1.125rem; }
+    .rs-modal-header button { background: transparent; border: none; font-size: 1.25rem; cursor: pointer; }
+    .rs-modal-body { padding: 1rem; max-height: 70vh; overflow: auto; }
+    .rs-resources-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .rs-resource { background: #fff; border-radius: 10px; padding: 0.5rem; border: 1px solid rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 0.5rem; align-items: stretch; min-height: 220px; }
+    .rs-thumb { width: 100%; aspect-ratio: 3/4; background: #f4f6f8; display: flex; align-items: center; justify-content: center; border-radius: 6px; overflow: hidden; }
+    .rs-thumb canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .rs-resource-title { font-size: 0.95rem; color: #222; margin: 0; }
+    .rs-actions { display: flex; gap: 0.5rem; margin-top: auto; }
+    .rs-actions a, .rs-actions button { padding: 0.45rem 0.6rem; text-decoration: none; border-radius: 8px; font-size: 0.85rem; border: 1px solid rgba(0,0,0,0.06); background: white; color: var(--primary-color); cursor: pointer; }
+    .rs-loading { display: inline-block; width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(0,0,0,0.08); border-top-color: var(--primary-color); animation: rs-spin 1s linear infinite; }
+    @keyframes rs-spin { to { transform: rotate(360deg); } }
+    .rs-pagination { display:flex; gap:8px; justify-content:center; align-items:center; padding:0.75rem 1rem; border-top:1px solid #eee; background:#fafafa; }
+    .rs-page-btn { padding:6px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:white; color:var(--primary-color); cursor:pointer; }
+    .rs-page-btn.active { background:var(--primary-color); color:white; border-color:var(--primary-color); }
+
+    @media (max-width: 900px) {
+        .rs-resources-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 560px) {
+        .rs-resources-grid { grid-template-columns: 1fr; }
+    }
+    </style>
+
+    <!-- PDF.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    <script>
+    // Resources modal + PDF first-page thumbnails using PDF.js
+    document.addEventListener('DOMContentLoaded', function() {
+        // configure worker
+        if (window['pdfjsLib']) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        }
+
+        const modal = document.getElementById('resourcesModal');
+        const modalClose = document.getElementById('rsModalClose');
+        const resourcesGrid = document.getElementById('rsResourcesGrid');
+
+        // pagination state
+        let modalItems = [];
+        let currentPage = 0;
+        const PAGE_SIZE = 9;
+
+        function renderPage(pageIndex) {
+            currentPage = pageIndex;
+            resourcesGrid.innerHTML = '';
+            const start = pageIndex * PAGE_SIZE;
+            const slice = modalItems.slice(start, start + PAGE_SIZE);
+
+            if (slice.length === 0) {
+                resourcesGrid.innerHTML = '<p>No resources available.</p>';
+            }
+
+            slice.forEach(item => {
+                const node = document.createElement('div');
+                node.className = 'rs-resource';
+
+                const thumb = document.createElement('div');
+                thumb.className = 'rs-thumb';
+                const loader = document.createElement('div'); loader.className = 'rs-loading';
+                thumb.appendChild(loader);
+
+                const title = document.createElement('p'); title.className = 'rs-resource-title'; title.textContent = item.title || 'Document';
+
+                const actions = document.createElement('div'); actions.className = 'rs-actions';
+                const view = document.createElement('a'); view.href = item.url; view.target = '_blank'; view.rel = 'noopener'; view.textContent = 'View';
+                const dl = document.createElement('a'); dl.href = item.url; dl.download = ''; dl.textContent = 'Download';
+                actions.appendChild(view); actions.appendChild(dl);
+
+                node.appendChild(thumb);
+                node.appendChild(title);
+                node.appendChild(actions);
+                resourcesGrid.appendChild(node);
+
+                // Render first page thumbnail using PDF.js if available
+                if (window['pdfjsLib']) {
+                    const loadingTask = pdfjsLib.getDocument(item.url);
+                    loadingTask.promise.then(function(pdf) {
+                        return pdf.getPage(1).then(function(page) {
+                            const viewport = page.getViewport({ scale: 1 });
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+
+                            // compute scale to fit thumb width
+                            const targetWidth = Math.min(420, Math.max(150, thumb.clientWidth * 2));
+                            const scaleRequired = targetWidth / viewport.width;
+                            const vp = page.getViewport({ scale: scaleRequired });
+                            canvas.width = Math.round(vp.width);
+                            canvas.height = Math.round(vp.height);
+
+                            const renderContext = { canvasContext: context, viewport: vp };
+                            page.render(renderContext).promise.then(function() {
+                                thumb.removeChild(loader);
+                                thumb.appendChild(canvas);
+                            }).catch(function() { thumb.removeChild(loader); thumb.textContent = 'Preview unavailable'; });
+                        });
+                    }).catch(function() { thumb.removeChild(loader); thumb.textContent = 'Preview unavailable'; });
+                } else {
+                    thumb.removeChild(loader);
+                    thumb.textContent = 'Preview unavailable';
+                }
+            });
+
+            renderPagination();
+        }
+
+        function openModalForSlide(slide) {
+            const raw = slide.getAttribute('data-pdfs') || '[]';
+            try { modalItems = JSON.parse(raw); } catch(e) { modalItems = []; }
+            currentPage = 0;
+            renderPage(0);
+
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden'; // prevent background scroll
+            // focus first close button
+            modalClose.focus();
+        }
+
+        function closeModal() {
+            modal.setAttribute('aria-hidden', 'true');
+            resourcesGrid.innerHTML = '';
+            document.body.style.overflow = '';
+        }
+
+        function renderPagination() {
+            // remove existing pagination if any
+            let existing = modal.querySelector('.rs-pagination');
+            if (existing) existing.remove();
+
+            const pages = Math.ceil(modalItems.length / PAGE_SIZE);
+            if (pages <= 1) return;
+
+            const pager = document.createElement('div');
+            pager.className = 'rs-pagination';
+
+            const prevBtn = document.createElement('button'); prevBtn.className = 'rs-page-btn'; prevBtn.textContent = 'Prev';
+            prevBtn.disabled = (currentPage === 0);
+            prevBtn.addEventListener('click', () => { renderPage(Math.max(0, currentPage - 1)); });
+            pager.appendChild(prevBtn);
+
+            // page numbers (max show 5 around current)
+            const maxShow = 5; const half = Math.floor(maxShow/2);
+            let start = Math.max(0, currentPage - half);
+            let end = Math.min(pages - 1, start + maxShow - 1);
+            if (end - start < maxShow - 1) start = Math.max(0, end - (maxShow - 1));
+
+            for (let i = start; i <= end; i++) {
+                const p = document.createElement('button'); p.className = 'rs-page-btn' + (i === currentPage ? ' active' : ''); p.textContent = (i+1);
+                p.addEventListener('click', () => { renderPage(i); });
+                pager.appendChild(p);
+            }
+
+            const nextBtn = document.createElement('button'); nextBtn.className = 'rs-page-btn'; nextBtn.textContent = 'Next';
+            nextBtn.disabled = (currentPage >= pages - 1);
+            nextBtn.addEventListener('click', () => { renderPage(Math.min(pages-1, currentPage + 1)); });
+            pager.appendChild(nextBtn);
+
+            modal.querySelector('.rs-modal-dialog').appendChild(pager);
+        }
+
+        // wire up resource buttons
+        document.querySelectorAll('.program-slide .resources-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const slide = e.currentTarget.closest('.program-slide');
+                if (!slide) return;
+                openModalForSlide(slide);
+            });
+        });
+
+        // make whole slide clickable (but ignore clicks on inner controls/links)
+        document.querySelectorAll('.program-slide').forEach(slide => {
+            slide.tabIndex = 0;
+            slide.setAttribute('role', 'button');
+            slide.addEventListener('click', function(e) {
+                // if the user clicked a control or link inside the slide, don't open modal
+                if (e.target.closest('.resources-btn') || e.target.closest('a') || e.target.closest('button')) return;
+                openModalForSlide(slide);
+            });
+            slide.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openModalForSlide(slide);
+                }
+            });
+        });
+
+        modalClose.addEventListener('click', closeModal);
+        modal.querySelector('.rs-modal-backdrop').addEventListener('click', closeModal);
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+    });
+    </script>
+
+    <style>
+    /* Ensure program image area preserves 16:9 and prevents stretching on small screens */
+    .program-image{position:relative;aspect-ratio:16/9;overflow:hidden;background:#f6f6f6}
+    .program-image img, .program-image canvas{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* Mobile: reduce title and description sizes for readability */
+    @media (max-width:600px){
+        .program-slide .program-title{font-size:1rem}
+        .program-slide .program-desc{font-size:0.85rem}
+        .program-slide .program-desc p{line-height:1.25}
+        .program-nav-button{top:50%}
+    }
+    </style>
+
+    <script>
+    // Render newest PDF first page as the program card image (16:9) using PDF.js
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!window['pdfjsLib']) return;
+        const slides = document.querySelectorAll('.program-slide');
+        slides.forEach(async (slide) => {
+            try {
+                const raw = slide.getAttribute('data-pdfs') || '[]';
+                const items = JSON.parse(raw);
+                if (!items || items.length === 0) return;
+                const first = items[0];
+                if (!first || !first.url) return;
+
+                const container = slide.querySelector('.program-image');
+                if (!container) return;
+
+                const rect = container.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                const targetWidthCSS = rect.width || 320;
+                const targetWidth = Math.max(320, Math.round(targetWidthCSS * dpr));
+                const targetHeight = Math.round(targetWidth * 9 / 16);
+
+                // load PDF and first page
+                const loading = pdfjsLib.getDocument(first.url);
+                const pdf = await loading.promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 1 });
+
+                // scale so the rendered page fully covers the target 16:9 area
+                const scale = Math.max(targetWidth / viewport.width, targetHeight / viewport.height);
+                const vp = page.getViewport({ scale: scale });
+
+                // render to an offscreen canvas at device pixels
+                const off = document.createElement('canvas');
+                off.width = Math.round(vp.width);
+                off.height = Math.round(vp.height);
+                const offCtx = off.getContext('2d');
+                await page.render({ canvasContext: offCtx, viewport: vp }).promise;
+
+                // final canvas sized to target (device pixels)
+                const canvas = document.createElement('canvas');
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                // show canvas responsive to its container which enforces 16:9
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.alt = first.title || '';
+                const ctx = canvas.getContext('2d');
+
+                // top-crop from the offscreen render into the final 16:9 canvas
+                // horizontally center, but crop from the top (sy = 0) to keep page header visible
+                const sx = Math.max(0, Math.round((off.width - canvas.width) / 2));
+                const sy = 0;
+                ctx.drawImage(off, sx, sy, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
+                // Hide existing <img> if present, append canvas
+                const img = container.querySelector('img');
+                if (img) img.style.display = 'none';
+                container.appendChild(canvas);
+            } catch (e) {
+                console.warn('Program card thumbnail render failed', e);
+            }
+        });
+    });
+    </script>
 
     <!-- Online Services Section -->
     <section class="content-section online-services-section">

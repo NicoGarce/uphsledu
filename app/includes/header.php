@@ -25,6 +25,11 @@ if (!$is_admin_page && !$is_auth_page && !$is_maintenance_page) {
     try {
         require_once __DIR__ . '/../config/database.php';
         require_once __DIR__ . '/functions.php';
+
+        // Ensure DB initializer runs on every page load (idempotent)
+        if (function_exists('initializeDatabase')) {
+            try { initializeDatabase(); } catch (Exception $e) { error_log('DB init error: ' . $e->getMessage()); }
+        }
         
         // Check if maintenance mode is enabled
         if (function_exists('getSetting')) {

@@ -1209,8 +1209,9 @@ function careerSlugExists($slug, $excludeId = null) {
 }
 
 // Generate unique slug for career posting
+
 function generateUniqueCareerSlug($position, $excludeId = null) {
     return generateUniqueSlug($position, 'careers_postings', $excludeId);
 }
-?>
+
 
