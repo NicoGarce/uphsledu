@@ -2678,8 +2678,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
 
                     const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.textContent = pdf.filename; a.style.flex='1'; a.style.color='#1e3a8a'; a.style.textDecoration='underline';
                     const t = document.createElement('span'); t.style.color='#6b7280'; t.style.fontSize='0.85rem'; t.textContent = pdf.uploaded_at;
-                    const btn = document.createElement('button'); btn.className='btn btn-icon'; btn.title='Delete PDF'; btn.style.background='#ef4444'; btn.style.color='#fff'; btn.onclick = function(){ deletePdf(pdf.id, programId); };
-                    btn.innerHTML = '<i class="fas fa-trash"></i>';
+                    const btn = document.createElement('button'); btn.className='btn btn-icon'; btn.title='Remove PDF'; btn.style.background='#f59e0b'; btn.style.color='#fff'; btn.onclick = function(){ deletePdf(pdf.id, programId); };
+                    btn.innerHTML = '<i class="fas fa-minus-circle"></i>';
 
                     row.appendChild(a); row.appendChild(t); row.appendChild(btn);
                     container.appendChild(row);
@@ -2691,7 +2691,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
 
         // Delete PDF by id (AJAX)
         async function deletePdf(pdfId, programId) {
-            if (!confirm('Delete this PDF?')) return;
+            if (!confirm('Remove this PDF from the program? The file will remain on the server.')) return;
             const tokenField = document.querySelector('input[name="_token"]');
             const form = new FormData(); form.append('pdf_id', pdfId); if (tokenField) form.append('_token', tokenField.value);
             try {
@@ -2721,36 +2721,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             // refresh pdf list into modal area
             refreshPdfListIntoModal(programId);
             document.getElementById('editModal').style.display = 'flex';
+            // wire choose existing button
+            setTimeout(()=>{
+                const chooseBtn = document.getElementById('modal_choose_existing');
+                if (chooseBtn) {
+                    chooseBtn.onclick = function(){ openChooseExisting(programId); };
+                }
+            },10);
         }
 
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
-            document.getElementById('modal_upload_files').value = '';
-            document.getElementById('modal_upload_status').textContent = '';
+            document.getElementById('modal_upload_status') && (document.getElementById('modal_upload_status').textContent = '');
         }
-
-        // Upload from modal
-        async function startUploadForModal(e) {
-            e.preventDefault();
-            const programId = document.getElementById('modal_program_id').value;
-            const filesInput = document.getElementById('modal_upload_files');
-            const statusEl = document.getElementById('modal_upload_status');
-            const progressBar = document.getElementById('modal_upload_progress');
-            if (!programId) { alert('Missing program id'); return; }
-            if (!filesInput.files || filesInput.files.length === 0) { alert('Select PDFs to upload'); return; }
-            const form = new FormData(); form.append('program_id', programId);
-            const tokenField = document.querySelector('input[name="_token"]'); if (tokenField) form.append('_token', tokenField.value);
-            for (let i=0;i<filesInput.files.length;i++) form.append('files[]', filesInput.files[i]);
-            statusEl.textContent = '';
-            progressBar.style.width = '0%'; progressBar.parentElement.style.display = 'block';
-            const xhr = new XMLHttpRequest(); xhr.open('POST','ajax-library-programs-upload.php');
-            xhr.upload.onprogress = function(evt){ if (evt.lengthComputable) { const pct = Math.round((evt.loaded/evt.total)*100); progressBar.style.width = pct + '%'; progressBar.textContent = pct + '%'; }};
-            // show processing indicator when upload completes but server still working
-            xhr.upload.onprogress = function(evt){ if (evt.lengthComputable) { const pct = Math.round((evt.loaded/evt.total)*100); progressBar.style.width = pct + '%'; progressBar.textContent = pct === 100 ? 'Processing…' : pct + '%'; }};
-            xhr.onload = function(){ try { const data = JSON.parse(xhr.responseText); if (data.success) { statusEl.textContent = data.message || 'Uploaded'; refreshPdfListIntoModal(programId); } else { statusEl.textContent = data.error || 'Upload failed'; } } catch(e){ statusEl.textContent = 'Invalid server response'; } setTimeout(()=>{ progressBar.parentElement.style.display='none'; progressBar.style.width='0%'; progressBar.textContent=''; },800); };
-            xhr.onerror = function(){ statusEl.textContent = 'Upload error'; };
-            xhr.send(form);
-        }
+        
 
         // Refresh PDF list but target modal container
         async function refreshPdfListIntoModal(programId) {
@@ -2827,7 +2811,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                 statusEl.textContent = 'Save error';
             }
         });
-    </script>
+
+        // --- Choose existing files UI ---
+        function openChooseExisting(programId) {
+            const overlay = document.createElement('div'); overlay.style.position='fixed'; overlay.style.inset='0'; overlay.style.background='rgba(0,0,0,0.5)'; overlay.style.display='flex'; overlay.style.alignItems='center'; overlay.style.justifyContent='center'; overlay.style.zIndex='3000';
+            const box = document.createElement('div'); box.style.background='#fff'; box.style.width='720px'; box.style.maxHeight='80vh'; box.style.overflow='auto'; box.style.borderRadius='10px'; box.style.padding='12px';
+            const title = document.createElement('div'); title.textContent='Choose existing PDFs'; title.style.fontWeight='700'; title.style.marginBottom='8px';
+            const list = document.createElement('div'); list.style.display='grid'; list.style.gridTemplateColumns='repeat(2,1fr)'; list.style.gap='8px'; list.style.marginBottom='8px';
+            const footer = document.createElement('div'); footer.style.display='flex'; footer.style.justifyContent='flex-end'; footer.style.gap='8px';
+            const btnCancel = document.createElement('button'); btnCancel.className='btn'; btnCancel.textContent='Cancel';
+            const btnAttach = document.createElement('button'); btnAttach.className='btn btn-primary'; btnAttach.textContent='Attach selected';
+            footer.appendChild(btnCancel); footer.appendChild(btnAttach);
+            box.appendChild(title); box.appendChild(list); box.appendChild(footer); overlay.appendChild(box); document.body.appendChild(overlay);
+
+            btnCancel.onclick = function(){ overlay.remove(); };
+
+            fetch('ajax-library-programs-scan.php?program_id='+encodeURIComponent(programId)).then(r=>r.json()).then(data=>{
+                if (!data.success) { list.innerHTML = '<div style="color:#6b7280">'+(data.error||'Scan failed')+'</div>'; return; }
+                const attached = data.attached || [];
+                data.files.forEach(f => {
+                    const id = 'choose_file_'+Math.random().toString(36).slice(2,9);
+                    const el = document.createElement('label'); el.style.display='flex'; el.style.alignItems='center'; el.style.gap='8px'; el.style.padding='6px'; el.style.border='1px solid #eef2ff'; el.style.borderRadius='6px';
+                    const cb = document.createElement('input'); cb.type='checkbox'; cb.id = id; cb.value = f.filename; if (attached.indexOf(f.filename) !== -1) { cb.disabled = true; }
+                    const txt = document.createElement('span'); txt.textContent = f.filename; txt.style.fontSize='0.95rem'; txt.style.color = attached.indexOf(f.filename) !== -1 ? '#9ca3af' : '#0f172a';
+                    el.appendChild(cb); el.appendChild(txt);
+                    list.appendChild(el);
+                });
+            }).catch(err=>{ list.innerHTML = '<div style="color:#6b7280">Scan error</div>'; });
+
+            btnAttach.onclick = function(){
+                const checks = Array.from(list.querySelectorAll('input[type=checkbox]:not(:disabled):checked')).map(i=>i.value);
+                if (checks.length === 0) { alert('Select files to attach'); return; }
+                const form = new FormData(); form.append('program_id', programId); const tokenField = document.querySelector('input[name="_token"]'); if (tokenField) form.append('_token', tokenField.value);
+                checks.forEach(f => form.append('files[]', f));
+                fetch('ajax-library-programs-attach.php', { method: 'POST', body: form }).then(r=>r.json()).then(resp=>{
+                    if (resp && resp.success) {
+                        overlay.remove(); refreshPdfListIntoModal(programId);
+                        if (resp.added && resp.added.length) alert('Attached: '+resp.added.join(', '));
+                        else if (resp.skipped && resp.skipped.length) alert('Already attached: '+resp.skipped.join(', '));
+                    } else {
+                        alert(resp.error || 'Attach failed');
+                    }
+                }).catch(()=>{ alert('Attach error'); });
+            };
+        }
+
+	</script>
 
 <?php include '../app/includes/admin-footer.php'; ?>
 
@@ -2866,12 +2895,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         <div id="modal_pdf_list" style="margin-bottom:12px;color:#374151;"></div>
 
         <div style="display:flex;gap:8px;align-items:center;">
-            <input type="file" id="modal_upload_files" accept="application/pdf" multiple>
-            <button class="btn btn-icon btn-primary" title="Upload PDFs" onclick="startUploadForModal(event)"><i class="fas fa-upload"></i></button>
-        </div>
-        <div style="margin-top:8px;">
-            <div id="modal_upload_progress_wrap" style="display:none;background:#f1f5f9;border-radius:6px;height:20px;overflow:hidden;"><div id="modal_upload_progress" style="width:0%;height:100%;background:linear-gradient(90deg,#2563eb,#60a5fa);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.85rem;">0%</div></div>
-            <div id="modal_upload_status" style="margin-top:6px;color:#374151;"></div>
+            <div style="color:#6b7280;font-size:0.95rem;">Uploads disabled here — use "Choose existing" to attach files already on the server.</div>
+            <button class="btn" id="modal_choose_existing" style="padding:6px 10px;" title="Choose existing files">Choose existing</button>
         </div>
     </div>
 </div>

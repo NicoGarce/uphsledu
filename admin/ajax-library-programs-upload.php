@@ -76,6 +76,8 @@ if ($count === 0) { echo json_encode(['success'=>false,'error'=>'No files provid
 
 $baseDir = __DIR__ . '/../assets/documents/library/programs/' . $program_slug . '/';
 if (!is_dir($baseDir)) { if (!mkdir($baseDir,0755,true)) { echo json_encode(['success'=>false,'error'=>'Failed to create program directory']); exit; } }
+$baseDir = __DIR__ . '/../assets/documents/library/';
+if (!is_dir($baseDir)) { if (!mkdir($baseDir,0755,true)) { echo json_encode(['success'=>false,'error'=>'Failed to create library directory']); exit; } }
 
 $saved = [];
 $errors = [];
@@ -118,7 +120,7 @@ for ($i=0;$i<$count;$i++) {
         error_log('thumbnail spawn failed: ' . $e->getMessage());
     }
     try {
-        $relPath = 'assets/documents/library/programs/' . $program_slug . '/' . $final;
+        $relPath = 'assets/documents/library/' . $final;
         $ins = $pdo->prepare('INSERT INTO library_program_pdfs (program_id, filename, path, uploaded_at) VALUES (:program_id, :filename, :path, NOW())');
         $ins->execute([':program_id'=>$program_id,':filename'=>$final,':path'=>$relPath]);
     } catch (Exception $e) {

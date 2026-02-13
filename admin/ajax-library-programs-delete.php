@@ -35,12 +35,8 @@ if (!$row) {
     echo json_encode(['success'=>false,'error'=>'PDF not found']); exit;
 }
 
-$path = __DIR__ . '/../' . $row['path'];
-if (file_exists($path)) {
-    @unlink($path);
-}
-
+// Do NOT delete the physical file from disk. Only remove the DB record.
 $del = $pdo->prepare('DELETE FROM library_program_pdfs WHERE id = :id');
 $del->execute([':id'=>$pdf_id]);
 
-echo json_encode(['success'=>true,'message'=>'Deleted']);
+echo json_encode(['success'=>true,'message'=>'Removed']);

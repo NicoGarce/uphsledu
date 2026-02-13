@@ -29,32 +29,34 @@ include '../app/includes/header.php';
 <?php
 // Helper: list PDFs for a program slug and return JSON array string usable in data-pdfs
 function listProgramPdfsJson($slug, $base_path) {
-    $dir = __DIR__ . '/../assets/documents/library/programs/' . $slug . '/';
     $items = [];
-    if (is_dir($dir)) {
-        $files = scandir($dir);
-        $pdfs = [];
-        foreach ($files as $f) {
-            if ($f === '.' || $f === '..') continue;
-            $full = $dir . $f;
-            if (!is_file($full)) continue;
-            $ext = strtolower(pathinfo($f, PATHINFO_EXTENSION));
-            if ($ext !== 'pdf') continue;
-            $pdfs[] = ['file' => $f, 'mtime' => filemtime($full)];
-        }
-        // sort by modification time desc (newest first)
-        usort($pdfs, function($a, $b) { return $b['mtime'] <=> $a['mtime']; });
-        foreach ($pdfs as $p) {
-            $f = $p['file'];
-            $title = preg_replace('/[_\-]+/', ' ', pathinfo($f, PATHINFO_FILENAME));
-            $item = ['title' => $title, 'url' => $base_path . 'assets/documents/library/programs/' . $slug . '/' . rawurlencode($f)];
-            // if a server-generated thumbnail JPEG exists next to the PDF, include it to speed up rendering
-            $thumbPath = $dir . pathinfo($f, PATHINFO_FILENAME) . '.jpg';
-            if (is_file($thumbPath)) {
-                $item['thumb'] = $base_path . 'assets/documents/library/programs/' . $slug . '/' . rawurlencode(pathinfo($f, PATHINFO_FILENAME) . '.jpg');
+    try {
+        $db = getDBConnection();
+        $stmt = $db->prepare('SELECT id FROM library_programs WHERE slug = :slug LIMIT 1');
+        $stmt->execute([':slug' => $slug]);
+        $r = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$r) return json_encode($items);
+        $program_id = (int)$r['id'];
+
+        $ps = $db->prepare('SELECT filename, path, uploaded_at FROM library_program_pdfs WHERE program_id = :pid ORDER BY uploaded_at DESC');
+        $ps->execute([':pid' => $program_id]);
+        $rows = $ps->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $row) {
+            $fname = $row['filename'];
+            $title = preg_replace('/[_\-]+/', ' ', pathinfo($fname, PATHINFO_FILENAME));
+            $url = $base_path . ltrim($row['path'], '/');
+            $item = ['title' => $title, 'url' => $url];
+            // server-generated thumbnail next to the PDF (same folder, .jpg)
+            $fsThumb = __DIR__ . '/../' . preg_replace('#^/+|\.{2,}#', '', $row['path']);
+            $fsThumb = preg_replace('/\.pdf$/i', '.jpg', $fsThumb);
+            if (is_file($fsThumb)) {
+                $thumbRel = preg_replace('/\.pdf$/i', '.jpg', $row['path']);
+                $item['thumb'] = $base_path . ltrim($thumbRel, '/');
             }
             $items[] = $item;
         }
+    } catch (Exception $e) {
+        // ignore and return empty
     }
     return json_encode($items);
 }
