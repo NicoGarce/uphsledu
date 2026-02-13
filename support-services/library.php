@@ -49,10 +49,16 @@ function listProgramPdfsJson($slug, $base_path) {
             // server-generated thumbnail next to the PDF (same folder, .jpg)
             $fsThumb = __DIR__ . '/../' . preg_replace('#^/+|\.{2,}#', '', $row['path']);
             $fsThumb = preg_replace('/\.pdf$/i', '.jpg', $fsThumb);
-            if (is_file($fsThumb)) {
-                $thumbRel = preg_replace('/\.pdf$/i', '.jpg', $row['path']);
-                $item['thumb'] = $base_path . ltrim($thumbRel, '/');
+            // expose thumb via proxy so client gets immediate placeholder and background-gen is triggered when missing
+            $thumbFile = preg_replace('/\.pdf$/i', '.jpg', $row['filename']);
+            $v = 0;
+            if (!empty($row['uploaded_at'])) {
+                $v = strtotime($row['uploaded_at']);
             }
+            $item['thumb'] = $base_path . 'admin/library-thumb.php?f=' . urlencode($thumbFile) . '&v=' . intval($v);
+            // server-side check whether the actual JPG exists yet so client can decide to fall back
+            $fsThumbPath = __DIR__ . '/../assets/documents/library/' . preg_replace('/\.pdf$/i', '.jpg', $row['filename']);
+            $item['thumb_exists'] = is_file($fsThumbPath) ? true : false;
             $items[] = $item;
         }
     } catch (Exception $e) {
@@ -656,7 +662,7 @@ body {
                                         $hasThumbClass = '';
                                         $imgAttr = '';
                                         $pdfsArr = json_decode($pdfsJson, true);
-                                        if (!empty($pdfsArr) && !empty($pdfsArr[0]['thumb'])) {
+                                        if (!empty($pdfsArr) && !empty($pdfsArr[0]['thumb_exists'])) {
                                             $img = $pdfsArr[0]['thumb'];
                                             $hasThumbClass = ' has-thumb';
                                             $imgAttr = ' data-pdf-thumb="1"';
@@ -982,7 +988,7 @@ body {
                 };
 
                 // prefer server-generated JPEG thumb if available; fall back to PDF.js
-                if (item.thumb) {
+                if (item.thumb && item.thumb_exists) {
                     const img = document.createElement('img');
                     img.src = item.thumb;
                     img.alt = item.title || '';
