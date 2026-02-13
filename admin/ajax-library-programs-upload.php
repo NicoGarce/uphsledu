@@ -99,6 +99,22 @@ for ($i=0;$i<$count;$i++) {
     if (!move_uploaded_file($filesField['tmp_name'][$i], $target)) { $errors[] = "{$original}: move failed"; continue; }
     @chmod($target, 0644);
     $saved[] = $final;
+    // Spawn a background job to generate a JPEG thumbnail of the first PDF page (non-blocking)
+    try {
+        $thumbBase = $baseDir . pathinfo($final, PATHINFO_FILENAME) . '.jpg';
+        $phpBinary = defined('PHP_BINARY') ? PHP_BINARY : 'php';
+        $script = __DIR__ . '/generate-pdf-thumb.php';
+        $cmd = escapeshellarg($phpBinary) . ' ' . escapeshellarg($script) . ' ' . escapeshellarg($target) . ' ' . escapeshellarg($thumbBase);
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            // Windows: use start /B to run in background
+            @pclose(@popen('start /B ' . $cmd, 'r'));
+        } else {
+            // Unix-like: append ampersand
+            @exec($cmd . ' > /dev/null 2>&1 &');
+        }
+    } catch (Exception $e) {
+        error_log('thumbnail spawn failed: ' . $e->getMessage());
+    }
     try {
         $relPath = 'assets/documents/library/programs/' . $program_slug . '/' . $final;
         $ins = $pdo->prepare('INSERT INTO library_program_pdfs (program_id, filename, path, uploaded_at) VALUES (:program_id, :filename, :path, NOW())');

@@ -47,7 +47,13 @@ function listProgramPdfsJson($slug, $base_path) {
         foreach ($pdfs as $p) {
             $f = $p['file'];
             $title = preg_replace('/[_\-]+/', ' ', pathinfo($f, PATHINFO_FILENAME));
-            $items[] = ['title' => $title, 'url' => $base_path . 'assets/documents/library/programs/' . $slug . '/' . rawurlencode($f)];
+            $item = ['title' => $title, 'url' => $base_path . 'assets/documents/library/programs/' . $slug . '/' . rawurlencode($f)];
+            // if a server-generated thumbnail JPEG exists next to the PDF, include it to speed up rendering
+            $thumbPath = $dir . pathinfo($f, PATHINFO_FILENAME) . '.jpg';
+            if (is_file($thumbPath)) {
+                $item['thumb'] = $base_path . 'assets/documents/library/programs/' . $slug . '/' . rawurlencode(pathinfo($f, PATHINFO_FILENAME) . '.jpg');
+            }
+            $items[] = $item;
         }
     }
     return json_encode($items);
@@ -607,17 +613,19 @@ body {
     $useDB = getSetting('library_programs_source', 'static');
     if ($useDB === 'db') {
         try {
+            // If any program has no PDFs, hide the entire carousel (strict requirement)
             $db = getDBConnection();
-            $cntStmt = $db->query('SELECT COUNT(*) AS c FROM library_programs');
-            $cntRow = $cntStmt->fetch();
-            $programCount = $cntRow ? (int)$cntRow['c'] : 0;
-            if ($programCount === 0) {
+            $stmt = $db->query('SELECT slug FROM library_programs');
+            $rows = $stmt->fetchAll();
+            if (empty($rows)) {
                 $showCarousel = false;
             } else {
-                $pdfStmt = $db->query('SELECT COUNT(*) AS c FROM library_program_pdfs');
-                $pdfRow = $pdfStmt->fetch();
-                $pdfCount = $pdfRow ? (int)$pdfRow['c'] : 0;
-                if ($pdfCount === 0) $showCarousel = false;
+                foreach ($rows as $r) {
+                    $slug = $r['slug'];
+                    $pdfsJson = listProgramPdfsJson($slug, $base_path);
+                    $arr = json_decode($pdfsJson, true);
+                    if (empty($arr)) { $showCarousel = false; break; }
+                }
             }
         } catch (Exception $e) {
             $showCarousel = false;
@@ -640,10 +648,21 @@ body {
                                     $slug = htmlspecialchars($r['slug']);
                                     $title = htmlspecialchars($r['title']);
                                     $desc = htmlspecialchars($r['description']);
-                                    $img = !empty($r['image']) ? $base_path . $r['image'] : ($base_path . 'assets/images/support-services/college-library/img/programs/placeholder.jpg');
-                                    $pdfsJson = listProgramPdfsJson($slug, $base_path);
-                                    echo "<div class=\"program-slide\" data-pdfs='" . htmlspecialchars($pdfsJson, ENT_QUOTES) . "'>";
-                                    echo "<div class=\"program-image\"><img src=\"{$img}\" alt=\"" . $title . "\"></div>";
+                                        $img = !empty($r['image']) ? $base_path . $r['image'] : ($base_path . 'assets/images/support-services/college-library/img/programs/placeholder.jpg');
+                                        $pdfsJson = listProgramPdfsJson($slug, $base_path);
+                                        // if the newest PDF has a server thumbnail, use it as the program image and mark the container so client-side PDF.js rendering skips work
+                                        $hasThumbClass = '';
+                                        $imgAttr = '';
+                                        $pdfsArr = json_decode($pdfsJson, true);
+                                        if (!empty($pdfsArr) && !empty($pdfsArr[0]['thumb'])) {
+                                            $img = $pdfsArr[0]['thumb'];
+                                            $hasThumbClass = ' has-thumb';
+                                            $imgAttr = ' data-pdf-thumb="1"';
+                                        }
+                                        // render image as background to avoid browser alt-text showing when file missing
+                                        $bgStyle = "style=\"background-image:url('" . htmlspecialchars($img, ENT_QUOTES) . "');\"";
+                                        echo "<div class=\"program-slide\" data-pdfs='" . htmlspecialchars($pdfsJson, ENT_QUOTES) . "'>";
+                                        echo "<div class=\"program-image{$hasThumbClass}\"><div class=\"prog-thumb-loader\"><div class=\"rs-loading\"></div></div><div class=\"program-image-bg\" {$bgStyle} {$imgAttr}></div></div>";
                                     echo "<div class=\"program-text\"><h4>" . $title . "</h4><p>" . $desc . "</p><div style=\"margin-top:0.75rem;\"><button type=\"button\" class=\"btn resources-btn\">Resources</button></div></div></div>";
                                 }
                             } catch (Exception $e) {
@@ -654,7 +673,8 @@ body {
                         ?>
                         <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("free-coffee", $base_path); ?>'>
                             <div class="program-image">
-                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/free-coffee.jpg" alt="Free Coffee Program">
+                                <div class="prog-thumb-loader"><div class="rs-loading"></div></div>
+                                <div class="program-image-bg" style="background-image:url('<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/free-coffee.jpg')"></div>
                             </div>
                             <div class="program-text">
                                 <h4>Free Coffee</h4>
@@ -667,7 +687,8 @@ body {
 
                         <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("seed-library", $base_path); ?>'>
                             <div class="program-image">
-                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/seed-library.jpg" alt="Seed Library Program">
+                                <div class="prog-thumb-loader"><div class="rs-loading"></div></div>
+                                <div class="program-image-bg" style="background-image:url('<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/seed-library.jpg')"></div>
                             </div>
                             <div class="program-text">
                                 <h4>Seed Library Program</h4>
@@ -680,7 +701,8 @@ body {
 
                         <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("community-outreach", $base_path); ?>'>
                             <div class="program-image">
-                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/community-outreach.jpg" alt="Community Outreach Program">
+                                <div class="prog-thumb-loader"><div class="rs-loading"></div></div>
+                                <div class="program-image-bg" style="background-image:url('<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/community-outreach.jpg')"></div>
                             </div>
                             <div class="program-text">
                                 <h4>Community Outreach Program</h4>
@@ -693,7 +715,8 @@ body {
 
                         <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("international-conference", $base_path); ?>'>
                             <div class="program-image">
-                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/international-conference.jpg" alt="International Collaborative Conference">
+                                <div class="prog-thumb-loader"><div class="rs-loading"></div></div>
+                                <div class="program-image-bg" style="background-image:url('<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/international-conference.jpg')"></div>
                             </div>
                             <div class="program-text">
                                 <h4>International Collaborative Conference</h4>
@@ -706,7 +729,8 @@ body {
 
                         <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("newsletter-reports", $base_path); ?>'>
                             <div class="program-image">
-                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/newsletter-reports.jpg" alt="Library Newsletter and Annual Reports">
+                                <div class="prog-thumb-loader"><div class="rs-loading"></div></div>
+                                <div class="program-image-bg" style="background-image:url('<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/newsletter-reports.jpg')"></div>
                             </div>
                             <div class="program-text">
                                 <h4>Library Newsletter and Annual Reports</h4>
@@ -801,6 +825,12 @@ body {
     .rs-viewer-header { display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0.75rem; border-bottom:1px solid #eee; }
     .rs-viewer-frame { width:100%; height: calc(70vh - 48px); border: none; }
 
+    /* program card loader */
+    .program-image { position: relative; }
+    .prog-thumb-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.6); }
+    .prog-thumb-loader .rs-loading { width: 36px; height: 36px; border-width: 4px; }
+    .program-image.has-thumb .prog-thumb-loader { display: none; }
+
     @media (max-width: 900px) {
         .rs-resources-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -870,46 +900,89 @@ body {
                 thumb.appendChild(loader);
 
                 const title = document.createElement('p'); title.className = 'rs-resource-title'; title.textContent = item.title || 'Document';
+                // hide title during thumbnail loading; reveal after success/failure
+                title.style.display = 'none';
 
                 const actions = document.createElement('div'); actions.className = 'rs-actions';
                 const view = document.createElement('a'); view.href = item.url; view.textContent = 'View';
+                const openNew = document.createElement('a'); openNew.href = item.url; openNew.target = '_blank'; openNew.rel = 'noopener'; openNew.textContent = 'Open';
                 const dl = document.createElement('a'); dl.href = item.url; dl.download = ''; dl.textContent = 'Download';
-                actions.appendChild(view); actions.appendChild(dl);
+                actions.appendChild(view); actions.appendChild(openNew); actions.appendChild(dl);
 
                 node.appendChild(thumb);
                 node.appendChild(title);
                 node.appendChild(actions);
                 resourcesGrid.appendChild(node);
 
-                // Render first page thumbnail using PDF.js if available
-                if (window['pdfjsLib']) {
-                    const loadingTask = pdfjsLib.getDocument(item.url);
-                    loadingTask.promise.then(function(pdf) {
-                        return pdf.getPage(1).then(function(page) {
-                            const viewport = page.getViewport({ scale: 1 });
-                            const canvas = document.createElement('canvas');
-                            const context = canvas.getContext('2d');
+                // helper: show a simple 'unavailable' placeholder
+                const showUnavailable = () => {
+                    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+                    const err = document.createElement('div'); err.textContent = 'Preview unavailable'; err.style.color = '#666'; err.style.fontSize = '0.9rem'; err.style.padding = '0.25rem';
+                    thumb.appendChild(err);
+                    title.style.display = '';
+                };
 
-                            // compute scale to fit thumb width
-                            const targetWidth = Math.min(420, Math.max(150, thumb.clientWidth * 2));
-                            const scaleRequired = targetWidth / viewport.width;
-                            const vp = page.getViewport({ scale: scaleRequired });
-                            canvas.width = Math.round(vp.width);
-                            canvas.height = Math.round(vp.height);
+                // helper: render using PDF.js
+                const renderPdfThumb = async () => {
+                    if (!window['pdfjsLib']) return showUnavailable();
+                    try {
+                        const loadingTask = pdfjsLib.getDocument(item.url);
+                        const pdf = await loadingTask.promise;
+                        const page = await pdf.getPage(1);
+                        const viewport = page.getViewport({ scale: 1 });
 
-                            const renderContext = { canvasContext: context, viewport: vp };
-                            page.render(renderContext).promise.then(function() {
-                                thumb.removeChild(loader);
-                                thumb.appendChild(canvas);
-                                // clicking the thumbnail opens the in-modal viewer
-                                thumb.style.cursor = 'pointer';
-                                thumb.addEventListener('click', function() { openViewer(item.url, item.title || 'Preview'); });
-                            }).catch(function() { thumb.removeChild(loader); thumb.textContent = 'Preview unavailable'; });
-                        });
-                    }).catch(function() { thumb.removeChild(loader); thumb.textContent = 'Preview unavailable'; });
+                        const dpr = window.devicePixelRatio || 1;
+                        const targetWidthCSS = Math.min(420, Math.max(120, thumb.clientWidth || 160));
+                        const targetWidth = Math.max(120, Math.round(targetWidthCSS * dpr));
+                        const targetHeight = Math.round(targetWidth * 4 / 3);
+
+                        const scale = Math.max(targetWidth / viewport.width, targetHeight / viewport.height);
+                        const vp = page.getViewport({ scale: scale });
+
+                        const off = document.createElement('canvas');
+                        off.width = Math.round(vp.width);
+                        off.height = Math.round(vp.height);
+                        const offCtx = off.getContext('2d');
+                        await page.render({ canvasContext: offCtx, viewport: vp }).promise;
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        canvas.style.width = '100%';
+                        canvas.style.height = '100%';
+                        const ctx = canvas.getContext('2d');
+
+                        const sx = Math.max(0, Math.round((off.width - canvas.width) / 2));
+                        const sy = 0;
+                        ctx.drawImage(off, sx, sy, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
+                        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+                        thumb.appendChild(canvas);
+                        thumb.style.cursor = 'pointer';
+                        thumb.addEventListener('click', function() { openViewer(item.url, item.title || 'Preview'); });
+                        title.style.display = '';
+                    } catch (e) {
+                        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+                        showUnavailable();
+                    }
+                };
+
+                // prefer server-generated JPEG thumb if available; fall back to PDF.js
+                if (item.thumb) {
+                    const img = document.createElement('img');
+                    img.src = item.thumb;
+                    img.alt = item.title || '';
+                    img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
+                    img.onload = function() {
+                        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+                        thumb.appendChild(img);
+                        thumb.style.cursor = 'pointer';
+                        thumb.addEventListener('click', function() { openViewer(item.url, item.title || 'Preview'); });
+                        title.style.display = '';
+                    };
+                    img.onerror = function() { renderPdfThumb(); };
                 } else {
-                    thumb.removeChild(loader);
-                    thumb.textContent = 'Preview unavailable';
+                    renderPdfThumb();
                 }
 
                 // wire actions: open in modal viewer for 'View', keep download as-is
@@ -1014,7 +1087,8 @@ body {
     <style>
     /* Ensure program image area preserves 16:9 and prevents stretching on small screens */
     .program-image{position:relative;aspect-ratio:16/9;overflow:hidden;background:#f6f6f6}
-    .program-image img, .program-image canvas{width:100%;height:100%;object-fit:cover;display:block}
+    .program-image-bg, .program-image canvas{width:100%;height:100%;object-fit:cover;display:block;background-size:cover;background-position:center}
+    .program-image .program-image-bg { width:100%; height:100%; }
 
     /* Mobile: reduce title and description sizes for readability */
     @media (max-width:600px){
@@ -1040,6 +1114,26 @@ body {
 
                 const container = slide.querySelector('.program-image');
                 if (!container) return;
+                // if a server-generated thumbnail image is present (container has has-thumb class), prefer it
+                const bgDiv = container.querySelector('.program-image-bg');
+                if (container.classList && container.classList.contains('has-thumb')) {
+                    // check whether the background image actually resolves; if not, fall back to client rendering
+                    let bgOk = false;
+                    if (bgDiv) {
+                        const bg = window.getComputedStyle(bgDiv).backgroundImage || '';
+                        if (bg && bg !== 'none' && bg.indexOf('placeholder') === -1) bgOk = true;
+                    }
+                    if (bgOk) {
+                        const l = container.querySelector('.prog-thumb-loader'); if (l) l.style.display = 'none';
+                        return;
+                    }
+                    // fall through to client-side rendering if background missing or placeholder
+                }
+                // show loader while rendering
+                let cardLoader = container.querySelector('.prog-thumb-loader');
+                if (!cardLoader) {
+                    cardLoader = document.createElement('div'); cardLoader.className = 'prog-thumb-loader'; const spin = document.createElement('div'); spin.className = 'rs-loading'; cardLoader.appendChild(spin); container.appendChild(cardLoader);
+                }
 
                 const rect = container.getBoundingClientRect();
                 const dpr = window.devicePixelRatio || 1;
@@ -1080,12 +1174,14 @@ body {
                 const sy = 0;
                 ctx.drawImage(off, sx, sy, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
-                // Hide existing <img> if present, append canvas
-                const img = container.querySelector('img');
-                if (img) img.style.display = 'none';
+                // Hide existing background image div if present, append canvas and remove loader
+                if (bgDiv) bgDiv.style.display = 'none';
                 container.appendChild(canvas);
+                if (cardLoader && cardLoader.parentNode) cardLoader.parentNode.removeChild(cardLoader);
             } catch (e) {
                 console.warn('Program card thumbnail render failed', e);
+                // ensure loader removed on failure
+                const cardLoader = slide.querySelector('.prog-thumb-loader'); if (cardLoader && cardLoader.parentNode) cardLoader.parentNode.removeChild(cardLoader);
             }
         });
     });

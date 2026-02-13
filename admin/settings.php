@@ -2631,6 +2631,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                     const pct = Math.round((evt.loaded / evt.total) * 100);
                     progressBar.style.width = pct + '%';
                     progressBar.textContent = pct + '%';
+                    if (pct === 100) progressBar.textContent = 'Processing…';
                 }
             };
             xhr.onload = function() {
@@ -2744,6 +2745,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             progressBar.style.width = '0%'; progressBar.parentElement.style.display = 'block';
             const xhr = new XMLHttpRequest(); xhr.open('POST','ajax-library-programs-upload.php');
             xhr.upload.onprogress = function(evt){ if (evt.lengthComputable) { const pct = Math.round((evt.loaded/evt.total)*100); progressBar.style.width = pct + '%'; progressBar.textContent = pct + '%'; }};
+            // show processing indicator when upload completes but server still working
+            xhr.upload.onprogress = function(evt){ if (evt.lengthComputable) { const pct = Math.round((evt.loaded/evt.total)*100); progressBar.style.width = pct + '%'; progressBar.textContent = pct === 100 ? 'Processing…' : pct + '%'; }};
             xhr.onload = function(){ try { const data = JSON.parse(xhr.responseText); if (data.success) { statusEl.textContent = data.message || 'Uploaded'; refreshPdfListIntoModal(programId); } else { statusEl.textContent = data.error || 'Upload failed'; } } catch(e){ statusEl.textContent = 'Invalid server response'; } setTimeout(()=>{ progressBar.parentElement.style.display='none'; progressBar.style.width='0%'; progressBar.textContent=''; },800); };
             xhr.onerror = function(){ statusEl.textContent = 'Upload error'; };
             xhr.send(form);
