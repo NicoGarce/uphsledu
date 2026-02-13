@@ -106,8 +106,10 @@ for ($i=0;$i<$count;$i++) {
         $script = __DIR__ . '/generate-pdf-thumb.php';
         $cmd = escapeshellarg($phpBinary) . ' ' . escapeshellarg($script) . ' ' . escapeshellarg($target) . ' ' . escapeshellarg($thumbBase);
         if (stripos(PHP_OS, 'WIN') === 0) {
-            // Windows: use start /B to run in background
-            @pclose(@popen('start /B ' . $cmd, 'r'));
+            // Windows: use start with empty title and /B to run in background; redirect output to NUL
+            // Wrap command in start "" /B <cmd> > NUL 2>&1
+            $winCmd = 'start "" /B ' . $cmd . ' > NUL 2>&1';
+            @pclose(@popen($winCmd, 'r'));
         } else {
             // Unix-like: append ampersand
             @exec($cmd . ' > /dev/null 2>&1 &');
