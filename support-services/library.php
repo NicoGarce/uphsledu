@@ -924,11 +924,23 @@ body {
                     title.style.display = '';
                 };
 
-                // helper: render using PDF.js
+                // helper: render using PDF.js (fetch first to avoid worker fetch issues and improve reliability)
                 const renderPdfThumb = async () => {
                     if (!window['pdfjsLib']) return showUnavailable();
                     try {
-                        const loadingTask = pdfjsLib.getDocument(item.url);
+                        // resolve absolute URL
+                        let docUrl = item.url;
+                        try { docUrl = (new URL(docUrl, window.location.href)).href; } catch (ee) { /* ignore */ }
+
+                        // fetch PDF bytes with a short timeout
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 12000);
+                        const resp = await fetch(docUrl, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+                        if (!resp.ok) throw new Error('Fetch failed ' + resp.status);
+                        const arr = await resp.arrayBuffer();
+
+                        const loadingTask = pdfjsLib.getDocument({ data: arr });
                         const pdf = await loadingTask.promise;
                         const page = await pdf.getPage(1);
                         const viewport = page.getViewport({ scale: 1 });
@@ -1102,90 +1114,106 @@ body {
     </style>
 
     <script>
-    // Render newest PDF first page as the program card image (16:9) using PDF.js
+    // Render newest PDF first page as the program card image (16:9) using PDF.js — lazy render only visible slides
     document.addEventListener('DOMContentLoaded', function() {
         if (!window['pdfjsLib']) return;
-        const slides = document.querySelectorAll('.program-slide');
-        slides.forEach(async (slide) => {
+        const carouselRoot = document.querySelector('.program-carousel');
+        if (!carouselRoot) return;
+
+        const slides = Array.from(document.querySelectorAll('.program-slide'));
+        const rendered = new WeakSet();
+
+        const lazyRenderSlide = async (slide) => {
+            if (!slide || rendered.has(slide)) return;
+            // prefer server-generated background thumb
+            const container = slide.querySelector('.program-image');
+            if (!container) return;
+            const bgDiv = container.querySelector('.program-image-bg');
+            if (container.classList && container.classList.contains('has-thumb')) {
+                let bgOk = false;
+                if (bgDiv) {
+                    const bg = window.getComputedStyle(bgDiv).backgroundImage || '';
+                    if (bg && bg !== 'none' && bg.indexOf('placeholder') === -1) bgOk = true;
+                }
+                if (bgOk) {
+                    const l = container.querySelector('.prog-thumb-loader'); if (l) l.style.display = 'none';
+                    rendered.add(slide);
+                    return;
+                }
+            }
+
+            // gather pdf url
+            const raw = slide.getAttribute('data-pdfs') || '[]';
+            let items = [];
+            try { items = JSON.parse(raw); } catch(e) { items = []; }
+            if (!items || items.length === 0) { rendered.add(slide); return; }
+            const first = items[0]; if (!first || !first.url) { rendered.add(slide); return; }
+
+            // add loader if missing
+            let cardLoader = container.querySelector('.prog-thumb-loader');
+            if (!cardLoader) {
+                cardLoader = document.createElement('div'); cardLoader.className = 'prog-thumb-loader'; const spin = document.createElement('div'); spin.className = 'rs-loading'; cardLoader.appendChild(spin); container.appendChild(cardLoader);
+            }
+
             try {
-                const raw = slide.getAttribute('data-pdfs') || '[]';
-                const items = JSON.parse(raw);
-                if (!items || items.length === 0) return;
-                const first = items[0];
-                if (!first || !first.url) return;
+                // resolve and fetch PDF as bytes first (more reliable)
+                let docUrl = first.url; try { docUrl = (new URL(docUrl, window.location.href)).href; } catch(e) {}
+                const controller = new AbortController(); const to = setTimeout(()=>controller.abort(), 12000);
+                const resp = await fetch(docUrl, { signal: controller.signal }); clearTimeout(to);
+                if (!resp.ok) throw new Error('fetch failed ' + resp.status);
+                const ab = await resp.arrayBuffer();
 
-                const container = slide.querySelector('.program-image');
-                if (!container) return;
-                // if a server-generated thumbnail image is present (container has has-thumb class), prefer it
-                const bgDiv = container.querySelector('.program-image-bg');
-                if (container.classList && container.classList.contains('has-thumb')) {
-                    // check whether the background image actually resolves; if not, fall back to client rendering
-                    let bgOk = false;
-                    if (bgDiv) {
-                        const bg = window.getComputedStyle(bgDiv).backgroundImage || '';
-                        if (bg && bg !== 'none' && bg.indexOf('placeholder') === -1) bgOk = true;
-                    }
-                    if (bgOk) {
-                        const l = container.querySelector('.prog-thumb-loader'); if (l) l.style.display = 'none';
-                        return;
-                    }
-                    // fall through to client-side rendering if background missing or placeholder
-                }
-                // show loader while rendering
-                let cardLoader = container.querySelector('.prog-thumb-loader');
-                if (!cardLoader) {
-                    cardLoader = document.createElement('div'); cardLoader.className = 'prog-thumb-loader'; const spin = document.createElement('div'); spin.className = 'rs-loading'; cardLoader.appendChild(spin); container.appendChild(cardLoader);
-                }
-
-                const rect = container.getBoundingClientRect();
-                const dpr = window.devicePixelRatio || 1;
-                const targetWidthCSS = rect.width || 320;
-                const targetWidth = Math.max(320, Math.round(targetWidthCSS * dpr));
-                const targetHeight = Math.round(targetWidth * 9 / 16);
-
-                // load PDF and first page
-                const loading = pdfjsLib.getDocument(first.url);
+                const loading = pdfjsLib.getDocument({ data: ab });
                 const pdf = await loading.promise;
                 const page = await pdf.getPage(1);
                 const viewport = page.getViewport({ scale: 1 });
 
-                // scale so the rendered page fully covers the target 16:9 area
+                const dpr = window.devicePixelRatio || 1;
+                const rect = container.getBoundingClientRect();
+                const targetWidthCSS = rect.width || 320;
+                const targetWidth = Math.max(320, Math.round(targetWidthCSS * dpr));
+                const targetHeight = Math.round(targetWidth * 9 / 16);
+
                 const scale = Math.max(targetWidth / viewport.width, targetHeight / viewport.height);
                 const vp = page.getViewport({ scale: scale });
 
-                // render to an offscreen canvas at device pixels
-                const off = document.createElement('canvas');
-                off.width = Math.round(vp.width);
-                off.height = Math.round(vp.height);
-                const offCtx = off.getContext('2d');
-                await page.render({ canvasContext: offCtx, viewport: vp }).promise;
+                const off = document.createElement('canvas'); off.width = Math.round(vp.width); off.height = Math.round(vp.height);
+                const offCtx = off.getContext('2d'); await page.render({ canvasContext: offCtx, viewport: vp }).promise;
 
-                // final canvas sized to target (device pixels)
-                const canvas = document.createElement('canvas');
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-                // show canvas responsive to its container which enforces 16:9
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-                canvas.alt = first.title || '';
+                const canvas = document.createElement('canvas'); canvas.width = targetWidth; canvas.height = targetHeight; canvas.style.width = '100%'; canvas.style.height = '100%';
                 const ctx = canvas.getContext('2d');
-
-                // top-crop from the offscreen render into the final 16:9 canvas
-                // horizontally center, but crop from the top (sy = 0) to keep page header visible
-                const sx = Math.max(0, Math.round((off.width - canvas.width) / 2));
-                const sy = 0;
+                const sx = Math.max(0, Math.round((off.width - canvas.width) / 2)); const sy = 0;
                 ctx.drawImage(off, sx, sy, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
-                // Hide existing background image div if present, append canvas and remove loader
                 if (bgDiv) bgDiv.style.display = 'none';
                 container.appendChild(canvas);
                 if (cardLoader && cardLoader.parentNode) cardLoader.parentNode.removeChild(cardLoader);
-            } catch (e) {
-                console.warn('Program card thumbnail render failed', e);
-                // ensure loader removed on failure
+                rendered.add(slide);
+            } catch (err) {
+                console.warn('Program card thumbnail render failed', err);
                 const cardLoader = slide.querySelector('.prog-thumb-loader'); if (cardLoader && cardLoader.parentNode) cardLoader.parentNode.removeChild(cardLoader);
+                rendered.add(slide);
             }
-        });
+        };
+
+        // IntersectionObserver to lazy-render only the visible slide(s)
+        try {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(ent => {
+                    if (ent.isIntersecting) {
+                        lazyRenderSlide(ent.target);
+                        // pre-render next sibling for smoother transitions
+                        const next = ent.target.nextElementSibling; if (next) lazyRenderSlide(next);
+                    }
+                });
+            }, { root: carouselRoot, threshold: 0.45 });
+            slides.forEach(s => io.observe(s));
+            // ensure first slide is attempted immediately
+            if (slides[0]) lazyRenderSlide(slides[0]);
+        } catch (e) {
+            // fallback: render first slide synchronously
+            if (slides[0]) lazyRenderSlide(slides[0]);
+        }
     });
     </script>
 
