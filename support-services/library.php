@@ -601,6 +601,29 @@ body {
     ?>
 
     <!-- Library Programs Section -->
+    <?php
+    // compute whether to show the DB-driven carousel: require DB source, at least one program, and at least one PDF
+    $showCarousel = true;
+    $useDB = getSetting('library_programs_source', 'static');
+    if ($useDB === 'db') {
+        try {
+            $db = getDBConnection();
+            $cntStmt = $db->query('SELECT COUNT(*) AS c FROM library_programs');
+            $cntRow = $cntStmt->fetch();
+            $programCount = $cntRow ? (int)$cntRow['c'] : 0;
+            if ($programCount === 0) {
+                $showCarousel = false;
+            } else {
+                $pdfStmt = $db->query('SELECT COUNT(*) AS c FROM library_program_pdfs');
+                $pdfRow = $pdfStmt->fetch();
+                $pdfCount = $pdfRow ? (int)$pdfRow['c'] : 0;
+                if ($pdfCount === 0) $showCarousel = false;
+            }
+        } catch (Exception $e) {
+            $showCarousel = false;
+        }
+    }
+    if (!empty($showCarousel)): ?>
     <section class="content-section library-programs-section">
         <div class="container">
             <h2 class="section-title">Library Programs</h2>
@@ -608,8 +631,7 @@ body {
                 <div class="program-carousel">
                     <div class="program-carousel-track" id="libraryProgramsTrack">
                         <?php
-                        // If site setting chooses DB source, render programs from DB; otherwise fall back to static slides above
-                        $useDB = getSetting('library_programs_source', 'static');
+                        // $useDB already determined above; render DB or static slides below
                         if ($useDB === 'db') {
                             try {
                                 $stmt = getDBConnection()->query("SELECT slug, title, description, image FROM library_programs ORDER BY created_at ASC");
@@ -708,6 +730,7 @@ body {
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
     <!-- Mission and Vision Section -->
     <section class="content-section mission-vision-section">
@@ -735,7 +758,16 @@ body {
                 <button type="button" id="rsModalClose" aria-label="Close resources">✕</button>
             </header>
             <div class="rs-modal-body">
-                <div id="rsResourcesGrid" class="rs-resources-grid"></div>
+                    <div id="rsResourcesGrid" class="rs-resources-grid"></div>
+                </div>
+                <!-- In-modal PDF viewer overlay -->
+                <div id="rsViewer" class="rs-viewer" aria-hidden="true">
+                    <div class="rs-viewer-header">
+                        <strong id="rsViewerTitle">Preview</strong>
+                        <button type="button" id="rsViewerClose" aria-label="Close preview">✕</button>
+                    </div>
+                    <iframe id="rsViewerFrame" class="rs-viewer-frame" src="" title="PDF preview"></iframe>
+                </div>
             </div>
         </div>
     </div>
@@ -762,6 +794,12 @@ body {
     .rs-pagination { display:flex; gap:8px; justify-content:center; align-items:center; padding:0.75rem 1rem; border-top:1px solid #eee; background:#fafafa; }
     .rs-page-btn { padding:6px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:white; color:var(--primary-color); cursor:pointer; }
     .rs-page-btn.active { background:var(--primary-color); color:white; border-color:var(--primary-color); }
+
+    /* In-modal PDF viewer (overlay inside dialog) */
+    .rs-viewer { position: absolute; inset: 0; background: #fff; z-index: 12; display: none; flex-direction: column; }
+    .rs-viewer[aria-hidden="false"] { display: flex; }
+    .rs-viewer-header { display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0.75rem; border-bottom:1px solid #eee; }
+    .rs-viewer-frame { width:100%; height: calc(70vh - 48px); border: none; }
 
     @media (max-width: 900px) {
         .rs-resources-grid { grid-template-columns: repeat(2, 1fr); }
@@ -792,6 +830,26 @@ body {
         let currentPage = 0;
         const PAGE_SIZE = 9;
 
+        // in-modal viewer elements
+        const viewer = document.getElementById('rsViewer');
+        const viewerClose = document.getElementById('rsViewerClose');
+        const viewerFrame = document.getElementById('rsViewerFrame');
+        const viewerTitle = document.getElementById('rsViewerTitle');
+
+        function openViewer(url, title) {
+            if (!viewer) return;
+            viewer.setAttribute('aria-hidden', 'false');
+            viewerFrame.src = url;
+            if (viewerTitle && title) viewerTitle.textContent = title;
+            viewerClose.focus();
+        }
+
+        function closeViewer() {
+            if (!viewer) return;
+            viewer.setAttribute('aria-hidden', 'true');
+            viewerFrame.src = '';
+        }
+
         function renderPage(pageIndex) {
             currentPage = pageIndex;
             resourcesGrid.innerHTML = '';
@@ -814,7 +872,7 @@ body {
                 const title = document.createElement('p'); title.className = 'rs-resource-title'; title.textContent = item.title || 'Document';
 
                 const actions = document.createElement('div'); actions.className = 'rs-actions';
-                const view = document.createElement('a'); view.href = item.url; view.target = '_blank'; view.rel = 'noopener'; view.textContent = 'View';
+                const view = document.createElement('a'); view.href = item.url; view.textContent = 'View';
                 const dl = document.createElement('a'); dl.href = item.url; dl.download = ''; dl.textContent = 'Download';
                 actions.appendChild(view); actions.appendChild(dl);
 
@@ -843,6 +901,9 @@ body {
                             page.render(renderContext).promise.then(function() {
                                 thumb.removeChild(loader);
                                 thumb.appendChild(canvas);
+                                // clicking the thumbnail opens the in-modal viewer
+                                thumb.style.cursor = 'pointer';
+                                thumb.addEventListener('click', function() { openViewer(item.url, item.title || 'Preview'); });
                             }).catch(function() { thumb.removeChild(loader); thumb.textContent = 'Preview unavailable'; });
                         });
                     }).catch(function() { thumb.removeChild(loader); thumb.textContent = 'Preview unavailable'; });
@@ -850,6 +911,9 @@ body {
                     thumb.removeChild(loader);
                     thumb.textContent = 'Preview unavailable';
                 }
+
+                // wire actions: open in modal viewer for 'View', keep download as-is
+                view.addEventListener('click', function(e) { e.preventDefault(); openViewer(item.url, item.title || 'Preview'); });
             });
 
             renderPagination();
@@ -937,7 +1001,13 @@ body {
 
         modalClose.addEventListener('click', closeModal);
         modal.querySelector('.rs-modal-backdrop').addEventListener('click', closeModal);
-        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+        if (viewerClose) viewerClose.addEventListener('click', closeViewer);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (viewer && viewer.getAttribute('aria-hidden') === 'false') { closeViewer(); return; }
+                closeModal();
+            }
+        });
     });
     </script>
 
