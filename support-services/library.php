@@ -389,6 +389,7 @@ body {
     gap: 1.5rem;
     align-items: center;
     background: #fff;
+    position: relative;
     padding: 1.25rem;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.06);
@@ -646,12 +647,37 @@ body {
                 a.addEventListener('mouseenter', function(e){
                     // ignore on touch devices
                     if (('ontouchstart' in window) || navigator.maxTouchPoints > 0) return;
-                    showTip('Open in Drive');
+                    showTip('Open in Gdrive');
                     moveTip(e.clientX, e.clientY);
                     enabled = true;
                 });
                 a.addEventListener('mousemove', function(e){ if (!enabled) return; moveTip(e.clientX, e.clientY); });
                 a.addEventListener('mouseleave', function(){ hideTip(); enabled = false; });
+            });
+        })();
+
+        // add a small Google Drive (Gdrive) icon button to slides that have a real link
+        (function(){
+            const track = document.getElementById('libraryProgramsTrack');
+            if (!track) return;
+            const slides = track.querySelectorAll('.program-slide');
+            slides.forEach(function(slide){
+                const parentLink = slide.closest('.program-slide-link');
+                const href = parentLink ? parentLink.getAttribute('href') : (slide.getAttribute('data-link') || '');
+                if (!href || href === '#' || href.toLowerCase().startsWith('javascript:')) return;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'gdrive-btn';
+                btn.setAttribute('aria-label', 'Open in Gdrive');
+                btn.title = 'Open in Gdrive';
+                // Use Font Awesome brand icon; fallback text if not available
+                btn.innerHTML = '<i class="fab fa-google-drive" aria-hidden="true"></i>';
+                btn.addEventListener('click', function(e){
+                    e.stopPropagation();
+                    try { window.open(href, '_blank', 'noopener'); } catch(err){ window.open(href, '_blank'); }
+                });
+                slide.appendChild(btn);
             });
         })();
 
@@ -848,6 +874,29 @@ body {
         white-space: nowrap;
         box-shadow: 0 6px 18px rgba(16,24,40,0.12);
     }
+
+    /* Gdrive icon button placed at top-right of each slide */
+    .gdrive-btn {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        z-index: 30;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.98);
+        border: 1px solid rgba(16,24,40,0.06);
+        color: var(--primary-color);
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(16,24,40,0.08);
+        padding: 0;
+        font-size: 16px;
+    }
+    .gdrive-btn i { font-size: 18px; }
+    .gdrive-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(16,24,40,0.12); }
     </style>
 
     
