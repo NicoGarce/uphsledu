@@ -73,6 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $error = 'Failed to save settings. Please try again.';
             }
+            // snapshot modal values to gate Save button
+            setModalFormOriginalSnapshot();
         }
     } elseif (isset($_POST['action']) && $_POST['action'] === 'toggle_maintenance') {
         $maintenance_mode = isset($_POST['maintenance_mode']) ? '1' : '0';
@@ -614,22 +616,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
 
                 $stmt = $pdo->prepare('SELECT id FROM library_programs WHERE slug = :slug');
                 $stmt->execute([':slug' => $slug]);
-                if ($stmt->fetch()) {
-                    $error = 'A program with that slug already exists.';
-                } else {
-                    $ins = $pdo->prepare('INSERT INTO library_programs (slug,title,description,created_at,updated_at) VALUES (:slug,:title,:description,NOW(),NOW())');
-                    $ins->execute([':slug'=>$slug,':title'=>$title,':description'=>$description]);
-                    $success = 'Program created successfully.';
-                }
+                    if ($stmt->fetch()) {
+                        $error = 'A program with that slug already exists.';
+                    } else {
+                        // Handle optional uploaded thumbnail image (takes precedence) or image URL
+                        $image = '';
+                        if (isset($_FILES['image']) && isset($_FILES['image']['tmp_name']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                            $file = $_FILES['image'];
+                            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                            if (in_array($ext, ['jpg','jpeg','png','webp','gif'])) {
+                                $baseDir = __DIR__ . '/../assets/images/support-services/college-library/programs/' . $slug . '/';
+                                if (!is_dir($baseDir)) { @mkdir($baseDir,0755,true); }
+                                $safe = preg_replace('/[^a-zA-Z0-9_\-\.]/','_',pathinfo($file['name'], PATHINFO_FILENAME));
+                                $final = $safe . '.' . $ext;
+                                $target = $baseDir . $final;
+                                $counter = 1; while (file_exists($target)) { $final = $safe . '_' . $counter . '.' . $ext; $target = $baseDir . $final; $counter++; }
+                                if (move_uploaded_file($file['tmp_name'], $target)) {
+                                    @chmod($target, 0644);
+                                    $image = 'assets/images/support-services/college-library/programs/' . $slug . '/' . $final;
+                                }
+                            }
+                        }
+                        if (empty($image)) {
+                            $image = Validator::sanitize($_POST['image'] ?? '', 'string');
+                        }
+                        $link = Validator::sanitize($_POST['link'] ?? '', 'url');
+                        $ins = $pdo->prepare('INSERT INTO library_programs (slug,title,description,image,link,created_at,updated_at) VALUES (:slug,:title,:description,:image,:link,NOW(),NOW())');
+                        $ins->execute([':slug'=>$slug,':title'=>$title,':description'=>$description,':image'=>$image,':link'=>$link]);
+                        $success = 'Program created successfully.';
+                    }
             } elseif ($_POST['action'] === 'library_update_program') {
                 $id = (int)($_POST['id'] ?? 0);
                 $title = Validator::sanitize($_POST['title'] ?? '', 'string');
                 $description = Validator::sanitize($_POST['description'] ?? '', 'string');
+                $image = Validator::sanitize($_POST['image'] ?? '', 'string');
+                $link = Validator::sanitize($_POST['link'] ?? '', 'url');
                 if ($id <= 0) {
                     $error = 'Invalid program ID.';
                 } else {
-                    $up = $pdo->prepare('UPDATE library_programs SET title = :title, description = :description, updated_at = NOW() WHERE id = :id');
-                    $up->execute([':title'=>$title,':description'=>$description,':id'=>$id]);
+                    $parts = ['title = :title', 'description = :description', 'updated_at = NOW()'];
+                    $params = [':title'=>$title, ':description'=>$description, ':id'=>$id];
+                    if (!empty($image)) { $parts[] = 'image = :image'; $params[':image'] = $image; }
+                    if (!empty($link)) { $parts[] = 'link = :link'; $params[':link'] = $link; }
+                    $sql = 'UPDATE library_programs SET ' . implode(', ', $parts) . ' WHERE id = :id';
+                    $up = $pdo->prepare($sql);
+                    $up->execute($params);
                     $success = 'Program updated successfully.';
                 }
             } elseif ($_POST['action'] === 'library_delete_program') {
@@ -643,23 +674,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                     $row = $s->fetch(PDO::FETCH_ASSOC);
                     if ($row) {
                         $slug = $row['slug'];
-                        $baseDir = __DIR__ . '/../assets/documents/library/programs/' . $slug;
-                        // delete files and directory if exists
-                        if (is_dir($baseDir)) {
-                            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+                        // remove thumbnail image directory if present (new thumbnails are stored under assets/images/...)
+                        $imgDir = __DIR__ . '/../assets/images/support-services/college-library/programs/' . $slug;
+                        if (is_dir($imgDir)) {
+                            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($imgDir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
                             foreach ($files as $fileinfo) {
                                 if ($fileinfo->isDir()) {
-                                    rmdir($fileinfo->getRealPath());
+                                    @rmdir($fileinfo->getRealPath());
                                 } else {
                                     @unlink($fileinfo->getRealPath());
                                 }
                             }
-                            @rmdir($baseDir);
+                            @rmdir($imgDir);
                         }
-                        // delete DB rows
-                        $pdo->prepare('DELETE FROM library_program_pdfs WHERE program_id = :id')->execute([':id'=>$id]);
+                        // delete program record
                         $pdo->prepare('DELETE FROM library_programs WHERE id = :id')->execute([':id'=>$id]);
-                        $success = 'Program and associated PDFs deleted.';
+                        $success = 'Program deleted.';
                     } else {
                         $error = 'Program not found.';
                     }
@@ -682,92 +712,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             <p class="dashboard-subtitle">Manage website-wide settings and configurations</p>
         </div>
 
-        <!-- Library Programs Manager -->
-        <div class="settings-section">
+        <!-- Quick Navigation & Search -->
+        <div class="settings-section" id="settings-quicknav">
             <div class="settings-card">
-                <div class="settings-card-header">
-                    <h2>
-                        <i class="fas fa-book"></i>
-                        Library Programs Manager
-                    </h2>
-                    <p class="settings-description">Create, edit, delete library programs and upload multiple PDFs per program. Uploaded PDFs are stored under <strong>assets/documents/library/programs/{slug}/</strong>.</p>
-                </div>
-
-                <?php
-                // Fetch programs and their PDFs from DB
-                $programs = [];
-                $program_pdfs = [];
-                try {
-                    $st = $pdo->query('SELECT id, slug, title, description FROM library_programs ORDER BY created_at ASC');
-                    $programs = $st->fetchAll(PDO::FETCH_ASSOC);
-                    $ids = array_column($programs, 'id');
-                    if (!empty($ids)) {
-                        $placeholders = implode(',', array_fill(0, count($ids), '?'));
-                        $stmt = $pdo->prepare("SELECT id, program_id, filename, path, uploaded_at FROM library_program_pdfs WHERE program_id IN ({$placeholders}) ORDER BY uploaded_at DESC");
-                        $stmt->execute($ids);
-                        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($rows as $r) {
-                            $program_pdfs[$r['program_id']][] = $r;
-                        }
-                    }
-                } catch (Exception $e) {
-                    // ignore
-                }
-                ?>
-
-                <div class="form-actions" style="margin-bottom:16px;">
-                    <form method="POST" class="inline" style="display:flex;gap:8px;align-items:center;">
-                        <?php echo CSRF::field(); ?>
-                        <input type="hidden" name="action" value="set_library_programs_source">
-                        <label style="margin-right:8px;">Source:</label>
-                        <select name="library_programs_source" class="form-input" style="width:auto;">
-                            <option value="static" <?php echo getSetting('library_programs_source','static') !== 'db' ? 'selected' : ''; ?>>Static</option>
-                            <option value="db" <?php echo getSetting('library_programs_source','static') === 'db' ? 'selected' : ''; ?>>Database</option>
-                        </select>
-                        <button class="btn" type="submit">Save</button>
-                    </form>
-                </div>
-
-                <div style="display:flex;flex-direction:column;gap:16px;">
-                    <div style="flex:1; width:100%;">
-                        <h3 style="margin-top:0;margin-bottom:8px;">Create Program</h3>
-                        <form method="POST" class="settings-form" novalidate style="display:flex;flex-direction:column;gap:8px;">
-                            <?php echo CSRF::field(); ?>
-                            <input type="hidden" name="action" value="library_create_program">
-                            <div style="display:flex;gap:8px;align-items:center;">
-                                <input type="text" name="title" class="form-input" placeholder="Program title" style="flex:1;min-width:140px;padding:8px;font-size:0.95rem;" required>
-                                <input type="text" name="slug" class="form-input" placeholder="slug (optional)" style="width:140px;padding:8px;font-size:0.95rem;">
-                                <button type="submit" class="btn" style="padding:6px 10px;font-size:0.95rem;">Create</button>
-                            </div>
-                            <div>
-                                <label class="form-label" style="font-size:0.9rem;margin-bottom:6px;">Description</label>
-                                <textarea name="description" class="form-textarea" rows="2" style="padding:8px;font-size:0.95rem;min-height:56px;" placeholder="Short description (optional)"></textarea>
-                            </div>
-                        </form>
+                <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+                    <div style="display:flex;gap:8px;align-items:center;flex:1;min-width:220px;">
+                        <a href="#section-general" class="btn quicknav-link" data-target="section-general">General</a>
+                        <a href="#section-contact" class="btn quicknav-link" data-target="section-contact">Contact</a>
+                        <a href="#section-social" class="btn quicknav-link" data-target="section-social">Social</a>
+                        <a href="#section-library-programs" class="btn quicknav-link" data-target="section-library-programs">Library</a>
                     </div>
-
-                    <div style="flex:1;">
-                        <h3 style="margin-top:0;margin-bottom:8px;">Existing Programs</h3>
-                        <?php if (empty($programs)): ?>
-                            <p>No programs yet.</p>
-                        <?php else: ?>
-                            <ul id="program-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
-                                <?php foreach ($programs as $p): ?>
-                                    <li class="section-maintenance-group" style="display:flex;align-items:center;gap:8px;padding:10px;">
-                                        <button class="" style="background:transparent;color:var(--text-dark);padding:8px;border-radius:6px;box-shadow:none;border:0;text-align:left;flex:1;font-weight:600;" onclick="openEditModal(<?php echo (int)$p['id']; ?>)">
-                                            <?php echo htmlspecialchars($p['title']); ?>
-                                            <div style="font-size:0.85rem;color:#6b7280;margin-top:4px;font-weight:400;"><?php echo htmlspecialchars($p['slug']); ?></div>
-                                        </button>
-                                        <button class="btn btn-icon" title="Delete program" onclick="deleteProgram(<?php echo (int)$p['id']; ?>)" style="background:#ef4444;color:#fff;border-radius:6px;padding:8px 10px;"> 
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                        <input type="hidden" id="program-data-<?php echo (int)$p['id']; ?>" data-title="<?php echo htmlspecialchars($p['title'], ENT_QUOTES); ?>" data-desc="<?php echo htmlspecialchars($p['description'], ENT_QUOTES); ?>">
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input id="settings_search" type="search" placeholder="Search settings..." class="form-input" style="min-width:220px;max-width:420px;padding:8px 12px;">
+                        <button id="settings_search_clear" class="btn" type="button">Clear</button>
                     </div>
                 </div>
+                <p class="settings-description" style="margin-top:10px;">Quickly jump to a settings card or search to filter settings cards by name or description.</p>
             </div>
         </div>
 
@@ -786,7 +746,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         <?php endif; ?>
 
         <!-- General Information Section -->
-        <div class="settings-section">
+        <div id="section-general" class="settings-section">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -847,7 +807,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Contact Information Section -->
-        <div class="settings-section">
+        <div id="section-contact" class="settings-section">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -935,7 +895,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Social Media Links Section -->
-        <div class="settings-section">
+        <div id="section-social" class="settings-section">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1013,8 +973,125 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             </div>
         </div>
 
+        <!-- Library Programs Manager -->
+        <div id="section-library-programs" class="settings-section">
+            <div class="settings-card">
+                <div class="settings-card-header no-divider-bottom">
+                    <h2>
+                        <i class="fas fa-book"></i>
+                        Library Programs Manager
+                    </h2>
+                    <p class="settings-description">Create, edit, delete library programs and upload multiple PDFs per program. Uploaded PDFs are stored under <strong>assets/documents/library/programs/{slug}/</strong>.</p>
+                </div>
+
+                <?php
+                // Fetch programs from DB. PDF attachments are deprecated so we no longer query library_program_pdfs.
+                $programs = [];
+                $program_pdfs = []; // kept as empty for backward compatibility in templates
+                try {
+                    $st = $pdo->query('SELECT id, slug, title, description, image, link FROM library_programs ORDER BY created_at ASC');
+                    $programs = $st->fetchAll(PDO::FETCH_ASSOC);
+                } catch (Exception $e) {
+                    // ignore
+                }
+                ?>
+
+                <div class="form-actions" style="margin-bottom:16px;">
+                    <form method="POST" class="inline" style="display:flex;gap:8px;align-items:center;">
+                        <?php echo CSRF::field(); ?>
+                        <input type="hidden" name="action" value="set_library_programs_source">
+                        <label style="margin-right:8px;">Source:</label>
+                        <select name="library_programs_source" class="form-input" style="width:auto;">
+                            <option value="static" <?php echo getSetting('library_programs_source','static') !== 'db' ? 'selected' : ''; ?>>Static</option>
+                            <option value="db" <?php echo getSetting('library_programs_source','static') === 'db' ? 'selected' : ''; ?>>Database</option>
+                        </select>
+                        <button class="btn" type="submit">Save</button>
+                    </form>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                    <div style="flex:1; width:100%;">
+                        <h3 style="margin-top:0;margin-bottom:8px;">Create Program</h3>
+                        <form method="POST" id="create_program_form" class="settings-form" novalidate enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:8px;">
+                            <?php echo CSRF::field(); ?>
+                            <input type="hidden" name="action" value="library_create_program">
+                            <div style="display:grid;grid-template-columns:1fr 220px;gap:12px;align-items:start;">
+                                <div>
+                                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                                        <input id="create_title" type="text" name="title" class="form-input" placeholder="Program title" style="flex:1;min-width:140px;padding:8px;font-size:0.95rem;" required>
+                                        <input type="text" name="slug" class="form-input" placeholder="slug (optional)" style="width:140px;padding:8px;font-size:0.95rem;">
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:0.9rem;margin-bottom:6px;">Description</label>
+                                        <textarea id="create_description" name="description" class="form-textarea" rows="3" style="padding:8px;font-size:0.95rem;min-height:80px;" placeholder="Short description (required)"></textarea>
+                                    </div>
+                                    <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+                                        <label class="form-label" style="font-size:0.9rem;margin-bottom:0;">Thumbnail</label>
+                                        <input id="create_image_file" type="file" name="image" accept="image/*" class="form-input" style="padding:6px;font-size:0.95rem;" onchange="previewCreateImageFile(this); checkCreateForm();">
+                                    </div>
+                                    <div style="margin-top:8px;">
+                                        <label class="form-label" style="font-size:0.9rem;margin-bottom:6px;">Google Drive Link</label>
+                                        <input id="create_link" type="url" name="link" class="form-input" placeholder="https://drive.google.com/..." style="padding:8px;font-size:0.95rem;">
+                                    </div>
+                                    <div style="margin-top:12px;">
+                                        <button type="submit" id="create_program_btn" class="btn btn-primary" style="padding:8px 12px;font-size:0.95rem;" disabled>Create Program</button>
+                                    </div>
+                                </div>
+                                <div style="border-left:1px solid #eef2ff;padding-left:12px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                    <div style="font-size:0.9rem;color:#6b7280;width:100%;">Thumbnail Preview</div>
+                                    <div id="create_image_preview" style="width:180px;height:120px;background:#fbfdff;border:1px dashed #e6eefb;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#6b7280;">No image</div>
+                                    <div style="font-size:0.85rem;color:#6b7280;text-align:center;padding-top:6px;">Fill all fields and select an image to enable Create.</div>
+                                </div>
+                            </div>
+                                </form>
+                            </div>
+
+                            <div style="flex:1;">
+                        <h3 style="margin-top:0;margin-bottom:8px;">Existing Programs</h3>
+                        <?php if (empty($programs)): ?>
+                            <p>No programs yet.</p>
+                        <?php else: ?>
+                            <ul id="program-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+                                <?php foreach ($programs as $p): ?>
+                                    <?php
+                                        // compute public image path including app base directory so admin preview works
+                                        $publicImage = '';
+                                        if (!empty($p['image'])) {
+                                            $scriptDir = dirname(dirname($_SERVER['SCRIPT_NAME']));
+                                            $prefix = ($scriptDir && $scriptDir !== '/') ? rtrim($scriptDir, '/') . '/' : '/';
+                                            $imgRel = $p['image'];
+                                            if (strpos($imgRel, '/') === 0) { $imgRel = ltrim($imgRel, '/'); }
+                                            $publicImage = $prefix . $imgRel;
+                                        }
+                                    ?>
+                                    <li class="section-maintenance-group" style="display:flex;align-items:center;gap:12px;padding:10px;">
+                                        <?php if ($publicImage): ?>
+                                            <div style="width:84px;height:56px;flex:0 0 84px;overflow:hidden;border-radius:6px;">
+                                                <img src="<?php echo htmlspecialchars($publicImage, ENT_QUOTES); ?>" style="width:84px;height:56px;object-fit:cover;border-radius:6px;display:block;">
+                                            </div>
+                                        <?php else: ?>
+                                            <div style="width:84px;height:56px;flex:0 0 84px;display:flex;align-items:center;justify-content:center;background:#fbfdff;border-radius:6px;color:#6b7280;border:1px dashed #e6eefb;">No image</div>
+                                        <?php endif; ?>
+                                        <div style="flex:1;min-width:0;cursor:pointer;" onclick="openEditModal(<?php echo (int)$p['id']; ?>)" role="button" tabindex="0">
+                                            <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo htmlspecialchars($p['title']); ?></div>
+                                            <div style="font-size:0.85rem;color:#6b7280;margin-top:4px;"><?php echo htmlspecialchars($p['slug']); ?></div>
+                                        </div>
+                                        <div style="display:flex;gap:8px;align-items:center;">
+                                            <button class="btn" title="Edit" onclick="openEditModal(<?php echo (int)$p['id']; ?>)" style="padding:8px;border-radius:6px;background:transparent;border:1px solid transparent;"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-icon" title="Delete program" onclick="deleteProgram(<?php echo (int)$p['id']; ?>)" style="background:#ef4444;color:#fff;border-radius:6px;padding:8px 10px;"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                        <input type="hidden" id="program-data-<?php echo (int)$p['id']; ?>" data-title="<?php echo htmlspecialchars($p['title'], ENT_QUOTES); ?>" data-desc="<?php echo htmlspecialchars($p['description'], ENT_QUOTES); ?>" data-image="<?php echo htmlspecialchars($publicImage, ENT_QUOTES); ?>" data-link="<?php echo htmlspecialchars($p['link'] ?? '', ENT_QUOTES); ?>">
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Display Settings Section -->
-        <div class="settings-section">
+        <div id="section-display" class="settings-section">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1084,7 +1161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Post Settings Section -->
-        <div class="settings-section">
+        <div id="section-post" class="settings-section">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1139,7 +1216,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Section Maintenance Switches -->
-        <div class="settings-section">
+        <div id="section-maintenance" class="settings-section">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1269,7 +1346,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Navbar Visibility Switches -->
-        <div class="settings-section">
+        <div id="section-navbar" class="settings-section">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1400,6 +1477,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             padding-bottom: 20px;
             border-bottom: 2px solid #f1f5f9;
         }
+
+        /* utility to suppress the header divider when the following card already draws a divider */
+        .settings-card-header.no-divider-bottom {
+            border-bottom: none;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
         
         .settings-card-header h2 {
             font-size: 1.5rem;
@@ -1501,6 +1585,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             padding-top: 25px;
             border-top: 2px solid #f1f5f9;
         }
+
+        /* If a settings card begins with a .form-actions block (e.g. program list header), don't double the divider line between cards */
+        .settings-card > .form-actions:first-child {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
         
         .btn {
             display: inline-flex;
@@ -1522,6 +1613,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             background: var(--secondary-color);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(28, 77, 161, 0.3);
+        }
+
+        /* Disabled state visual cue for buttons/inputs */
+        button[disabled], .btn[disabled], .btn[aria-disabled="true"], input[disabled], textarea[disabled] {
+            opacity: 0.55 !important;
+            cursor: not-allowed !important;
+            filter: grayscale(20%);
+            transform: none !important;
+            box-shadow: none !important;
         }
         
         .btn i {
@@ -2605,42 +2705,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         }
 
         async function startUpload(e) {
-            e.preventDefault();
-            const programId = document.getElementById('upload_program_id').value;
-            const filesInput = document.getElementById('upload_files');
-            const statusEl = document.getElementById('upload_status');
-            const progressBar = document.getElementById('upload_progress');
+            e && e.preventDefault && e.preventDefault();
+            // PDF upload flow deprecated — thumbnail images and links are managed on the program edit form now.
+            alert('PDF upload/attachment has been deprecated. Use the program edit form to set thumbnails and external links.');
+            return;
+        }
 
-            if (!programId) { alert('Please select a program.'); return; }
-            if (!filesInput.files || filesInput.files.length === 0) { alert('Select at least one PDF file.'); return; }
+        // Upload a thumbnail image file for a program
+        async function startThumbnailUpload(e) {
+            e && e.preventDefault && e.preventDefault();
+            const programIdEl = document.getElementById('thumbnail_upload_program_id');
+            const filesInput = document.getElementById('thumbnail_upload_files');
+            const statusEl = document.getElementById('thumbnail_upload_status');
+            const progressBar = document.getElementById('thumbnail_upload_progress');
+
+            if (!programIdEl || !programIdEl.value) { alert('Please select a program.'); return; }
+            if (!filesInput || !filesInput.files || filesInput.files.length === 0) { alert('Select an image file.'); return; }
+
+            const file = filesInput.files[0];
+            const allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+            if (allowed.indexOf(file.type) === -1) {
+                if (!file.type.startsWith('image/')) { alert('Please upload a valid image file (jpg, png, webp, gif).'); return; }
+            }
 
             const form = new FormData();
-            form.append('program_id', programId);
+            form.append('program_id', programIdEl.value);
+            form.append('thumbnail', file);
             const tokenField = document.querySelector('input[name="_token"]');
             if (tokenField) form.append('_token', tokenField.value);
-            for (let i=0;i<filesInput.files.length;i++) form.append('files[]', filesInput.files[i]);
 
             statusEl.textContent = '';
-            progressBar.style.width = '0%';
-            progressBar.parentElement.style.display = 'block';
+            if (progressBar) { progressBar.style.width = '0%'; progressBar.parentElement.style.display = 'block'; }
 
             const xhr = new XMLHttpRequest();
             xhr.open('POST', 'ajax-library-programs-upload.php');
             xhr.upload.onprogress = function(evt) {
-                if (evt.lengthComputable) {
+                if (evt.lengthComputable && progressBar) {
                     const pct = Math.round((evt.loaded / evt.total) * 100);
                     progressBar.style.width = pct + '%';
                     progressBar.textContent = pct + '%';
-                    if (pct === 100) progressBar.textContent = 'Processing…';
                 }
             };
             xhr.onload = function() {
                 try {
                     const data = JSON.parse(xhr.responseText);
-                    if (data.success) {
-                        statusEl.textContent = data.message || 'Upload successful.';
-                        // refresh the file list for the program
-                        refreshPdfList(programId);
+                    if (data && data.success) {
+                        statusEl.textContent = data.message || 'Thumbnail uploaded.';
+                        // Update hidden program-data image attribute so edit modal and list show new thumbnail
+                        const el = document.getElementById('program-data-' + programIdEl.value);
+                        if (el && data.image) {
+                            el.setAttribute('data-image', data.image);
+                        }
+                        // If edit modal is open for this program, update preview and modal image field
+                        const modalId = document.getElementById('modal_program_id') && document.getElementById('modal_program_id').value;
+                        if (modalId && modalId == programIdEl.value) {
+                            const imgField = document.getElementById('modal_image'); if (imgField && data.image) imgField.value = data.image;
+                            const preview = document.getElementById('modal_image_preview'); if (preview) preview.innerHTML = data.image ? ('<img src="'+data.image+'" style="max-width:180px;max-height:120px;border-radius:6px;">') : '<div style="color:#6b7280;">No thumbnail</div>';
+                        }
                         filesInput.value = '';
                     } else {
                         statusEl.textContent = data.error || 'Upload failed.';
@@ -2648,7 +2769,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                 } catch (e) {
                     statusEl.textContent = 'Upload error: invalid server response';
                 }
-                setTimeout(()=>{ progressBar.parentElement.style.display='none'; progressBar.style.width='0%'; progressBar.textContent=''; }, 900);
+                setTimeout(()=>{ if (progressBar) { progressBar.parentElement.style.display='none'; progressBar.style.width='0%'; progressBar.textContent=''; } }, 900);
             };
             xhr.onerror = function() { statusEl.textContent = 'Upload failed (network).'; };
             xhr.send(form);
@@ -2656,78 +2777,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
 
         // Refresh PDF list for a program via AJAX
         async function refreshPdfList(programId) {
+            // Deprecated: PDF lists are no longer used. Show placeholder info if present in the DOM.
             try {
-                const resp = await fetch('ajax-library-programs-list.php?program_id='+encodeURIComponent(programId));
-                const data = await resp.json();
-                if (!data.success) return;
                 const container = document.getElementById('pdf-list-'+programId);
                 if (!container) return;
-                container.innerHTML = '';
-                if (!data.files || data.files.length === 0) {
-                    container.innerHTML = '<div style="color:#6b7280;">No PDFs uploaded yet.</div>';
-                    return;
-                }
-
-                data.files.forEach(function(pdf){
-                    const row = document.createElement('div'); row.className = 'pdf-row'; row.setAttribute('data-pdf-id', pdf.id);
-
-                    const p = window.location.pathname.split('/admin/');
-                    const base = p.length > 1 ? p[0] : '';
-                    const rel = (pdf.path || '').replace(/^\/+/, '');
-                    const href = (base === '' ? '/' + rel : base + '/' + rel);
-
-                    const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.textContent = pdf.filename; a.style.flex='1'; a.style.color='#1e3a8a'; a.style.textDecoration='underline';
-                    const t = document.createElement('span'); t.style.color='#6b7280'; t.style.fontSize='0.85rem'; t.textContent = pdf.uploaded_at;
-                    const btn = document.createElement('button'); btn.className='btn btn-icon'; btn.title='Remove PDF'; btn.style.background='#f59e0b'; btn.style.color='#fff'; btn.onclick = function(){ deletePdf(pdf.id, programId); };
-                    btn.innerHTML = '<i class="fas fa-minus-circle"></i>';
-
-                    row.appendChild(a); row.appendChild(t); row.appendChild(btn);
-                    container.appendChild(row);
-                });
-            } catch (e) {
-                console.error(e);
-            }
+                container.innerHTML = '<div style="color:#6b7280;">PDF attachments are deprecated.</div>';
+            } catch (e) { console.error(e); }
         }
 
         // Delete PDF by id (AJAX)
         async function deletePdf(pdfId, programId) {
-            if (!confirm('Remove this PDF from the program? The file will remain on the server.')) return;
-            const tokenField = document.querySelector('input[name="_token"]');
-            const form = new FormData(); form.append('pdf_id', pdfId); if (tokenField) form.append('_token', tokenField.value);
-            try {
-                const resp = await fetch('ajax-library-programs-delete.php', { method:'POST', body: form });
-                const data = await resp.json();
-                if (data.success) {
-                    // remove from DOM
-                    const el = document.querySelector('[data-pdf-id="'+pdfId+'"]'); if (el) el.remove();
-                    // if list empty, show placeholder
-                    const listEl = document.getElementById('pdf-list-'+programId);
-                    if (listEl && listEl.children.length === 0) listEl.innerHTML = '<div style="color:#6b7280;">No PDFs uploaded yet.</div>';
-                } else {
-                    alert(data.error || 'Delete failed');
-                }
-            } catch (e) { alert('Delete error'); }
+            // Deprecated: PDF delete is no longer applicable in the new flow.
+            alert('Removing individual PDF attachments is deprecated.');
+            return;
         }
 
-        // Open edit modal for a program
-        function openEditModal(programId) {
+        // Open edit modal for a program. Fetch fresh metadata from server to ensure image is current.
+        async function openEditModal(programId) {
             const dataEl = document.getElementById('program-data-' + programId);
-            if (!dataEl) return;
-            const title = dataEl.getAttribute('data-title') || '';
-            const desc = dataEl.getAttribute('data-desc') || '';
+            // optimistic fill from data attributes
+            if (dataEl) {
+                const title = dataEl.getAttribute('data-title') || '';
+                const desc = dataEl.getAttribute('data-desc') || '';
+                document.getElementById('modal_title').value = title;
+                document.getElementById('modal_description').value = desc;
+            }
             document.getElementById('modal_program_id').value = programId;
-            document.getElementById('modal_title').value = title;
-            document.getElementById('modal_description').value = desc;
-            // refresh pdf list into modal area
-            refreshPdfListIntoModal(programId);
+            document.getElementById('modal_title').value = document.getElementById('modal_title').value || '';
+            document.getElementById('modal_description').value = document.getElementById('modal_description').value || '';
+            // show modal immediately
             document.getElementById('editModal').style.display = 'flex';
-            // wire choose existing button
-            setTimeout(()=>{
-                const chooseBtn = document.getElementById('modal_choose_existing');
-                if (chooseBtn) {
-                    chooseBtn.onclick = function(){ openChooseExisting(programId); };
+
+            // Fetch latest program metadata from server (fallback to data attributes on failure)
+            try {
+                const resp = await fetch('ajax-library-programs-list.php?program_id=' + encodeURIComponent(programId));
+                const data = await resp.json();
+                if (data && data.success && data.program) {
+                    const p = data.program;
+                    document.getElementById('modal_title').value = p.title || '';
+                    document.getElementById('modal_description').value = p.description || '';
+                    const imgHidden = document.getElementById('modal_image'); if (imgHidden) imgHidden.value = p.image || '';
+                    const linkField = document.getElementById('modal_link'); if (linkField) linkField.value = p.link || '';
+                    // update preview
+                    const preview = document.getElementById('modal_image_preview'); if (preview) {
+                        if (p.image) preview.innerHTML = '<img src="' + p.image + '" style="max-width:180px;max-height:120px;border-radius:6px;">';
+                        else preview.innerHTML = '<div style="color:#6b7280;">No thumbnail</div>';
+                    }
+                    // also update data-element attributes so list stays in sync
+                    if (dataEl) {
+                        dataEl.setAttribute('data-title', p.title || '');
+                        dataEl.setAttribute('data-desc', p.description || '');
+                        dataEl.setAttribute('data-image', p.image || '');
+                        dataEl.setAttribute('data-link', p.link || '');
+                    }
+                } else {
+                    // fallback to attributes if fetch fails
+                    if (dataEl) {
+                        const image = dataEl.getAttribute('data-image') || '';
+                        const link = dataEl.getAttribute('data-link') || '';
+                        const imgHidden = document.getElementById('modal_image'); if (imgHidden) imgHidden.value = image;
+                        const linkField = document.getElementById('modal_link'); if (linkField) linkField.value = link;
+                        const preview = document.getElementById('modal_image_preview'); if (preview) {
+                            if (image) preview.innerHTML = '<img src="' + image + '" style="max-width:180px;max-height:120px;border-radius:6px;">';
+                            else preview.innerHTML = '<div style="color:#6b7280;">No thumbnail</div>';
+                        }
+                    }
                 }
-            },10);
+            } catch (e) {
+                if (dataEl) {
+                    const image = dataEl.getAttribute('data-image') || '';
+                    const link = dataEl.getAttribute('data-link') || '';
+                    const imgHidden = document.getElementById('modal_image'); if (imgHidden) imgHidden.value = image;
+                    const linkField = document.getElementById('modal_link'); if (linkField) linkField.value = link;
+                    const preview = document.getElementById('modal_image_preview'); if (preview) {
+                        if (image) preview.innerHTML = '<img src="' + image + '" style="max-width:180px;max-height:120px;border-radius:6px;">';
+                        else preview.innerHTML = '<div style="color:#6b7280;">No thumbnail</div>';
+                    }
+                }
+            }
         }
 
         function closeEditModal() {
@@ -2738,122 +2865,111 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
 
         // Refresh PDF list but target modal container
         async function refreshPdfListIntoModal(programId) {
+            // Deprecated: modal PDF list not used. Show a note.
             try {
-                const resp = await fetch('ajax-library-programs-list.php?program_id='+encodeURIComponent(programId));
-                const data = await resp.json();
                 const container = document.getElementById('modal_pdf_list');
                 if (!container) return;
-                container.innerHTML = '';
-                if (!data.success || !data.files || data.files.length === 0) {
-                    container.innerHTML = '<div style="color:#6b7280;">No PDFs uploaded yet.</div>';
-                    return;
-                }
-                data.files.forEach(function(pdf){
-                    const row = document.createElement('div'); row.className = 'pdf-row'; row.setAttribute('data-pdf-id', pdf.id);
-
-                    const p = window.location.pathname.split('/admin/');
-                    const base = p.length > 1 ? p[0] : '';
-                    const rel = (pdf.path || '').replace(/^\/+/, '');
-                    const href = (base === '' ? '/' + rel : base + '/' + rel);
-
-                    const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.textContent = pdf.filename; a.style.flex='1'; a.style.color='#1e3a8a'; a.style.textDecoration='underline';
-                    const t = document.createElement('span'); t.textContent = pdf.uploaded_at; t.style.color='#6b7280'; t.style.fontSize='0.85rem';
-                    const btn = document.createElement('button'); btn.className = 'btn btn-icon'; btn.title = 'Delete PDF'; btn.style.background = '#ef4444'; btn.style.color = '#fff'; btn.onclick = function(){ deletePdf(pdf.id, programId); row.remove(); };
-                    btn.innerHTML = '<i class="fas fa-trash"></i>';
-                    row.appendChild(a); row.appendChild(t); row.appendChild(btn);
-                    container.appendChild(row);
-                });
+                container.innerHTML = '<div style="color:#6b7280;">PDF attachments are deprecated.</div>';
             } catch (e) { console.error(e); }
         }
 
         // AJAX-save modal form to avoid full page reload
-        document.getElementById('modal_edit_form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formEl = this;
-            const form = new FormData(formEl);
-            // append CSRF token if present on page
-            const tokenField = document.querySelector('input[name="_token"]');
-            if (tokenField) form.append('_token', tokenField.value);
+        (function(){
+            const modalForm = document.getElementById('modal_edit_form');
+            const register = function(formEl){
+                formEl.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const formEl = this;
+                    // If a new thumbnail was selected, upload it first so the update receives the stored image path
+                    const tokenField = document.querySelector('input[name="_token"]');
+                    const fileInput = document.getElementById('modal_image_file');
+                    const statusEl = document.getElementById('modal_edit_status');
+                    statusEl.textContent = 'Saving...';
 
-            const statusEl = document.getElementById('modal_edit_status');
-            statusEl.textContent = 'Saving...';
-
-            try {
-                const resp = await fetch('ajax-library-programs-update.php', { method: 'POST', body: form });
-                const data = await resp.json();
-                if (data && data.success) {
-                    statusEl.textContent = data.message || 'Saved.';
-                    // update program list entry
-                    const id = form.get('id');
-                    const title = form.get('title');
-                    const desc = form.get('description');
-                    const dataEl = document.getElementById('program-data-' + id);
-                    if (dataEl) {
-                        dataEl.setAttribute('data-title', title);
-                        dataEl.setAttribute('data-desc', desc);
-                        const li = dataEl.closest('li');
-                        if (li) {
-                            const titleBtn = li.querySelector('button');
-                            if (titleBtn) {
-                                // update inner HTML to keep slug line intact
-                                const slugDiv = titleBtn.querySelector('div');
-                                const slugText = slugDiv ? slugDiv.innerText : '';
-                                titleBtn.innerHTML = title + (slugText ? ('<div style="font-size:0.85rem;color:#6b7280;margin-top:4px;font-weight:400;">' + slugText + '</div>') : '');
+                    if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                        try {
+                            const upForm = new FormData();
+                            upForm.append('program_id', document.getElementById('modal_program_id').value);
+                            upForm.append('thumbnail', fileInput.files[0]);
+                            if (tokenField) upForm.append('_token', tokenField.value);
+                            const upResp = await fetch('ajax-library-programs-upload.php', { method: 'POST', body: upForm });
+                            const upData = await upResp.json();
+                            if (upData && upData.success && upData.image) {
+                                // set hidden image field so update will persist it
+                                const imgHidden = document.getElementById('modal_image'); if (imgHidden) imgHidden.value = upData.image;
+                                // update program-data attribute and preview
+                                const pid = document.getElementById('modal_program_id').value;
+                                const el = document.getElementById('program-data-' + pid);
+                                if (el) el.setAttribute('data-image', upData.image);
+                                const preview = document.getElementById('modal_image_preview'); if (preview) preview.innerHTML = '<img src="'+upData.image+'" style="max-width:180px;max-height:120px;border-radius:6px;">';
+                                // clear file input
+                                fileInput.value = '';
+                            } else {
+                                statusEl.textContent = upData.error || 'Thumbnail upload failed.';
+                                return;
                             }
+                        } catch (ux) {
+                            statusEl.textContent = 'Thumbnail upload error';
+                            return;
                         }
                     }
-                    // brief highlight
-                    setTimeout(()=>{ statusEl.textContent = ''; }, 2500);
-                } else {
-                    statusEl.textContent = data.error || 'Save failed.';
-                }
-            } catch (err) {
-                statusEl.textContent = 'Save error';
-            }
-        });
+
+                    // proceed with update (includes hidden image field if upload succeeded)
+                    const form = new FormData(formEl);
+                    if (tokenField) form.append('_token', tokenField.value);
+
+                    try {
+                        const resp = await fetch('ajax-library-programs-update.php', { method: 'POST', body: form });
+                        const data = await resp.json();
+                        if (data && data.success) {
+                            statusEl.textContent = data.message || 'Saved.';
+                            // update program list entry
+                            const id = form.get('id');
+                            const title = form.get('title');
+                            const desc = form.get('description');
+                            const dataEl = document.getElementById('program-data-' + id);
+                            if (dataEl) {
+                                dataEl.setAttribute('data-title', title);
+                                dataEl.setAttribute('data-desc', desc);
+                                // if server returned program image, update attribute and preview
+                                if (data.program && data.program.image) {
+                                    dataEl.setAttribute('data-image', data.program.image);
+                                    const preview = document.getElementById('modal_image_preview'); if (preview) preview.innerHTML = '<img src="'+data.program.image+'" style="max-width:180px;max-height:120px;border-radius:6px;">';
+                                    const imgHidden = document.getElementById('modal_image'); if (imgHidden) imgHidden.value = data.program.image;
+                                }
+                                const li = dataEl.closest('li');
+                                if (li) {
+                                    const titleBtn = li.querySelector('button');
+                                    if (titleBtn) {
+                                        // update inner HTML to keep slug line intact
+                                        const slugDiv = titleBtn.querySelector('div');
+                                        const slugText = slugDiv ? slugDiv.innerText : '';
+                                        titleBtn.innerHTML = title + (slugText ? ('<div style="font-size:0.85rem;color:#6b7280;margin-top:4px;font-weight:400;">' + slugText + '</div>') : '');
+                                    }
+                                }
+                            }
+                            // brief highlight then close modal and show toast
+                            setTimeout(()=>{ statusEl.textContent = ''; }, 800);
+                            // close modal after a short delay so user sees the brief status
+                            setTimeout(()=>{ closeEditModal(); showToast(data.message || 'Saved.'); }, 900);
+                        } else {
+                            statusEl.textContent = data.error || 'Save failed.';
+                        }
+                    } catch (err) {
+                        statusEl.textContent = 'Save error';
+                    }
+                });
+            };
+
+            if (modalForm) register(modalForm);
+            else document.addEventListener('DOMContentLoaded', function(){ const mf = document.getElementById('modal_edit_form'); if (mf) register(mf); });
+        })();
 
         // --- Choose existing files UI ---
         function openChooseExisting(programId) {
-            const overlay = document.createElement('div'); overlay.style.position='fixed'; overlay.style.inset='0'; overlay.style.background='rgba(0,0,0,0.5)'; overlay.style.display='flex'; overlay.style.alignItems='center'; overlay.style.justifyContent='center'; overlay.style.zIndex='3000';
-            const box = document.createElement('div'); box.style.background='#fff'; box.style.width='720px'; box.style.maxHeight='80vh'; box.style.overflow='auto'; box.style.borderRadius='10px'; box.style.padding='12px';
-            const title = document.createElement('div'); title.textContent='Choose existing PDFs'; title.style.fontWeight='700'; title.style.marginBottom='8px';
-            const list = document.createElement('div'); list.style.display='grid'; list.style.gridTemplateColumns='repeat(2,1fr)'; list.style.gap='8px'; list.style.marginBottom='8px';
-            const footer = document.createElement('div'); footer.style.display='flex'; footer.style.justifyContent='flex-end'; footer.style.gap='8px';
-            const btnCancel = document.createElement('button'); btnCancel.className='btn'; btnCancel.textContent='Cancel';
-            const btnAttach = document.createElement('button'); btnAttach.className='btn btn-primary'; btnAttach.textContent='Attach selected';
-            footer.appendChild(btnCancel); footer.appendChild(btnAttach);
-            box.appendChild(title); box.appendChild(list); box.appendChild(footer); overlay.appendChild(box); document.body.appendChild(overlay);
-
-            btnCancel.onclick = function(){ overlay.remove(); };
-
-            fetch('ajax-library-programs-scan.php?program_id='+encodeURIComponent(programId)).then(r=>r.json()).then(data=>{
-                if (!data.success) { list.innerHTML = '<div style="color:#6b7280">'+(data.error||'Scan failed')+'</div>'; return; }
-                const attached = data.attached || [];
-                data.files.forEach(f => {
-                    const id = 'choose_file_'+Math.random().toString(36).slice(2,9);
-                    const el = document.createElement('label'); el.style.display='flex'; el.style.alignItems='center'; el.style.gap='8px'; el.style.padding='6px'; el.style.border='1px solid #eef2ff'; el.style.borderRadius='6px';
-                    const cb = document.createElement('input'); cb.type='checkbox'; cb.id = id; cb.value = f.filename; if (attached.indexOf(f.filename) !== -1) { cb.disabled = true; }
-                    const txt = document.createElement('span'); txt.textContent = f.filename; txt.style.fontSize='0.95rem'; txt.style.color = attached.indexOf(f.filename) !== -1 ? '#9ca3af' : '#0f172a';
-                    el.appendChild(cb); el.appendChild(txt);
-                    list.appendChild(el);
-                });
-            }).catch(err=>{ list.innerHTML = '<div style="color:#6b7280">Scan error</div>'; });
-
-            btnAttach.onclick = function(){
-                const checks = Array.from(list.querySelectorAll('input[type=checkbox]:not(:disabled):checked')).map(i=>i.value);
-                if (checks.length === 0) { alert('Select files to attach'); return; }
-                const form = new FormData(); form.append('program_id', programId); const tokenField = document.querySelector('input[name="_token"]'); if (tokenField) form.append('_token', tokenField.value);
-                checks.forEach(f => form.append('files[]', f));
-                fetch('ajax-library-programs-attach.php', { method: 'POST', body: form }).then(r=>r.json()).then(resp=>{
-                    if (resp && resp.success) {
-                        overlay.remove(); refreshPdfListIntoModal(programId);
-                        if (resp.added && resp.added.length) alert('Attached: '+resp.added.join(', '));
-                        else if (resp.skipped && resp.skipped.length) alert('Already attached: '+resp.skipped.join(', '));
-                    } else {
-                        alert(resp.error || 'Attach failed');
-                    }
-                }).catch(()=>{ alert('Attach error'); });
-            };
+            // Deprecated: choosing existing server-side PDF files is no longer supported.
+            alert('Choosing existing PDFs is deprecated. Manage thumbnails and external links on the program edit form.');
+            return;
         }
 
 	</script>
@@ -2866,11 +2982,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         <button onclick="closeEditModal()" style="position:absolute;right:12px;top:12px;background:transparent;border:none;font-size:22px;color:var(--text-dark);">&times;</button>
         <div class="settings-card-header" style="padding-bottom:10px;margin-bottom:6px;border-bottom:1px solid #eef2ff;">
             <h2 style="font-size:1.25rem;display:flex;align-items:center;gap:8px;margin:0;"><i class="fas fa-book"></i> Edit Program</h2>
-            <p class="settings-description" style="margin:6px 0 0 0;color:var(--text-light);">Edit program details and manage uploaded PDFs.</p>
+            <p class="settings-description" style="margin:6px 0 0 0;color:var(--text-light);">Edit program details, thumbnail and resource link (Google Drive).</p>
         </div>
 
         <div id="modal_edit_status" style="margin-bottom:8px;color:#0f172a;font-weight:600;"></div>
-        <form method="POST" style="display:flex;flex-direction:column;gap:10px;" id="modal_edit_form">
+        <form method="POST" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:10px;" id="modal_edit_form">
             <?php echo CSRF::field(); ?>
             <input type="hidden" name="action" value="library_update_program">
             <input type="hidden" name="id" id="modal_program_id">
@@ -2882,8 +2998,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                 <label class="form-label">Description</label>
                 <textarea id="modal_description" name="description" class="form-textarea" rows="4" style="padding:8px;font-size:0.95rem;"></textarea>
             </div>
-            <div style="display:flex;gap:8px;align-items:center;">
-                <button type="submit" class="btn btn-icon btn-primary" title="Save changes"><i class="fas fa-save"></i></button>
+            <div>
+                <label class="form-label">Thumbnail (upload to replace current image)</label>
+                <input id="modal_image_file" name="image_file" type="file" accept="image/*" class="form-input" style="padding:6px;font-size:0.95rem;" onchange="previewModalImageFile(this);">
+                <input type="hidden" id="modal_image" name="image">
+                <div id="modal_image_preview" style="margin-top:8px;color:#6b7280;"></div>
+            </div>
+            <div>
+                <label class="form-label">Google Drive Link</label>
+                <input id="modal_link" name="link" type="url" class="form-input" style="padding:8px;font-size:0.95rem;">
+            </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                <button type="submit" id="modal_save_btn" class="btn btn-icon btn-primary" title="Save changes" disabled><i class="fas fa-save"></i></button>
                 <button type="button" class="btn btn-icon" title="Delete program" style="background:#ef4444;color:#fff;" onclick="if(confirm('Delete this program and all PDFs?')){ deleteProgram(parseInt(document.getElementById('modal_program_id').value)); }"><i class="fas fa-trash"></i></button>
                 <div id="modal_edit_status" style="margin-left:8px;color:#374151;font-size:0.95rem;"></div>
             </div>
@@ -2891,13 +3017,181 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
 
         <hr style="margin:16px 0;border-color:#eef2ff;">
 
-        <h4 style="margin:0 0 8px 0;color:var(--text-dark);">PDFs</h4>
-        <div id="modal_pdf_list" style="margin-bottom:12px;color:#374151;"></div>
-
-        <div style="display:flex;gap:8px;align-items:center;">
-            <div style="color:#6b7280;font-size:0.95rem;">Uploads disabled here — use "Choose existing" to attach files already on the server.</div>
-            <button class="btn" id="modal_choose_existing" style="padding:6px 10px;" title="Choose existing files">Choose existing</button>
-        </div>
+        <div style="color:#6b7280;font-size:0.95rem;">Thumbnails and links are saved immediately when you save the program. Use the upload button elsewhere to upload image files.</div>
     </div>
 </div>
+
+<script>
+function previewModalImageFile(input){
+    var preview = document.getElementById('modal_image_preview');
+    if(!preview) return;
+    if(input.files && input.files[0]){
+        var reader = new FileReader();
+        reader.onload = function(e){
+            preview.innerHTML = '<img src="'+e.target.result+'" style="max-width:160px;max-height:120px;border-radius:6px;object-fit:cover;">';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        var url = document.getElementById('modal_image') ? document.getElementById('modal_image').value : '';
+        if(url){
+            preview.innerHTML = '<img src="'+url+'" style="max-width:160px;max-height:120px;border-radius:6px;object-fit:cover;">';
+        } else {
+            preview.innerHTML = '<div style="color:#6b7280;">No thumbnail</div>';
+        }
+    }
+}
+
+// When opening the modal, ensure preview shows current image value (if any)
+function setModalImagePreviewFromValue(){
+    var hidden = document.getElementById('modal_image');
+    var preview = document.getElementById('modal_image_preview');
+    if(!preview) return;
+    if(hidden && hidden.value){
+        preview.innerHTML = '<img src="'+hidden.value+'" style="max-width:160px;max-height:120px;border-radius:6px;object-fit:cover;">';
+    } else {
+        preview.innerHTML = '<div style="color:#6b7280;">No thumbnail</div>';
+    }
+}
+
+// Expose for callers that populate modal fields
+window.previewModalImageFile = previewModalImageFile;
+window.setModalImagePreviewFromValue = setModalImagePreviewFromValue;
+
+// Preview for the Create form image input
+function previewCreateImageFile(input){
+    var preview = document.getElementById('create_image_preview');
+    if(!preview) return;
+    if(input.files && input.files[0]){
+        var reader = new FileReader();
+        reader.onload = function(e){
+            preview.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">';
+        };
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.innerHTML = 'No image';
+    }
+}
+
+window.previewCreateImageFile = previewCreateImageFile;
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    // Quick-nav smooth scroll and highlight
+    document.querySelectorAll('.quicknav-link').forEach(function(a){
+        a.addEventListener('click', function(e){
+            e.preventDefault();
+            var id = this.dataset.target;
+            var el = document.getElementById(id);
+            if (!el) return;
+            var y = el.getBoundingClientRect().top + window.pageYOffset - 16;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            // highlight
+            var orig = el.style.boxShadow;
+            el.style.boxShadow = '0 8px 24px rgba(28,77,161,0.12)';
+            setTimeout(function(){ el.style.boxShadow = orig || ''; }, 700);
+        });
+    });
+
+    // Search/filter settings cards
+    var search = document.getElementById('settings_search');
+    var clear = document.getElementById('settings_search_clear');
+    function filterSettings(){
+        var q = (search && search.value || '').toLowerCase().trim();
+        document.querySelectorAll('.settings-section').forEach(function(section){
+            if (section.id === 'settings-quicknav') { section.style.display = ''; return; }
+            var card = section.querySelector('.settings-card');
+            if (!card) return;
+            var title = (card.querySelector('h2') && card.querySelector('h2').innerText) || '';
+            var desc = (card.querySelector('.settings-description') && card.querySelector('.settings-description').innerText) || '';
+            var sub = Array.from(card.querySelectorAll('h3')).map(function(h){ return h.innerText; }).join(' ');
+            var hay = (title + ' ' + desc + ' ' + sub).toLowerCase();
+            if (!q || hay.indexOf(q) !== -1) {
+                section.style.display = '';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+    }
+    if (search) search.addEventListener('input', filterSettings);
+    if (clear) clear.addEventListener('click', function(){ if (search) search.value=''; filterSettings(); if (search) search.focus(); });
+});
+</script>
+
+<script>
+(function(){
+    // Create form gating: enable Create only when title, description, link and a file are provided
+    function checkCreateForm(){
+        var title = document.getElementById('create_title') ? document.getElementById('create_title').value.trim() : '';
+        var desc = document.getElementById('create_description') ? document.getElementById('create_description').value.trim() : '';
+        var link = document.getElementById('create_link') ? document.getElementById('create_link').value.trim() : '';
+        var fileInput = document.getElementById('create_image_file');
+        var fileSelected = fileInput && fileInput.files && fileInput.files.length > 0;
+        var btn = document.getElementById('create_program_btn');
+        if(!btn) return;
+        btn.disabled = !(title && desc && link && fileSelected);
+    }
+    // expose for inline onchange handlers
+    window.checkCreateForm = checkCreateForm;
+
+    // Modal change-detection: snapshot original values and enable Save only when any of the key fields change
+    window._modalOriginalSnapshot = { title:'', desc:'', link:'', image:'' };
+    window.setModalFormOriginalSnapshot = function(){
+        var title = document.getElementById('modal_title') ? document.getElementById('modal_title').value : '';
+        var desc = document.getElementById('modal_description') ? document.getElementById('modal_description').value : '';
+        var link = document.getElementById('modal_link') ? document.getElementById('modal_link').value : '';
+        var image = document.getElementById('modal_image') ? document.getElementById('modal_image').value : '';
+        window._modalOriginalSnapshot = { title: title, desc: desc, link: link, image: image };
+        var saveBtn = document.getElementById('modal_save_btn'); if(saveBtn) saveBtn.disabled = true;
+        var fileInput = document.getElementById('modal_image_file'); if(fileInput) fileInput.value = '';
+    };
+
+    window.modalFormChanged = function(){
+        var snap = window._modalOriginalSnapshot || { title:'', desc:'', link:'', image:'' };
+        var title = document.getElementById('modal_title') ? document.getElementById('modal_title').value : '';
+        var desc = document.getElementById('modal_description') ? document.getElementById('modal_description').value : '';
+        var link = document.getElementById('modal_link') ? document.getElementById('modal_link').value : '';
+        var image = document.getElementById('modal_image') ? document.getElementById('modal_image').value : '';
+        var fileInput = document.getElementById('modal_image_file');
+        var fileSelected = fileInput && fileInput.files && fileInput.files.length > 0;
+        var changed = fileSelected || title !== snap.title || desc !== snap.desc || link !== snap.link || image !== snap.image;
+        var saveBtn = document.getElementById('modal_save_btn'); if(saveBtn) saveBtn.disabled = !changed;
+    };
+
+    document.addEventListener('DOMContentLoaded', function(){
+        // wire up create form listeners
+        var ids = ['create_title','create_description','create_link'];
+        ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener('input', checkCreateForm); });
+        var createFile = document.getElementById('create_image_file'); if(createFile) createFile.addEventListener('change', checkCreateForm);
+        checkCreateForm();
+
+        // wire up modal listeners
+        ['modal_title','modal_description','modal_link'].forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener('input', window.modalFormChanged); });
+        var modalFile = document.getElementById('modal_image_file'); if(modalFile) modalFile.addEventListener('change', window.modalFormChanged);
+    });
+
+})();
+</script>
+
+<script>
+// Small toast helper for client-side feedback
+function showToast(message, type) {
+    type = type || 'success';
+    var t = document.createElement('div');
+    t.className = 'lp-toast ' + type;
+    t.textContent = message || '';
+    t.style.position = 'fixed';
+    t.style.right = '20px';
+    t.style.top = '20px';
+    t.style.background = type === 'success' ? '#16a34a' : '#ef4444';
+    t.style.color = '#fff';
+    t.style.padding = '10px 14px';
+    t.style.borderRadius = '8px';
+    t.style.boxShadow = '0 6px 18px rgba(2,6,23,0.2)';
+    t.style.zIndex = 99999;
+    t.style.fontWeight = 600;
+    document.body.appendChild(t);
+    setTimeout(function(){ t.style.opacity = '0'; t.style.transition = 'opacity 300ms'; }, 2400);
+    setTimeout(function(){ try{ document.body.removeChild(t); }catch(e){} }, 3000);
+}
+</script>
 

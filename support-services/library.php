@@ -26,47 +26,6 @@ $page_title = "University Library - UPHSL";
 include '../app/includes/header.php';
 ?>
 
-<?php
-// Helper: list PDFs for a program slug and return JSON array string usable in data-pdfs
-function listProgramPdfsJson($slug, $base_path) {
-    $items = [];
-    try {
-        $db = getDBConnection();
-        $stmt = $db->prepare('SELECT id FROM library_programs WHERE slug = :slug LIMIT 1');
-        $stmt->execute([':slug' => $slug]);
-        $r = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$r) return json_encode($items);
-        $program_id = (int)$r['id'];
-
-        $ps = $db->prepare('SELECT filename, path, uploaded_at FROM library_program_pdfs WHERE program_id = :pid ORDER BY uploaded_at DESC');
-        $ps->execute([':pid' => $program_id]);
-        $rows = $ps->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($rows as $row) {
-            $fname = $row['filename'];
-            $title = preg_replace('/[_\-]+/', ' ', pathinfo($fname, PATHINFO_FILENAME));
-            $url = $base_path . ltrim($row['path'], '/');
-            $item = ['title' => $title, 'url' => $url];
-            // server-generated thumbnail next to the PDF (same folder, .jpg)
-            $fsThumb = __DIR__ . '/../' . preg_replace('#^/+|\.{2,}#', '', $row['path']);
-            $fsThumb = preg_replace('/\.pdf$/i', '.jpg', $fsThumb);
-            // expose thumb via proxy so client gets immediate placeholder and background-gen is triggered when missing
-            $thumbFile = preg_replace('/\.pdf$/i', '.jpg', $row['filename']);
-            $v = 0;
-            if (!empty($row['uploaded_at'])) {
-                $v = strtotime($row['uploaded_at']);
-            }
-            $item['thumb'] = $base_path . 'admin/library-thumb.php?f=' . urlencode($thumbFile) . '&v=' . intval($v);
-            // server-side check whether the actual JPG exists yet so client can decide to fall back
-            $fsThumbPath = __DIR__ . '/../assets/documents/library/' . preg_replace('/\.pdf$/i', '.jpg', $row['filename']);
-            $item['thumb_exists'] = is_file($fsThumbPath) ? true : false;
-            $items[] = $item;
-        }
-    } catch (Exception $e) {
-        // ignore and return empty
-    }
-    return json_encode($items);
-}
-?>
 
 <style>
 body {
@@ -417,6 +376,12 @@ body {
     will-change: transform;
 }
 
+/* Ensure each slide (or link-wrapped slide) occupies full carousel width */
+.program-carousel-track > .program-slide-link,
+.program-carousel-track > .program-slide {
+    flex: 0 0 100%;
+}
+
 .program-slide {
     min-width: 100%;
     display: grid;
@@ -450,7 +415,7 @@ body {
 .program-text h4 {
     margin-top: 0;
     color: var(--primary-color);
-    font-size: 1.05rem;
+    font-size: 1.3rem; /* increased for better visibility in slider */
     margin-bottom: 0.4rem;
 }
 
@@ -482,7 +447,9 @@ body {
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 10px 30px rgba(16,24,40,0.08);
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    opacity: 1;
+    visibility: visible;
 }
 
 .carousel-nav:hover { transform: translateY(-50%) scale(1.04); box-shadow: 0 14px 40px rgba(16,24,40,0.12); }
@@ -521,6 +488,15 @@ body {
     .carousel-nav { width: 34px; height: 34px; border-radius: 8px; }
     .carousel-prev { left: 8px; }
     .carousel-next { right: 8px; }
+
+    /* slightly smaller title on small screens to maintain layout */
+    .program-text h4 { font-size: 1.15rem; }
+}
+
+/* Desktop: only show nav arrows when hovering the carousel container */
+@media (min-width: 769px) {
+    .carousel-nav { opacity: 0; visibility: hidden; }
+    .program-carousel:hover .carousel-nav { opacity: 1; visibility: visible; }
 }
 </style>
 
@@ -600,6 +576,85 @@ body {
             carousel.addEventListener('mouseleave', () => { startInterval(); });
         }
 
+        // touch / swipe support for mobile and tablets
+        if (carousel && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            let startX = 0;
+            let currentX = 0;
+            let dragging = false;
+            const threshold = 50; // px
+
+            carousel.addEventListener('touchstart', function(e){
+                if (e.touches.length !== 1) return;
+                startX = e.touches[0].clientX;
+                currentX = startX;
+                dragging = true;
+                if (intervalId) { clearInterval(intervalId); intervalId = null; }
+            }, { passive: true });
+
+            carousel.addEventListener('touchmove', function(e){
+                if (!dragging) return;
+                currentX = e.touches[0].clientX;
+                const dx = currentX - startX;
+                const pct = (dx / carousel.offsetWidth) * 100;
+                track.style.transition = 'none';
+                track.style.transform = `translateX(${ -idx * 100 + pct }%)`;
+            }, { passive: true });
+
+            carousel.addEventListener('touchend', function(e){
+                if (!dragging) return;
+                dragging = false;
+                track.style.transition = '';
+                const dx = currentX - startX;
+                if (Math.abs(dx) > threshold) {
+                    if (dx < 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                } else {
+                    update();
+                }
+                startInterval();
+            });
+        }
+
+        // click animation for link-based slides
+        document.querySelectorAll('.program-slide-link').forEach(function(a){
+            a.addEventListener('click', function(e){
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // allow modifier-initiated behavior
+                e.preventDefault();
+                a.classList.add('clicked');
+                const href = a.getAttribute('href');
+                setTimeout(()=>{ window.open(href, '_blank'); a.classList.remove('clicked'); }, 140);
+                resetInterval();
+            });
+        });
+
+        // tooltip that follows cursor on hover for link slides
+        (function(){
+            let tip = null;
+            function showTip(text){
+                if (!tip) { tip = document.createElement('div'); tip.className = 'program-tooltip'; document.body.appendChild(tip); }
+                tip.textContent = text;
+                tip.style.display = 'block';
+            }
+            function moveTip(x,y){ if (!tip) return; const offsetY = 14; tip.style.left = x + 'px'; tip.style.top = (y - offsetY) + 'px'; }
+            function hideTip(){ if (!tip) return; tip.style.display = 'none'; }
+
+            document.querySelectorAll('.program-slide-link').forEach(function(a){
+                let enabled = false;
+                a.addEventListener('mouseenter', function(e){
+                    // ignore on touch devices
+                    if (('ontouchstart' in window) || navigator.maxTouchPoints > 0) return;
+                    showTip('Open in Drive');
+                    moveTip(e.clientX, e.clientY);
+                    enabled = true;
+                });
+                a.addEventListener('mousemove', function(e){ if (!enabled) return; moveTip(e.clientX, e.clientY); });
+                a.addEventListener('mouseleave', function(){ hideTip(); enabled = false; });
+            });
+        })();
+
         // initial state
         update();
         if (slideCount > 1) startInterval();
@@ -621,20 +676,11 @@ body {
     $useDB = getSetting('library_programs_source', 'static');
     if ($useDB === 'db') {
         try {
-            // If any program has no PDFs, hide the entire carousel (strict requirement)
+            // Determine whether there are any DB-driven programs with a usable link.
             $db = getDBConnection();
-            $stmt = $db->query('SELECT slug FROM library_programs');
-            $rows = $stmt->fetchAll();
-            if (empty($rows)) {
-                $showCarousel = false;
-            } else {
-                foreach ($rows as $r) {
-                    $slug = $r['slug'];
-                    $pdfsJson = listProgramPdfsJson($slug, $base_path);
-                    $arr = json_decode($pdfsJson, true);
-                    if (empty($arr)) { $showCarousel = false; break; }
-                }
-            }
+            $stmt = $db->query("SELECT COUNT(*) as cnt FROM library_programs WHERE TRIM(COALESCE(link, '')) <> ''");
+            $cnt = (int)$stmt->fetchColumn();
+            if ($cnt === 0) { $showCarousel = false; }
         } catch (Exception $e) {
             $showCarousel = false;
         }
@@ -650,28 +696,25 @@ body {
                         // $useDB already determined above; render DB or static slides below
                         if ($useDB === 'db') {
                             try {
-                                $stmt = getDBConnection()->query("SELECT slug, title, description, image FROM library_programs ORDER BY created_at ASC");
+                                // select new fields: include link; only render programs that have a link
+                                $stmt = getDBConnection()->query("SELECT id, slug, title, description, image, link FROM library_programs ORDER BY created_at ASC");
                                 $rows = $stmt->fetchAll();
                                 foreach ($rows as $r) {
                                     $slug = htmlspecialchars($r['slug']);
                                     $title = htmlspecialchars($r['title']);
                                     $desc = htmlspecialchars($r['description']);
-                                        $img = !empty($r['image']) ? $base_path . $r['image'] : ($base_path . 'assets/images/support-services/college-library/img/programs/placeholder.jpg');
-                                        $pdfsJson = listProgramPdfsJson($slug, $base_path);
-                                        // if the newest PDF has a server thumbnail, use it as the program image and mark the container so client-side PDF.js rendering skips work
-                                        $hasThumbClass = '';
-                                        $imgAttr = '';
-                                        $pdfsArr = json_decode($pdfsJson, true);
-                                        if (!empty($pdfsArr) && !empty($pdfsArr[0]['thumb_exists'])) {
-                                            $img = $pdfsArr[0]['thumb'];
-                                            $hasThumbClass = ' has-thumb';
-                                            $imgAttr = ' data-pdf-thumb="1"';
-                                        }
-                                        // render image as background to avoid browser alt-text showing when file missing
-                                        $bgStyle = "style=\"background-image:url('" . htmlspecialchars($img, ENT_QUOTES) . "');\"";
-                                        echo "<div class=\"program-slide\" data-pdfs='" . htmlspecialchars($pdfsJson, ENT_QUOTES) . "'>";
-                                        echo "<div class=\"program-image{$hasThumbClass}\"><div class=\"prog-thumb-loader\"><div class=\"rs-loading\"></div></div><div class=\"program-image-bg\" {$bgStyle} {$imgAttr}></div></div>";
-                                    echo "<div class=\"program-text\"><h4>" . $title . "</h4><p>" . $desc . "</p><div style=\"margin-top:0.75rem;\"><button type=\"button\" class=\"btn resources-btn\">Resources</button></div></div></div>";
+                                    $link = trim($r['link'] ?? '');
+                                    if (empty($link)) continue; // skip entries without a link
+                                    $img = !empty($r['image']) ? $base_path . $r['image'] : ($base_path . 'assets/images/support-services/college-library/img/programs/placeholder.jpg');
+
+                                    $bgStyle = "style=\"background-image:url('" . htmlspecialchars($img, ENT_QUOTES) . "');\"";
+                                    // render slide as a clickable link that opens in a new tab
+                                    $safeLink = htmlspecialchars($link, ENT_QUOTES);
+                                    echo "<a class=\"program-slide-link\" href=\"{$safeLink}\" target=\"_blank\" rel=\"noopener noreferrer\">";
+                                    echo "<div class=\"program-slide\">";
+                                    echo "<div class=\"program-image\"><div class=\"program-image-bg\" {$bgStyle}></div></div>";
+                                    echo "<div class=\"program-text\"><h4>" . $title . "</h4><p>" . $desc . "</p></div>";
+                                    echo "</div></a>";
                                 }
                             } catch (Exception $e) {
                                 // fallback: nothing here, keep static slides below
@@ -679,19 +722,15 @@ body {
                         } else {
                             // static slides (kept as-is above)
                         ?>
-                        <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("free-coffee", $base_path); ?>'>
+                        <a class="program-slide-link" href="#" target="_blank" rel="noopener noreferrer"><div class="program-slide">
                             <div class="program-image">
-                                <div class="prog-thumb-loader"><div class="rs-loading"></div></div>
                                 <div class="program-image-bg" style="background-image:url('<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/free-coffee.jpg')"></div>
                             </div>
                             <div class="program-text">
                                 <h4>Free Coffee</h4>
                                 <p>The library offers complimentary coffee during study hours to foster a welcoming, focused atmosphere for students and staff. This small but meaningful amenity encourages longer study sessions, peer collaboration, and informal librarian-student interactions that increase resource discovery and support academic success across disciplines.</p>
-                                <div style="margin-top:0.75rem;">
-                                    <button type="button" class="btn resources-btn">Resources</button>
-                                </div>
                             </div>
-                        </div>
+                        </div></a>
 
                         <div class="program-slide" data-pdfs='<?php echo listProgramPdfsJson("seed-library", $base_path); ?>'>
                             <div class="program-image">
@@ -781,447 +820,37 @@ body {
         </div>
     </section>
 
-    <!-- Resources Modal -->
-    <div id="resourcesModal" class="rs-modal" aria-hidden="true">
-        <div class="rs-modal-backdrop"></div>
-        <div class="rs-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="rsModalTitle">
-            <header class="rs-modal-header">
-                <h3 id="rsModalTitle">Program Resources</h3>
-                <button type="button" id="rsModalClose" aria-label="Close resources">✕</button>
-            </header>
-            <div class="rs-modal-body">
-                    <div id="rsResourcesGrid" class="rs-resources-grid"></div>
-                </div>
-                <!-- In-modal PDF viewer overlay -->
-                <div id="rsViewer" class="rs-viewer" aria-hidden="true">
-                    <div class="rs-viewer-header">
-                        <strong id="rsViewerTitle">Preview</strong>
-                        <button type="button" id="rsViewerClose" aria-label="Close preview">✕</button>
-                    </div>
-                    <iframe id="rsViewerFrame" class="rs-viewer-frame" src="" title="PDF preview"></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <style>
-    /* Modal for resources */
-    .rs-modal { display: none; position: fixed; inset: 0; z-index: 1200; }
-    .rs-modal[aria-hidden="false"] { display: block; }
-    .rs-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
-    .rs-modal-dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 95%; max-width: 1000px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(2,6,23,0.3); }
-    .rs-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
-    .rs-modal-header h3 { margin: 0; font-size: 1.125rem; }
-    .rs-modal-header button { background: transparent; border: none; font-size: 1.25rem; cursor: pointer; }
-    .rs-modal-body { padding: 1rem; max-height: 70vh; overflow: auto; }
-    .rs-resources-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .rs-resource { background: #fff; border-radius: 10px; padding: 0.5rem; border: 1px solid rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 0.5rem; align-items: stretch; min-height: 220px; }
-    .rs-thumb { width: 100%; aspect-ratio: 3/4; background: #f4f6f8; display: flex; align-items: center; justify-content: center; border-radius: 6px; overflow: hidden; }
-    .rs-thumb canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .rs-resource-title { font-size: 0.95rem; color: #222; margin: 0; }
-    .rs-actions { display: flex; gap: 0.5rem; margin-top: auto; }
-    .rs-actions a, .rs-actions button { padding: 0.45rem 0.6rem; text-decoration: none; border-radius: 8px; font-size: 0.85rem; border: 1px solid rgba(0,0,0,0.06); background: white; color: var(--primary-color); cursor: pointer; }
-    .rs-loading { display: inline-block; width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(0,0,0,0.08); border-top-color: var(--primary-color); animation: rs-spin 1s linear infinite; }
-    @keyframes rs-spin { to { transform: rotate(360deg); } }
-    .rs-pagination { display:flex; gap:8px; justify-content:center; align-items:center; padding:0.75rem 1rem; border-top:1px solid #eee; background:#fafafa; }
-    .rs-page-btn { padding:6px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:white; color:var(--primary-color); cursor:pointer; }
-    .rs-page-btn.active { background:var(--primary-color); color:white; border-color:var(--primary-color); }
-
-    /* In-modal PDF viewer (overlay inside dialog) */
-    .rs-viewer { position: absolute; inset: 0; background: #fff; z-index: 12; display: none; flex-direction: column; }
-    .rs-viewer[aria-hidden="false"] { display: flex; }
-    .rs-viewer-header { display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0.75rem; border-bottom:1px solid #eee; }
-    .rs-viewer-frame { width:100%; height: calc(70vh - 48px); border: none; }
-
-    /* program card loader */
-    .program-image { position: relative; }
-    .prog-thumb-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.6); }
-    .prog-thumb-loader .rs-loading { width: 36px; height: 36px; border-width: 4px; }
-    .program-image.has-thumb .prog-thumb-loader { display: none; }
-
-    @media (max-width: 900px) {
-        .rs-resources-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 560px) {
-        .rs-resources-grid { grid-template-columns: 1fr; }
-    }
-    </style>
-
-    <!-- PDF.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
-    <script>
-    // Resources modal + PDF first-page thumbnails using PDF.js
-    document.addEventListener('DOMContentLoaded', function() {
-        // configure worker
-        if (window['pdfjsLib']) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-        }
-
-        const modal = document.getElementById('resourcesModal');
-        const modalClose = document.getElementById('rsModalClose');
-        const resourcesGrid = document.getElementById('rsResourcesGrid');
-
-        // pagination state
-        let modalItems = [];
-        let currentPage = 0;
-        const PAGE_SIZE = 9;
-
-        // in-modal viewer elements
-        const viewer = document.getElementById('rsViewer');
-        const viewerClose = document.getElementById('rsViewerClose');
-        const viewerFrame = document.getElementById('rsViewerFrame');
-        const viewerTitle = document.getElementById('rsViewerTitle');
-
-        function openViewer(url, title) {
-            if (!viewer) return;
-            viewer.setAttribute('aria-hidden', 'false');
-            viewerFrame.src = url;
-            if (viewerTitle && title) viewerTitle.textContent = title;
-            viewerClose.focus();
-        }
-
-        function closeViewer() {
-            if (!viewer) return;
-            viewer.setAttribute('aria-hidden', 'true');
-            viewerFrame.src = '';
-        }
-
-        function renderPage(pageIndex) {
-            currentPage = pageIndex;
-            resourcesGrid.innerHTML = '';
-            const start = pageIndex * PAGE_SIZE;
-            const slice = modalItems.slice(start, start + PAGE_SIZE);
-
-            if (slice.length === 0) {
-                resourcesGrid.innerHTML = '<p>No resources available.</p>';
-            }
-
-            slice.forEach(item => {
-                const node = document.createElement('div');
-                node.className = 'rs-resource';
-
-                const thumb = document.createElement('div');
-                thumb.className = 'rs-thumb';
-                const loader = document.createElement('div'); loader.className = 'rs-loading';
-                thumb.appendChild(loader);
-
-                const title = document.createElement('p'); title.className = 'rs-resource-title'; title.textContent = item.title || 'Document';
-                // hide title during thumbnail loading; reveal after success/failure
-                title.style.display = 'none';
-
-                const actions = document.createElement('div'); actions.className = 'rs-actions';
-                const view = document.createElement('a'); view.href = item.url; view.textContent = 'View';
-                const openNew = document.createElement('a'); openNew.href = item.url; openNew.target = '_blank'; openNew.rel = 'noopener'; openNew.textContent = 'Open';
-                const dl = document.createElement('a'); dl.href = item.url; dl.download = ''; dl.textContent = 'Download';
-                actions.appendChild(view); actions.appendChild(openNew); actions.appendChild(dl);
-
-                node.appendChild(thumb);
-                node.appendChild(title);
-                node.appendChild(actions);
-                resourcesGrid.appendChild(node);
-
-                // helper: show a simple 'unavailable' placeholder
-                const showUnavailable = () => {
-                    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-                    const err = document.createElement('div'); err.textContent = 'Preview unavailable'; err.style.color = '#666'; err.style.fontSize = '0.9rem'; err.style.padding = '0.25rem';
-                    thumb.appendChild(err);
-                    title.style.display = '';
-                };
-
-                // helper: render using PDF.js (fetch first to avoid worker fetch issues and improve reliability)
-                const renderPdfThumb = async () => {
-                    if (!window['pdfjsLib']) return showUnavailable();
-                    try {
-                        // resolve absolute URL
-                        let docUrl = item.url;
-                        try { docUrl = (new URL(docUrl, window.location.href)).href; } catch (ee) { /* ignore */ }
-
-                        // fetch PDF bytes with a short timeout
-                        const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 12000);
-                        const resp = await fetch(docUrl, { signal: controller.signal });
-                        clearTimeout(timeoutId);
-                        if (!resp.ok) throw new Error('Fetch failed ' + resp.status);
-                        const arr = await resp.arrayBuffer();
-
-                        const loadingTask = pdfjsLib.getDocument({ data: arr });
-                        const pdf = await loadingTask.promise;
-                        const page = await pdf.getPage(1);
-                        const viewport = page.getViewport({ scale: 1 });
-
-                        const dpr = window.devicePixelRatio || 1;
-                        const targetWidthCSS = Math.min(420, Math.max(120, thumb.clientWidth || 160));
-                        const targetWidth = Math.max(120, Math.round(targetWidthCSS * dpr));
-                        const targetHeight = Math.round(targetWidth * 4 / 3);
-
-                        const scale = Math.max(targetWidth / viewport.width, targetHeight / viewport.height);
-                        const vp = page.getViewport({ scale: scale });
-
-                        const off = document.createElement('canvas');
-                        off.width = Math.round(vp.width);
-                        off.height = Math.round(vp.height);
-                        const offCtx = off.getContext('2d');
-                        await page.render({ canvasContext: offCtx, viewport: vp }).promise;
-
-                        const canvas = document.createElement('canvas');
-                        canvas.width = targetWidth;
-                        canvas.height = targetHeight;
-                        canvas.style.width = '100%';
-                        canvas.style.height = '100%';
-                        const ctx = canvas.getContext('2d');
-
-                        const sx = Math.max(0, Math.round((off.width - canvas.width) / 2));
-                        const sy = 0;
-                        ctx.drawImage(off, sx, sy, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-
-                        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-                        thumb.appendChild(canvas);
-                        thumb.style.cursor = 'pointer';
-                        thumb.addEventListener('click', function() { openViewer(item.url, item.title || 'Preview'); });
-                        title.style.display = '';
-                    } catch (e) {
-                        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-                        showUnavailable();
-                    }
-                };
-
-                // prefer server-generated JPEG thumb if available; fall back to PDF.js
-                if (item.thumb && item.thumb_exists) {
-                    const img = document.createElement('img');
-                    img.src = item.thumb;
-                    img.alt = item.title || '';
-                    img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
-                    img.onload = function() {
-                        if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-                        thumb.appendChild(img);
-                        thumb.style.cursor = 'pointer';
-                        thumb.addEventListener('click', function() { openViewer(item.url, item.title || 'Preview'); });
-                        title.style.display = '';
-                    };
-                    img.onerror = function() { renderPdfThumb(); };
-                } else {
-                    renderPdfThumb();
-                }
-
-                // wire actions: open in modal viewer for 'View', keep download as-is
-                view.addEventListener('click', function(e) { e.preventDefault(); openViewer(item.url, item.title || 'Preview'); });
-            });
-
-            renderPagination();
-        }
-
-        function openModalForSlide(slide) {
-            const raw = slide.getAttribute('data-pdfs') || '[]';
-            try { modalItems = JSON.parse(raw); } catch(e) { modalItems = []; }
-            currentPage = 0;
-            renderPage(0);
-
-            modal.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden'; // prevent background scroll
-            // focus first close button
-            modalClose.focus();
-        }
-
-        function closeModal() {
-            modal.setAttribute('aria-hidden', 'true');
-            resourcesGrid.innerHTML = '';
-            document.body.style.overflow = '';
-        }
-
-        function renderPagination() {
-            // remove existing pagination if any
-            let existing = modal.querySelector('.rs-pagination');
-            if (existing) existing.remove();
-
-            const pages = Math.ceil(modalItems.length / PAGE_SIZE);
-            if (pages <= 1) return;
-
-            const pager = document.createElement('div');
-            pager.className = 'rs-pagination';
-
-            const prevBtn = document.createElement('button'); prevBtn.className = 'rs-page-btn'; prevBtn.textContent = 'Prev';
-            prevBtn.disabled = (currentPage === 0);
-            prevBtn.addEventListener('click', () => { renderPage(Math.max(0, currentPage - 1)); });
-            pager.appendChild(prevBtn);
-
-            // page numbers (max show 5 around current)
-            const maxShow = 5; const half = Math.floor(maxShow/2);
-            let start = Math.max(0, currentPage - half);
-            let end = Math.min(pages - 1, start + maxShow - 1);
-            if (end - start < maxShow - 1) start = Math.max(0, end - (maxShow - 1));
-
-            for (let i = start; i <= end; i++) {
-                const p = document.createElement('button'); p.className = 'rs-page-btn' + (i === currentPage ? ' active' : ''); p.textContent = (i+1);
-                p.addEventListener('click', () => { renderPage(i); });
-                pager.appendChild(p);
-            }
-
-            const nextBtn = document.createElement('button'); nextBtn.className = 'rs-page-btn'; nextBtn.textContent = 'Next';
-            nextBtn.disabled = (currentPage >= pages - 1);
-            nextBtn.addEventListener('click', () => { renderPage(Math.min(pages-1, currentPage + 1)); });
-            pager.appendChild(nextBtn);
-
-            modal.querySelector('.rs-modal-dialog').appendChild(pager);
-        }
-
-        // wire up resource buttons
-        document.querySelectorAll('.program-slide .resources-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const slide = e.currentTarget.closest('.program-slide');
-                if (!slide) return;
-                openModalForSlide(slide);
-            });
-        });
-
-        // make whole slide clickable (but ignore clicks on inner controls/links)
-        document.querySelectorAll('.program-slide').forEach(slide => {
-            slide.tabIndex = 0;
-            slide.setAttribute('role', 'button');
-            slide.addEventListener('click', function(e) {
-                // if the user clicked a control or link inside the slide, don't open modal
-                if (e.target.closest('.resources-btn') || e.target.closest('a') || e.target.closest('button')) return;
-                openModalForSlide(slide);
-            });
-            slide.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openModalForSlide(slide);
-                }
-            });
-        });
-
-        modalClose.addEventListener('click', closeModal);
-        modal.querySelector('.rs-modal-backdrop').addEventListener('click', closeModal);
-        if (viewerClose) viewerClose.addEventListener('click', closeViewer);
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                if (viewer && viewer.getAttribute('aria-hidden') === 'false') { closeViewer(); return; }
-                closeModal();
-            }
-        });
-    });
-    </script>
-
-    <style>
-    /* Ensure program image area preserves 16:9 and prevents stretching on small screens */
+    /* Lightweight modal-free resources: keep card sizing and image behavior */
     .program-image{position:relative;aspect-ratio:16/9;overflow:hidden;background:#f6f6f6}
-    .program-image-bg, .program-image canvas{width:100%;height:100%;object-fit:cover;display:block;background-size:cover;background-position:center}
-    .program-image .program-image-bg { width:100%; height:100%; }
-
-    /* Mobile: reduce title and description sizes for readability */
-    @media (max-width:600px){
-        .program-slide .program-title{font-size:1rem}
-        .program-slide .program-desc{font-size:0.85rem}
-        .program-slide .program-desc p{line-height:1.25}
-        .program-nav-button{top:50%}
+    .program-image-bg{width:100%;height:100%;background-size:cover;background-position:center;display:block}
+    .program-slide-link{display:block;color:inherit;text-decoration:none}
+    .program-slide-link .program-slide{transition:transform .18s ease,box-shadow .18s ease}
+    .program-slide-link.clicked .program-slide{transform:scale(.985);opacity:.98}
+    /* Hover highlight for link-based slides */
+    .program-slide-link:hover .program-slide {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(14,61,170,0.12);
+        border-color: rgba(14,61,170,0.12);
+    }
+    /* Tooltip styling (shown near cursor) */
+    .program-tooltip {
+        position: fixed;
+        display: inline-block;
+        padding: 6px 10px;
+        background: var(--primary-color, #0e3da5);
+        color: #fff;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        pointer-events: none;
+        z-index: 4000;
+        transform: translate(-50%, -120%);
+        white-space: nowrap;
+        box-shadow: 0 6px 18px rgba(16,24,40,0.12);
     }
     </style>
 
-    <script>
-    // Render newest PDF first page as the program card image (16:9) using PDF.js — lazy render only visible slides
-    document.addEventListener('DOMContentLoaded', function() {
-        if (!window['pdfjsLib']) return;
-        const carouselRoot = document.querySelector('.program-carousel');
-        if (!carouselRoot) return;
-
-        const slides = Array.from(document.querySelectorAll('.program-slide'));
-        const rendered = new WeakSet();
-
-        const lazyRenderSlide = async (slide) => {
-            if (!slide || rendered.has(slide)) return;
-            // prefer server-generated background thumb
-            const container = slide.querySelector('.program-image');
-            if (!container) return;
-            const bgDiv = container.querySelector('.program-image-bg');
-            if (container.classList && container.classList.contains('has-thumb')) {
-                let bgOk = false;
-                if (bgDiv) {
-                    const bg = window.getComputedStyle(bgDiv).backgroundImage || '';
-                    if (bg && bg !== 'none' && bg.indexOf('placeholder') === -1) bgOk = true;
-                }
-                if (bgOk) {
-                    const l = container.querySelector('.prog-thumb-loader'); if (l) l.style.display = 'none';
-                    rendered.add(slide);
-                    return;
-                }
-            }
-
-            // gather pdf url
-            const raw = slide.getAttribute('data-pdfs') || '[]';
-            let items = [];
-            try { items = JSON.parse(raw); } catch(e) { items = []; }
-            if (!items || items.length === 0) { rendered.add(slide); return; }
-            const first = items[0]; if (!first || !first.url) { rendered.add(slide); return; }
-
-            // add loader if missing
-            let cardLoader = container.querySelector('.prog-thumb-loader');
-            if (!cardLoader) {
-                cardLoader = document.createElement('div'); cardLoader.className = 'prog-thumb-loader'; const spin = document.createElement('div'); spin.className = 'rs-loading'; cardLoader.appendChild(spin); container.appendChild(cardLoader);
-            }
-
-            try {
-                // resolve and fetch PDF as bytes first (more reliable)
-                let docUrl = first.url; try { docUrl = (new URL(docUrl, window.location.href)).href; } catch(e) {}
-                const controller = new AbortController(); const to = setTimeout(()=>controller.abort(), 12000);
-                const resp = await fetch(docUrl, { signal: controller.signal }); clearTimeout(to);
-                if (!resp.ok) throw new Error('fetch failed ' + resp.status);
-                const ab = await resp.arrayBuffer();
-
-                const loading = pdfjsLib.getDocument({ data: ab });
-                const pdf = await loading.promise;
-                const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 1 });
-
-                const dpr = window.devicePixelRatio || 1;
-                const rect = container.getBoundingClientRect();
-                const targetWidthCSS = rect.width || 320;
-                const targetWidth = Math.max(320, Math.round(targetWidthCSS * dpr));
-                const targetHeight = Math.round(targetWidth * 9 / 16);
-
-                const scale = Math.max(targetWidth / viewport.width, targetHeight / viewport.height);
-                const vp = page.getViewport({ scale: scale });
-
-                const off = document.createElement('canvas'); off.width = Math.round(vp.width); off.height = Math.round(vp.height);
-                const offCtx = off.getContext('2d'); await page.render({ canvasContext: offCtx, viewport: vp }).promise;
-
-                const canvas = document.createElement('canvas'); canvas.width = targetWidth; canvas.height = targetHeight; canvas.style.width = '100%'; canvas.style.height = '100%';
-                const ctx = canvas.getContext('2d');
-                const sx = Math.max(0, Math.round((off.width - canvas.width) / 2)); const sy = 0;
-                ctx.drawImage(off, sx, sy, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-
-                if (bgDiv) bgDiv.style.display = 'none';
-                container.appendChild(canvas);
-                if (cardLoader && cardLoader.parentNode) cardLoader.parentNode.removeChild(cardLoader);
-                rendered.add(slide);
-            } catch (err) {
-                console.warn('Program card thumbnail render failed', err);
-                const cardLoader = slide.querySelector('.prog-thumb-loader'); if (cardLoader && cardLoader.parentNode) cardLoader.parentNode.removeChild(cardLoader);
-                rendered.add(slide);
-            }
-        };
-
-        // IntersectionObserver to lazy-render only the visible slide(s)
-        try {
-            const io = new IntersectionObserver((entries) => {
-                entries.forEach(ent => {
-                    if (ent.isIntersecting) {
-                        lazyRenderSlide(ent.target);
-                        // pre-render next sibling for smoother transitions
-                        const next = ent.target.nextElementSibling; if (next) lazyRenderSlide(next);
-                    }
-                });
-            }, { root: carouselRoot, threshold: 0.45 });
-            slides.forEach(s => io.observe(s));
-            // ensure first slide is attempted immediately
-            if (slides[0]) lazyRenderSlide(slides[0]);
-        } catch (e) {
-            // fallback: render first slide synchronously
-            if (slides[0]) lazyRenderSlide(slides[0]);
-        }
-    });
-    </script>
+    
 
     <!-- Online Services Section -->
     <section class="content-section online-services-section">
