@@ -120,12 +120,9 @@ body {
 /* Content Sections */
 .content-section {
     padding: 4rem 0;
-    background: white;
+    background: #ffffff;
 }
 
-.content-section:nth-child(even) {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
 
 .section-title {
     text-align: center;
@@ -134,18 +131,6 @@ body {
     color: var(--primary-color);
     margin-bottom: 1rem;
     position: relative;
-}
-
-.section-title::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: var(--secondary-color);
-    border-radius: 2px;
 }
 
 .section-subtitle {
@@ -159,8 +144,9 @@ body {
 }
 
 /* Mission Vision Section */
-.mission-vision-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+.lib-mission-vision-section {
+    background: #ffffff; /* make section background white for cohesion */
+    padding: 4rem 0;
 }
 
 .mv-container {
@@ -169,13 +155,14 @@ body {
     gap: 3rem;
     max-width: 1000px;
     margin: 0 auto;
+    padding: 1rem;
 }
 
 .mv-card {
-    background: white;
+    background: #ffffff;
     padding: 2.5rem;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(16,24,40,0.06);
     text-align: center;
     border-left: 4px solid var(--primary-color);
 }
@@ -259,7 +246,7 @@ body {
 
 /* Quality Objectives Section */
 .quality-objectives-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: #ffffff;
 }
 
 .objectives-list {
@@ -695,6 +682,137 @@ body {
     include '../app/includes/news-carousel.php';
     ?>
 
+    
+
+    <!-- Mission and Vision Section -->
+    <section class="content-section lib-mission-vision-section ">
+        <div class="container">
+            <h2 class="section-title">Mission & Vision</h2>
+            <div class="mv-container">
+                <div class="mv-card">
+                    <h3>Vision</h3>
+                    <p>A dominant university library provider in global community</p>
+                </div>
+                <div class="mv-card">
+                    <h3>Mission</h3>
+                    <p>Committed to provide users with comprehensive resources and services as tools for independent critical thinking and life-long learning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+    /* Lightweight modal-free resources: keep card sizing and image behavior */
+    .program-image{position:relative;aspect-ratio:16/9;overflow:hidden;background:#f6f6f6}
+    .program-image-bg{width:100%;height:100%;background-size:cover;background-position:center;display:block}
+    .program-slide-link{display:block;color:inherit;text-decoration:none}
+    .program-slide-link .program-slide{transition:transform .18s ease,box-shadow .18s ease}
+    .program-slide-link.clicked .program-slide{transform:scale(.985);opacity:.98}
+    /* Hover highlight for link-based slides */
+    .program-slide-link:hover .program-slide {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(14,61,170,0.12);
+        border-color: rgba(14,61,170,0.12);
+    }
+    /* Tooltip styling (shown near cursor) */
+    .program-tooltip {
+        position: fixed;
+        display: inline-block;
+        padding: 6px 10px;
+        background: var(--primary-color, #0e3da5);
+        color: #fff;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        pointer-events: none;
+        z-index: 4000;
+        transform: translate(-50%, -120%);
+        white-space: nowrap;
+        box-shadow: 0 6px 18px rgba(16,24,40,0.12);
+    }
+
+    /* Gdrive icon button placed at top-right of each slide */
+    .gdrive-btn {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        z-index: 30;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.98);
+        border: 1px solid rgba(16,24,40,0.06);
+        color: var(--primary-color);
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(16,24,40,0.08);
+        padding: 0;
+        font-size: 16px;
+    }
+    .gdrive-btn i { font-size: 18px; }
+    .gdrive-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(16,24,40,0.12); }
+    </style>
+
+    
+
+    <!-- Online Services Section -->
+    <section class="content-section online-services-section">
+        <div class="container">
+            <h2 class="section-title">Online Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-opac.jpg" alt="OPAC">
+                    </div>
+                    <h4>OPAC - Online Public Access Catalogue</h4>
+                    <p>This feature-rich Online LMS, there is never a need to worry on valuable data. All of your data, including archival data, remains instantly accessible all the time—with no system slowdown. Up-to-date information on books, members and status reports is just a click away.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-ebsco.png" alt="EBSCOhost">
+                    </div>
+                    <h4>EBSCOhost</h4>
+                    <p>A powerful online reference system accessible via internet. It offers a variety of proprietary full-text databases and popular databases from leading information providers. The comprehensive databases range from general reference collections to specially designed, subject-specific databases for public, academic, medical, corporate, and school libraries.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-pej.png" alt="Philippine E-Journals">
+                    </div>
+                    <h4>Philippine E-Journals</h4>
+                    <p>An expanding collection of academic journals that are made accessible globally through a single Web-based platform. It is hosted by C&E Publishing, Inc., a premier educational publisher in the Philippines and a leader in the distribution of integrated information-based solutions.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/starbooks.png" alt="Starbooks">
+                    </div>
+                    <h4>Starbooks</h4>
+                    <p>State of the art facilities to access science and technology information via the STOO portals. A technically-qualified staff will be on hand to assist STARBOOKS users on-site while an online Librarian's HelpDesk service will also be available to answer queries.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/escra.png" alt="eSCRA Online">
+                    </div>
+                    <h4>eSCRA Online</h4>
+                    <p>A Complete Decision from 1901 to the Present. Online Library, Always Updated and Available. Search and Browse Modes Makes it Fast and Intuitive. Smart Searching through Intelligent Fields. TrueCite Technology gives you the same look and feel as the book.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/turnitin.png" alt="Turnitin">
+                    </div>
+                    <h4>Turnitin</h4>
+                    <p>An expanding collection of academic journals that are made accessible globally through a single Web-based platform. It is hosted by C&E Publishing, Inc., a premier educational publisher in the Philippines and a leader in the distribution of integrated information-based solutions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quality Objectives Section -->
     <!-- Library Programs Section -->
     <?php
     // compute whether to show the DB-driven carousel: require DB source, at least one program, and at least one PDF
@@ -829,135 +947,6 @@ body {
     </section>
     <?php endif; ?>
 
-    <!-- Mission and Vision Section -->
-    <section class="content-section mission-vision-section">
-        <div class="container">
-            <h2 class="section-title">Mission & Vision</h2>
-            <div class="mv-container">
-                <div class="mv-card">
-                    <h3>Vision</h3>
-                    <p>A dominant university library provider in global community</p>
-                </div>
-                <div class="mv-card">
-                    <h3>Mission</h3>
-                    <p>Committed to provide users with comprehensive resources and services as tools for independent critical thinking and life-long learning.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <style>
-    /* Lightweight modal-free resources: keep card sizing and image behavior */
-    .program-image{position:relative;aspect-ratio:16/9;overflow:hidden;background:#f6f6f6}
-    .program-image-bg{width:100%;height:100%;background-size:cover;background-position:center;display:block}
-    .program-slide-link{display:block;color:inherit;text-decoration:none}
-    .program-slide-link .program-slide{transition:transform .18s ease,box-shadow .18s ease}
-    .program-slide-link.clicked .program-slide{transform:scale(.985);opacity:.98}
-    /* Hover highlight for link-based slides */
-    .program-slide-link:hover .program-slide {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 40px rgba(14,61,170,0.12);
-        border-color: rgba(14,61,170,0.12);
-    }
-    /* Tooltip styling (shown near cursor) */
-    .program-tooltip {
-        position: fixed;
-        display: inline-block;
-        padding: 6px 10px;
-        background: var(--primary-color, #0e3da5);
-        color: #fff;
-        font-size: 0.85rem;
-        border-radius: 6px;
-        pointer-events: none;
-        z-index: 4000;
-        transform: translate(-50%, -120%);
-        white-space: nowrap;
-        box-shadow: 0 6px 18px rgba(16,24,40,0.12);
-    }
-
-    /* Gdrive icon button placed at top-right of each slide */
-    .gdrive-btn {
-        position: absolute;
-        top: 10px;
-        right: 12px;
-        z-index: 30;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.98);
-        border: 1px solid rgba(16,24,40,0.06);
-        color: var(--primary-color);
-        cursor: pointer;
-        box-shadow: 0 8px 22px rgba(16,24,40,0.08);
-        padding: 0;
-        font-size: 16px;
-    }
-    .gdrive-btn i { font-size: 18px; }
-    .gdrive-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(16,24,40,0.12); }
-    </style>
-
-    
-
-    <!-- Online Services Section -->
-    <section class="content-section online-services-section">
-        <div class="container">
-            <h2 class="section-title">Online Services</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-opac.jpg" alt="OPAC">
-                    </div>
-                    <h4>OPAC - Online Public Access Catalogue</h4>
-                    <p>This feature-rich Online LMS, there is never a need to worry on valuable data. All of your data, including archival data, remains instantly accessible all the time—with no system slowdown. Up-to-date information on books, members and status reports is just a click away.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-ebsco.png" alt="EBSCOhost">
-                    </div>
-                    <h4>EBSCOhost</h4>
-                    <p>A powerful online reference system accessible via internet. It offers a variety of proprietary full-text databases and popular databases from leading information providers. The comprehensive databases range from general reference collections to specially designed, subject-specific databases for public, academic, medical, corporate, and school libraries.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-pej.png" alt="Philippine E-Journals">
-                    </div>
-                    <h4>Philippine E-Journals</h4>
-                    <p>An expanding collection of academic journals that are made accessible globally through a single Web-based platform. It is hosted by C&E Publishing, Inc., a premier educational publisher in the Philippines and a leader in the distribution of integrated information-based solutions.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/starbooks.png" alt="Starbooks">
-                    </div>
-                    <h4>Starbooks</h4>
-                    <p>State of the art facilities to access science and technology information via the STOO portals. A technically-qualified staff will be on hand to assist STARBOOKS users on-site while an online Librarian's HelpDesk service will also be available to answer queries.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/escra.png" alt="eSCRA Online">
-                    </div>
-                    <h4>eSCRA Online</h4>
-                    <p>A Complete Decision from 1901 to the Present. Online Library, Always Updated and Available. Search and Browse Modes Makes it Fast and Intuitive. Smart Searching through Intelligent Fields. TrueCite Technology gives you the same look and feel as the book.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/turnitin.png" alt="Turnitin">
-                    </div>
-                    <h4>Turnitin</h4>
-                    <p>An expanding collection of academic journals that are made accessible globally through a single Web-based platform. It is hosted by C&E Publishing, Inc., a premier educational publisher in the Philippines and a leader in the distribution of integrated information-based solutions.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Quality Objectives Section -->
     <section class="content-section quality-objectives-section">
         <div class="container">
             <h2 class="section-title">Quality Objectives</h2>
