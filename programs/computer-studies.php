@@ -389,7 +389,7 @@ include '../app/includes/header.php';
                             <li><strong>BSIT:</strong> Information Technology (Game Development)</li>
                             <li><strong>BSCS:</strong> Computer Science (Data Science)</li>
                             <li><strong>BSEMC:</strong> Entertainment & Multimedia Computing</li>
-                            <li><strong>BSIT-CF:</strong> Information Technology (Cybersecurity & Forensics)</li>
+                            <li><strong>BIT:</strong> Information Technology (Cybersecurity & Forensics)</li>
                         </ul>
                     </div>
                     
