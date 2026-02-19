@@ -661,6 +661,30 @@ body {
             });
         })();
 
+        // add Gdrive icon to CAS slides as well
+        (function(){
+            const track = document.getElementById('casTrack');
+            if (!track) return;
+            const slides = track.querySelectorAll('.program-slide');
+            slides.forEach(function(slide){
+                const parentLink = slide.closest('.program-slide-link');
+                const href = parentLink ? parentLink.getAttribute('href') : (slide.getAttribute('data-link') || '');
+                if (!href || href === '#' || href.toLowerCase().startsWith('javascript:')) return;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'gdrive-btn';
+                btn.setAttribute('aria-label', 'Open in Gdrive');
+                btn.title = 'Open in Gdrive';
+                btn.innerHTML = '<i class="fab fa-google-drive" aria-hidden="true"></i>';
+                btn.addEventListener('click', function(e){
+                    e.stopPropagation();
+                    try { window.open(href, '_blank', 'noopener'); } catch(err){ window.open(href, '_blank'); }
+                });
+                slide.appendChild(btn);
+            });
+        })();
+
         // add a small Google Drive (Gdrive) icon button to slides that have a real link
         (function(){
             const track = document.getElementById('libraryProgramsTrack');
