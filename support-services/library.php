@@ -10,6 +10,24 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Ensure the library CAS table exists (Current Awareness Services)
+try {
+    $db = getDBConnection();
+    $db->exec("CREATE TABLE IF NOT EXISTS library_cas (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        slug VARCHAR(191) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        image VARCHAR(1024) DEFAULT '',
+        link VARCHAR(2048) DEFAULT '',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY ux_slug (slug)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+} catch (Exception $e) {
+    // non-fatal: table creation failure should not break the page
+}
+
 // Check if this sub-page or Support Services section is in maintenance
 if (isSectionInMaintenance('support-services', 'library') || isSectionInMaintenance('support-services')) {
     $page_title = "University Library - Maintenance";
@@ -691,11 +709,11 @@ body {
             <div class="mv-container">
                 <div class="mv-card">
                     <h3>Vision</h3>
-                    <p>A dominant university library provider in global community</p>
+                    <p> The UPHSL University Library envisions to be a pioneering hub of innovative and comprehensive resources and services, leading in both national and global academic communities. </p>
                 </div>
                 <div class="mv-card">
                     <h3>Mission</h3>
-                    <p>Committed to provide users with comprehensive resources and services as tools for independent critical thinking and life-long learning.</p>
+                    <p>Dedicated to empowering users through state-of-the-art library resources and technology-driven services, fostering independent critical thinking, creativity, and lifelong learning in an ever-evolving digital landscape.</p>
                 </div>
             </div>
         </div>
@@ -947,18 +965,215 @@ body {
     </section>
     <?php endif; ?>
 
+    <!-- Current Awareness Services (CAS) Section -->
+    <?php
+    $showCas = true;
+    $useCasDB = getSetting('library_cas_source', 'static');
+    if ($useCasDB === 'db') {
+        try {
+            $stmt = $db->query("SELECT COUNT(*) as cnt FROM library_cas WHERE TRIM(COALESCE(link, '')) <> ''");
+            $cnt = (int)$stmt->fetchColumn();
+            if ($cnt === 0) { $showCas = false; }
+        } catch (Exception $e) {
+            $showCas = false;
+        }
+    }
+    if (!empty($showCas)): ?>
+    <section class="content-section library-programs-section">
+        <div class="container">
+            <h2 class="section-title">Current Awareness Services</h2>
+            <div class="program-carousel-container">
+                <div class="program-carousel">
+                    <div class="program-carousel-track" id="casTrack">
+                        <?php
+                        if ($useCasDB === 'db') {
+                            try {
+                                $stmt = getDBConnection()->query("SELECT id, slug, title, description, image, link FROM library_cas ORDER BY created_at ASC");
+                                $rows = $stmt->fetchAll();
+                                foreach ($rows as $r) {
+                                    $slug = htmlspecialchars($r['slug']);
+                                    $title = htmlspecialchars($r['title']);
+                                    $desc = htmlspecialchars($r['description']);
+                                    $link = trim($r['link'] ?? '');
+                                    if (empty($link)) continue;
+                                    $img = !empty($r['image']) ? $base_path . $r['image'] : ($base_path . 'assets/images/support-services/college-library/img/programs/placeholder.jpg');
+                                    $bgStyle = "style=\"background-image:url('" . htmlspecialchars($img, ENT_QUOTES) . "');\"";
+                                    $safeLink = htmlspecialchars($link, ENT_QUOTES);
+                                    echo "<a class=\"program-slide-link\" href=\"{$safeLink}\" target=\"_blank\" rel=\"noopener noreferrer\">";
+                                    echo "<div class=\"program-slide\">";
+                                    echo "<div class=\"program-image\"><div class=\"program-image-bg\" {$bgStyle}></div></div>";
+                                    echo "<div class=\"program-text\"><h4>" . $title . "</h4><p>" . $desc . "</p></div>";
+                                    echo "</div></a>";
+                                }
+                            } catch (Exception $e) {
+                                // fallback to static
+                            }
+                        }
+                        // static fallback (renders if DB not used or empty)
+                        if ($useCasDB !== 'db') {
+                        ?>
+                        <div class="program-slide">
+                            <div class="program-image">
+                                <div class="program-image-bg" style="background-image:url('<?php echo $base_path; ?>assets/images/support-services/college-library/img/programs/cas-sample.jpg')"></div>
+                            </div>
+                            <div class="program-text">
+                                <h4>Current Awareness Briefs</h4>
+                                <p>Curated alerts and brief summaries of newly acquired resources, journals, and noteworthy research items to keep faculty and students current in their fields.</p>
+                            </div>
+                        </div>
+                        <?php } // end static fallback ?>
+                    </div>
+
+                    <button type="button" aria-label="Previous CAS" class="carousel-nav carousel-prev" id="casPrev">
+                        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" aria-label="Next CAS" class="carousel-nav carousel-next" id="casNext">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <div class="carousel-dots" id="casDots"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    // CAS carousel (similar behavior to Library Programs carousel)
+    document.addEventListener('DOMContentLoaded', function() {
+        const track = document.getElementById('casTrack');
+        if (!track) return;
+
+        const slides = Array.from(track.children);
+        const prev = document.getElementById('casPrev');
+        const next = document.getElementById('casNext');
+        const dotsContainer = document.getElementById('casDots');
+
+        let idx = 0;
+        let intervalId = null;
+        const slideCount = slides.length;
+
+        function update() {
+            track.style.transform = `translateX(-${idx * 100}%)`;
+            if (dotsContainer) {
+                const dots = Array.from(dotsContainer.children);
+                dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+            }
+        }
+
+        function goTo(i) { idx = (i + slideCount) % slideCount; update(); }
+        function nextSlide() { goTo(idx + 1); }
+        function prevSlide() { goTo(idx - 1); }
+
+        if (dotsContainer && slideCount > 1) {
+            for (let i = 0; i < slideCount; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                btn.addEventListener('click', () => { goTo(i); resetInterval(); });
+                dotsContainer.appendChild(btn);
+            }
+        }
+
+        if (next) next.addEventListener('click', () => { nextSlide(); resetInterval(); });
+        if (prev) prev.addEventListener('click', () => { prevSlide(); resetInterval(); });
+
+        function startInterval() { if (intervalId) return; intervalId = setInterval(nextSlide, 5000); }
+        function resetInterval() { if (intervalId) { clearInterval(intervalId); intervalId = null; } startInterval(); }
+
+        const carousel = track.closest('.program-carousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', () => { if (intervalId) clearInterval(intervalId); intervalId = null; });
+            carousel.addEventListener('mouseleave', () => { startInterval(); });
+        }
+
+        // touch support
+        if (carousel && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            let startX = 0, currentX = 0, dragging = false, threshold = 50;
+            carousel.addEventListener('touchstart', function(e){ if (e.touches.length !== 1) return; startX = e.touches[0].clientX; currentX = startX; dragging = true; if (intervalId) { clearInterval(intervalId); intervalId = null; } }, { passive: true });
+            carousel.addEventListener('touchmove', function(e){ if (!dragging) return; currentX = e.touches[0].clientX; const dx = currentX - startX; const pct = (dx / carousel.offsetWidth) * 100; track.style.transition = 'none'; track.style.transform = `translateX(${ -idx * 100 + pct }%)`; }, { passive: true });
+            carousel.addEventListener('touchend', function(){ if (!dragging) return; dragging = false; track.style.transition = ''; const dx = currentX - startX; if (Math.abs(dx) > threshold) { if (dx < 0) nextSlide(); else prevSlide(); } else { update(); } startInterval(); });
+        }
+
+        // initial
+        update(); if (slideCount > 1) startInterval();
+    });
+    </script>
+    <?php endif; ?>
+
+    <style>
+    /* Objectives cards: two-column layout that stacks on small screens */
+    .objectives-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        max-width: 1100px;
+        margin: 0 auto;
+        align-items: start;
+    }
+
+    .objective-card {
+        background: #ffffff;
+        padding: 1.75rem;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(16,24,40,0.06);
+        border-left: 4px solid var(--secondary-color);
+    }
+
+    .objective-card h3 { margin-top: 0; color: var(--primary-color); font-size: 1.25rem; font-weight: 700; }
+
+    /* Readability improvements for objective lists */
+    .objective-card ul { list-style: none; padding: 0; margin: 0; }
+    .objective-card li {
+        position: relative;
+        padding-left: 2.4rem;
+        margin-bottom: 1rem;
+        line-height: 1.45;
+        font-size: 0.98rem;
+        color: #333;
+    }
+    .objective-card li::before {
+        content: "\2713"; /* checkmark */
+        position: absolute;
+        left: 0;
+        top: 0.12rem;
+        color: var(--secondary-color);
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .objective-card li strong { display: inline-block; color: var(--primary-color); margin-right: 0.4rem; font-weight:700; }
+    .objective-card li p { display: inline; margin: 0; }
+
+    @media (max-width: 768px) {
+        .objectives-cards { grid-template-columns: 1fr; }
+    }
+    </style>
+
     <section class="content-section quality-objectives-section">
         <div class="container">
-            <h2 class="section-title">Quality Objectives</h2>
-            <div class="objectives-list">
-                <ul>
-                    <li>To develop better access to resources and services.</li>
-                    <li>To collaborate with all stakeholders on their learning needs and experience.</li>
-                    <li>To assist the faculty in updating references for their course syllabi.</li>
-                    <li>To disseminate new services and promote their use.</li>
-                    <li>To use feedback for continual improvement.</li>
-                    <li>To expand proactive library user education and information literacy program.</li>
-                </ul>
+            <div class="objectives-cards">
+                <div class="objective-card">
+                    <h3>General Objectives</h3>
+                        <ul>
+                            <li>Enhance the continuous collection with cutting-edge, diverse, and inclusive materials that support the evolving curriculum and research needs.</li>
+                            <li>Implement advanced technologies and innovative services to enhance user experience, accessibility, and engagement.</li>
+                            <li>Promote information literacy and digital fluency through targeted programs, workshops, and personalized support.</li>
+                            <li>Strengthen collaborations with local and international institutions to share knowledge, resources, and best practices.</li>
+                            <li>Integrate sustainable practices in library operations, focusing on eco-friendly initiatives and long-term resource management.</li>
+                            <li>Invest in the continuous professional growth of library staff through training, seminars, and exposure to global trends and innovations.</li>
+                            <li>Engage with the university community and beyond through outreach programs, cultural events, and support for community-driven projects.</li>
+                        </ul>
+                </div>
+
+                <div class="objective-card">
+                    <h3>Educational Organizations Management System Quality Objectives</h3>
+                    <ul>
+                        <li>To innovate access to resources and services that enhance users' technical and professional competencies aligned with Perpetualite values.</li>
+                        <li>To provide organized and updated references and academic materials that support compliance and align with national and international educational standards.</li>
+                        <li>To establish library collaborations and linkages that expand resource access and improve service delivery.</li>
+                        <li>To support knowledge generation, dissemination, and utilization for academic and research excellence.</li>
+                        <li>To provide relevant library services that contribute to uplifting the quality of life in adopted communities.</li>
+                        <li>To adopt cutting-edge technologies and innovations that ensure relevant and efficient library services.</li>
+                        <li>To promote responsible knowledge sharing, research dissemination, and protection of intellectual property rights.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </section>

@@ -593,7 +593,7 @@ foreach ($sections as $key => $section) {
 }
 
 // Library Programs POST handlers (create / update / delete / set source)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['library_create_program','library_update_program','library_delete_program','set_library_programs_source'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array($_POST['action'], ['library_create_program','library_update_program','library_delete_program','set_library_programs_source','library_cas_create','library_cas_update','library_cas_delete','set_library_cas_source'])) {
     if (!CSRF::verify()) {
         $error = 'Security token mismatch. Please refresh the page and try again.';
     } else {
@@ -604,6 +604,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                     $success = 'Library programs source updated.';
                 } else {
                     $error = 'Failed to update library programs source.';
+                }
+            } elseif ($_POST['action'] === 'set_library_cas_source') {
+                $source = isset($_POST['library_cas_source']) && $_POST['library_cas_source'] === 'db' ? 'db' : 'static';
+                if (setSetting('library_cas_source', $source, 'text', 'Library CAS source (db|static)', $_SESSION['user_id'])) {
+                    $success = 'Library CAS source updated.';
+                } else {
+                    $error = 'Failed to update Library CAS source.';
                 }
             } elseif ($_POST['action'] === 'library_create_program') {
                 $title = Validator::sanitize($_POST['title'] ?? '', 'string');
@@ -692,6 +699,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                         $success = 'Program deleted.';
                     } else {
                         $error = 'Program not found.';
+                    }
+                }
+            } elseif ($_POST['action'] === 'library_cas_create') {
+                $title = Validator::sanitize($_POST['title'] ?? '', 'string');
+                $description = Validator::sanitize($_POST['description'] ?? '', 'string');
+                $slug = Validator::sanitize($_POST['slug'] ?? '', 'slug');
+                if (empty($slug)) {
+                    $slug = preg_replace('/[^a-z0-9-]+/','-',strtolower(trim($title)));
+                    $slug = trim($slug,'-');
+                }
+
+                $stmt = $pdo->prepare('SELECT id FROM library_cas WHERE slug = :slug');
+                $stmt->execute([':slug' => $slug]);
+                if ($stmt->fetch()) {
+                    $error = 'An item with that slug already exists.';
+                } else {
+                    // Handle optional uploaded thumbnail image (takes precedence) or image URL
+                    $image = '';
+                    if (isset($_FILES['image']) && isset($_FILES['image']['tmp_name']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                        $file = $_FILES['image'];
+                        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                        if (in_array($ext, ['jpg','jpeg','png','webp','gif'])) {
+                            $baseDir = __DIR__ . '/../assets/images/support-services/college-library/cas/' . $slug . '/';
+                            if (!is_dir($baseDir)) { @mkdir($baseDir,0755,true); }
+                            $safe = preg_replace('/[^a-zA-Z0-9_\-\.]/','_',pathinfo($file['name'], PATHINFO_FILENAME));
+                            $final = $safe . '.' . $ext;
+                            $target = $baseDir . $final;
+                            $counter = 1; while (file_exists($target)) { $final = $safe . '_' . $counter . '.' . $ext; $target = $baseDir . $final; $counter++; }
+                            if (move_uploaded_file($file['tmp_name'], $target)) {
+                                @chmod($target, 0644);
+                                $image = 'assets/images/support-services/college-library/cas/' . $slug . '/' . $final;
+                            }
+                        }
+                    }
+                    if (empty($image)) {
+                        $image = Validator::sanitize($_POST['image'] ?? '', 'string');
+                    }
+                    $link = Validator::sanitize($_POST['link'] ?? '', 'url');
+                    $ins = $pdo->prepare('INSERT INTO library_cas (slug,title,description,image,link,created_at,updated_at) VALUES (:slug,:title,:description,:image,:link,NOW(),NOW())');
+                    $ins->execute([':slug'=>$slug,':title'=>$title,':description'=>$description,':image'=>$image,':link'=>$link]);
+                    $success = 'Item created successfully.';
+                }
+            } elseif ($_POST['action'] === 'library_cas_update') {
+                $id = (int)($_POST['id'] ?? 0);
+                $title = Validator::sanitize($_POST['title'] ?? '', 'string');
+                $description = Validator::sanitize($_POST['description'] ?? '', 'string');
+                $image = Validator::sanitize($_POST['image'] ?? '', 'string');
+                $link = Validator::sanitize($_POST['link'] ?? '', 'url');
+                if ($id <= 0) {
+                    $error = 'Invalid item ID.';
+                } else {
+                    $parts = ['title = :title', 'description = :description', 'updated_at = NOW()'];
+                    $params = [':title'=>$title, ':description'=>$description, ':id'=>$id];
+                    if (!empty($image)) { $parts[] = 'image = :image'; $params[':image'] = $image; }
+                    if (!empty($link)) { $parts[] = 'link = :link'; $params[':link'] = $link; }
+                    $sql = 'UPDATE library_cas SET ' . implode(', ', $parts) . ' WHERE id = :id';
+                    $up = $pdo->prepare($sql);
+                    $up->execute($params);
+                    $success = 'Item updated successfully.';
+                }
+            } elseif ($_POST['action'] === 'library_cas_delete') {
+                $id = (int)($_POST['id'] ?? 0);
+                if ($id <= 0) {
+                    $error = 'Invalid item ID.';
+                } else {
+                    $s = $pdo->prepare('SELECT slug FROM library_cas WHERE id = :id');
+                    $s->execute([':id'=>$id]);
+                    $row = $s->fetch(PDO::FETCH_ASSOC);
+                    if ($row) {
+                        $slug = $row['slug'];
+                        $imgDir = __DIR__ . '/../assets/images/support-services/college-library/cas/' . $slug;
+                        if (is_dir($imgDir)) {
+                            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($imgDir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+                            foreach ($files as $fileinfo) {
+                                if ($fileinfo->isDir()) {
+                                    @rmdir($fileinfo->getRealPath());
+                                } else {
+                                    @unlink($fileinfo->getRealPath());
+                                }
+                            }
+                            @rmdir($imgDir);
+                        }
+                        $pdo->prepare('DELETE FROM library_cas WHERE id = :id')->execute([':id'=>$id]);
+                        $success = 'Item deleted.';
+                    } else {
+                        $error = 'Item not found.';
                     }
                 }
             }
@@ -1081,6 +1174,120 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                                             <button class="btn btn-icon" title="Delete program" onclick="deleteProgram(<?php echo (int)$p['id']; ?>)" style="background:#ef4444;color:#fff;border-radius:6px;padding:8px 10px;"><i class="fas fa-trash"></i></button>
                                         </div>
                                         <input type="hidden" id="program-data-<?php echo (int)$p['id']; ?>" data-title="<?php echo htmlspecialchars($p['title'], ENT_QUOTES); ?>" data-desc="<?php echo htmlspecialchars($p['description'], ENT_QUOTES); ?>" data-image="<?php echo htmlspecialchars($publicImage, ENT_QUOTES); ?>" data-link="<?php echo htmlspecialchars($p['link'] ?? '', ENT_QUOTES); ?>">
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Library CAS Manager (Current Awareness Services) -->
+        <div id="section-library-cas" class="settings-section">
+            <div class="settings-card">
+                <div class="settings-card-header no-divider-bottom">
+                    <h2>
+                        <i class="fas fa-bell"></i>
+                        Library CAS Manager (Current Awareness Services)
+                    </h2>
+                    <p class="settings-description">Create, edit, and delete current awareness items. Thumbnails are stored under <strong>assets/images/support-services/college-library/cas/{slug}/</strong>.</p>
+                </div>
+
+                <?php
+                $cas_items = [];
+                try {
+                    $st = $pdo->query('SELECT id, slug, title, description, image, link FROM library_cas ORDER BY created_at ASC');
+                    $cas_items = $st->fetchAll(PDO::FETCH_ASSOC);
+                } catch (Exception $e) {
+                    // ignore
+                }
+                ?>
+
+                <div class="form-actions" style="margin-bottom:16px;">
+                    <form method="POST" class="inline" style="display:flex;gap:8px;align-items:center;">
+                        <?php echo CSRF::field(); ?>
+                        <input type="hidden" name="action" value="set_library_cas_source">
+                        <label style="margin-right:8px;">Source:</label>
+                        <select name="library_cas_source" class="form-input" style="width:auto;">
+                            <option value="static" <?php echo getSetting('library_cas_source','static') !== 'db' ? 'selected' : ''; ?>>Static</option>
+                            <option value="db" <?php echo getSetting('library_cas_source','static') === 'db' ? 'selected' : ''; ?>>Database</option>
+                        </select>
+                        <button class="btn" type="submit">Save</button>
+                    </form>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                    <div style="flex:1; width:100%;">
+                        <h3 style="margin-top:0;margin-bottom:8px;">Create CAS Item</h3>
+                        <form method="POST" id="create_cas_form" class="settings-form" novalidate enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:8px;">
+                            <?php echo CSRF::field(); ?>
+                            <input type="hidden" name="action" value="library_cas_create">
+                            <div style="display:grid;grid-template-columns:1fr 220px;gap:12px;align-items:start;">
+                                <div>
+                                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                                        <input id="create_cas_title" type="text" name="title" class="form-input" placeholder="Item title" style="flex:1;min-width:140px;padding:8px;font-size:0.95rem;" required>
+                                        <input type="text" name="slug" class="form-input" placeholder="slug (optional)" style="width:140px;padding:8px;font-size:0.95rem;">
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:0.9rem;margin-bottom:6px;">Description</label>
+                                        <textarea id="create_cas_description" name="description" class="form-textarea" rows="3" style="padding:8px;font-size:0.95rem;min-height:80px;" placeholder="Short description (required)"></textarea>
+                                    </div>
+                                    <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+                                        <label class="form-label" style="font-size:0.9rem;margin-bottom:0;">Thumbnail</label>
+                                        <input id="create_cas_image_file" type="file" name="image" accept="image/*" class="form-input" style="padding:6px;font-size:0.95rem;" onchange="previewCreateCASImageFile(this); checkCreateCASForm();">
+                                    </div>
+                                    <div style="margin-top:8px;">
+                                        <label class="form-label" style="font-size:0.9rem;margin-bottom:6px;">Google Drive Link</label>
+                                        <input id="create_cas_link" type="url" name="link" class="form-input" placeholder="https://drive.google.com/..." style="padding:8px;font-size:0.95rem;">
+                                    </div>
+                                    <div style="margin-top:12px;">
+                                        <button type="submit" id="create_cas_btn" class="btn btn-primary" style="padding:8px 12px;font-size:0.95rem;" disabled>Create Item</button>
+                                    </div>
+                                </div>
+                                <div style="border-left:1px solid #eef2ff;padding-left:12px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+                                    <div style="font-size:0.9rem;color:#6b7280;width:100%;">Thumbnail Preview</div>
+                                    <div id="create_cas_image_preview" style="width:180px;height:120px;background:#fbfdff;border:1px dashed #e6eefb;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#6b7280;">No image</div>
+                                    <div style="font-size:0.85rem;color:#6b7280;text-align:center;padding-top:6px;">Fill all fields and select an image to enable Create.</div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div style="flex:1;">
+                        <h3 style="margin-top:0;margin-bottom:8px;">Existing CAS Items</h3>
+                        <?php if (empty($cas_items)): ?>
+                            <p>No items yet.</p>
+                        <?php else: ?>
+                            <ul id="cas-item-list" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+                                <?php foreach ($cas_items as $p): ?>
+                                    <?php
+                                        $publicImage = '';
+                                        if (!empty($p['image'])) {
+                                            $scriptDir = dirname(dirname($_SERVER['SCRIPT_NAME']));
+                                            $prefix = ($scriptDir && $scriptDir !== '/') ? rtrim($scriptDir, '/') . '/' : '/';
+                                            $imgRel = $p['image'];
+                                            if (strpos($imgRel, '/') === 0) { $imgRel = ltrim($imgRel, '/'); }
+                                            $publicImage = $prefix . $imgRel;
+                                        }
+                                    ?>
+                                    <li class="section-maintenance-group" style="display:flex;align-items:center;gap:12px;padding:10px;">
+                                        <?php if ($publicImage): ?>
+                                            <div style="width:84px;height:56px;flex:0 0 84px;overflow:hidden;border-radius:6px;">
+                                                <img src="<?php echo htmlspecialchars($publicImage, ENT_QUOTES); ?>" style="width:84px;height:56px;object-fit:cover;border-radius:6px;display:block;">
+                                            </div>
+                                        <?php else: ?>
+                                            <div style="width:84px;height:56px;flex:0 0 84px;display:flex;align-items:center;justify-content:center;background:#fbfdff;border-radius:6px;color:#6b7280;border:1px dashed #e6eefb;">No image</div>
+                                        <?php endif; ?>
+                                        <div style="flex:1;min-width:0;cursor:pointer;" onclick="openEditCASModal(<?php echo (int)$p['id']; ?>)" role="button" tabindex="0">
+                                            <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo htmlspecialchars($p['title']); ?></div>
+                                            <div style="font-size:0.85rem;color:#6b7280;margin-top:4px;"><?php echo htmlspecialchars($p['slug']); ?></div>
+                                        </div>
+                                        <div style="display:flex;gap:8px;align-items:center;">
+                                            <button class="btn" title="Edit" onclick="openEditCASModal(<?php echo (int)$p['id']; ?>)" style="padding:8px;border-radius:6px;background:transparent;border:1px solid transparent;"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-icon" title="Delete item" onclick="deleteCASItem(<?php echo (int)$p['id']; ?>)" style="background:#ef4444;color:#fff;border-radius:6px;padding:8px 10px;"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                        <input type="hidden" id="cas-data-<?php echo (int)$p['id']; ?>" data-title="<?php echo htmlspecialchars($p['title'], ENT_QUOTES); ?>" data-desc="<?php echo htmlspecialchars($p['description'], ENT_QUOTES); ?>" data-image="<?php echo htmlspecialchars($publicImage, ENT_QUOTES); ?>" data-link="<?php echo htmlspecialchars($p['link'] ?? '', ENT_QUOTES); ?>">
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -2704,6 +2911,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             form.submit();
         }
 
+        function deleteCASItem(id) {
+            if (!confirm('Delete this item? This cannot be undone.')) return;
+            const tokenField = document.querySelector('input[name="_token"]');
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.style.display = 'none';
+            const action = document.createElement('input'); action.type='hidden'; action.name='action'; action.value='library_cas_delete'; form.appendChild(action);
+            const idf = document.createElement('input'); idf.type='hidden'; idf.name='id'; idf.value=id; form.appendChild(idf);
+            if (tokenField) { const t = document.createElement('input'); t.type='hidden'; t.name='_token'; t.value = tokenField.value; form.appendChild(t); }
+            document.body.appendChild(form);
+            form.submit();
+        }
+
         async function startUpload(e) {
             e && e.preventDefault && e.preventDefault();
             // PDF upload flow deprecated — thumbnail images and links are managed on the program edit form now.
@@ -2862,6 +3082,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             document.getElementById('modal_upload_status') && (document.getElementById('modal_upload_status').textContent = '');
         }
         
+        // Open edit modal for CAS item by reusing the same modal but switching action
+        function openEditCASModal(casId) {
+            const dataEl = document.getElementById('cas-data-' + casId);
+            if (dataEl) {
+                const title = dataEl.getAttribute('data-title') || '';
+                const desc = dataEl.getAttribute('data-desc') || '';
+                document.getElementById('modal_title').value = title;
+                document.getElementById('modal_description').value = desc;
+                const imgHidden = document.getElementById('modal_image'); if (imgHidden) imgHidden.value = dataEl.getAttribute('data-image') || '';
+                const linkField = document.getElementById('modal_link'); if (linkField) linkField.value = dataEl.getAttribute('data-link') || '';
+            }
+            document.getElementById('modal_program_id').value = casId;
+            // change modal form to update CAS item instead of library program
+            var actionInput = document.querySelector('#modal_edit_form input[name="action"]');
+            if (actionInput) actionInput.value = 'library_cas_update';
+            // change modal heading
+            var heading = document.querySelector('#editModal .settings-card-header h2'); if (heading) heading.innerHTML = '<i class="fas fa-bell"></i> Edit CAS Item';
+            // change delete button to call deleteCASItem
+            var delBtn = document.querySelector('#editModal button[title="Delete program"]');
+            if (delBtn) {
+                delBtn.setAttribute('title','Delete item');
+                delBtn.onclick = function(){ if(confirm('Delete this item?')){ deleteCASItem(parseInt(document.getElementById('modal_program_id').value)); } };
+            }
+            document.getElementById('editModal').style.display = 'flex';
+            setModalFormOriginalSnapshot();
+            setModalImagePreviewFromValue();
+        }
+
+        // Preview for CAS create form
+        function previewCreateCASImageFile(input){
+            var preview = document.getElementById('create_cas_image_preview');
+            if(!preview) return;
+            if(input.files && input.files[0]){
+                var reader = new FileReader();
+                reader.onload = function(e){
+                    preview.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.innerHTML = 'No image';
+            }
+        }
+
+        function checkCreateCASForm(){
+            var title = document.getElementById('create_cas_title') ? document.getElementById('create_cas_title').value.trim() : '';
+            var desc = document.getElementById('create_cas_description') ? document.getElementById('create_cas_description').value.trim() : '';
+            var link = document.getElementById('create_cas_link') ? document.getElementById('create_cas_link').value.trim() : '';
+            var fileInput = document.getElementById('create_cas_image_file');
+            var fileSelected = fileInput && fileInput.files && fileInput.files.length > 0;
+            var btn = document.getElementById('create_cas_btn');
+            if(!btn) return;
+            btn.disabled = !(title && desc && link && fileSelected);
+        }
+        
 
         // Refresh PDF list but target modal container
         async function refreshPdfListIntoModal(programId) {
@@ -2892,7 +3166,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                             upForm.append('program_id', document.getElementById('modal_program_id').value);
                             upForm.append('thumbnail', fileInput.files[0]);
                             if (tokenField) upForm.append('_token', tokenField.value);
-                            const upResp = await fetch('ajax-library-programs-upload.php', { method: 'POST', body: upForm });
+                            var actionInputVal = document.querySelector('#modal_edit_form input[name="action"]') ? document.querySelector('#modal_edit_form input[name="action"]').value : 'library_update_program';
+                            const uploadEndpoint = actionInputVal === 'library_cas_update' ? 'ajax-library-cas-upload.php' : 'ajax-library-programs-upload.php';
+                            const upResp = await fetch(uploadEndpoint, { method: 'POST', body: upForm });
                             const upData = await upResp.json();
                             if (upData && upData.success && upData.image) {
                                 // set hidden image field so update will persist it
@@ -3158,11 +3434,17 @@ document.addEventListener('DOMContentLoaded', function(){
     };
 
     document.addEventListener('DOMContentLoaded', function(){
-        // wire up create form listeners
-        var ids = ['create_title','create_description','create_link'];
-        ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener('input', checkCreateForm); });
-        var createFile = document.getElementById('create_image_file'); if(createFile) createFile.addEventListener('change', checkCreateForm);
-        checkCreateForm();
+    // wire up create form listeners (Programs)
+    var ids = ['create_title','create_description','create_link'];
+    ids.forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener('input', checkCreateForm); });
+    var createFile = document.getElementById('create_image_file'); if(createFile) createFile.addEventListener('change', checkCreateForm);
+    checkCreateForm();
+
+    // wire up create form listeners (CAS)
+    var casIds = ['create_cas_title','create_cas_description','create_cas_link'];
+    casIds.forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener('input', checkCreateCASForm); });
+    var createCasFile = document.getElementById('create_cas_image_file'); if(createCasFile) createCasFile.addEventListener('change', checkCreateCASForm);
+    checkCreateCASForm();
 
         // wire up modal listeners
         ['modal_title','modal_description','modal_link'].forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener('input', window.modalFormChanged); });

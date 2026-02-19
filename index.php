@@ -11,6 +11,24 @@ session_start();
 require_once 'app/config/database.php';
 require_once 'app/includes/functions.php';
 
+// Ensure the library CAS table exists on homepage load as well
+try {
+    $db = getDBConnection();
+    $db->exec("CREATE TABLE IF NOT EXISTS library_cas (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        slug VARCHAR(191) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        image VARCHAR(1024) DEFAULT '',
+        link VARCHAR(2048) DEFAULT '',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY ux_slug (slug)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+} catch (Exception $e) {
+    // ignore failures
+}
+
 // Check if this is the first time setup
 $pdo = getDBConnection();
 $stmt = $pdo->query("SELECT COUNT(*) as count FROM users");
