@@ -573,8 +573,8 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                     }
                     
                     // Insert normalized text as plain text (no formatting)
-                    // Use null format to ensure it uses default editor formatting
-                    quill.insertText(selection.index, pastedText, null, 'user');
+                    // Pass an empty format object instead of null to avoid Quill internal errors
+                    quill.insertText(selection.index, pastedText, {}, 'user');
                     
                     // Remove any formatting that might have been applied
                     quill.formatText(selection.index, pastedText.length, {

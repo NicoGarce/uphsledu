@@ -38,6 +38,10 @@ $base_path = $GLOBALS['base_path'];
     <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/style.css">
     <link rel="stylesheet" href="<?php echo $base_path; ?>assets/css/dashboard.css">
     <?php if (isset($additional_css)) echo $additional_css; ?>
+    <?php if (!empty($uses_quill)): ?>
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <?php endif; ?>
 </head>
 <body>
     <!-- Navigation -->

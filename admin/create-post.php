@@ -382,6 +382,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php 
 // For create-post, we need to include editor.css as well
 $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
+// Tell header to include Quill assets so library is available early
+$uses_quill = true;
 ?>
 <?php include '../app/includes/admin-header.php'; ?>
 
@@ -622,9 +624,6 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
     </div>
 
         <script src="../assets/js/script.js"></script>
-    <!-- Quill Rich Text Editor (Free, No API Key Required) -->
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <style>
         #content-editor {
             height: 400px;
@@ -745,8 +744,8 @@ $additional_css = '<link rel="stylesheet" href="../assets/css/editor.css">';
                     }
                     
                     // Insert normalized text as plain text (no formatting)
-                    // Use null format to ensure it uses default editor formatting
-                    quill.insertText(selection.index, pastedText, null, 'user');
+                    // Pass an empty format object instead of null to avoid Quill internal errors
+                    quill.insertText(selection.index, pastedText, {}, 'user');
                     
                     // Remove any formatting that might have been applied
                     quill.formatText(selection.index, pastedText.length, {
