@@ -39,8 +39,8 @@ Options -Indexes
 </Files>
 
 # Redirect public .php requests to clean, trailing-slash URLs
-# Exclude internal paths (admin, auth, app, online_payment, uploads, ajax, api)
-RewriteCond %{REQUEST_URI} !^/(admin|auth|app|online_payment|uploads|ajax|api)/ [NC]
+# Exclude internal paths (auth, app, online_payment, uploads, ajax, api)
+RewriteCond %{REQUEST_URI} !^/(auth|app|online_payment|uploads|ajax|api)/ [NC]
 # Exclude AJAX endpoints that include ajax- in THE_REQUEST
 RewriteCond %{THE_REQUEST} !ajax- [NC]
 RewriteCond %{THE_REQUEST} \s/+(.*)\.php[\s?] [NC]
