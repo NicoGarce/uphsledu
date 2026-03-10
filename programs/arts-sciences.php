@@ -265,7 +265,7 @@ include '../app/includes/header.php';
                             <li><strong>College:</strong> College of Arts and Science</li>
                             <li><strong>Duration:</strong> 4 years</li>
                             <li><strong>Programs:</strong> 3 Bachelor's Programs</li>
-                            <li><strong>Focus:</strong> Liberal Arts & Humanities</li>
+                            <li><strong>Focus:</strong> Psychology & Social Sciences</li>
                         </ul>
                     </div>
                     
