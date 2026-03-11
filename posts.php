@@ -452,6 +452,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const queryString = urlParams.toString();
         const newUrl = queryString ? `posts?${queryString}` : 'posts';
         window.history.pushState({ page: page }, '', newUrl);
+
+        // Update header/title and subtitle based on current filters
+        function updatePostsHeader() {
+            const postsTitle = document.querySelector('.posts-title');
+            const postsSubtitle = document.querySelector('.posts-subtitle');
+
+            let titleText = 'University News & Announcements';
+            let subtitleText = 'Stay updated with the latest news and announcements from the University of Perpetual Help System Laguna.';
+
+            // Use selected category name if present
+            if (categoryFilter && categoryFilter.value) {
+                const opt = categoryFilter.options[categoryFilter.selectedIndex];
+                const catName = opt ? opt.text : '';
+                if (catName) {
+                    titleText = catName + ' News & Announcements';
+                    subtitleText = 'Stay updated with the latest news and announcements from ' + catName + '.';
+                }
+            }
+
+            // If specific_date is used without category, keep generic subtitle but reflect date if desired (skip for now)
+
+            if (postsTitle) postsTitle.innerHTML = '<i class="fas fa-newspaper"></i> ' + titleText;
+            if (postsSubtitle) postsSubtitle.textContent = subtitleText;
+        }
+
+        // Update header immediately after changing the URL
+        updatePostsHeader();
         
         fetch(`ajax-search.php?${ajaxParams}`)
             .then(response => {
@@ -464,20 +491,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     searchResults.innerHTML = data.html;
                     
-                    // Scroll to top of results smoothly after a brief delay to ensure DOM is updated
-                    setTimeout(() => {
-                        const postsContent = document.querySelector('.posts-content');
-                        if (postsContent) {
-                            const offset = 120; // Offset from top for header
-                            const elementPosition = postsContent.getBoundingClientRect().top;
-                            const offsetPosition = elementPosition + window.pageYOffset - offset;
-                            
-                            window.scrollTo({
-                                top: offsetPosition,
-                                behavior: 'smooth'
-                            });
-                        }
-                    }, 50);
+                    // No automatic scroll: keep user's current viewport when filters change
                     
                     // Re-attach pagination event listeners
                     attachPaginationListeners();
