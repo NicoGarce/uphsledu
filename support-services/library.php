@@ -1202,7 +1202,7 @@ body {
         </div>
     </section>
 
-    <!-- History Section -->
+    <!-- History Section 
     <section class="content-section history-section">
         <div class="container">
             <h2 class="section-title">History</h2>
@@ -1210,7 +1210,7 @@ body {
                 <p>Through the STARBOOKS Program, Filipinos can have access to scientific information for their research needs or simply satisfy their curious minds. Eventually, it is hoped that (1) it will create interest in the field of Science and Technology which may increase the number of Filipinos enrolling in S&T courses, (2) encourage great and curious minds to develop new ideas - inventions and innovations, and (3) inspire one's capacity for entrepreneurship and research for socio-economic development.</p>
             </div>
         </div>
-    </section>
+    </section>-->
 </main>
 
 <?php include '../app/includes/footer.php'; ?>
