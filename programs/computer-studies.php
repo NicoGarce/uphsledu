@@ -316,7 +316,7 @@ include '../app/includes/header.php';
                             </div>
                             
                             <div class="program-section">
-                                <h3>Bachelor of Information Technology, Major in Cybersecurity and Forensics</h3>
+                                <h3>Bachelor of Information Technology in Cybersecurity and Forensics</h3>
                                 <p>This four-year degree program is designed to equip students with the knowledge and skills necessary to protect digital assets and investigate cybercrimes. This comprehensive program covers a wide range of topics, including computer security fundamentals, network security, ethical hacking, digital forensics, information assurance, and IT project management. Students learn to identify vulnerabilities, implement security measures, analyze cyberattacks, and recover digital evidence. The curriculum blends theoretical concepts with hands-on practical experience through laboratory exercises and real-world projects, utilizing industry-standard tools and techniques. Graduates of this program will be prepared for diverse careers in cybersecurity and digital forensics, such as security analysts, penetration testers, forensics investigators, and security administrators, contributing to the growing need for skilled professionals in the digital age. The program also emphasizes the importance of ethical conduct and professional responsibility in the field of information technology.</p>
                                 
                                 <h4>Program Educational Objectives:</h4>
