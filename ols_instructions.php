@@ -264,7 +264,7 @@ include 'app/includes/header.php';
                                                     <div class="qr-codes">
                                                         <div class="qr-item">
                                                             <div class="qr-image">
-                                                                <img src="assets/images/moodle/moodle qr.jpg" alt="Moodle QR Code" class="qr-code">
+                                                                <img src="assets/images/moodle/New_Moodle_QR.png" alt="Moodle QR Code" class="qr-code">
                                                             </div>
                                                             <div class="qr-info">
                                                                 <h6>Moodle QR Code</h6>
