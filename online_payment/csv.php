@@ -58,8 +58,6 @@ if (!$is_authenticated) {
                 --alt-color-1: #ffc63e;
                 --alt-color-2: #e0b03c;
 }
-
-            }
             
             body {
                 font-family: 'Montserrat', sans-serif;
