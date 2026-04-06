@@ -1,4 +1,4 @@
-<?php 	
+<?php  
 session_start();
 $_SESSION['isin'] = 'iamin';
 
@@ -57,6 +57,8 @@ if (!$is_authenticated) {
                 --text-light: #666;
                 --alt-color-1: #ffc63e;
                 --alt-color-2: #e0b03c;
+}
+
             }
             
             body {
@@ -234,6 +236,9 @@ include "campus_table_manager.php";
 // Ensure campus tables exist on initial load
 $table_result = ensureCampusTablesExist($con);
 logTableCreation($con, $table_result);
+// Ensure temporary tables exist for CSV New Enroll tab
+$tmp_table_result = ensureTmpStudentTablesExist($con);
+logTableCreation($con, $tmp_table_result);
 
 // Handle Post/Redirect/Get token to avoid double-submit on refresh
 if (!isset($_SESSION['import_csrf'])) {
@@ -672,7 +677,166 @@ function processBatch($con, $table, $batchData, $lineNumbers = [], $studentNumbe
     
     return ['imported' => $imported, 'skipped' => $skipped, 'duplicateRecords' => $duplicateRecords, 'skippedRecords' => $skippedRecords];
 }
-?>	
+
+// Temporary-students importer (merged from csv_tmp.php)
+$err_tmp = '';
+$success_tmp = '';
+
+// Small helper to normalize CSV fields for temporary import
+function cleanField($value) {
+    if (!is_string($value)) { $value = strval($value); }
+    $value = preg_replace('/^\xEF\xBB\xBF/', '', $value);
+    $value = trim(str_replace("\xC2\xA0", ' ', $value));
+    if ((strlen($value) >= 2) && (($value[0] === '"' && substr($value, -1) === '"') || ($value[0] === "'" && substr($value, -1) === "'"))) {
+        $value = substr($value, 1, -1);
+    }
+    $value = preg_replace('/\s+/', ' ', $value);
+    return $value;
+}
+
+// Process a batch of temp-student rows with duplicate check
+function processBatchTmp($con, $table, $batchValues, $batchLocators) {
+    $inserted = 0;
+    $skipped = 0;
+    $duplicates = [];
+    if (empty($batchValues)) return ['inserted'=>0,'skipped'=>0,'duplicates'=>[]];
+
+    // Check existing locator_num in DB
+    $escapedLocs = array_map(function($n) use ($con) { return "'" . mysqli_real_escape_string($con, $n) . "'"; }, $batchLocators);
+    $exist = [];
+    if (!empty($escapedLocs)) {
+        $checkSQL = "SELECT `locator_num` FROM `{$table}` WHERE `locator_num` IN (" . implode(',', $escapedLocs) . ")";
+        $res = @mysqli_query($con, $checkSQL);
+        if ($res) {
+            while ($r = mysqli_fetch_assoc($res)) { $exist[$r['locator_num']] = true; }
+        }
+    }
+
+    $newValues = [];
+    foreach ($batchValues as $idx => $val) {
+        $locator = $batchLocators[$idx] ?? '';
+        if ($locator !== '' && isset($exist[$locator])) {
+            $duplicates[] = $locator;
+            $skipped++;
+        } else {
+            $newValues[] = $val;
+        }
+    }
+
+    if (!empty($newValues)) {
+        $sql = "INSERT INTO `{$table}` (`locator_num`,`stud_name`) VALUES " . implode(',', $newValues) . " ON DUPLICATE KEY UPDATE stud_name=VALUES(stud_name)";
+        if (@mysqli_query($con, $sql)) {
+            $affected = mysqli_affected_rows($con);
+            $inserted += $affected;
+        } else {
+            // If batch insert fails, try individual inserts to continue
+            foreach ($newValues as $v) {
+                $ins = "INSERT INTO `{$table}` (`locator_num`,`stud_name`) VALUES {$v} ON DUPLICATE KEY UPDATE stud_name=VALUES(stud_name)";
+                if (@mysqli_query($con, $ins)) { $inserted += mysqli_affected_rows($con); }
+                else { $skipped++; }
+            }
+        }
+    }
+
+    return ['inserted'=>$inserted, 'skipped'=>$skipped, 'duplicates'=>$duplicates];
+}
+
+// Handle temporary CSV upload and import (tab: CSV New Enroll)
+if (isset($_POST['btnsubmit_tmp']) && isset($_FILES['csv_file_tmp'])) {
+    $campid_tmp = $_POST['campid_tmp'] ?? '';
+    $table_tmp = mapCampusToTmpTable($campid_tmp);
+
+    if ($table_tmp === null) {
+        $err_tmp = 'Invalid campus selected.';
+    } else if (!tableExists($con, $table_tmp)) {
+        $err_tmp = 'Campus temporary table not available.';
+    } else {
+        $file = $_FILES['csv_file_tmp'];
+        if ($file['error'] == UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            if ($ext !== 'csv') {
+                $err_tmp = 'Please upload a CSV file.';
+            } else {
+                $uploadDir = 'uploads/';
+                if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+                $fileName = $uploadDir . uniqid('csvtmp_') . '_' . basename($file['name']);
+                if (move_uploaded_file($file['tmp_name'], $fileName)) {
+                    $handle = @fopen($fileName, 'r');
+                    if (!$handle) {
+                        $err_tmp = 'Failed to open uploaded CSV.';
+                        @unlink($fileName);
+                    } else {
+                        mysqli_autocommit($con, FALSE);
+                        $batchSize = 200;
+                        $batchValues = [];
+                        $batchLocators = [];
+                        $inserted = 0;
+                        $skipped = 0;
+                        $lineNum = 0;
+                        $duplicateRecords = [];
+                        $skippedRecords = [];
+
+                        while (($data = fgetcsv($handle, 2000, ',')) !== FALSE) {
+                            $lineNum++;
+                            if (count($data) < 3) {
+                                $skipped++;
+                                $skippedRecords[] = "Row {$lineNum}: Insufficient columns (need at least 3 columns)";
+                                continue;
+                            }
+                            $locator = cleanField($data[0]);
+                            $name = cleanField($data[2]);
+                            if ($locator === '' || $name === '') {
+                                $skipped++;
+                                $skippedRecords[] = "Row {$lineNum}: Empty fields";
+                                continue;
+                            }
+                            $escLocator = mysqli_real_escape_string($con, $locator);
+                            $escName = mysqli_real_escape_string($con, $name);
+                            $batchValues[] = "('{$escLocator}','{$escName}')";
+                            $batchLocators[] = $locator;
+
+                            if (count($batchValues) >= $batchSize) {
+                                $res = processBatchTmp($con, $table_tmp, $batchValues, $batchLocators);
+                                $inserted += $res['inserted'];
+                                $skipped += $res['skipped'];
+                                if (!empty($res['duplicates'])) $duplicateRecords = array_merge($duplicateRecords, $res['duplicates']);
+                                $batchValues = [];
+                                $batchLocators = [];
+                            }
+                        }
+
+                        if (!empty($batchValues)) {
+                            $res = processBatchTmp($con, $table_tmp, $batchValues, $batchLocators);
+                            $inserted += $res['inserted'];
+                            $skipped += $res['skipped'];
+                            if (!empty($res['duplicates'])) $duplicateRecords = array_merge($duplicateRecords, $res['duplicates']);
+                        }
+
+                        if (mysqli_commit($con)) {
+                            $success_tmp = "Import completed. Approximately {$inserted} rows inserted.";
+                            if (!empty($skippedRecords)) {
+                                $success_tmp .= ' ' . count($skippedRecords) . ' lines skipped.';
+                            }
+                        } else {
+                            mysqli_rollback($con);
+                            $err_tmp = 'Database commit failed.';
+                        }
+
+                        mysqli_autocommit($con, TRUE);
+                        fclose($handle);
+                        @unlink($fileName);
+                    }
+                } else {
+                    $err_tmp = 'Failed to move uploaded file.';
+                }
+            }
+        } else {
+            $err_tmp = 'Error uploading file: ' . $file['error'];
+        }
+    }
+}
+
+?>
 
 <!doctype html>
 <html lang="en">
@@ -1048,6 +1212,49 @@ function validateFile() {
     }
 }
 
+// Temporary-tab campus/file validation (global so onchange handlers can call it)
+function checkCampusTmp(campval) {
+    var fileInput = document.getElementById("csv_file_tmp");
+    var submitBtn = document.getElementById("btnsubmit_tmp");
+    
+    if (!fileInput || !submitBtn) return;
+    if (campval === "") {
+        fileInput.disabled = true;
+        submitBtn.disabled = true;
+    } else {
+        fileInput.disabled = false;
+        submitBtn.disabled = false;
+        // Re-validate file if one is already selected
+        validateFileTmp();
+    }
+}
+
+function validateFileTmp() {
+    var fileInput = document.getElementById("csv_file_tmp");
+    var submitBtn = document.getElementById("btnsubmit_tmp");
+    var campid = document.getElementById("campid_tmp");
+    if (!fileInput || !submitBtn || !campid) return;
+    var campval = campid.value;
+    if (fileInput.files.length > 0 && campval !== "") {
+        var fileName = fileInput.files[0].name;
+        var fileExt = fileName.split('.').pop().toLowerCase();
+        
+        if (fileExt === 'csv') {
+            submitBtn.disabled = false;
+            var el = document.getElementById("file-info-tmp");
+            if (el) el.innerHTML = '<div style="color: #28a745; font-size: 14px; margin-top: 10px; font-weight: 600;">✓ Valid CSV file selected</div>';
+        } else {
+            submitBtn.disabled = true;
+            var el = document.getElementById("file-info-tmp");
+            if (el) el.innerHTML = '<div style="color: #dc3545; font-size: 14px; margin-top: 10px; font-weight: 600;">✗ Please select a CSV file (.csv)</div>';
+        }
+    } else {
+        submitBtn.disabled = true;
+        var el = document.getElementById("file-info-tmp");
+        if (el) el.innerHTML = '';
+    }
+}
+
 function showProgress() {
     document.getElementById("progress-container").style.display = "block";
     document.getElementById("btnsubmit").value = "Processing...";
@@ -1106,6 +1313,38 @@ function simulateProgress() {
 }
 </script>
 
+<script>
+// Tab switching logic
+function switchTab(tab) {
+    var main = document.getElementById('tab-main');
+    var tmp = document.getElementById('tab-tmp');
+    var tabs = document.querySelectorAll('.navigation .tablink');
+    tabs.forEach(function(el){ el.classList.remove('active'); });
+    var activeBtn = document.querySelector('.navigation .tablink[data-tab="'+tab+'"]');
+    if (activeBtn) activeBtn.classList.add('active');
+    if (tab === 'tmp') {
+        if (main) main.style.display = 'none';
+        if (tmp) tmp.style.display = 'block';
+    } else {
+        if (tmp) tmp.style.display = 'none';
+        if (main) main.style.display = 'block';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    var tablinks = document.querySelectorAll('.navigation .tablink');
+    tablinks.forEach(function(btn){
+        btn.addEventListener('click', function(e){
+            e.preventDefault();
+            var t = this.getAttribute('data-tab');
+            switchTab(t);
+        });
+    });
+    // initialize to main tab
+    switchTab('main');
+});
+</script>
+
 </head>
 
 <body>
@@ -1119,76 +1358,120 @@ function simulateProgress() {
         </div>
 
         <div class="navigation">
-            <a href="csv.php" class="active">📊 CSV Import</a>
+            <a href="#" class="tablink active" data-tab="main">📊 CSV Import</a>
+            <a href="#" class="tablink" data-tab="tmp">📥 CSV New Enroll</a>
             <a href="guestold_student.php">💳 Payment Portal</a>
             <a href="?logout=1" class="logout">🚪 Logout</a>
         </div>
 
         <div class="form-container">
-            <?php if (isset($err)) { ?>
-                <div class="alert alert-error"><?php echo $err; ?></div>
-            <?php } ?>
+            <div id="tab-main" class="tab-content">
+                <?php if (!empty($err)) { ?>
+                    <div class="alert alert-error"><?php echo $err; ?></div>
+                <?php } ?>
 
-            <?php if (isset($success)) { ?>
-                <div class="alert alert-success"><?php echo $success; ?></div>
-            <?php } ?>
+                <?php if (!empty($success)) { ?>
+                    <div class="alert alert-success"><?php echo $success; ?></div>
+                <?php } ?>
 
-            <form method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="campid" class="form-label">Select Campus</label>
-                    <select name="campid" id="campid" class="campus-select" onchange="checkCampus(this.value)">
-                        <option value="">Choose your campus...</option>
-                        <option value="UPHB">🏫 Binan Campus</option>
-                        <option value="UPHMU">🏥 Medical University</option>
-                        <option value="UPHG">🏢 GMA Campus</option>
-                        <option value="UPHM">🏛️ Manila Campus</option>
-                        <option value="PHCP">🏘️ Pangasinan Campus</option>
-                        <option value="UPHI">🏛️ Isabela Campus</option>
-                        <option value="UPHR">🏛️ Roxas Campus</option>
-                    </select>
-                </div>
+                <form method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="campid" class="form-label">Select Campus</label>
+                        <select name="campid" id="campid" class="campus-select" onchange="checkCampus(this.value)">
+                            <option value="">Choose your campus...</option>
+                            <option value="UPHB">🏫 Binan Campus</option>
+                            <option value="UPHMU">🏥 Medical University</option>
+                            <option value="UPHG">🏢 GMA Campus</option>
+                            <option value="UPHM">🏛️ Manila Campus</option>
+                            <option value="PHCP">🏘️ Pangasinan Campus</option>
+                            <option value="UPHI">🏛️ Isabela Campus</option>
+                            <option value="UPHR">🏛️ Roxas Campus</option>
+                        </select>
+                    </div>
 
-                <div class="file-input-group">
-                    <label for="excel_file" class="form-label">Select CSV File to Import</label>
-                    <input type="file" name="excel_file" id="excel_file" accept=".csv" class="file-input" onchange="validateFile()" disabled>
-                    <div id="file-info" class="file-info"></div>
-                </div>
+                    <div class="file-input-group">
+                        <label for="excel_file" class="form-label">Select CSV File to Import</label>
+                        <input type="file" name="excel_file" id="excel_file" accept=".csv" class="file-input" onchange="validateFile()" disabled>
+                        <div id="file-info" class="file-info"></div>
+                    </div>
 
-                <div class="info-section">
-                    <h3>📋 File Format Requirements</h3>
-                    <p><strong>File Structure:</strong></p>
-                    <ul>
-                        <li><strong>No header rows.</strong> Each row represents one student record.</li>
-                        <li><strong>Data Columns (in order):</strong></li>
-                        <li>&nbsp;&nbsp;- Column 1: <strong>Student Number</strong> (must be unique)</li>
-                        <li>&nbsp;&nbsp;- Column 2: <strong>Last Name</strong></li>
-                        <li>&nbsp;&nbsp;- Column 3: <strong>First Name</strong></li>
-                        <li>&nbsp;&nbsp;- Column 4: <strong>Course</strong> (optional)</li>
-                    </ul>
-                    <p><strong>Supported format:</strong> .csv only</p>
-                    <p><strong>Performance:</strong> Optimized for large files (6000+ rows)</p>
-                    <p><strong>Note:</strong> Duplicate student numbers will be ignored. Empty rows are automatically skipped.</p>
-                    <p style="color: var(--primary-color); font-weight: 600; margin-top: 15px;">📋 Get CSV file from Sir Arnold</p>
-                </div>
+                    <div class="info-section">
+                        <h3>📋 File Format Requirements</h3>
+                        <p><strong>File Structure:</strong></p>
+                        <ul>
+                            <li><strong>No header rows.</strong> Each row represents one student record.</li>
+                            <li><strong>Data Columns (in order):</strong></li>
+                            <li>&nbsp;&nbsp;- Column 1: <strong>Student Number</strong> (must be unique)</li>
+                            <li>&nbsp;&nbsp;- Column 2: <strong>Last Name</strong></li>
+                            <li>&nbsp;&nbsp;- Column 3: <strong>First Name</strong></li>
+                            <li>&nbsp;&nbsp;- Column 4: <strong>Course</strong> (optional)</li>
+                        </ul>
+                        <p><strong>Supported format:</strong> .csv only</p>
+                        <p><strong>Performance:</strong> Optimized for large files (6000+ rows)</p>
+                        <p><strong>Note:</strong> Duplicate student numbers will be ignored. Empty rows are automatically skipped.</p>
+                        <p style="color: var(--primary-color); font-weight: 600; margin-top: 15px;">📋 Get CSV file from Sir Arnold</p>
+                    </div>
 
-                <div class="submit-section">
-                    <input type="submit" value="📊 Import Data" id="btnsubmit" name="btnsubmit" class="submit-btn" disabled>
-                    
-                    <div id="progress-container" class="progress-container fade-in" style="display: none;">
-                        <div style="background-color: #f0f0f0; border-radius: 10px; padding: 3px; margin-bottom: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
-                            <div id="progress-bar" class="progress-bar-animated" style="height: 20px; border-radius: 8px; width: 0%; transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
-                                0%
+                    <div class="submit-section">
+                        <input type="submit" value="📊 Import Data" id="btnsubmit" name="btnsubmit" class="submit-btn" disabled>
+                        
+                        <div id="progress-container" class="progress-container fade-in" style="display: none;">
+                            <div style="background-color: #f0f0f0; border-radius: 10px; padding: 3px; margin-bottom: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                                <div id="progress-bar" class="progress-bar-animated" style="height: 20px; border-radius: 8px; width: 0%; transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">
+                                    0%
+                                </div>
+                            </div>
+                            <div id="progress-text" style="text-align: center; color: var(--text-light); font-size: 12px; font-weight: 500;">
+                                Preparing to process file...
+                            </div>
+                            <div id="progress-details" style="text-align: center; color: var(--text-light); font-size: 11px; margin-top: 5px; font-style: italic;">
+                                <!-- Progress details will be shown here -->
                             </div>
                         </div>
-                        <div id="progress-text" style="text-align: center; color: var(--text-light); font-size: 12px; font-weight: 500;">
-                            Preparing to process file...
-                        </div>
-                        <div id="progress-details" style="text-align: center; color: var(--text-light); font-size: 11px; margin-top: 5px; font-style: italic;">
-                            <!-- Progress details will be shown here -->
-                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+
+            <div id="tab-tmp" class="tab-content" style="display:none;">
+                <?php if (!empty($err_tmp)) { ?>
+                    <div class="alert alert-error"><?php echo htmlspecialchars($err_tmp); ?></div>
+                <?php } ?>
+
+                <?php if (!empty($success_tmp)) { ?>
+                    <div class="alert alert-success"><?php echo htmlspecialchars($success_tmp); ?></div>
+                <?php } ?>
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="campid_tmp" class="form-label">Select Campus</label>
+                        <select name="campid_tmp" id="campid_tmp" class="campus-select" onchange="checkCampusTmp(this.value)">
+                            <option value="">Choose your campus...</option>
+                            <option value="UPHB">🏫 Binan Campus</option>
+                            <option value="UPHMU">🏥 Medical University</option>
+                            <option value="UPHG">🏢 GMA Campus</option>
+                            <option value="UPHM">🏛️ Manila Campus</option>
+                            <option value="PHCP">🏘️ Pangasinan Campus</option>
+                            <option value="UPHI">🏛️ Isabela Campus</option>
+                            <option value="UPHR">🏛️ Roxas Campus</option>
+                        </select>
+                    </div>
+
+                    <div class="file-input-group">
+                        <label for="csv_file_tmp" class="form-label">Select CSV (at least 3 columns: student id in column 1, student name in column 3)</label>
+                        <input type="file" name="csv_file_tmp" id="csv_file_tmp" accept=".csv" class="file-input" onchange="validateFileTmp()" disabled>
+                        <div id="file-info-tmp" class="file-info"></div>
+                    </div>
+
+                    <div class="info-section">
+                        <p><strong>File format:</strong> CSV with at least 3 columns per row (no header). Column 1 = locator; Column 3 = student name.</p>
+                        <p><strong>Behavior:</strong> duplicates (existing locator_num) will be skipped; new rows will be inserted into the campus `_tmp_stud` table.</p>
+                    </div>
+
+                    <div class="submit-section">
+                        <input type="submit" value="📄 Upload & Import" id="btnsubmit_tmp" name="btnsubmit_tmp" class="submit-btn" disabled>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </body>

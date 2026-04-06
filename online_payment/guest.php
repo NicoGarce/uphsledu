@@ -80,47 +80,65 @@ include "campus_table_manager.php";
 
 // Ensure all campus tables exist (including Isabela and Roxas)
 ensureCampusTablesExist($con);
- if (isset($_POST["btnsubmit"])) {
-     if ($_POST["campid"]<>"UPHB") {
-      date_default_timezone_set("Asia/Manila");
-	//$transid = "UPHSL" . date("HismdY");
-	$transid = $_POST["campid"] ."_". date("HismdY");
-    //header("Location: payment.php?payee=&transid=$transid");
-	$locno = urlencode($_POST["locno"] ?? '');
-	$gtrn = urlencode($_POST["gtrn"] ?? '');
-	header("Location: payment.php?payee=&transid=" . urlencode($transid) . "&locno=$locno&gtrno=$gtrn");
-     } else {
-      $totalrec = 0;
-      // Use prepared statement to prevent SQL injection
-      $stmt = mysqli_prepare($con, "SELECT COUNT(*) as totalrec FROM tblgtrn WHERE locno=? AND gtrno=? AND is_valid=1");
-      if ($stmt) {
-        $locno = $_POST["locno"] ?? '';
-        $gtrn = $_POST["gtrn"] ?? '';
-        mysqli_stmt_bind_param($stmt, "ss", $locno, $gtrn);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-      } else {
-        $result = false;
-      }	   
-	  while ($row = mysqli_fetch_array($result)) {	
-	    $totalrec = $row["totalrec"];
-	  }
-     if ($totalrec>=1) {   
+// Ensure temporary locator-based student tables exist
+ensureTmpStudentTablesExist($con);
+
+// Find student name by locator from the campus tmp table
+function findStudentByLocator($con, $locator, $campid) {
+    $locator = trim($locator);
+    if ($locator === '') { return null; }
+    $table = mapCampusToTmpTable($campid);
+    if ($table === null) { return null; }
+    $t = str_replace("`", "", $table);
+    $loc = mysqli_real_escape_string($con, $locator);
+    $sql = "SELECT `stud_name` FROM `{$t}` WHERE `locator_num`='".$loc."' LIMIT 1";
+    $res = @mysqli_query($con, $sql);
+    if ($res && ($row = mysqli_fetch_assoc($res))) {
+        $name = isset($row['stud_name']) ? trim($row['stud_name']) : '';
+        return ($name !== '') ? $name : null;
+    }
+    return null;
+}
+
+// Handle AJAX verification request for locator
+if (isset($_POST["verify_locator"])) {
+    if (ob_get_level()) { ob_clean(); }
+    header('Content-Type: application/json');
+    $locno = isset($_POST['locno']) ? trim($_POST['locno']) : '';
+    $campid = isset($_POST['campid']) ? $_POST['campid'] : '';
+    $table = mapCampusToTmpTable($campid);
+    if ($table === null) {
+        echo json_encode(['success' => false, 'message' => 'Invalid campus selected.']);
+    } else if (!tableExists($con, $table)) {
+        echo json_encode(['success' => false, 'message' => 'Campus verification data not available.']);
+    } else {
+        $studentName = findStudentByLocator($con, $locno, $campid);
+        if ($studentName && $locno !== '') {
+            echo json_encode(['success' => true, 'name' => $studentName, 'message' => 'Locator verified successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Locator number not found. Please check your locator number and campus selection.']);
+        }
+    }
+    exit;
+}
+if (isset($_POST["btnsubmit"])) {
     date_default_timezone_set("Asia/Manila");
-	//$transid = "UPHSL" . date("HismdY");
-	$transid = $_POST["campid"] ."_". date("HismdY");
-    //header("Location: payment.php?payee=&transid=$transid");
-	$locno = urlencode($_POST["locno"] ?? '');
-	$gtrn = urlencode($_POST["gtrn"] ?? '');
-	header("Location: payment.php?payee=&transid=" . urlencode($transid) . "&locno=$locno&gtrno=$gtrn");
-	 } else {
-	?>
-	 <div style="padding:20px; background-color:#FF0000; color:#FFFFFF; font-size:30px; font-weight:bold" align="center">Entered transaction reference no. does<br>not exist or is not validated</div>
-<?php	
-	 }
-    die;
-   }
- }
+    $campid = $_POST["campid"] ?? '';
+    $locno_raw = $_POST["locno"] ?? '';
+    $locno = trim($locno_raw);
+    $studentName = findStudentByLocator($con, $locno, $campid);
+    if ($studentName && $locno !== '') {
+        $transid = $campid ."_". date("HismdY");
+        // Redirect with confirmed payee name and locator
+        header("Location: payment.php?payee=" . urlencode($studentName) . "&transid=" . urlencode($transid) . "&locno=" . urlencode($locno));
+        die;
+    } else {
+        ?>
+        <div style="padding:20px; background-color:#FF0000; color:#FFFFFF; font-size:20px; font-weight:bold" align="center">Entered locator number does not exist or is not validated</div>
+        <?php
+        die;
+    }
+}
 ?>	
 <!doctype html>
 <html lang="en">
@@ -347,6 +365,125 @@ ensureCampusTablesExist($con);
             font-size: 14px;
             line-height: 1.5;
         }
+
+        .verification-section {
+            background: var(--tertiary-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .verification-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        .verify-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .verify-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(28, 77, 161, 0.3);
+        }
+
+        .verify-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .verification-result {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .verification-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .verification-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .verification-loading {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .student-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--primary-color);
+        }
+
+        .confirmation-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .confirm-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--alt-color-1), var(--alt-color-2));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .confirm-btn:hover {
+            background: linear-gradient(135deg, var(--alt-color-2), var(--alt-color-1));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 198, 62, 0.3);
+        }
+
+        .reject-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .reject-btn:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
         
         @media (max-width: 768px) {
             .container {
@@ -393,33 +530,137 @@ ensureCampusTablesExist($con);
         }
     </style>
 
-<script>
- function checkcampus(campval) {
-            const transrefSection = document.getElementById("transref");
-            const campusInfo = document.getElementById("campus-info");
-            
-            if (campval !== "UPHB") {
-                transrefSection.style.display = "none";
-                campusInfo.style.display = "block";
-     } else {
-                transrefSection.style.display = "block";
-                campusInfo.style.display = "none";
-            }
+    <script>
+    var isLocatorVerified = false;
+
+    function toggleSubmit() {
+        var l = document.getElementById('locno');
+        var btn = document.getElementById('btnsubmit');
+        var submitSection = document.getElementById('submit-section');
+        if (isLocatorVerified && l.value.trim() !== '') {
+            submitSection.style.display = 'block';
+            btn.disabled = false;
+        } else {
+            submitSection.style.display = 'none';
+            if (btn) btn.disabled = true;
         }
-        
-        // Add smooth animations
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(30px)';
-            
-            setTimeout(() => {
-                container.style.transition = 'all 0.6s ease';
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 100);
-        });
-</script>
+    }
+
+    function resetVerification() {
+        var campid = document.getElementById('campid').value;
+        var locatorSection = document.getElementById('locator-section');
+        var campusInfo = document.getElementById('campus-info');
+        // Show locator input when a campus is selected; show campus info for non-UPHB
+        if (campid !== '') {
+            if (locatorSection) locatorSection.style.display = 'block';
+            if (campid !== 'UPHB') {
+                if (campusInfo) campusInfo.style.display = 'block';
+            } else {
+                if (campusInfo) campusInfo.style.display = 'none';
+            }
+        } else {
+            if (locatorSection) locatorSection.style.display = 'none';
+            if (campusInfo) campusInfo.style.display = 'none';
+        }
+        // Reset verification state
+        isLocatorVerified = false;
+        var resultDiv = document.getElementById('verification-result');
+        if (resultDiv) resultDiv.innerHTML = '';
+        var submitHelp = document.getElementById('submit-help');
+        if (submitHelp) submitHelp.innerHTML = 'Please verify your locator number before proceeding';
+        toggleSubmit();
+    }
+
+    function confirmLocator() {
+        isLocatorVerified = true;
+        var submitHelp = document.getElementById('submit-help');
+        if (submitHelp) submitHelp.innerHTML = '✓ Name confirmed! You may now proceed with payment.';
+        toggleSubmit();
+        setTimeout(function() {
+            var submitBtn = document.getElementById('btnsubmit');
+            if (submitBtn) submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+
+    function rejectLocator() {
+        isLocatorVerified = false;
+        document.getElementById('locno').value = '';
+        var resultDiv = document.getElementById('verification-result');
+        if (resultDiv) resultDiv.innerHTML = '';
+        var submitHelp = document.getElementById('submit-help');
+        if (submitHelp) submitHelp.innerHTML = 'Please verify your locator number before proceeding';
+        toggleSubmit();
+        var locatorSection = document.getElementById('locator-section');
+        var campusInfo = document.getElementById('campus-info');
+        if (locatorSection) locatorSection.style.display = 'none';
+        if (campusInfo) campusInfo.style.display = 'none';
+        document.getElementById('campid').value = '';
+    }
+
+    function verifyLocator() {
+        var locno = document.getElementById('locno').value.trim();
+        var campid = document.getElementById('campid').value;
+        var resultDiv = document.getElementById('verification-result');
+        var verifyBtn = document.getElementById('verifyBtn');
+        if (locno === '') { alert('Please enter a locator number first.'); return; }
+        if (campid === '') { alert('Please select a campus first.'); return; }
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = 'Verifying...';
+        resultDiv.innerHTML = '<div class="verification-loading">Verifying locator...</div>';
+        var formData = new FormData();
+        formData.append('verify_locator', '1');
+        formData.append('locno', locno);
+        formData.append('campid', campid);
+        fetch('', { method: 'POST', body: formData })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resultDiv.innerHTML = '<div class="verification-success">' +
+                                      '<div>✓ ' + data.message + '</div>' +
+                                      '<div class="student-name">' + data.name + '</div>' +
+                                      '<div>Please confirm this is your name before proceeding.</div>' +
+                                      '<div class="confirmation-buttons">' +
+                                      '<button type="button" onclick="confirmLocator()" class="confirm-btn">✓ Confirm</button>' +
+                                      '<button type="button" onclick="rejectLocator()" class="reject-btn">✗ No</button>' +
+                                      '</div>' +
+                                      '</div>';
+                var submitHelp = document.getElementById('submit-help');
+                if (submitHelp) submitHelp.innerHTML = 'Please confirm the name above to proceed';
+                toggleSubmit();
+                setTimeout(function() { resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+            } else {
+                isLocatorVerified = false;
+                resultDiv.innerHTML = '<div class="verification-error">✗ ' + data.message + '</div>';
+                var submitHelp = document.getElementById('submit-help');
+                if (submitHelp) submitHelp.innerHTML = 'Please verify your locator number before proceeding';
+                toggleSubmit();
+                setTimeout(function() { resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+            }
+        })
+        .catch(error => {
+            isLocatorVerified = false;
+            resultDiv.innerHTML = '<div class="verification-error">✗ Error verifying locator. Please try again.</div>';
+            var submitHelp = document.getElementById('submit-help');
+            if (submitHelp) submitHelp.innerHTML = 'Please verify your locator number before proceeding';
+            console.error('Error:', error);
+            toggleSubmit();
+            setTimeout(function() { resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+        })
+        .finally(() => { verifyBtn.disabled = false; verifyBtn.innerHTML = 'Verify'; });
+    }
+
+    // Add smooth animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector('.container');
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+            container.style.transition = 'all 0.6s ease';
+            container.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+        }, 100);
+    });
+    </script>
 </head>
 
 <body>
@@ -436,7 +677,7 @@ ensureCampusTablesExist($con);
 	<form method="post">
             <div class="form-group">
                 <label class="form-label" for="campid">Select Your Campus</label>
-                <select name="campid" id="campid" class="campus-select" onchange="checkcampus(this.value)" required>
+                <select name="campid" id="campid" class="campus-select" onchange="resetVerification()" required>
                     <option value="">Choose your campus...</option>
                     <option value="UPHB">🏫 Binan Campus</option>
                     <option value="UPHMU">🏥 Medical University</option>
@@ -453,27 +694,26 @@ ensureCampusTablesExist($con);
                 <p>For campuses other than Binan, you can proceed directly to payment. Please ensure you have your payment details ready.</p>
             </div>
 
-            <div id="transref" style="display: none;">
+            <div id="locator-section" style="display: none;">
                 <div class="transref-section">
-                    <h4 style="color: #12199C; margin-bottom: 20px; text-align: center;">📝 Transaction Reference Required</h4>
-                    <div class="input-row">
+                    <h4 style="color: #12199C; margin-bottom: 20px; text-align: center;">📝 Locator Number Required</h4>
+                    <div id="submit-help" class="help-text" style="text-align: center; margin-bottom: 15px;">Please verify your locator number before proceeding</div>
+                    <div class="verification-form">
                         <div class="input-group">
                             <label class="form-label" for="locno">Locator Number</label>
-                            <input type="text" name="locno" id="locno" class="form-input" maxlength="20" placeholder="Enter locator number">
-                            <div class="help-text">For new students only</div>
+                            <input type="text" name="locno" id="locno" class="form-input" maxlength="20" placeholder="Enter locator number" oninput="resetVerification()" required>
                         </div>
-                        <div class="input-group">
-                            <label class="form-label" for="gtrn">Transaction Reference</label>
-                            <input type="text" name="gtrn" id="gtrn" class="form-input" maxlength="20" placeholder="Enter reference number">
-                            <div class="help-text">Provided by your College/Department</div>
-		</div>
-		</div>
-	</div>
-</div>
+                        <button type="button" id="verifyBtn" onclick="verifyLocator()" class="verify-btn">🔍 Verify</button>
+                    </div>
+                    <div id="verification-result" class="verification-result"></div>
+                </div>
+            </div>
 
-            <button type="submit" name="btnsubmit" class="submit-btn">
-                🚀 Proceed to Payment
-            </button>
+            <div id="submit-section" style="display: none;">
+                <button type="submit" id="btnsubmit" name="btnsubmit" class="submit-btn" disabled>
+                    🚀 Proceed to Payment
+                </button>
+            </div>
 	</form>	
     </div>
 </body>

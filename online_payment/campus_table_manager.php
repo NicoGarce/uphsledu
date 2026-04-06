@@ -71,6 +71,58 @@ function ensureCampusTablesExist($con) {
     ];
 }
 
+/**
+ * Temporary student tables (locator-based) mapping and creation
+ */
+function mapCampusToTmpTable($campid) {
+    $map = [
+        "UPHB" => "binan_tmp_stud",
+        "UPHMU" => "mu_tmp_stud",
+        "UPHG" => "gma_tmp_stud",
+        "UPHM" => "manila_tmp_stud",
+        "PHCP" => "pangasinan_tmp_stud",
+        "UPHI" => "isabela_tmp_stud",
+        "UPHR" => "roxas_tmp_stud"
+    ];
+    return isset($map[$campid]) ? $map[$campid] : null;
+}
+
+function createTmpStudentTable($con, $tableName) {
+    if (trim($tableName) === '') { return false; }
+    $t = mysqli_real_escape_string($con, $tableName);
+    $sql = "CREATE TABLE IF NOT EXISTS `{$t}` (
+        `locator_num` varchar(255) NOT NULL,
+        `stud_name` varchar(255) NOT NULL,
+        PRIMARY KEY (`locator_num`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    $result = @mysqli_query($con, $sql);
+    return $result !== false;
+}
+
+function ensureTmpStudentTablesExist($con) {
+    $campuses = ["UPHB", "UPHMU", "UPHG", "UPHM", "PHCP", "UPHI", "UPHR"];
+    $created_tables = [];
+    $existing_tables = [];
+    foreach ($campuses as $campus) {
+        $tableName = mapCampusToTmpTable($campus);
+        if ($tableName) {
+            if (!tableExists($con, $tableName)) {
+                if (createTmpStudentTable($con, $tableName)) {
+                    $created_tables[] = $tableName;
+                }
+            } else {
+                $existing_tables[] = $tableName;
+            }
+        }
+    }
+    return [
+        'created' => $created_tables,
+        'existing' => $existing_tables,
+        'total_created' => count($created_tables),
+        'total_existing' => count($existing_tables)
+    ];
+}
+
 function logTableCreation($con, $result) {
     // Optional: Log table creation for debugging
     if ($result['total_created'] > 0) {
