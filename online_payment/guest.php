@@ -116,7 +116,12 @@ if (isset($_POST["verify_locator"])) {
         if ($studentName && $locno !== '') {
             echo json_encode(['success' => true, 'name' => $studentName, 'message' => 'Locator verified successfully!']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Locator number not found. Please check your locator number and campus selection.']);
+            // Locator not found: advise the student to proceed with advising first
+            echo json_encode([
+                'success' => false,
+                'message' => 'Locator number not found. Please proceed with advising before attempting payment.',
+                'advice' => true
+            ]);
         }
     }
     exit;
@@ -426,6 +431,12 @@ if (isset($_POST["btnsubmit"])) {
             color: #721c24;
         }
 
+        .verification-advisory {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+
         .verification-loading {
             background: #d1ecf1;
             border: 1px solid #bee5eb;
@@ -630,9 +641,16 @@ if (isset($_POST["btnsubmit"])) {
                 setTimeout(function() { resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
             } else {
                 isLocatorVerified = false;
-                resultDiv.innerHTML = '<div class="verification-error">✗ ' + data.message + '</div>';
-                var submitHelp = document.getElementById('submit-help');
-                if (submitHelp) submitHelp.innerHTML = 'Please verify your locator number before proceeding';
+                // If server indicates this is an advisory (locator absent), render advisory message
+                if (data.advice) {
+                    resultDiv.innerHTML = '<div class="verification-advisory">⚠ ' + data.message + '</div>';
+                    var submitHelp = document.getElementById('submit-help');
+                    if (submitHelp) submitHelp.innerHTML = 'Locator number not found. Please proceed with advising before attempting payment.';
+                } else {
+                    resultDiv.innerHTML = '<div class="verification-error">✗ ' + data.message + '</div>';
+                    var submitHelp = document.getElementById('submit-help');
+                    if (submitHelp) submitHelp.innerHTML = 'Please verify your locator number before proceeding';
+                }
                 toggleSubmit();
                 setTimeout(function() { resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
             }
