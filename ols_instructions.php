@@ -530,13 +530,6 @@ include 'app/includes/header.php';
                                                     <img src="online_payment/instructions/7.png" alt="Payment Step 7" class="payment-instruction-image gallery-image" data-gallery-index="6" data-image-src="online_payment/instructions/7.png">
                                                 </div>
                                             </div>
-                                            
-                                            <div class="payment-step">
-                                                <h5><i class="fas fa-step-forward"></i> Step 8</h5>
-                                                <div class="step-image">
-                                                    <img src="online_payment/instructions/8.png" alt="Payment Step 8" class="payment-instruction-image gallery-image" data-gallery-index="7" data-image-src="online_payment/instructions/8.png">
-                                                </div>
-                                            </div>
                                         </div>
                                         
                                         <!-- Gallery Modal -->
