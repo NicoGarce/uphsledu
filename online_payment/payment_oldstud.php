@@ -2,9 +2,11 @@
 session_start();
 
 // Check maintenance before any output
-require_once '../app/config/database.php';
-require_once '../app/includes/functions.php';
-
+require_once __DIR__ . '/../app/config/paths.php';
+require_once __DIR__ . '/../app/config/database.php';
+require_once __DIR__ . '/../app/includes/functions.php';
+// Ensure $base_path is available (fallback to parent folder)
+$base_path = isset($GLOBALS['base_path']) ? $GLOBALS['base_path'] : '../';
 // Check if this sub-page or Online Payment section is in maintenance
 if (isSectionInMaintenance('online-payment', 'guestold-student') || isSectionInMaintenance('online-payment')) {
     $maintenance_message = getSectionMaintenanceMessage('online-payment', null, 'guestold-student');
@@ -419,8 +421,12 @@ if (isset($_GET["transid"])) {
     }
 
     </script> 
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" as="image" type="image/png">
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="shortcut icon" type="image/png" href="images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png?v=2" sizes="32x32">
+    <link rel="shortcut icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png?v=2" sizes="32x32">
+    <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png?v=2">
 
 </head>
 
@@ -470,7 +476,7 @@ if (isset($_GET["transid"])) {
 
                    if ($value['label']=='Payment Description') {
 
-                ?><input type="text" name="description" id="description" readonly="true" style="padding: 10px; font-size: 14px; background-color: #97ECE3" size="128" maxlength="128" required><br><span style="font-size: 12px">
+                ?><input type="text" name="description" id="description" placeholder="Auto-filled" readonly="true" style="padding: 10px; font-size: 14px; background-color: #97ECE3" size="128" maxlength="128" required><br><span style="font-size: 12px">
 
                  <?php if (trim($_GET["payee"])=="") {echo "( Please select payment particulars/description below )";} else {echo "( Please select from Particulars )";} ?>
 

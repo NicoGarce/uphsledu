@@ -1,7 +1,10 @@
 <?php
 session_start();
-require_once '../app/config/database.php';
-require_once '../app/includes/functions.php';
+require_once __DIR__ . '/../app/config/paths.php';
+require_once __DIR__ . '/../app/config/database.php';
+require_once __DIR__ . '/../app/includes/functions.php';
+// Ensure $base_path is available (fallback to parent folder)
+$base_path = isset($GLOBALS['base_path']) ? $GLOBALS['base_path'] : '../';
 
 // Check if this sub-page or Online Payment section is in maintenance
 if (isSectionInMaintenance('online-payment', 'payment') || isSectionInMaintenance('online-payment')) {
@@ -235,7 +238,11 @@ function checkifmaydesc() {
 }
 </script>
 	<link rel="icon" type="image/png" href="images/logo.png">
-	<link rel="shortcut icon" type="image/png" href="images/logo.png">
+  <link rel="shortcut icon" type="image/png" href="images/logo.png">
+
+  <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png?v=2" sizes="32x32">
+  <link rel="shortcut icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png?v=2" sizes="32x32">
+  <link rel="apple-touch-icon" href="<?php echo $base_path; ?>assets/images/Logos/logo.png?v=2">
 
 </head>
 
