@@ -476,14 +476,7 @@ if (isset($_GET["transid"])) {
 
                    if ($value['label']=='Payment Description') {
 
-                ?><input type="text" name="description" id="description" placeholder="Auto-filled" readonly="true" style="padding: 10px; font-size: 14px; background-color: #97ECE3" size="128" maxlength="128" required><br><span style="font-size: 12px">
-
-                 <?php if (trim($_GET["payee"])=="") {echo "( Please select payment particulars/description below )";} else {echo "( Please select from Particulars )";} ?>
-
-                    <br><lable style="color:blue">or if not on list, enter here <input type="text" name="desc_others" id="desc_others" placeholder=" enter here "> the description of the payment you will be paying for</lable>
-
-
-                 </span><br>
+                ?><input type="hidden" name="description" id="description" placeholder="Auto-filled" readonly="true" size="128" maxlength="128" required>
 
                  <input type="hidden" name="isdesc" id="isdesc" value="">
 
@@ -494,8 +487,6 @@ if (isset($_GET["transid"])) {
                     <?php 
                     //if (trim($_GET["payee"])!="") 
                     { ?>
-
-                    <br>                 
 
                 Particulars :</strong>
 
@@ -644,7 +635,14 @@ if (isset($_GET["transid"])) {
 
 
                 </select><br>
+                <span style="font-size: 12px">
 
+                 <?php if (trim($_GET["payee"])=="") {echo "( Please select payment particulars/description below )";} else {echo "( Please select from Particulars )";} ?>
+
+                    <br><label style="color:blue">or if not on list,<input type="text" name="desc_others" id="desc_others" placeholder=" enter here "> the description of the payment you will be paying for</label>
+
+
+                </span><br>
                  <strong>For School Year:</strong>
 
 <select name="syfrom" id="syfrom" style="padding: 10px; font-size: 14px">
