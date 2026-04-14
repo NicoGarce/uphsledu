@@ -53,7 +53,7 @@
                             <i class="fas fa-graduation-cap"></i>
                             School Automate (GTI)
                         </a></li>
-                        <li><a href="https://uphslms.com/blended/login/index.php" target="_blank" class="service-link">
+                        <li><a href="https://uphslms.com/" target="_blank" class="service-link">
                             <i class="fas fa-book"></i>
                             Moodle
                         </a></li>
@@ -65,7 +65,7 @@
                             <i class="fab fa-microsoft"></i>
                             Microsoft 365
                         </a></li>
-                        <li><a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="service-link">
+                        <li><a href="http://gti-binan.uphsl.edu.ph:7777" target="_blank" class="service-link">
                             <i class="fas fa-credit-card"></i>
                             Online Payment
                         </a></li>
