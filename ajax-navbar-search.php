@@ -60,7 +60,7 @@ try {
         $results[] = [
             'type' => 'post',
             'title' => $post['title'],
-            'url' => "post.php?slug=" . $post['slug'],
+            'url' => $base_path . 'post.php?slug=' . $post['slug'],
             'date' => formatDate($post['date']),
             'category' => 'Article'
         ];
@@ -83,7 +83,7 @@ try {
         $results[] = [
             'type' => 'career',
             'title' => $career['title'],
-            'url' => "career.php?slug=" . $career['slug'],
+            'url' => $base_path . 'career.php?slug=' . $career['slug'],
             'date' => formatDate($career['date']),
             'category' => 'Career'
         ];

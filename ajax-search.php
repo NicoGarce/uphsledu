@@ -27,6 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 try {
     require_once 'app/config/database.php';
     require_once 'app/includes/functions.php';
+    require_once 'app/config/paths.php';
+
+    // Base path for building root-relative URLs in AJAX responses
+    $bp = isset($GLOBALS['base_path']) ? $GLOBALS['base_path'] : '/';
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
@@ -71,18 +75,18 @@ try {
                           </div>';
             }
             
-            $html .= '<div class="post-card-overlay">
-                        <a href="post.php?slug=' . $post['slug'] . '" class="read-more-btn">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                      </div>';
+                        $html .= '<div class="post-card-overlay">
+                                                <a href="' . $bp . 'post.php?slug=' . $post['slug'] . '" class="read-more-btn">
+                                                        <i class="fas fa-arrow-right"></i>
+                                                </a>
+                                            </div>';
             $html .= '</div>';
             
             $html .= '<div class="post-card-content">';
-            $html .= '<h2 class="post-card-title">
-                        <a href="post.php?slug=' . $post['slug'] . '">' . 
-                        htmlspecialchars($post['title']) . '</a>
-                      </h2>';
+                        $html .= '<h2 class="post-card-title">
+                                                <a href="' . $bp . 'post.php?slug=' . $post['slug'] . '">' . 
+                                                htmlspecialchars($post['title']) . '</a>
+                                            </h2>';
             
             $html .= '<div class="post-card-meta">
                         <span class="post-date">
@@ -98,7 +102,7 @@ try {
                                 ' . $post['views'] . ' views
                             </span>
                         </div>
-                        <a href="post.php?slug=' . $post['slug'] . '" class="read-more-link">
+                        <a href="' . $bp . 'post.php?slug=' . $post['slug'] . '" class="read-more-link">
                             Read More <i class="fas fa-arrow-right"></i>
                         </a>
                       </div>';
@@ -164,14 +168,14 @@ try {
         }
         
     } else {
-        $html .= '<div class="empty-posts">
-                    <div class="empty-posts-content">
-                        <i class="fas fa-search"></i>
-                        <h3>No Results Found</h3>
-                        <p>No posts match your search criteria. Try adjusting your search terms or filters.</p>
-                        <a href="posts.php" class="btn btn-primary">View All Posts</a>
-                    </div>
-                  </div>';
+                $html .= '<div class="empty-posts">
+                                        <div class="empty-posts-content">
+                                                <i class="fas fa-search"></i>
+                                                <h3>No Results Found</h3>
+                                                <p>No posts match your search criteria. Try adjusting your search terms or filters.</p>
+                                                <a href="' . $bp . 'posts.php" class="btn btn-primary">View All Posts</a>
+                                        </div>
+                                    </div>';
     }
     
     // Return JSON response

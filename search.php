@@ -282,14 +282,17 @@ include 'app/includes/header.php';
                 <div class="results-list">
                     <?php foreach ($results as $result): ?>
                         <?php 
+                        // Ensure URLs are root-relative using the configured base path
+                        $bp = isset($GLOBALS['base_path']) ? $GLOBALS['base_path'] : '/';
+
                         if ($result['type'] === 'post') {
-                            $result_url = 'post.php?slug=' . $result['slug'];
+                            $result_url = $bp . 'post.php?slug=' . $result['slug'];
                         } else {
                             // Handle empty URL for home page - use index.php for root
-                            $result_url = $result['url'] === '' ? 'index.php' : $result['url'];
+                            $result_url = $result['url'] === '' ? $bp . 'index.php' : $bp . ltrim($result['url'], '/');
                         }
                         ?>
-                        <a href="<?php echo $result_url; ?>" class="result-item-link">
+                        <a href="<?php echo htmlspecialchars($result_url); ?>" class="result-item-link">
                             <div class="result-item">
                                 <?php if ($result['type'] === 'post'): ?>
                                     <div class="result-type post-type">
