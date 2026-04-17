@@ -49,7 +49,7 @@
                 <div class="footer-section">
                     <h4 class="footer-subtitle">Online Services</h4>
                     <ul class="footer-links">
-                        <li><a href="http://gti-binan.uphsl.edu.ph:7777" target="_blank" class="service-link">
+                        <li><a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="service-link">
                             <i class="fas fa-graduation-cap"></i>
                             School Automate (GTI)
                         </a></li>

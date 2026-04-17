@@ -1304,7 +1304,7 @@ $navbar_items_config = [
                                 <a href="<?php echo $base_path; ?>ols_instructions.php" class="dropdown-link <?php echo ($current_page == 'ols_instructions') ? 'active' : ''; ?>">Instructions</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('online-services', 'gti-online-grades')): ?>
-                                <a href="http://gti-binan.uphsl.edu.ph:7777" target="_blank" class="dropdown-link">GTI Online Grades</a>
+                                <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">GTI Online Grades</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('online-services', 'moodle')): ?>
                                 <a href="https://uphslms.com/" target="_blank" class="dropdown-link">Moodle</a>
@@ -1632,7 +1632,7 @@ $navbar_items_config = [
                         <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">GTI Online Grades</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('online-services', 'moodle')): ?>
-                        <a href="https://uphslms.com/blended/login/index.php" target="_blank" class="mobile-dropdown-link">Moodle</a>
+                        <a href="https://uphslms.com/" target="_blank" class="mobile-dropdown-link">Moodle</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('online-services', 'google-account')): ?>
                         <a href="https://accounts.google.com/signin" target="_blank" class="mobile-dropdown-link">Google Account</a>
