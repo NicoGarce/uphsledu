@@ -51,17 +51,18 @@ if (!empty($dateTo)) {
 
 $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
-// Get total count for pagination
-$countQuery = "SELECT COUNT(*) as total FROM return_data $whereClause";
+// Get total count for pagination (count unique txnid)
+$countQuery = "SELECT COUNT(DISTINCT txnid) as total FROM return_data $whereClause";
 $countResult = mysqli_query($con, $countQuery);
 $totalRecords = mysqli_fetch_assoc($countResult)['total'];
 $totalPages = ceil($totalRecords / $perPage);
 $offset = ($page - 1) * $perPage;
 
-// Get data
-$query = "SELECT txnid, refno, status, message, transdate, amount 
+// Get data (group by txnid to show only unique transactions)
+$query = "SELECT txnid, refno, status, message, MAX(transdate) as transdate, amount 
           FROM return_data 
           $whereClause 
+          GROUP BY txnid 
           ORDER BY transdate DESC 
           LIMIT $perPage OFFSET $offset";
 $result = mysqli_query($con, $query);
