@@ -1,3 +1,9 @@
+    <?php
+// Set base path if not already set
+if (!isset($base_path)) {
+    $base_path = isset($_SERVER['BASE_PATH']) ? $_SERVER['BASE_PATH'] : '';
+}
+?>
     <!-- 
     Footer - UPHSL Website
     @author Nico Roell D. Garce
@@ -87,7 +93,7 @@
                         <li><a href="<?php echo $base_path; ?>support-services/careers.php">Careers</a></li>
                         <li><a href="<?php echo $base_path; ?>support-services/clinic.php">University Clinic</a></li>
                         <li><a href="<?php echo $base_path; ?>support-services/iea.php">International & External Affairs</a></li>
-                        <li><a href="<?php echo $base_path; ?>support-services/sps.php">Guidance & Admission</a></li>
+                        <li><a href="<?php echo $base_path; ?>support-services/sao.php">Student Affairs Office</a></li>
                     </ul>
                 </div>
                 

@@ -134,9 +134,9 @@ include '../app/includes/header.php';
             <div class="service-icon">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <h3>Student Personnel Services</h3>
-            <p>Student Personnel Services providing comprehensive guidance and admission support for all students.</p>
-            <a href="sps.php" class="service-link">
+            <h3>Student Affairs Office</h3>
+            <p>Student Affairs Office providing comprehensive guidance and admission support for all students.</p>
+            <a href="sao.php" class="service-link">
                 <i class="fas fa-arrow-right"></i>
                 Learn More
             </a>

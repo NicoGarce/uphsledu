@@ -340,8 +340,8 @@ try {
         ],
         [
             'type' => 'page',
-            'title' => 'Student Personnel Services',
-            'url' => $base_path . 'support-services/sps.php',
+            'title' => 'Student Affairs Office',
+            'url' => $base_path . 'support-services/sao.php',
             'date' => '',
             'category' => 'Service',
             'keywords' => ['student', 'personnel', 'services', 'support', 'assistance']

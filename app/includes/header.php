@@ -138,7 +138,7 @@ $navbar_items_config = [
         'clinic' => 'University Clinic',
         'cod' => 'Community Outreach Department',
         'iea' => 'International & External Affairs',
-        'sps' => 'Student Personnel Services',
+        'sao' => 'Student Affairs Office',
         'library' => 'Library',
         'quality-assurance' => 'Quality Assurance',
         'research' => 'Research'
@@ -1349,8 +1349,8 @@ $navbar_items_config = [
                                 <?php if (isNavbarItemVisible('support-services', 'iea')): ?>
                                 <a href="<?php echo $base_path; ?>support-services/iea.php" class="dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
                                 <?php endif; ?>
-                                <?php if (isNavbarItemVisible('support-services', 'sps')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/sps.php" class="dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Student Personnel Services</a>
+                                <?php if (isNavbarItemVisible('support-services', 'sao')): ?>
+                                <a href="<?php echo $base_path; ?>support-services/sao.php" class="dropdown-link <?php echo ($current_page == 'sao') ? 'active' : ''; ?>">Student Affairs Office</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'library')): ?>
                                 <a href="<?php echo $base_path; ?>support-services/library.php" class="dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>
@@ -1675,7 +1675,7 @@ $navbar_items_config = [
                         <a href="<?php echo $base_path; ?>support-services/iea.php" class="mobile-dropdown-link <?php echo ($current_page == 'iea') ? 'active' : ''; ?>">International & External Affairs</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'sps')): ?>
-                        <a href="<?php echo $base_path; ?>support-services/sps.php" class="mobile-dropdown-link <?php echo ($current_page == 'sps') ? 'active' : ''; ?>">Student Personnel Services</a>
+                        <a href="<?php echo $base_path; ?>support-services/sao.php" class="mobile-dropdown-link <?php echo ($current_page == 'sao') ? 'active' : ''; ?>">Student Affairs Office</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('support-services', 'library')): ?>
                         <a href="<?php echo $base_path; ?>support-services/library.php" class="mobile-dropdown-link <?php echo ($current_page == 'library') ? 'active' : ''; ?>">Library</a>

@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'online-services' => ['name' => 'Online Services', 'subpages' => ['ols-instructions']],
                 'support-services' => [
                     'name' => 'Support Services',
-                    'subpages' => ['support-services-index', 'careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance', 'research']
+                    'subpages' => ['support-services-index', 'careers', 'clinic', 'cod', 'iea', 'sao', 'library', 'quality-assurance', 'research']
                 ],
                 'campuses' => ['name' => 'Campuses', 'subpages' => []],
                 'about' => ['name' => 'About', 'subpages' => ['about-index', 'contact', 'environmental-policy', 'university-policy', 'map']],
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'home' => ['name' => 'Home', 'subitems' => []],
             'programs' => ['name' => 'Programs', 'subitems' => ['basic-education', 'senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school']],
             'online-services' => ['name' => 'Online Services', 'subitems' => ['instructions', 'gti-online-grades', 'moodle', 'google-account', 'microsoft-365', 'saliksik']],
-            'support-services' => ['name' => 'Support Services', 'subitems' => ['alumni', 'careers', 'clinic', 'cod', 'iea', 'sps', 'library', 'quality-assurance', 'research']],
+            'support-services' => ['name' => 'Support Services', 'subitems' => ['alumni', 'careers', 'clinic', 'cod', 'iea', 'sao', 'library', 'quality-assurance', 'research']],
             'campuses' => ['name' => 'Campuses', 'subitems' => []],
             'about' => ['name' => 'About', 'subitems' => ['about-us', 'contact', 'environmental-policy', 'university-policy', 'map']],
             'online-payment' => ['name' => 'Online Payment', 'subitems' => ['entrance-exam', 'new-enrollees', 'enrolled-students', 'other-payments']],
@@ -252,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'clinic' => 'University Clinic',
                         'cod' => 'Community Outreach Department',
                         'iea' => 'International & External Affairs',
-                        'sps' => 'Student Personnel Services',
+                        'sao' => 'Student Affairs Office',
                         'library' => 'Library',
                         'quality-assurance' => 'Quality Assurance',
                         'research' => 'Research'
@@ -412,7 +412,7 @@ $navbar_items_config = [
             'clinic' => 'University Clinic',
             'cod' => 'Community Outreach Department',
             'iea' => 'International & External Affairs',
-            'sps' => 'Student Personnel Services',
+            'sao' => 'Student Affairs Office',
             'library' => 'Library',
             'quality-assurance' => 'Quality Assurance',
             'research' => 'Research'
@@ -529,7 +529,7 @@ $sections = [
             'clinic' => 'University Clinic',
             'cod' => 'Community Outreach',
             'iea' => 'International & External Affairs',
-            'sps' => 'Student Personnel Services',
+            'sao' => 'Student Affairs Office',
             'library' => 'Library',
             'quality-assurance' => 'Quality Assurance',
             'research' => 'Research'

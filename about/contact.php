@@ -171,9 +171,9 @@ include '../app/includes/header.php';
                                     <i class="fas fa-graduation-cap"></i>
                                     <span>Academic Programs</span>
                                 </a>
-                                <a href="../support-services/sps.php" class="quick-link">
+                                <a href="../support-services/sao.php" class="quick-link">
                                     <i class="fas fa-user-graduate"></i>
-                                    <span>Student Personnel Services</span>
+                                    <span>Student Affairs Office</span>
                                 </a>
                                 <a href="../support-services/careers.php" class="quick-link">
                                     <i class="fas fa-briefcase"></i>
