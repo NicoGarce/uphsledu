@@ -255,8 +255,16 @@ include '../app/includes/header.php';
 
                     </section>
                 </div>
-                <!-- Facebook Sidebar Widget -->
+                <!-- Sidebar Image -->
                 <aside class="content-sidebar">
+                    <div class="sidebar-widget image-widget">
+                        <h3 class="image-title">Graduate School</h3>
+                        <a href="javascript:void(0);" onclick="openImageModal('<?php echo $base_path; ?>programs/img/graduate-school/GS.jpg')" class="image-link">
+                            <img src="<?php echo $base_path; ?>programs/img/graduate-school/GS.jpg" alt="Graduate School" class="sidebar-image">
+                        </a>
+                    </div>
+                    
+                    <!-- Facebook Sidebar Widget -->
                     <div class="sidebar-widget facebook-widget">
                         <a href="https://www.facebook.com/UPHSLGraduateSchool" target="_blank" rel="noopener" class="facebook-header">
                             <h3 class="facebook-title">
@@ -329,6 +337,98 @@ include '../app/includes/header.php';
 
     .social-link span {
         font-weight: 600;
+    }
+
+    /* Image Widget Styling for Sidebar */
+    .image-widget {
+        margin-bottom: 2rem;
+        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-title {
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-align: center;
+    }
+
+    .image-link {
+        display: block;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .image-link:hover {
+        transform: scale(1.02);
+    }
+
+    .sidebar-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
+    /* Image Modal Styling */
+    .image-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+        position: relative;
+        margin: auto;
+        padding: 20px;
+        width: 90%;
+        max-width: 900px;
+        height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .modal-content img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        z-index: 10000;
+    }
+
+    .close-modal:hover {
+        color: #bbb;
+        text-decoration: none;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     /* Facebook Widget Styling for Sidebar */
@@ -611,7 +711,23 @@ include '../app/includes/header.php';
 
         .content-sidebar {
             width: 100%;
-            order: 2;
+            order: -1; /* Move sidebar to top on mobile */
+        }
+
+        .image-widget {
+            margin-bottom: 1.5rem;
+            order: -1; /* Ensure image is first on mobile */
+        }
+
+        .modal-content {
+            width: 95%;
+            padding: 10px;
+        }
+
+        .close-modal {
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
         }
 
         .programs-grid {
@@ -666,6 +782,45 @@ include '../app/includes/header.php';
         }
     }
     </style>
+
+<!-- Image Modal -->
+<div id="imageModal" class="image-modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeImageModal()">&times;</span>
+        <img id="modalImage" src="" alt="Graduate School Image">
+    </div>
+</div>
+
+<script>
+function openImageModal(imageSrc) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = 'block';
+    modalImg.src = imageSrc;
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restore background scroll
+}
+
+// Close modal when clicking outside the image
+window.onclick = function(event) {
+    const modal = document.getElementById('imageModal');
+    if (event.target == modal) {
+        closeImageModal();
+    }
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeImageModal();
+    }
+});
+</script>
 
 <?php
 // Include footer
