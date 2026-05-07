@@ -276,6 +276,21 @@ include '../app/includes/header.php';
                         <div class="facebook-embed">
                             <div class="fb-page" data-href="https://www.facebook.com/UPHSLGraduateSchool" data-tabs="timeline" data-width="" data-height="500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
                         </div>
+                    </div>
+                    <!-- Contact Information Widget -->
+                    <div class="sidebar-widget contact-widget">
+                        <h3 class="contact-title">Contact Information</h3>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <a href="tel:09544938841" class="contact-link">0954 493 8841</a>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:0287785310" class="contact-link">(02) 8778-5310</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </aside>
         </div>
@@ -429,6 +444,71 @@ include '../app/includes/header.php';
     @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+    }
+
+    /* Contact Widget Styling for Sidebar */
+    .contact-widget {
+        margin-bottom: 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+
+    .contact-title {
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-align: center;
+    }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.8rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .contact-item:hover {
+        background: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-item:hover .contact-link,
+    .contact-item:hover i {
+        color: white;
+    }
+
+    .contact-item i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        width: 20px;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+
+    .contact-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .contact-link:hover {
+        color: white;
+        text-decoration: none;
     }
 
     /* Facebook Widget Styling for Sidebar */
