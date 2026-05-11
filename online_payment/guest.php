@@ -5,6 +5,21 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Get campus from URL parameter for pre-selection
+$selected_campus = isset($_GET['campus']) ? strtoupper(trim($_GET['campus'])) : '';
+
+// Function to generate shareable link with campus parameter
+function generateShareableLink($campus) {
+    $base_url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . $_SERVER['HTTP_HOST'];
+    $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $current_path = dirname($current_path);
+    
+    // Remove existing query parameters
+    $base_url = rtrim($base_url, '/');
+    
+    return $base_url . '?campus=' . $campus;
+}
+
 // Check if Guest (New Enrollees) or Online Payment section is in maintenance
 // isSectionInMaintenance already checks main section if sub-page is not enabled
 if (isSectionInMaintenance('online-payment', 'guest')) {
@@ -324,6 +339,21 @@ if (isset($_POST["btnsubmit"])) {
             margin-top: 5px;
             font-style: italic;
         }
+
+        .share-link {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .share-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
         
         .submit-btn {
             width: 100%;
@@ -569,9 +599,13 @@ if (isset($_POST["btnsubmit"])) {
             } else {
                 if (campusInfo) campusInfo.style.display = 'none';
             }
+            // Update URL with campus parameter
+            updateURLWithCampus(campid);
         } else {
             if (locatorSection) locatorSection.style.display = 'none';
             if (campusInfo) campusInfo.style.display = 'none';
+            // Remove campus parameter from URL
+            updateURLWithCampus('');
         }
         // Reset verification state
         isLocatorVerified = false;
@@ -581,6 +615,19 @@ if (isset($_POST["btnsubmit"])) {
         if (submitHelp) submitHelp.innerHTML = 'Please verify your locator number before proceeding';
         toggleSubmit();
     }
+
+function updateURLWithCampus(campus) {
+    var url = new URL(window.location.href);
+    
+    if (campus) {
+        url.searchParams.set('campus', campus);
+    } else {
+        url.searchParams.delete('campus');
+    }
+    
+    // Update URL without page reload
+    window.history.replaceState({}, '', url.toString());
+}
 
     function confirmLocator() {
         isLocatorVerified = true;
@@ -697,13 +744,13 @@ if (isset($_POST["btnsubmit"])) {
                 <label class="form-label" for="campid">Select Your Campus</label>
                 <select name="campid" id="campid" class="campus-select" onchange="resetVerification()" required>
                     <option value="">Choose your campus...</option>
-                    <option value="UPHB">🏫 Binan Campus</option>
-                    <option value="UPHMU">🏥 Medical University</option>
-                    <option value="UPHG">🏢 GMA Campus</option>
-                    <option value="UPHM">🏛️ Manila Campus</option>
-                    <option value="PHCP">🏘️ Pangasinan Campus</option>
-                    <option value="UPHI">🏛️ Isabela Campus</option>
-                    <option value="UPHR">🏛️ Roxas Campus</option>
+                    <option value="UPHB" <?php echo ($selected_campus === 'UPHB') ? 'selected' : ''; ?>>🏫 Binan Campus</option>
+                    <option value="UPHMU" <?php echo ($selected_campus === 'UPHMU') ? 'selected' : ''; ?>>🏥 Medical University</option>
+                    <option value="UPHG" <?php echo ($selected_campus === 'UPHG') ? 'selected' : ''; ?>>🏢 GMA Campus</option>
+                    <option value="UPHM" <?php echo ($selected_campus === 'UPHM') ? 'selected' : ''; ?>>🏛️ Manila Campus</option>
+                    <option value="PHCP" <?php echo ($selected_campus === 'PHCP') ? 'selected' : ''; ?>>🏘️ Pangasinan Campus</option>
+                    <option value="UPHI" <?php echo ($selected_campus === 'UPHI') ? 'selected' : ''; ?>>🏛️ Isabela Campus</option>
+                    <option value="UPHR" <?php echo ($selected_campus === 'UPHR') ? 'selected' : ''; ?>>🏛️ Roxas Campus</option>
 		</select>
 	</div>
 
@@ -732,6 +779,19 @@ if (isset($_POST["btnsubmit"])) {
                     🚀 Proceed to Payment
                 </button>
             </div>
+            </div>
+            
+            <?php if ($selected_campus !== ''): ?>
+            <div class="campus-info" style="background: #e3f2fd; border-left: 4px solid var(--primary-color); padding: 15px; margin-top: 20px; border-radius: 0 8px 8px 0;">
+                <h4 style="color: var(--primary-color); font-family: 'Barlow Semi Condensed', sans-serif; margin-bottom: 10px;">📋 Share Link</h4>
+                <a href="<?php 
+                    $current_url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . $_SERVER['HTTP_HOST'];
+                    echo $current_url . ((strpos($current_url, '?') !== false) ? '&' : '?') . 'campus=' . $selected_campus; 
+                ?>" class="share-link" target="_blank">
+                    📤 Share <?php echo $selected_campus; ?> Campus Link
+                </a>
+            </div>
+            <?php endif; ?>
 	</form>	
     </div>
 </body>

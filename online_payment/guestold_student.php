@@ -5,6 +5,21 @@ session_start();
 require_once '../app/config/database.php';
 require_once '../app/includes/functions.php';
 
+// Get campus from URL parameter for pre-selection
+$selected_campus = isset($_GET['campus']) ? strtoupper(trim($_GET['campus'])) : '';
+
+// Function to generate shareable link with campus parameter
+function generateShareableLink($campus) {
+    $base_url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . $_SERVER['HTTP_HOST'];
+    $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $current_path = dirname($current_path);
+    
+    // Remove existing query parameters
+    $base_url = rtrim($base_url, '/');
+    
+    return $base_url . '?campus=' . $campus;
+}
+
 // Check if Guest Old Student or Online Payment section is in maintenance
 // isSectionInMaintenance already checks main section if sub-page is not enabled
 if (isSectionInMaintenance('online-payment', 'guestold-student')) {
@@ -75,6 +90,9 @@ if (isSectionInMaintenance('online-payment', 'guestold-student')) {
 
 	include "dbconnect.php";
 	include "campus_table_manager.php";
+
+	// Ensure all campus tables exist (including Isabela and Roxas)
+	ensureCampusTablesExist($con);
 
 	// Ensure all campus tables exist (including Isabela and Roxas)
 	ensureCampusTablesExist($con);
@@ -358,6 +376,21 @@ if (isSectionInMaintenance('online-payment', 'guestold-student')) {
             margin-top: 5px;
             font-style: italic;
         }
+
+        .share-link {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .share-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
         
         .verification-result {
             margin-top: 20px;
@@ -577,8 +610,12 @@ function resetVerification() {
 	// Show verification section only if campus is selected
 	if (campid !== '') {
 		verificationSection.style.display = 'block';
+		// Update URL with campus parameter
+		updateURLWithCampus(campid);
 	} else {
 		verificationSection.style.display = 'none';
+		// Remove campus parameter from URL
+		updateURLWithCampus('');
 	}
 	
 	// Reset verification state
@@ -586,6 +623,19 @@ function resetVerification() {
 	document.getElementById('verification-result').innerHTML = '';
 	document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
 	toggleSubmit();
+}
+
+function updateURLWithCampus(campus) {
+	var url = new URL(window.location.href);
+	
+	if (campus) {
+		url.searchParams.set('campus', campus);
+	} else {
+		url.searchParams.delete('campus');
+	}
+	
+	// Update URL without page reload
+	window.history.replaceState({}, '', url.toString());
 }
 
 function confirmStudent() {
@@ -738,13 +788,13 @@ function verifyStudent() {
                 <label class="form-label" for="campid">Select Your Campus</label>
                 <select name="campid" id="campid" class="campus-select" onchange="resetVerification()" required>
                     <option value="">Choose your campus...</option>
-                    <option value="UPHB">🏫 Binan Campus</option>
-                    <option value="UPHMU">🏥 Medical University</option>
-                    <option value="UPHG">🏢 GMA Campus</option>
-                    <option value="UPHM">🏛️ Manila Campus</option>
-                    <option value="PHCP">🏘️ Pangasinan Campus</option>
-                    <option value="UPHI">🏛️ Isabela Campus</option>
-                    <option value="UPHR">🏛️ Roxas Campus</option>
+                    <option value="UPHB" <?php echo ($selected_campus === 'UPHB') ? 'selected' : ''; ?>>🏫 Binan Campus</option>
+                    <option value="UPHMU" <?php echo ($selected_campus === 'UPHMU') ? 'selected' : ''; ?>>🏥 Medical University</option>
+                    <option value="UPHG" <?php echo ($selected_campus === 'UPHG') ? 'selected' : ''; ?>>🏢 GMA Campus</option>
+                    <option value="UPHM" <?php echo ($selected_campus === 'UPHM') ? 'selected' : ''; ?>>🏛️ Manila Campus</option>
+                    <option value="PHCP" <?php echo ($selected_campus === 'PHCP') ? 'selected' : ''; ?>>🏘️ Pangasinan Campus</option>
+                    <option value="UPHI" <?php echo ($selected_campus === 'UPHI') ? 'selected' : ''; ?>>🏛️ Isabela Campus</option>
+                    <option value="UPHR" <?php echo ($selected_campus === 'UPHR') ? 'selected' : ''; ?>>🏛️ Roxas Campus</option>
 		</select>
 	</div>
 
@@ -776,6 +826,14 @@ function verifyStudent() {
                 <p><strong>For Current Students:</strong></p>
                 <p>Please select your campus first, then verify your student number to access the payment portal. This ensures that only registered students can make payments for their accounts.</p>
                 <p><strong>Note:</strong> Make sure you have your student number ready and select the correct campus where you are enrolled.</p>
+                <?php if ($selected_campus !== ''): ?>
+                <a href="<?php 
+                    $current_url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+                    echo $current_url . ((strpos($current_url, '?') !== false) ? '&' : '?') . 'campus=' . $selected_campus; 
+                ?>" class="share-link" target="_blank">
+                    📤 Share Binan Campus Link
+                </a>
+            <?php endif; ?>
 	</div>
 	</form>	
     </div>
