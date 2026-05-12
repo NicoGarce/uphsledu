@@ -724,6 +724,20 @@ function updateURLWithCampus(campus) {
             container.style.opacity = '1';
             container.style.transform = 'translateY(0)';
         }, 100);
+        
+        // Initialize locator section visibility based on pre-selected campus
+        var campid = document.getElementById('campid').value;
+        var locatorSection = document.getElementById('locator-section');
+        var campusInfo = document.getElementById('campus-info');
+        
+        if (campid !== '') {
+            if (locatorSection) locatorSection.style.display = 'block';
+            if (campid !== 'UPHB') {
+                if (campusInfo) campusInfo.style.display = 'block';
+            } else {
+                if (campusInfo) campusInfo.style.display = 'none';
+            }
+        }
     });
     </script>
 </head>

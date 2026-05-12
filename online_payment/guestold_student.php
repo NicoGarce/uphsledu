@@ -764,6 +764,14 @@ function verifyStudent() {
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
             }, 100);
+            
+            // Initialize verification section visibility based on pre-selected campus
+            var campid = document.getElementById('campid').value;
+            var verificationSection = document.getElementById('verification-section');
+            
+            if (campid !== '' && verificationSection) {
+                verificationSection.style.display = 'block';
+            }
         });
 </script>
 </head>
