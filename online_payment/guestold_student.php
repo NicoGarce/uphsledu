@@ -795,8 +795,8 @@ function verifyStudent() {
                     <option value="PHCP" <?php echo ($selected_campus === 'PHCP') ? 'selected' : ''; ?>>🏘️ Pangasinan Campus</option>
                     <option value="UPHI" <?php echo ($selected_campus === 'UPHI') ? 'selected' : ''; ?>>🏛️ Isabela Campus</option>
                     <option value="UPHR" <?php echo ($selected_campus === 'UPHR') ? 'selected' : ''; ?>>🏛️ Roxas Campus</option>
-		</select>
-	</div>
+                </select>
+            </div>
 
             <div id="verification-section" class="verification-section" style="display: none;">
                 <h4 style="color: var(--primary-color); margin-bottom: 20px; text-align: center;">🔐 Student Verification</h4>
@@ -813,7 +813,7 @@ function verifyStudent() {
                 </div>
                 
                 <div id="verification-result" class="verification-result"></div>
-	</div>
+	        </div>
 	
             <div id="submit-section" style="display: none;">
                 <button type="submit" id="btnsubmit" name="btnsubmit" class="submit-btn">
@@ -826,15 +826,8 @@ function verifyStudent() {
                 <p><strong>For Current Students:</strong></p>
                 <p>Please select your campus first, then verify your student number to access the payment portal. This ensures that only registered students can make payments for their accounts.</p>
                 <p><strong>Note:</strong> Make sure you have your student number ready and select the correct campus where you are enrolled.</p>
-                <?php if ($selected_campus !== ''): ?>
-                <a href="<?php 
-                    $current_url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-                    echo $current_url . ((strpos($current_url, '?') !== false) ? '&' : '?') . 'campus=' . $selected_campus; 
-                ?>" class="share-link" target="_blank">
-                    📤 Share Binan Campus Link
-                </a>
-            <?php endif; ?>
-	</div>
+                
+            </div>
 	</form>	
     </div>
 </body>

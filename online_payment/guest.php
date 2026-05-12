@@ -780,18 +780,6 @@ function updateURLWithCampus(campus) {
                 </button>
             </div>
             </div>
-            
-            <?php if ($selected_campus !== ''): ?>
-            <div class="campus-info" style="background: #e3f2fd; border-left: 4px solid var(--primary-color); padding: 15px; margin-top: 20px; border-radius: 0 8px 8px 0;">
-                <h4 style="color: var(--primary-color); font-family: 'Barlow Semi Condensed', sans-serif; margin-bottom: 10px;">📋 Share Link</h4>
-                <a href="<?php 
-                    $current_url = (isset($_SERVER['HTTPS']) ? "https://" : "http://") . $_SERVER['HTTP_HOST'];
-                    echo $current_url . ((strpos($current_url, '?') !== false) ? '&' : '?') . 'campus=' . $selected_campus; 
-                ?>" class="share-link" target="_blank">
-                    📤 Share <?php echo $selected_campus; ?> Campus Link
-                </a>
-            </div>
-            <?php endif; ?>
 	</form>	
     </div>
 </body>
