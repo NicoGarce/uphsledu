@@ -759,12 +759,12 @@ function updateURLWithCampus(campus) {
                 <select name="campid" id="campid" class="campus-select" onchange="resetVerification()" required>
                     <option value="">Choose your campus...</option>
                     <option value="UPHB" <?php echo ($selected_campus === 'UPHB') ? 'selected' : ''; ?>>🏫 Binan Campus</option>
-                    <option value="UPHMU" <?php echo ($selected_campus === 'UPHMU') ? 'selected' : ''; ?>>🏥 Medical University</option>
+                    <!--<option value="UPHMU" <?php echo ($selected_campus === 'UPHMU') ? 'selected' : ''; ?>>🏥 Medical University</option>
                     <option value="UPHG" <?php echo ($selected_campus === 'UPHG') ? 'selected' : ''; ?>>🏢 GMA Campus</option>
                     <option value="UPHM" <?php echo ($selected_campus === 'UPHM') ? 'selected' : ''; ?>>🏛️ Manila Campus</option>
                     <option value="PHCP" <?php echo ($selected_campus === 'PHCP') ? 'selected' : ''; ?>>🏘️ Pangasinan Campus</option>
                     <option value="UPHI" <?php echo ($selected_campus === 'UPHI') ? 'selected' : ''; ?>>🏛️ Isabela Campus</option>
-                    <option value="UPHR" <?php echo ($selected_campus === 'UPHR') ? 'selected' : ''; ?>>🏛️ Roxas Campus</option>
+                    <option value="UPHR" <?php echo ($selected_campus === 'UPHR') ? 'selected' : ''; ?>>🏛️ Roxas Campus</option>-->
 		</select>
 	</div>
 
