@@ -402,7 +402,7 @@ body {
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    text-align: justify;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid rgba(44, 90, 160, 0.15);
     position: relative;
@@ -1019,6 +1019,42 @@ body {
                             <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/iG-Library-Logo.svg" alt="IG Library">
                         </div>
                         <p>A digital library platform that provides access to a collection of e-books, academic journals, and other learning materials. It is commonly used by schools and universities to support research and academic study online.</p>
+                    </div>
+                </a>
+                <a href="https://research.ebsco.com/c/aw5nov/search" target="_blank" rel="noopener noreferrer" class="resource-card-link">
+                    <div class="resource-card">
+                        <div class="resource-link-indicator">↗</div>
+                        <div class="resource-image">
+                            <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/EBSCO.png" alt="EBSCO">
+                        </div>
+                        <p>An online research platform that provides access to academic databases, journals, and ebooks. It is mainly used by students and researchers to find reliable, scholarly articles from library-subscribed sources.</p>
+                    </div>
+                </a>
+                <a href="https://ejournals.ph/" target="_blank" rel="noopener noreferrer" class="resource-card-link">
+                    <div class="resource-card">
+                        <div class="resource-link-indicator">↗</div>
+                        <div class="resource-image">
+                            <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/PEJ.png" alt="PEJ">
+                        </div>
+                        <p>An online database that provides access to scholarly journals published in the Philippines. It contains academic articles from various fields such as education, social sciences, business, health, and humanities. It is commonly used by students and researchers to find locally published, peer-reviewed studies and research materials.</p>
+                    </div>
+                </a>
+                <a href="https://www.starbooks.ph/" target="_blank" rel="noopener noreferrer" class="resource-card-link">
+                    <div class="resource-card">
+                        <div class="resource-link-indicator">↗</div>
+                        <div class="resource-image">
+                            <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/starbooks.png" alt="Starbooks">
+                        </div>
+                        <p>A digital library system in the Philippines that provides offline access to science, technology, and educational resources. It is developed by the Department of Science and Technology (DOST) and is used in schools and communities, especially in areas with limited or no internet access.</p>
+                    </div>
+                </a>
+                <a href="https://central.com.ph/e-scra/?wppb_referer_url=https%3A%2F%2Fcentral.com.ph%2Fdashboard%2F&redirect_to=https://central.com.ph/dashboard/" target="_blank" rel="noopener noreferrer" class="resource-card-link">
+                    <div class="resource-card">
+                        <div class="resource-link-indicator">↗</div>
+                        <div class="resource-image">
+                            <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/escra.png" alt="PEJ">
+                        </div>
+                        <p>A digital legal research database in the Philippines that provides access to Supreme Court decisions and annotated case reports. It is mainly used by law students, lawyers, and researchers for legal research and case references.</p>
                     </div>
                 </a>
             </div>
