@@ -203,6 +203,32 @@ body {
     background: white;
 }
 
+.online-services-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    align-items: stretch;
+}
+
+.online-services-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.online-services-right {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .online-services-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -221,6 +247,7 @@ body {
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid rgba(44, 90, 160, 0.1);
+    position: relative;
 }
 
 .service-card:hover {
@@ -229,8 +256,8 @@ body {
 }
 
 .service-image {
-    width: 120px;
-    height: 80px;
+    width: 160px;
+    height: 100px;
     margin: 0 auto 1.5rem;
     display: flex;
     align-items: center;
@@ -260,6 +287,179 @@ body {
     color: #666;
     line-height: 1.6;
     font-size: 0.95rem;
+}
+
+.service-email {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+.service-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card-link:hover .service-card {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.service-link-indicator {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.service-card-link:hover .service-link-indicator {
+    opacity: 1;
+}
+
+/* Facebook Widget */
+.facebook-widget-container {
+    max-width: 100%;
+    margin: 0;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: 100%;
+}
+
+.facebook-header {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #1877f2, #0d65d9);
+    transition: opacity 0.3s ease;
+}
+
+.facebook-header:hover {
+    opacity: 0.95;
+}
+
+.facebook-title {
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.facebook-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.facebook-embed {
+    padding: 1.5rem;
+    background: #f8f9fa;
+}
+
+/* Online Resources Section - Custom Classes */
+.online-resources-section {
+    background: white;
+}
+
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.resource-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.resource-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid rgba(44, 90, 160, 0.15);
+    position: relative;
+}
+
+.resource-card-link:hover .resource-card {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(44, 90, 160, 0.2);
+    border-color: var(--primary-color);
+}
+
+.resource-image {
+    width: 160px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 10px;
+}
+
+.resource-image img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: brightness(1.1);
+}
+
+.resource-card p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.resource-link-indicator {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.resource-card-link:hover .resource-link-indicator {
+    opacity: 1;
 }
 
 /* Quality Objectives Section */
@@ -798,57 +998,72 @@ body {
 
     
 
+    <!-- Online Resources Section -->
+    <section class="content-section online-resources-section">
+        <div class="container">
+            <h2 class="section-title">Online Resources</h2>
+            <div class="resources-grid">
+                <a href="https://www.accessengineeringlibrary.com/" target="_blank" rel="noopener noreferrer" class="resource-card-link">
+                    <div class="resource-card">
+                        <div class="resource-link-indicator">↗</div>
+                        <div class="resource-image">
+                            <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/MHAE.png" alt="McGraw Hill Access Engineering">
+                        </div>
+                        <p>An online engineering reference platform provided by McGraw-Hill. It gives Students and faculty have access to engineering textbooks, reference handbooks, videos, and interactive tools that help in learning and solving engineering problems.</p>
+                    </div>
+                </a>
+                <a href="https://portal.igpublish.com/" target="_blank" rel="noopener noreferrer" class="resource-card-link">
+                    <div class="resource-card">
+                        <div class="resource-link-indicator">↗</div>
+                        <div class="resource-image">
+                            <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/iG-Library-Logo.svg" alt="IG Library">
+                        </div>
+                        <p>A digital library platform that provides access to a collection of e-books, academic journals, and other learning materials. It is commonly used by schools and universities to support research and academic study online.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- Online Services Section -->
     <section class="content-section online-services-section">
         <div class="container">
-            <h2 class="section-title">Online Services</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-opac.jpg" alt="OPAC">
-                    </div>
-                    <h4>OPAC - Online Public Access Catalogue</h4>
-                    <p>This feature-rich Online LMS, there is never a need to worry on valuable data. All of your data, including archival data, remains instantly accessible all the time—with no system slowdown. Up-to-date information on books, members and status reports is just a click away.</p>
+            <div class="online-services-layout">
+                <div class="online-services-left">
+                    <h2 class="section-title">Online Services</h2>
+                    <a href="https://www.turnitin.com/login_page.asp?lang=en_us" target="_blank" rel="noopener noreferrer" class="service-card-link">
+                        <div class="service-card">
+                            <div class="service-link-indicator">↗</div>
+                            <div class="service-image">
+                                <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/Turnitin_logo_(2021).svg.png" alt="Turnitin">
+                            </div>
+                            <p>a widely used, internet-based plagiarism detection and academic integrity service that checks submitted papers against a massive database of websites, academic publications, and previously submitted student work.</p>
+                        </div>
+                    </a>
+                    <a href="mailto:librarycollege@uphsl.edu.ph" class="service-card-link">
+                        <div class="service-card">
+                            <div class="service-link-indicator">✉</div>
+                            <div class="service-image">
+                                <img src="<?php echo $base_path; ?>assets/images/library/logo.png" alt="Library Email">
+                            </div>
+                            <p>Contact the University Library via email for inquiries, research assistance, and other library-related concerns.</p>
+                            <p class="service-email">librarycollege@uphsl.edu.ph</p>
+                        </div>
+                    </a>
                 </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-ebsco.png" alt="EBSCOhost">
+                <div class="online-services-right">
+                    <div class="facebook-widget-container">
+                        <a href="https://www.facebook.com/uphslmainlibrary101" target="_blank" rel="noopener" class="facebook-header">
+                            <h3 class="facebook-title">
+                                <i class="fab fa-facebook"></i>
+                                Follow Us on Facebook
+                            </h3>
+                            <p class="facebook-subtitle">Stay connected with our latest updates</p>
+                        </a>
+                        <div class="facebook-embed">
+                            <div class="fb-page" data-href="https://www.facebook.com/uphslmainlibrary101" data-tabs="timeline" data-width="" data-height="500" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
+                        </div>
                     </div>
-                    <h4>EBSCOhost</h4>
-                    <p>A powerful online reference system accessible via internet. It offers a variety of proprietary full-text databases and popular databases from leading information providers. The comprehensive databases range from general reference collections to specially designed, subject-specific databases for public, academic, medical, corporate, and school libraries.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/uphsl-pej.png" alt="Philippine E-Journals">
-                    </div>
-                    <h4>Philippine E-Journals</h4>
-                    <p>An expanding collection of academic journals that are made accessible globally through a single Web-based platform. It is hosted by C&E Publishing, Inc., a premier educational publisher in the Philippines and a leader in the distribution of integrated information-based solutions.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/starbooks.png" alt="Starbooks">
-                    </div>
-                    <h4>Starbooks</h4>
-                    <p>State of the art facilities to access science and technology information via the STOO portals. A technically-qualified staff will be on hand to assist STARBOOKS users on-site while an online Librarian's HelpDesk service will also be available to answer queries.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/escra.png" alt="eSCRA Online">
-                    </div>
-                    <h4>eSCRA Online</h4>
-                    <p>A Complete Decision from 1901 to the Present. Online Library, Always Updated and Available. Search and Browse Modes Makes it Fast and Intuitive. Smart Searching through Intelligent Fields. TrueCite Technology gives you the same look and feel as the book.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-image">
-                        <img src="<?php echo $base_path; ?>assets/images/support-services/college-library/img/olservices/turnitin.png" alt="Turnitin">
-                    </div>
-                    <h4>Turnitin</h4>
-                    <p>An expanding collection of academic journals that are made accessible globally through a single Web-based platform. It is hosted by C&E Publishing, Inc., a premier educational publisher in the Philippines and a leader in the distribution of integrated information-based solutions.</p>
                 </div>
             </div>
         </div>
