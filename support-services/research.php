@@ -512,18 +512,47 @@ body {
             
             <div class="news-video-layout" id="newsVideoLayout">
                 <div class="video-pdf-flex">
-                    <!-- IRC 2025 Video -->
+                    <!-- IRC Video Slider -->
                     <div class="video-wrapper">
                         <div class="video-container">
                             <div class="video-header">
                                 <h3 class="video-title">International Conference on Multidisciplinary Research for Sustainable Development Goals</h3>
                                 <p class="video-subtitle">Advancing Knowledge Frontiers for a Sustainable Future</p>
                             </div>
-                            <div class="video-player">
-                                <video controls autoplay muted loop playsinline>
-                                    <source src="<?php echo $base_path; ?>assets/video/IRC 2025.mp4" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
+                            <div class="video-slider">
+                                <div class="video-slider-track" id="videoSliderTrack">
+                                    <!-- IRC 2026 Video -->
+                                    <div class="video-slide">
+                                        <div class="video-player">
+                                            <video controls muted playsinline preload="auto">
+                                                <source src="<?php echo $base_path; ?>assets/video/IRC 2026.mp4" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    </div>
+                                    <!-- IRC 2025 Video -->
+                                    <div class="video-slide">
+                                        <div class="video-player">
+                                            <video controls muted playsinline preload="auto">
+                                                <source src="<?php echo $base_path; ?>assets/video/IRC 2025.mp4" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Navigation Arrows -->
+                                <button class="video-slider-nav video-slider-prev" id="videoSliderPrev">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="15 18 9 12 15 6"></polyline>
+                                    </svg>
+                                </button>
+                                <button class="video-slider-nav video-slider-next" id="videoSliderNext">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                </button>
+                                <!-- Dots Navigation -->
+                                <div class="video-slider-dots" id="videoSliderDots"></div>
                             </div>
                         </div>
                     </div>
@@ -813,20 +842,134 @@ body {
         width: 100%;
         position: relative;
         overflow: hidden;
-        background: transparent;
+        background: #000;
         flex: 1 1 auto;
         display: flex;
-        align-items: stretch;
+        align-items: center;
+        justify-content: center;
         height: 100%;
+        aspect-ratio: 16 / 9;
     }
     
     .video-player video {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         display: block;
         border-radius: 0 0 20px 20px;
         background: #000;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* Video Slider Styles */
+    .video-slider {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        flex: 1 1 auto;
+        display: flex;
+        align-items: stretch;
+        height: 100%;
+    }
+
+    .video-slider-track {
+        display: flex;
+        transition: transform 0.5s ease;
+        width: 100%;
+        height: 100%;
+    }
+
+    .video-slide {
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .video-slide .video-player {
+        height: 100%;
+    }
+
+    .video-slide-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        padding: 2rem 1.5rem 1rem;
+        color: white;
+        z-index: 10;
+    }
+
+    .video-year {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .video-slider-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: var(--primary-color, #2c5aa0);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .video-slider-nav:hover {
+        background: var(--primary-color, #2c5aa0);
+        color: white;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .video-slider-prev {
+        left: 1rem;
+    }
+
+    .video-slider-next {
+        right: 1rem;
+    }
+
+    .video-slider-dots {
+        position: absolute;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 20;
+    }
+
+    .video-slider-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        border: 2px solid rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .video-slider-dot.active {
+        background: white;
+        border-color: white;
+        transform: scale(1.2);
+    }
+
+    .video-slider-dot:hover {
+        background: rgba(255, 255, 255, 0.8);
     }
     
     /* When news carousel is hidden/empty, video takes full width */
@@ -953,6 +1096,92 @@ body {
     </style>
     
     <script>
+    // Video Slider Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const track = document.getElementById('videoSliderTrack');
+        const prevBtn = document.getElementById('videoSliderPrev');
+        const nextBtn = document.getElementById('videoSliderNext');
+        const dotsContainer = document.getElementById('videoSliderDots');
+        
+        if (!track) return;
+        
+        const slides = Array.from(track.children);
+        const slideCount = slides.length;
+        let currentIndex = 0;
+        
+        // Create dots
+        if (dotsContainer && slideCount > 1) {
+            for (let i = 0; i < slideCount; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'video-slider-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => {
+                    goToSlide(i);
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+        
+        function goToSlide(index) {
+            currentIndex = (index + slideCount) % slideCount;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            
+            // Update dots
+            if (dotsContainer) {
+                const dots = Array.from(dotsContainer.children);
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+            
+            // Pause all videos and reset to beginning
+            slides.forEach((slide) => {
+                const video = slide.querySelector('video');
+                if (video) {
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            });
+            
+            // Play the current slide's video
+            const currentSlide = slides[currentIndex];
+            const currentVideo = currentSlide.querySelector('video');
+            if (currentVideo) {
+                currentVideo.play().catch(e => console.log('Autoplay prevented:', e));
+            }
+        }
+        
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+        
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+        
+        // Add video end event listeners to auto-switch slides
+        slides.forEach((slide, index) => {
+            const video = slide.querySelector('video');
+            if (video) {
+                video.addEventListener('ended', () => {
+                    // When video ends, go to next slide
+                    nextSlide();
+                });
+            }
+        });
+        
+        // Navigation buttons
+        if (prevBtn) {
+            prevBtn.addEventListener('click', prevSlide);
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', nextSlide);
+        }
+        
+        // Initialize and play first video
+        goToSlide(0);
+    });
+    
     // Adjust layout when news carousel is hidden
     document.addEventListener('DOMContentLoaded', function() {
         const layout = document.getElementById('newsVideoLayout');
