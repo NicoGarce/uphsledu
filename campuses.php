@@ -423,7 +423,7 @@ include 'app/includes/header.php';
                 </a>
 
                 <!-- Roxas Campus -->
-                <div class="campus-card">
+                <a href="https://pueblodepanay.uphsl.edu.ph/" target="_blank" class="campus-card">
                     <div class="campus-image-container">
                         <img src="<?php echo $base_path; ?>assets/images/campuses/pueblo-college.jpg" alt="Roxas Campus" class="campus-image">
                         <div class="campus-basic-info">
@@ -442,7 +442,7 @@ include 'app/includes/header.php';
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- UPH-DR. JOSE G. TAMAYO MEDICAL UNIVERSITY -->
                 <a href="https://uphdjgtmedicaluniversity.edu.ph/" target="_blank" class="campus-card medical-university-card">
