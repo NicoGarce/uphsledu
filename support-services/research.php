@@ -235,6 +235,169 @@ body {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
+/* ICMRSDG 2025 Documentation Section */
+.icmrsdg-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 60px 0;
+}
+
+.icmrsdg-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.icmrsdg-wrapper {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.icmrsdg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.icmrsdg-pdf-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(44, 90, 160, 0.1);
+}
+
+.icmrsdg-pdf-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 1rem 1.5rem;
+    text-align: center;
+}
+
+.icmrsdg-pdf-title {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.icmrsdg-pdf-frame {
+    padding: 1rem;
+    background: white;
+}
+
+.icmrsdg-pdf-footer {
+    padding: 1rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-top: 1px solid rgba(44, 90, 160, 0.1);
+}
+
+.icmrsdg-download-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, var(--primary-color), #1a3d7a);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.icmrsdg-download-link:hover {
+    background: linear-gradient(135deg, var(--secondary-color), #e6b032);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive styles for ICMRSDG section */
+@media (max-width: 768px) {
+    .icmrsdg-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .icmrsdg-wrapper {
+        padding: 1.5rem;
+    }
+
+    .icmrsdg-pdf-frame iframe {
+        height: 400px;
+        min-height: 300px;
+    }
+}
+
+/* Research Agenda Section */
+.agenda-section {
+    background: white;
+}
+
+.agenda-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.agenda-wrapper {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 2rem;
+}
+
+.agenda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.agenda-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.agenda-download-link {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--secondary-color), #e6b032);
+    color: var(--primary-color);
+    border-radius: 10px;
+}
+
+.agenda-download-link:hover {
+    background: linear-gradient(135deg, var(--primary-color), #1a3d7a);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.agenda-frame {
+    width: 100%;
+    min-height: 600px;
+    overflow: auto;
+}
+
+.agenda-frame iframe {
+    border-radius: 15px;
+    width: 100%;
+    max-width: 100%;
+    display: block;
+    background: #fff;
+}
+
 .mv-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -493,7 +656,7 @@ body {
                 <div class="intro-logo">
                     <img src="<?php echo $base_path; ?>assets/images/research/uphsl-research-logo.png" alt="Research & Development Center Logo">
                 </div>
-                <h2>Research & Publication</h2>
+                <h2>Research & Development Center</h2>
                 <p class="intro-description">Research and Development Center (R&DC) demonstrates bold initiatives in escalating the research culture of the university, envisioning it as a research-renowned institution through its efficient and effective research mechanisms, ensuring that relevant and responsive services are in place for school heads, faculty, students and non-teaching staff who engage in research activities.</p>
             </div>
         </div>
@@ -556,28 +719,244 @@ body {
                             </div>
                         </div>
                     </div>
-                    <!-- PDF Preview: UPHSL Research Agenda -->
-                    <div class="pdf-preview-wrapper">
-                        <div class="pdf-preview-container">
-                            <div class="pdf-preview-header">
-                                <h3 class="pdf-preview-title">UPHSL Research Agenda</h3>
-                                <a href="<?php echo $base_path; ?>assets/documents/pdfs/UPHSL_Research_Agenda.pdf" target="_blank" class="pdf-download-link">Download PDF</a>
+                    <!-- Image Carousel -->
+                    <div class="image-carousel-wrapper">
+                        <div class="image-carousel-container">
+                            <div class="image-carousel-header">
+                                <h3 class="image-carousel-title">2nd International Conference on Multidisciplinary Research for Sustainable Development Goals</h3>
                             </div>
-                            <div class="pdf-preview-frame">
-                                <iframe src="<?php echo $base_path; ?>assets/documents/pdfs/UPHSL_Research_Agenda.pdf#toolbar=1&navpanes=0&scrollbar=1" width="100%" height="500px" style="border:1px solid #ccc; border-radius:10px; min-height:350px;" allowfullscreen loading="lazy"></iframe>
+                            <div class="image-carousel">
+                                <div class="image-carousel-track" id="imageCarouselTrack">
+                                    <div class="image-carousel-slide">
+                                        <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC.jpg" alt="IRC Conference Image 1" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC.jpg">
+                                    </div>
+                                    <div class="image-carousel-slide">
+                                        <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 2.jpg" alt="IRC Conference Image 2" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 2.jpg">
+                                    </div>
+                                    <div class="image-carousel-slide">
+                                        <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 3.jpg" alt="IRC Conference Image 3" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 3.jpg">
+                                    </div>
+                                    <div class="image-carousel-slide">
+                                        <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 4.jpg" alt="IRC Conference Image 4" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 4.jpg">
+                                    </div>
+                                    <div class="image-carousel-slide">
+                                        <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 5.jpg" alt="IRC Conference Image 5" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 5.jpg">
+                                    </div>
+                                    <div class="image-carousel-slide">
+                                        <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 6.jpg" alt="IRC Conference Image 6" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC 6.jpg">
+                                    </div>
+                                </div>
+                                <!-- Navigation Arrows -->
+                                <button class="image-carousel-nav image-carousel-prev" id="imageCarouselPrev">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="15 18 9 12 15 6"></polyline>
+                                    </svg>
+                                </button>
+                                <button class="image-carousel-nav image-carousel-next" id="imageCarouselNext">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg>
+                                </button>
+                                <!-- Dots Navigation -->
+                                <div class="image-carousel-dots" id="imageCarouselDots"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- News Carousel -->
-                <div class="news-carousel-wrapper" id="newsCarouselWrapper">
-                    <?php
-                    $categoryId = 'Research'; // Pass category name, component will look it up
-                    $sectionTitle = ''; // Empty to hide duplicate header
-                    $sectionDescription = ''; // Empty to hide duplicate description
-                    include '../app/includes/news-carousel.php';
-                    ?>
+
+                <!-- Lightbox Modal -->
+                <div class="lightbox" id="lightbox">
+                    <span class="lightbox-close" id="lightboxClose">&times;</span>
+                    <button class="lightbox-nav lightbox-prev" id="lightboxPrev">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button class="lightbox-nav lightbox-next" id="lightboxNext">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                    <img class="lightbox-content" id="lightboxContent" src="" alt="Full screen image">
                 </div>
+
+                <!-- Conference Information Card -->
+                <div class="conference-info-card">
+                    <div class="conference-info-header">
+                        <h3 class="conference-info-title">
+                            <i class="fas fa-file-alt"></i>
+                            Conference Information
+                        </h3>
+                    </div>
+                    <div class="conference-info-content">
+                        <div class="conference-buttons">
+                            <div class="conference-button-group">
+                                <label class="conference-label">Abstract submission and registration guidelines</label>
+                                <a href="https://docs.google.com/document/d/1c_TfAVBaQmRpwrH8t6vbQWYu3QB8O2iZbnj2tcvF3us/edit?tab=t.0" target="_blank" rel="noopener" class="conference-btn guidelines-btn">
+                                    <i class="fas fa-book"></i>
+                                    <span>Guidelines</span>
+                                </a>
+                            </div>
+                            <div class="conference-button-group">
+                                <label class="conference-label">Abstract submission and registration form</label>
+                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeHNTKNZto3aZHfy9gVazMsacZLGuGAM0kG7MZitac3Ih2-xA/viewform" target="_blank" rel="noopener" class="conference-btn form-btn">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Form</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="conference-email">
+                            <i class="fas fa-envelope"></i>
+                            <span>For conference related concerns, email us at:</span>
+                            <a href="mailto:icmrsdg@uphsl.edu.ph" class="email-link">icmrsdg@uphsl.edu.ph</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Section with Facebook Feed -->
+                <div class="news-layout">
+                    <div class="news-content">
+                        <div class="news-carousel-container">
+                            <div class="news-carousel" id="newsCarousel">
+                                <?php
+                                $categoryId = 'Research';
+                                $category = getCategoryByName($categoryId);
+                                $categoryId = $category ? $category['id'] : null;
+                                $news_carousel_posts = (int)getSetting('news_carousel_posts', '5');
+                                $category_posts = $categoryId ? getRecentPostsByCategory($categoryId, $news_carousel_posts) : [];
+                                ?>
+                                <?php if (!empty($category_posts)): ?>
+                                    <?php foreach ($category_posts as $index => $post): ?>
+                                        <div class="news-slide <?php echo $index === 0 ? 'active' : ''; ?>">
+                                            <div class="news-slide-meta">
+                                                <span class="news-slide-date">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <?php echo formatDate($post['published_at'] ?: $post['created_at']); ?>
+                                                </span>
+                                            </div>
+                                            <div class="news-slide-title-overlay">
+                                                <h3 class="news-slide-title">
+                                                    <a href="<?php echo $base_path; ?>post.php?slug=<?php echo $post['slug']; ?>">
+                                                        <?php echo htmlspecialchars($post['title']); ?>
+                                                    </a>
+                                                </h3>
+                                            </div>
+                                            <div class="news-slide-image">
+                                                <?php if ($post['featured_image']): ?>
+                                                    <?php
+                                                        $img = $post['featured_image'];
+                                                        $imgSrc = (strpos($img, 'uploads/') === 0) ? $img : 'uploads/' . $img;
+                                                    ?>
+                                                    <img src="<?php echo htmlspecialchars($imgSrc); ?>"
+                                                         alt="<?php echo htmlspecialchars($post['title']); ?>"
+                                                         decoding="async">
+                                                <?php else: ?>
+                                                    <div class="news-slide-placeholder">
+                                                        <i class="fas fa-newspaper"></i>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Navigation Arrows -->
+                            <button class="carousel-nav carousel-prev" id="newsPrev">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="carousel-nav carousel-next" id="newsNext">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+
+                            <!-- Dots Indicator -->
+                            <div class="carousel-dots" id="newsDots"></div>
+                        </div>
+
+                        <div class="news-actions">
+                            <a href="<?php echo $base_path; ?>posts.php?category=<?php echo urlencode($categoryId); ?>" class="btn btn-primary">
+                                <i class="fas fa-newspaper"></i>
+                                View All Research Posts
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="facebook-feed">
+                        <?php $facebook_url = 'https://www.facebook.com/UPHSLRDC'; ?>
+                        <a href="<?php echo htmlspecialchars($facebook_url); ?>" target="_blank" rel="noopener" class="facebook-header">
+                            <h3 class="facebook-title">
+                                <i class="fab fa-facebook"></i>
+                                Follow Us on Facebook
+                            </h3>
+                            <p class="facebook-subtitle">Stay connected with our latest updates</p>
+                        </a>
+                        <div class="facebook-embed">
+                            <div class="fb-page" data-href="<?php echo htmlspecialchars($facebook_url); ?>" data-tabs="timeline" data-width="" data-height="650" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                // Initialize news carousel
+                document.addEventListener('DOMContentLoaded', function() {
+                    const carousel = document.getElementById('newsCarousel');
+                    if (!carousel) return;
+
+                    const slides = carousel.querySelectorAll('.news-slide');
+                    const prevBtn = document.getElementById('newsPrev');
+                    const nextBtn = document.getElementById('newsNext');
+                    const dotsContainer = document.getElementById('newsDots');
+
+                    let currentSlide = 0;
+
+                    // Create dots
+                    if (dotsContainer && slides.length > 1) {
+                        slides.forEach((_, index) => {
+                            const dot = document.createElement('button');
+                            dot.className = 'carousel-dot';
+                            if (index === 0) dot.classList.add('active');
+                            dot.addEventListener('click', () => goToSlide(index));
+                            dotsContainer.appendChild(dot);
+                        });
+                    }
+
+                    function showSlide(index) {
+                        slides.forEach((slide, i) => {
+                            slide.classList.toggle('active', i === index);
+                        });
+
+                        if (dotsContainer) {
+                            const dots = dotsContainer.querySelectorAll('.carousel-dot');
+                            dots.forEach((dot, i) => {
+                                dot.classList.toggle('active', i === index);
+                            });
+                        }
+                    }
+
+                    function goToSlide(index) {
+                        currentSlide = index;
+                        showSlide(currentSlide);
+                    }
+
+                    function nextSlide() {
+                        currentSlide = (currentSlide + 1) % slides.length;
+                        showSlide(currentSlide);
+                    }
+
+                    function prevSlide() {
+                        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                        showSlide(currentSlide);
+                    }
+
+                    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+                    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+                    // Auto-rotate slides
+                    if (slides.length > 1) {
+                        setInterval(nextSlide, 5000);
+                    }
+                });
+                </script>
             </div>
         </div>
     </section>
@@ -588,7 +967,153 @@ body {
         padding: 60px 0;
         background: #f8f9fa;
     }
-    
+
+    /* Conference Information Card */
+    .conference-info-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 3rem;
+        border: 1px solid rgba(44, 90, 160, 0.1);
+    }
+
+    .conference-info-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 1rem 1.5rem;
+        text-align: center;
+    }
+
+    .conference-info-title {
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .conference-info-content {
+        padding: 1.5rem;
+    }
+
+    .conference-buttons {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        justify-content: center;
+    }
+
+    .conference-button-group {
+        flex: 1;
+        max-width: 250px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .conference-label {
+        color: #666;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-align: center;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .conference-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, var(--primary-color), #1a3d7a);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(28, 77, 161, 0.2);
+        border: 2px solid transparent;
+    }
+
+    .conference-btn:hover {
+        background: linear-gradient(135deg, var(--secondary-color), #e6b032);
+        color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(28, 77, 161, 0.3);
+    }
+
+    .conference-btn i {
+        font-size: 1rem;
+    }
+
+    .conference-email {
+        text-align: center;
+        padding: 1rem;
+        background: linear-gradient(135deg, rgba(44, 90, 160, 0.05), rgba(255, 198, 62, 0.05));
+        border-radius: 10px;
+        border: 1px solid rgba(44, 90, 160, 0.1);
+    }
+
+    .conference-email i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .conference-email span {
+        color: #666;
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+
+    .email-link {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+    }
+
+    .email-link:hover {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+
+    /* Responsive styles for conference card */
+    @media (max-width: 768px) {
+        .conference-buttons {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .conference-button-group {
+            max-width: 100%;
+        }
+
+        .conference-info-header {
+            padding: 0.8rem 1rem;
+        }
+
+        .conference-info-title {
+            font-size: 1rem;
+        }
+
+        .conference-info-content {
+            padding: 1rem;
+        }
+
+        .conference-label {
+            font-size: 0.8rem;
+        }
+    }
+
     .news-video-section .section-header {
         text-align: center;
         margin-bottom: 60px;
@@ -633,6 +1158,7 @@ body {
         max-width: 1200px;
         margin: 0 auto;
     }
+
     .video-pdf-flex {
         display: flex;
         flex-direction: row;
@@ -655,6 +1181,226 @@ body {
         justify-content: center;
         align-items: stretch;
         overflow: hidden;
+    }
+
+    /* Image Carousel Styles */
+    .image-carousel-wrapper {
+        flex: 0 0 40%;
+        min-width: 0;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        overflow: hidden;
+    }
+
+    .image-carousel-container {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        padding: 1.5rem 1rem 1rem 1rem;
+        width: 100%;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .image-carousel-header {
+        margin-bottom: 1rem;
+    }
+
+    .image-carousel-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color, #2c5aa0);
+        margin: 0;
+        text-align: center;
+    }
+
+    .image-carousel {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        flex: 1 1 auto;
+        display: flex;
+        align-items: stretch;
+        min-height: 300px;
+    }
+
+    .image-carousel-track {
+        display: flex;
+        transition: transform 0.5s ease;
+        width: 100%;
+        height: 100%;
+    }
+
+    .image-carousel-slide {
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .image-carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        border-radius: 12px;
+        background: #f8f9fa;
+        cursor: pointer;
+    }
+
+    .image-carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: var(--primary-color, #2c5aa0);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+    }
+
+    .image-carousel:hover .image-carousel-nav {
+        opacity: 1;
+    }
+
+    .image-carousel-nav:hover {
+        background: var(--primary-color, #2c5aa0);
+        color: white;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .image-carousel-prev {
+        left: 0.5rem;
+    }
+
+    .image-carousel-next {
+        right: 0.5rem;
+    }
+
+    .image-carousel-dots {
+        position: absolute;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 20;
+    }
+
+    .image-carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        border: 2px solid rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .image-carousel-dot.active {
+        background: white;
+        border-color: white;
+        transform: scale(1.2);
+    }
+
+    .image-carousel-dot:hover {
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .lightbox.show {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .lightbox-content {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        z-index: 10000;
+    }
+
+    .lightbox-close:hover {
+        color: var(--secondary-color, #ffc63e);
+    }
+
+    .lightbox-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        color: var(--primary-color, #2c5aa0);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10001;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .lightbox-nav:hover {
+        background: var(--primary-color, #2c5aa0);
+        color: white;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .lightbox-prev {
+        left: 20px;
+    }
+
+    .lightbox-next {
+        right: 20px;
     }
     .pdf-preview-container {
         background: #fff;
@@ -1182,6 +1928,163 @@ body {
         goToSlide(0);
     });
     
+    // Image Carousel Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const track = document.getElementById('imageCarouselTrack');
+        const prevBtn = document.getElementById('imageCarouselPrev');
+        const nextBtn = document.getElementById('imageCarouselNext');
+        const dotsContainer = document.getElementById('imageCarouselDots');
+        
+        if (!track) return;
+        
+        const slides = Array.from(track.children);
+        const slideCount = slides.length;
+        let currentIndex = 0;
+        
+        // Create dots
+        if (dotsContainer && slideCount > 1) {
+            for (let i = 0; i < slideCount; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'image-carousel-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => {
+                    goToSlide(i);
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+        
+        function goToSlide(index) {
+            currentIndex = (index + slideCount) % slideCount;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            
+            // Update dots
+            if (dotsContainer) {
+                const dots = Array.from(dotsContainer.children);
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+        }
+        
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+        
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+        
+        // Navigation buttons
+        if (prevBtn) {
+            prevBtn.addEventListener('click', prevSlide);
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', nextSlide);
+        }
+        
+        // Auto-play
+        let autoPlayInterval = setInterval(nextSlide, 5000);
+        
+        // Pause auto-play on hover
+        track.addEventListener('mouseenter', () => {
+            clearInterval(autoPlayInterval);
+        });
+        
+        track.addEventListener('mouseleave', () => {
+            autoPlayInterval = setInterval(nextSlide, 5000);
+        });
+        
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxContent = document.getElementById('lightboxContent');
+        const lightboxClose = document.getElementById('lightboxClose');
+        const lightboxPrev = document.getElementById('lightboxPrev');
+        const lightboxNext = document.getElementById('lightboxNext');
+        
+        let lightboxIndex = 0;
+        
+        // Add click event to all carousel images
+        const carouselImages = track.querySelectorAll('img');
+        carouselImages.forEach((img, index) => {
+            img.addEventListener('click', () => {
+                const fullImageSrc = img.getAttribute('data-full');
+                if (fullImageSrc) {
+                    lightboxContent.src = fullImageSrc;
+                    lightboxIndex = index;
+                    lightbox.classList.add('show');
+                    // Pause auto-play when lightbox is open
+                    clearInterval(autoPlayInterval);
+                }
+            });
+        });
+        
+        function showLightboxImage(index) {
+            lightboxIndex = (index + carouselImages.length) % carouselImages.length;
+            const img = carouselImages[lightboxIndex];
+            const fullImageSrc = img.getAttribute('data-full');
+            if (fullImageSrc) {
+                lightboxContent.src = fullImageSrc;
+            }
+        }
+        
+        // Navigation buttons
+        if (lightboxPrev) {
+            lightboxPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showLightboxImage(lightboxIndex - 1);
+            });
+        }
+        
+        if (lightboxNext) {
+            lightboxNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showLightboxImage(lightboxIndex + 1);
+            });
+        }
+        
+        // Close lightbox when clicking close button
+        if (lightboxClose) {
+            lightboxClose.addEventListener('click', () => {
+                lightbox.classList.remove('show');
+                lightboxContent.src = '';
+                // Resume auto-play
+                autoPlayInterval = setInterval(nextSlide, 5000);
+            });
+        }
+        
+        // Close lightbox when clicking outside the image
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('show');
+                lightboxContent.src = '';
+                // Resume auto-play
+                autoPlayInterval = setInterval(nextSlide, 5000);
+            }
+        });
+        
+        // Close lightbox on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('show')) {
+                lightbox.classList.remove('show');
+                lightboxContent.src = '';
+                // Resume auto-play
+                autoPlayInterval = setInterval(nextSlide, 5000);
+            }
+            // Navigate with arrow keys when lightbox is open
+            if (lightbox.classList.contains('show')) {
+                if (e.key === 'ArrowLeft') {
+                    showLightboxImage(lightboxIndex - 1);
+                } else if (e.key === 'ArrowRight') {
+                    showLightboxImage(lightboxIndex + 1);
+                }
+            }
+        });
+        
+        // Initialize
+        goToSlide(0);
+    });
+    
     // Adjust layout when news carousel is hidden
     document.addEventListener('DOMContentLoaded', function() {
         const layout = document.getElementById('newsVideoLayout');
@@ -1236,6 +2139,65 @@ body {
                 <div class="mv-card">
                     <h3>Mission</h3>
                     <p>Develop research-oriented professionals who produce high impact researches that are locally responsive and globally competitive, worthy of publication and citation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ICMRSDG 2025 Documentation Section -->
+    <section class="content-section icmrsdg-section">
+        <div class="container">
+            <h2 class="section-title">International Conference on Multidisciplinary Research for Sustainable Development Goals 2025</h2>
+            <div class="icmrsdg-container">
+                <div class="icmrsdg-wrapper">
+                    <div class="icmrsdg-grid">
+                        <div class="icmrsdg-pdf-card">
+                            <div class="icmrsdg-pdf-header">
+                                <h3 class="icmrsdg-pdf-title">ICMRSDG 2025 Documentation</h3>
+                            </div>
+                            <div class="icmrsdg-pdf-frame">
+                                <iframe src="<?php echo $base_path; ?>assets/documents/pdfs/ICMRSDG_2025_Documentation.pdf#toolbar=1&navpanes=0&scrollbar=1" width="100%" height="500px" style="border:1px solid #ccc; border-radius:15px; min-height:400px;" allowfullscreen loading="lazy"></iframe>
+                            </div>
+                            <div class="icmrsdg-pdf-footer">
+                                <a href="<?php echo $base_path; ?>assets/documents/pdfs/ICMRSDG_2025_Documentation.pdf" target="_blank" class="icmrsdg-download-link">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </a>
+                            </div>
+                        </div>
+                        <div class="icmrsdg-pdf-card">
+                            <div class="icmrsdg-pdf-header">
+                                <h3 class="icmrsdg-pdf-title">ICMRSDG 2025 Conference Proceedings</h3>
+                            </div>
+                            <div class="icmrsdg-pdf-frame">
+                                <iframe src="<?php echo $base_path; ?>assets/documents/pdfs/ICMRSDG_2025_Conference_Proceedings.pdf#toolbar=1&navpanes=0&scrollbar=1" width="100%" height="500px" style="border:1px solid #ccc; border-radius:15px; min-height:400px;" allowfullscreen loading="lazy"></iframe>
+                            </div>
+                            <div class="icmrsdg-pdf-footer">
+                                <a href="<?php echo $base_path; ?>assets/documents/pdfs/ICMRSDG_2025_Conference_Proceedings.pdf" target="_blank" class="icmrsdg-download-link">
+                                    <i class="fas fa-download"></i> Download PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Agenda Section -->
+    <section class="content-section agenda-section">
+        <div class="container">
+            <h2 class="section-title">UPHSL Research Agenda</h2>
+            <div class="agenda-container">
+                <div class="agenda-wrapper">
+                    <div class="agenda-header">
+                        <h3 class="agenda-title">Research Agenda Document</h3>
+                        <a href="<?php echo $base_path; ?>assets/documents/pdfs/UPHSL_Research_Agenda.pdf" target="_blank" class="agenda-download-link">
+                            <i class="fas fa-download"></i> Download PDF
+                        </a>
+                    </div>
+                    <div class="agenda-frame">
+                        <iframe src="<?php echo $base_path; ?>assets/documents/pdfs/UPHSL_Research_Agenda.pdf#toolbar=1&navpanes=0&scrollbar=1" width="100%" height="800px" style="border:1px solid #ccc; border-radius:15px; min-height:600px;" allowfullscreen loading="lazy"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
