@@ -12,7 +12,7 @@ require_once '../app/includes/functions.php';
 
 // Check if this sub-page or Support Services section is in maintenance
 if (isSectionInMaintenance('support-services', 'research') || isSectionInMaintenance('support-services')) {
-    $page_title = "Research & Publication - Maintenance";
+    $page_title = "Research & Development Center - Maintenance";
     $base_path = '../';
     include '../app/includes/header.php';
     if (displaySectionMaintenance('support-services', $base_path, 'research')) {
@@ -22,7 +22,7 @@ if (isSectionInMaintenance('support-services', 'research') || isSectionInMainten
 }
 
 $base_path = '../';
-$page_title = "Research & Publication - UPHSL";
+$page_title = "Research & Development Center - UPHSL";
 
 // Function to find PDF file for a research title
 function findResearchPDF($title, $department) {
