@@ -845,7 +845,7 @@ body {
                                                 <?php if ($post['featured_image']): ?>
                                                     <?php
                                                         $img = $post['featured_image'];
-                                                        $imgSrc = (strpos($img, 'uploads/') === 0) ? $img : 'uploads/' . $img;
+                                                        $imgSrc = (strpos($img, 'uploads/') === 0) ? $base_path . $img : $base_path . 'uploads/' . $img;
                                                     ?>
                                                     <img src="<?php echo htmlspecialchars($imgSrc); ?>"
                                                          alt="<?php echo htmlspecialchars($post['title']); ?>"
