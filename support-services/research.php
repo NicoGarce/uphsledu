@@ -2153,7 +2153,7 @@ body {
                     <div class="icmrsdg-grid">
                         <div class="icmrsdg-pdf-card">
                             <div class="icmrsdg-pdf-header">
-                                <h3 class="icmrsdg-pdf-title">ICMRSDG 2025 Documentation</h3>
+                                <h3 class="icmrsdg-pdf-title">ICMRSDG 2025 Conference Proceedings</h3>
                             </div>
                             <div class="icmrsdg-pdf-frame">
                                 <iframe src="<?php echo $base_path; ?>assets/documents/pdfs/ICMRSDG_2025_Documentation.pdf#toolbar=1&navpanes=0&scrollbar=1" width="100%" height="500px" style="border:1px solid #ccc; border-radius:15px; min-height:400px;" allowfullscreen loading="lazy"></iframe>
@@ -2166,7 +2166,7 @@ body {
                         </div>
                         <div class="icmrsdg-pdf-card">
                             <div class="icmrsdg-pdf-header">
-                                <h3 class="icmrsdg-pdf-title">ICMRSDG 2025 Conference Proceedings</h3>
+                                <h3 class="icmrsdg-pdf-title">ICMRSDG 2025 Documentation</h3>
                             </div>
                             <div class="icmrsdg-pdf-frame">
                                 <iframe src="<?php echo $base_path; ?>assets/documents/pdfs/ICMRSDG_2025_Conference_Proceedings.pdf#toolbar=1&navpanes=0&scrollbar=1" width="100%" height="500px" style="border:1px solid #ccc; border-radius:15px; min-height:400px;" allowfullscreen loading="lazy"></iframe>
