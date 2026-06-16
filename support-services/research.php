@@ -656,8 +656,8 @@ body {
                 <div class="intro-logo">
                     <img src="<?php echo $base_path; ?>assets/images/research/uphsl-research-logo.png" alt="Research & Development Center Logo">
                 </div>
-                <h2>Research & Development Center</h2>
-                <p class="intro-description">Research and Development Center (R&DC) demonstrates bold initiatives in escalating the research culture of the university, envisioning it as a research-renowned institution through its efficient and effective research mechanisms, ensuring that relevant and responsive services are in place for school heads, faculty, students and non-teaching staff who engage in research activities.</p>
+                <h2>UPHSL Research and Development Center</h2>
+                <p class="intro-description">The UPHSL Research and Development Center (R&DC) demonstrates bold initiatives in escalating the research culture of the university. It envisions UPHSL as a research-renowned institution through its efficient and effective research mechanisms, ensuring that relevant and responsive services are in place for school heads, faculty, students and non-teaching staff who engage in research activities.</p>
             </div>
         </div>
     </section>
