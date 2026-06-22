@@ -264,7 +264,7 @@ include 'app/includes/header.php';
                                                     <div class="qr-codes">
                                                         <div class="qr-item">
                                                             <div class="qr-image">
-                                                                <img src="assets/images/moodle/New_Moodle_QR.png" alt="Moodle QR Code" class="qr-code">
+                                                                <img src="assets/images/moodle/lmsbed-qr-code.png" alt="Moodle QR Code" class="qr-code">
                                                             </div>
                                                             <div class="qr-info">
                                                                 <h6>Moodle QR Code</h6>
@@ -287,7 +287,7 @@ include 'app/includes/header.php';
                                             <div class="method-section">
                                                 <h5><i class="fas fa-link"></i> Method 3: Via Direct Link</h5>
                                                 <div class="direct-links">
-                                                    <p><strong>Moodle LMS:</strong> <a href="https://uphslms.com/" target="_blank">https://uphslms.com/</a></p>
+                                                    <p><strong>Moodle LMS:</strong> <a href="https://lmsbed.uphsl.edu.ph/" target="_blank">https://uphslms.com/</a></p>
                                                 </div>
                                             </div>
                                         </div>

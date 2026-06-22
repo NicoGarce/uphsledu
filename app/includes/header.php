@@ -141,7 +141,7 @@ $navbar_items_config = [
         'sao' => 'Student Affairs Office',
         'library' => 'Library',
         'quality-assurance' => 'Quality Assurance',
-        'research' => 'Research'
+        'research' => 'Research and Development Center'
     ],
     'about' => [
         'about-us' => 'About Us',
@@ -1307,7 +1307,7 @@ $navbar_items_config = [
                                 <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">GTI Online Grades</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('online-services', 'moodle')): ?>
-                                <a href="https://uphslms.com/" target="_blank" class="dropdown-link">Moodle</a>
+                                <a href="https://lmsbed.uphsl.edu.ph/" target="_blank" class="dropdown-link">Moodle</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('online-services', 'google-account')): ?>
                                 <a href="https://accounts.google.com/signin" target="_blank" class="dropdown-link">Google Account</a>
