@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $navbar_items_check = [
             'home' => ['name' => 'Home', 'subitems' => []],
             'programs' => ['name' => 'Programs', 'subitems' => ['basic-education', 'senior-high-school', 'junior-high-school', 'grade-school', 'aviation', 'arts-sciences', 'business-accountancy', 'computer-studies', 'criminology', 'education', 'engineering-architecture', 'hospitality-management', 'maritime', 'law', 'graduate-school']],
-            'online-services' => ['name' => 'Online Services', 'subitems' => ['instructions', 'gti-online-grades', 'moodle', 'google-account', 'microsoft-365', 'saliksik']],
+            'online-services' => ['name' => 'Online Services', 'subitems' => ['instructions', 'gti-online-grades', 'moodle-bed', 'moodle-college', 'google-account', 'microsoft-365', 'saliksik']],
             'support-services' => ['name' => 'Support Services', 'subitems' => ['alumni', 'careers', 'clinic', 'cod', 'iea', 'sao', 'library', 'quality-assurance', 'research']],
             'campuses' => ['name' => 'Campuses', 'subitems' => []],
             'about' => ['name' => 'About', 'subitems' => ['about-us', 'contact', 'environmental-policy', 'university-policy', 'map']],
@@ -238,7 +238,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'subitems' => [
                         'instructions' => 'Instructions',
                         'gti-online-grades' => 'GTI Online Grades',
-                        'moodle' => 'Moodle',
+                        'moodle-bed' => 'Moodle for Basic Education',
+                        'moodle-college' => 'Moodle for College',
                         'google-account' => 'Google Account',
                         'microsoft-365' => 'Microsoft 365',
                         'saliksik' => 'Saliksik'
@@ -398,7 +399,8 @@ $navbar_items_config = [
         'subitems' => [
             'instructions' => 'Instructions',
             'gti-online-grades' => 'GTI Online Grades',
-            'moodle' => 'Moodle',
+            'moodle-bed' => 'Moodle for Basic Education',
+            'moodle-college' => 'Moodle for College',
             'google-account' => 'Google Account',
             'microsoft-365' => 'Microsoft 365',
             'saliksik' => 'Saliksik'
