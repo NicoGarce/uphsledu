@@ -127,7 +127,8 @@ $navbar_items_config = [
     'online-services' => [
         'instructions' => 'Instructions',
         'gti-online-grades' => 'GTI Online Grades',
-        'moodle' => 'Moodle',
+        'moodle-bed' => 'Moodle for Basic Education',
+        'moodle-college' => 'Moodle for College',
         'google-account' => 'Google Account',
         'microsoft-365' => 'Microsoft 365',
         'saliksik' => 'Saliksik'
@@ -1306,8 +1307,11 @@ $navbar_items_config = [
                                 <?php if (isNavbarItemVisible('online-services', 'gti-online-grades')): ?>
                                 <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="dropdown-link">GTI Online Grades</a>
                                 <?php endif; ?>
-                                <?php if (isNavbarItemVisible('online-services', 'moodle')): ?>
-                                <a href="https://lmsbed.uphsl.edu.ph/" target="_blank" class="dropdown-link">Moodle</a>
+                                <?php if (isNavbarItemVisible('online-services', 'moodle-bed')): ?>
+                                <a href="https://lmsbed.uphsl.edu.ph/" target="_blank" class="dropdown-link">Moodle for Basic Education</a>
+                                <?php endif; ?>
+                                <?php if (isNavbarItemVisible('online-services', 'moodle-college')): ?>
+                                <a href="https://lmsbinan.uphsl.edu.ph/" target="_blank" class="dropdown-link">Moodle for College</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('online-services', 'google-account')): ?>
                                 <a href="https://accounts.google.com/signin" target="_blank" class="dropdown-link">Google Account</a>

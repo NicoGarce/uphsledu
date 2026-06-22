@@ -251,7 +251,7 @@ include 'app/includes/header.php';
                                             <div class="method-section">
                                                 <h5><i class="fas fa-mouse-pointer"></i> Method 1: Via Navigation Menu</h5>
                                                 <ol class="instruction-steps">
-                                                    <li>Click on "Moodle" from the Online Services menu</li>
+                                                    <li>Click on "Moodle for Basic Education/Moodle for College" from the Online Services menu</li>
                                                     <li>You will be redirected to the Moodle login page</li>
                                                     <li>Enter your username and password (see credentials below)</li>
                                                     <li>Click "Log in" to access your courses</li>
@@ -267,7 +267,7 @@ include 'app/includes/header.php';
                                                                 <img src="assets/images/moodle/lmsbed-qr-code.png" alt="Moodle QR Code" class="qr-code">
                                                             </div>
                                                             <div class="qr-info">
-                                                                <h6>Moodle QR Code</h6>
+                                                                <h6>Moodle for Basic Education QR Code</h6>
                                                                 <p>Scan with your mobile device camera to access Moodle</p>
                                                             </div>
                                                         </div>
@@ -282,12 +282,35 @@ include 'app/includes/header.php';
                                                         </ol>
                                                     </div>
                                                 </div>
+                                                <!--<div class="qr-section">
+                                                    <div class="qr-codes">
+                                                        <div class="qr-item">
+                                                            <div class="qr-image">
+                                                                <img src="assets/images/moodle/lmsbinan-qr-code.png" alt="Moodle for College QR Code" class="qr-code">
+                                                            </div>
+                                                            <div class="qr-info">
+                                                                <h6>Moodle for College QR Code</h6>
+                                                                <p>Scan with your mobile device camera to access Moodle</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="qr-instructions">
+                                                        <h6><i class="fas fa-mobile-alt"></i> How to Scan:</h6>
+                                                        <ol>
+                                                            <li>Open your mobile device's camera app</li>
+                                                            <li>Point the camera at the QR code above</li>
+                                                            <li>Tap the notification that appears to open Moodle</li>
+                                                            <li>Enter your login credentials when prompted</li>
+                                                        </ol>
+                                                    </div>
+                                                </div>-->
                                             </div>
                                             
                                             <div class="method-section">
                                                 <h5><i class="fas fa-link"></i> Method 3: Via Direct Link</h5>
                                                 <div class="direct-links">
-                                                    <p><strong>Moodle LMS:</strong> <a href="https://lmsbed.uphsl.edu.ph/" target="_blank">https://uphslms.com/</a></p>
+                                                    <p><strong>Moodle LMS for Basic Education:</strong> <a href="https://lmsbed.uphsl.edu.ph/" target="_blank">https://lmsbed.uphsl.edu.ph/</a></p>
+                                                    <!--<p><strong>Moodle LMS for College:</strong> <a href="https://lmsbinan.uphsl.edu.ph/" target="_blank">https://lmsbinan.uphsl.edu.ph/</a></p>-->
                                                 </div>
                                             </div>
                                         </div>
@@ -736,7 +759,8 @@ include 'app/includes/header.php';
                         <h3>Quick Access</h3>
                         <ul class="quick-links">
                             <li><a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank">GTI Online Grades</a></li>
-                            <li><a href="https://uphslms.com/blended/login/index.php" target="_blank">Moodle LMS</a></li>
+                            <li><a href="https://lmsbed.uphsl.edu.ph/" target="_blank">Moodle LMS for Basic Education</a></li>
+                            <!--<li><a href="https://lmsbinan.uphsl.edu.ph/" target="_blank">Moodle LMS for College</a></li>-->
                             <li><a href="https://accounts.google.com/signin" target="_blank">Google Account</a></li>
                             <li><a href="https://login.microsoftonline.com/" target="_blank">Microsoft 365</a></li>
                             <li><a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank">Online Payment</a></li>
