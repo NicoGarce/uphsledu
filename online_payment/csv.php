@@ -229,6 +229,12 @@ if (!$is_authenticated) {
 }
 
 include "dbconnect.php";
+
+// Set character set to UTF-8 for proper handling of special characters
+if (isset($con)) {
+    mysqli_set_charset($con, 'utf8mb4');
+}
+
 include "campus_table_manager.php";
 
 // Ensure campus tables exist on initial load

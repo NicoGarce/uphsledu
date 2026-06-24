@@ -77,6 +77,9 @@ $base_path = $GLOBALS['base_path'];
                     <a href="payment-monitoring.php" class="nav-link icon-only <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>" title="Payment Monitoring">
                         <i class="fas fa-credit-card"></i>
                     </a>
+                    <a href="student-management.php" class="nav-link icon-only <?php echo ($current_page == 'student-management') ? 'active' : ''; ?>" title="Student Management">
+                        <i class="fas fa-user-graduate"></i>
+                    </a>
                     <a href="database-export.php" class="nav-link icon-only <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>" title="Database Export">
                         <i class="fas fa-database"></i>
                     </a>
@@ -200,6 +203,10 @@ $base_path = $GLOBALS['base_path'];
                     <a href="payment-monitoring.php" class="sidebar-link <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>">
                         <i class="fas fa-credit-card"></i>
                         <span>Payment Monitoring</span>
+                    </a>
+                    <a href="student-management.php" class="sidebar-link <?php echo ($current_page == 'student-management') ? 'active' : ''; ?>">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Student Management</span>
                     </a>
                 </div>
                 <?php endif; ?>
