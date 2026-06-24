@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'sao' => 'Student Affairs Office',
                         'library' => 'Library',
                         'quality-assurance' => 'Quality Assurance',
-                        'research' => 'Research'
+                        'research' => 'Research & Development Center'
                     ]
                 ],
                 'campuses' => ['name' => 'Campuses', 'subitems' => []],
@@ -417,7 +417,7 @@ $navbar_items_config = [
             'sao' => 'Student Affairs Office',
             'library' => 'Library',
             'quality-assurance' => 'Quality Assurance',
-            'research' => 'Research'
+            'research' => 'Research & Development Center'
         ]
     ],
     'campuses' => ['name' => 'Campuses', 'subitems' => []],
@@ -534,7 +534,7 @@ $sections = [
             'sao' => 'Student Affairs Office',
             'library' => 'Library',
             'quality-assurance' => 'Quality Assurance',
-            'research' => 'Research'
+            'research' => 'Research & Development Center'
         ]
     ],
     'campuses' => ['name' => 'Campuses', 'subpages' => []],

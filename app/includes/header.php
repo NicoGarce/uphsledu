@@ -1363,7 +1363,7 @@ $navbar_items_config = [
                                 <a href="<?php echo $base_path; ?>support-services/quality-assurance.php" class="dropdown-link <?php echo ($current_page == 'quality-assurance') ? 'active' : ''; ?>">Quality Assurance</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('support-services', 'research')): ?>
-                                <a href="<?php echo $base_path; ?>support-services/research.php" class="dropdown-link <?php echo ($current_page == 'research') ? 'active' : ''; ?>">Research</a>
+                                <a href="<?php echo $base_path; ?>support-services/research.php" class="dropdown-link <?php echo ($current_page == 'research') ? 'active' : ''; ?>">Research & Development Center</a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
