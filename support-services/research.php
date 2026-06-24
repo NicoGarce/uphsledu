@@ -684,6 +684,15 @@ body {
                             </div>
                             <div class="video-slider">
                                 <div class="video-slider-track" id="videoSliderTrack">
+                                    <!-- IRC 2026-2 Video -->
+                                    <div class="video-slide">
+                                        <div class="video-player">
+                                            <video controls muted playsinline preload="auto">
+                                                <source src="<?php echo $base_path; ?>assets/video/IRC-2026-2.mp4" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </div>
+                                    </div>
                                     <!-- IRC 2026 Video -->
                                     <div class="video-slide">
                                         <div class="video-player">
