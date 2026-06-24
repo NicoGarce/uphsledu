@@ -771,7 +771,8 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
                     </div>
                     <div class="control-group">
                         <label for="enrolled-search">Search:</label>
-                        <input type="text" id="enrolled-search" class="form-input" placeholder="Search by student number, name, or course...">
+                        <input type="text" id="enrolled-search" class="form-input" placeholder="Search">
+                        <!--<button type="button" class="btn btn-sm btn-primary" onclick="performEnrolledSearch()" style="margin-top: 5px;">Search</button>-->
                     </div>
                     <button class="btn btn-primary" onclick="openAddEnrolledModal()">
                         <i class="fas fa-plus"></i>
@@ -831,7 +832,8 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
                     </div>
                     <div class="control-group">
                         <label for="temporary-search">Search:</label>
-                        <input type="text" id="temporary-search" class="form-input" placeholder="Search by locator number or name...">
+                        <input type="text" id="temporary-search" class="form-input" placeholder="Search">
+                        <!--<button type="button" class="btn btn-sm btn-primary" onclick="performTemporarySearch()" style="margin-top: 5px;">Search</button>-->
                     </div>
                     <button class="btn btn-primary" onclick="openAddTemporaryModal()">
                         <i class="fas fa-plus"></i>
@@ -1486,11 +1488,23 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
             loadEnrolledStudents();
         });
 
-        document.getElementById('enrolled-search').addEventListener('input', debounce(function() {
-            enrolledCurrentSearch = this.value;
+        document.getElementById('enrolled-search').addEventListener('input', debounce(function(e) {
+            enrolledCurrentSearch = e.target.value;
             enrolledCurrentPage = 1;
             loadEnrolledStudents();
         }, 300));
+
+        document.getElementById('enrolled-search').addEventListener('keyup', debounce(function(e) {
+            enrolledCurrentSearch = e.target.value;
+            enrolledCurrentPage = 1;
+            loadEnrolledStudents();
+        }, 300));
+
+        function performEnrolledSearch() {
+            enrolledCurrentSearch = document.getElementById('enrolled-search').value;
+            enrolledCurrentPage = 1;
+            loadEnrolledStudents();
+        }
 
         function loadEnrolledStudents() {
             if (!enrolledCurrentCampus) {
@@ -1562,11 +1576,23 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
             loadTemporaryStudents();
         });
 
-        document.getElementById('temporary-search').addEventListener('input', debounce(function() {
-            temporaryCurrentSearch = this.value;
+        document.getElementById('temporary-search').addEventListener('input', debounce(function(e) {
+            temporaryCurrentSearch = e.target.value;
             temporaryCurrentPage = 1;
             loadTemporaryStudents();
         }, 300));
+
+        document.getElementById('temporary-search').addEventListener('keyup', debounce(function(e) {
+            temporaryCurrentSearch = e.target.value;
+            temporaryCurrentPage = 1;
+            loadTemporaryStudents();
+        }, 300));
+
+        function performTemporarySearch() {
+            temporaryCurrentSearch = document.getElementById('temporary-search').value;
+            temporaryCurrentPage = 1;
+            loadTemporaryStudents();
+        }
 
         function loadTemporaryStudents() {
             if (!temporaryCurrentCampus) {
@@ -1635,21 +1661,31 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
             let html = '';
             
             // Previous button
-            html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="onPageChange(${currentPage - 1})">Previous</button>`;
+            html += `<button ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">Previous</button>`;
             
             // Page numbers
             for (let i = 1; i <= totalPages; i++) {
                 if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-                    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="onPageChange(${i})">${i}</button>`;
+                    html += `<button class="${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
                 } else if (i === currentPage - 3 || i === currentPage + 3) {
                     html += `<button disabled>...</button>`;
                 }
             }
             
             // Next button
-            html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="onPageChange(${currentPage + 1})">Next</button>`;
+            html += `<button ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next</button>`;
             
             container.innerHTML = html;
+
+            // Add click event listeners to pagination buttons
+            container.querySelectorAll('button[data-page]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const page = parseInt(this.dataset.page);
+                    if (!isNaN(page) && page !== currentPage) {
+                        onPageChange(page);
+                    }
+                });
+            });
         }
 
         function debounce(func, wait) {
