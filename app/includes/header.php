@@ -130,8 +130,7 @@ $navbar_items_config = [
         'moodle-bed' => 'Moodle for Basic Education',
         'moodle-college' => 'Moodle for College',
         'google-account' => 'Google Account',
-        'microsoft-365' => 'Microsoft 365',
-        'saliksik' => 'Saliksik'
+        'microsoft-365' => 'Microsoft 365'
     ],
     'support-services' => [
         'alumni' => 'Alumni',
@@ -1319,9 +1318,6 @@ $navbar_items_config = [
                                 <?php if (isNavbarItemVisible('online-services', 'microsoft-365')): ?>
                                 <a href="https://login.microsoftonline.com/" target="_blank" class="dropdown-link">Microsoft 365</a>
                                 <?php endif; ?>
-                                <?php if (isNavbarItemVisible('online-services', 'saliksik')): ?>
-                                <a href="https://saliksikuphsl.org/" target="_blank" class="dropdown-link">Saliksik</a>
-                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1643,9 +1639,6 @@ $navbar_items_config = [
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('online-services', 'microsoft-365')): ?>
                         <a href="https://login.microsoftonline.com/" target="_blank" class="mobile-dropdown-link">Microsoft 365</a>
-                        <?php endif; ?>
-                        <?php if (isNavbarItemVisible('online-services', 'saliksik')): ?>
-                        <a href="https://saliksikuphsl.org/" target="_blank" class="mobile-dropdown-link">Saliksik</a>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
