@@ -75,10 +75,6 @@ if (!isset($base_path)) {
                             <i class="fas fa-credit-card"></i>
                             Online Payment
                         </a></li>
-                        <li><a href="https://saliksikuphsl.org/" target="_blank" class="service-link">
-                            <i class="fas fa-search"></i>
-                            Saliksik
-                        </a></li>
                     </ul>
                 </div>
                 
