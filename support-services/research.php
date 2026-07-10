@@ -737,6 +737,9 @@ body {
                             <div class="image-carousel">
                                 <div class="image-carousel-track" id="imageCarouselTrack">
                                     <div class="image-carousel-slide">
+                                        <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/abstract-ext.jpg" alt="IRC Conference Abstract Extension" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/abstract-ext.jpg" class="portrait-image">
+                                    </div>
+                                    <div class="image-carousel-slide">
                                         <img src="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC.jpg" alt="IRC Conference Image 1" data-full="<?php echo $base_path; ?>assets/images/research/ICMRSDG/IRC.jpg">
                                     </div>
                                     <div class="image-carousel-slide">
@@ -1260,6 +1263,12 @@ body {
         border-radius: 12px;
         background: #f8f9fa;
         cursor: pointer;
+    }
+
+    .image-carousel-slide img.portrait-image {
+        object-fit: contain;
+        max-width: 100%;
+        max-height: 100%;
     }
 
     .image-carousel-nav {
