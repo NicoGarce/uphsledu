@@ -1256,19 +1256,17 @@ body {
     }
 
     .image-carousel-slide img {
-        width: 100%;
-        height: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
         display: block;
         border-radius: 12px;
         background: #f8f9fa;
         cursor: pointer;
-    }
-
-    .image-carousel-slide img.portrait-image {
-        object-fit: contain;
-        max-width: 100%;
-        max-height: 100%;
     }
 
     .image-carousel-nav {
