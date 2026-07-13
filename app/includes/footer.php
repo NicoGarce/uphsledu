@@ -65,7 +65,7 @@ if (!isset($base_path)) {
                         </a></li>
                         <li><a href="https://lmsbed.uphsl.edu.ph/" target="_blank" class="service-link">
                             <i class="fas fa-book"></i>
-                            Moodle for Basi Education
+                            Moodle for College
                         </a></li>
                         <li><a href="https://accounts.google.com/signin" target="_blank" class="service-link">
                             <i class="fab fa-google"></i>

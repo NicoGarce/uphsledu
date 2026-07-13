@@ -282,7 +282,7 @@ include 'app/includes/header.php';
                                                         </ol>
                                                     </div>
                                                 </div>
-                                                <!--<div class="qr-section">
+                                                <div class="qr-section">
                                                     <div class="qr-codes">
                                                         <div class="qr-item">
                                                             <div class="qr-image">
@@ -303,14 +303,14 @@ include 'app/includes/header.php';
                                                             <li>Enter your login credentials when prompted</li>
                                                         </ol>
                                                     </div>
-                                                </div>-->
+                                                </div>
                                             </div>
                                             
                                             <div class="method-section">
                                                 <h5><i class="fas fa-link"></i> Method 3: Via Direct Link</h5>
                                                 <div class="direct-links">
                                                     <p><strong>Moodle LMS for Basic Education:</strong> <a href="https://lmsbed.uphsl.edu.ph/" target="_blank">https://lmsbed.uphsl.edu.ph/</a></p>
-                                                    <!--<p><strong>Moodle LMS for College:</strong> <a href="https://lmsbinan.uphsl.edu.ph/" target="_blank">https://lmsbinan.uphsl.edu.ph/</a></p>-->
+                                                    <p><strong>Moodle LMS for College:</strong> <a href="https://lmsbinan.uphsl.edu.ph/" target="_blank">https://lmsbinan.uphsl.edu.ph/</a></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -760,7 +760,7 @@ include 'app/includes/header.php';
                         <ul class="quick-links">
                             <li><a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank">GTI Online Grades</a></li>
                             <li><a href="https://lmsbed.uphsl.edu.ph/" target="_blank">Moodle LMS for Basic Education</a></li>
-                            <!--<li><a href="https://lmsbinan.uphsl.edu.ph/" target="_blank">Moodle LMS for College</a></li>-->
+                            <li><a href="https://lmsbinan.uphsl.edu.ph/" target="_blank">Moodle LMS for College</a></li>
                             <li><a href="https://accounts.google.com/signin" target="_blank">Google Account</a></li>
                             <li><a href="https://login.microsoftonline.com/" target="_blank">Microsoft 365</a></li>
                             <li><a href="https://uphsl.edu.ph/online_payment/guestold_student" target="_blank">Online Payment</a></li>
