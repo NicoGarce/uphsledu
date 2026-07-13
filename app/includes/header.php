@@ -1631,8 +1631,11 @@ $navbar_items_config = [
                         <?php if (isNavbarItemVisible('online-services', 'gti-online-grades')): ?>
                         <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="mobile-dropdown-link">GTI Online Grades</a>
                         <?php endif; ?>
-                        <?php if (isNavbarItemVisible('online-services', 'moodle')): ?>
-                        <a href="https://uphslms.com/" target="_blank" class="mobile-dropdown-link">Moodle</a>
+                        <?php if (isNavbarItemVisible('online-services', 'moodle-bed')): ?>
+                        <a href="https://lmsbed.uphsl.edu.ph/" target="_blank" class="dropdown-link">Moodle for Basic Education</a>
+                        <?php endif; ?>
+                        <?php if (isNavbarItemVisible('online-services', 'moodle-college')): ?>
+                        <a href="https://lmsbinan.uphsl.edu.ph/" target="_blank" class="dropdown-link">Moodle for College</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('online-services', 'google-account')): ?>
                         <a href="https://accounts.google.com/signin" target="_blank" class="mobile-dropdown-link">Google Account</a>

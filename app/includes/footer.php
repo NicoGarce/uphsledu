@@ -59,9 +59,13 @@ if (!isset($base_path)) {
                             <i class="fas fa-graduation-cap"></i>
                             School Automate (GTI)
                         </a></li>
-                        <li><a href="https://uphslms.com/" target="_blank" class="service-link">
+                        <li><a href="https://lmsbed.uphsl.edu.ph/" target="_blank" class="service-link">
                             <i class="fas fa-book"></i>
-                            Moodle
+                            Moodle for Basic Education
+                        </a></li>
+                        <li><a href="https://lmsbed.uphsl.edu.ph/" target="_blank" class="service-link">
+                            <i class="fas fa-book"></i>
+                            Moodle for Basi Education
                         </a></li>
                         <li><a href="https://accounts.google.com/signin" target="_blank" class="service-link">
                             <i class="fab fa-google"></i>
