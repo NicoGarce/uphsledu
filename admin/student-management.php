@@ -421,6 +421,113 @@ function processBatchTmp($con, $table, $batchValues, $batchLocators) {
     return ['inserted'=>$inserted, 'skipped'=>$skipped, 'duplicates'=>$duplicates];
 }
 
+// Handle copy-paste import for temporary students
+if (isset($_POST['btnsubmit_paste_tmp']) && isset($_POST['paste_data_tmp'])) {
+    $campid_tmp = $_POST['campid_tmp'] ?? '';
+    $table_tmp = mapCampusToTmpTable($campid_tmp);
+
+    if ($table_tmp === null) {
+        $err_tmp = 'Invalid campus selected.';
+    } else if (!tableExists($con, $table_tmp)) {
+        $err_tmp = 'Campus temporary table not available.';
+    } else {
+        $pasteData = trim($_POST['paste_data_tmp']);
+        if (empty($pasteData)) {
+            $err_tmp = "No data provided.";
+        } else {
+            $lines = explode("\n", $pasteData);
+            $result = processPasteDataTemporary($con, $lines, $table_tmp);
+            
+            if ($result['success']) {
+                $success_tmp = "Import completed. Approximately {$result['inserted']} rows inserted.";
+                if (!empty($result['skippedRecords'])) {
+                    $success_tmp .= ' ' . count($result['skippedRecords']) . ' lines skipped.';
+                }
+            } else {
+                $err_tmp = 'Error processing pasted data: ' . $result['message'];
+            }
+        }
+    }
+}
+
+// Function to process pasted data for temporary students
+function processPasteDataTemporary($con, $lines, $table) {
+    ini_set('memory_limit', '512M');
+    ini_set('max_execution_time', 300);
+    
+    mysqli_autocommit($con, FALSE);
+    $batchSize = 200;
+    $batchValues = [];
+    $batchLocators = [];
+    $inserted = 0;
+    $skipped = 0;
+    $lineNum = 0;
+    $duplicateRecords = [];
+    $skippedRecords = [];
+
+    foreach ($lines as $line) {
+        $lineNum++;
+        $line = trim($line);
+        if (empty($line)) continue;
+        
+        // Split by tab (Excel copy-paste)
+        $data = explode("\t", $line);
+        
+        if (count($data) < 3) {
+            $skipped++;
+            $skippedRecords[] = "Row {$lineNum}: Insufficient columns (need at least 3 columns)";
+            continue;
+        }
+        
+        // Format: Locator Number (col 0), Date (col 1), Student Name (col 2)
+        $locator = cleanField($data[0]);
+        $name = cleanField($data[2]);
+        
+        if ($locator === '' || $name === '') {
+            $skipped++;
+            $skippedRecords[] = "Row {$lineNum}: Empty fields";
+            continue;
+        }
+        $escLocator = mysqli_real_escape_string($con, $locator);
+        $escName = mysqli_real_escape_string($con, $name);
+        $batchValues[] = "('{$escLocator}','{$escName}')";
+        $batchLocators[] = $locator;
+
+        if (count($batchValues) >= $batchSize) {
+            $res = processBatchTmp($con, $table, $batchValues, $batchLocators);
+            $inserted += $res['inserted'];
+            $skipped += $res['skipped'];
+            if (!empty($res['duplicates'])) $duplicateRecords = array_merge($duplicateRecords, $res['duplicates']);
+            $batchValues = [];
+            $batchLocators = [];
+        }
+    }
+
+    if (!empty($batchValues)) {
+        $res = processBatchTmp($con, $table, $batchValues, $batchLocators);
+        $inserted += $res['inserted'];
+        $skipped += $res['skipped'];
+        if (!empty($res['duplicates'])) $duplicateRecords = array_merge($duplicateRecords, $res['duplicates']);
+    }
+
+    if (mysqli_commit($con)) {
+        $success = true;
+    } else {
+        mysqli_rollback($con);
+        $success = false;
+    }
+
+    mysqli_autocommit($con, TRUE);
+    
+    return [
+        'success' => $success,
+        'inserted' => $inserted,
+        'skipped' => $skipped,
+        'skippedRecords' => $skippedRecords,
+        'duplicateRecords' => $duplicateRecords
+    ];
+}
+
 // Handle temporary CSV upload and import
 if (isset($_POST['btnsubmit_tmp']) && isset($_FILES['csv_file_tmp'])) {
     $campid_tmp = $_POST['campid_tmp'] ?? '';
@@ -843,6 +950,10 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
                         <i class="fas fa-file-csv"></i>
                         CSV New Enroll
                     </button>
+                    <button class="btn btn-secondary" onclick="openPasteImportModalTmp()">
+                        <i class="fas fa-paste"></i>
+                        Copy-Paste Import
+                    </button>
                 </div>
 
                 <div class="table-container">
@@ -1151,6 +1262,58 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeCSVNewEnrollModal()">Cancel</button>
                         <button type="submit" name="btnsubmit_tmp" class="btn btn-primary">Import Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copy-Paste Import Modal (Temporary) -->
+    <div id="pasteImportModalTmp" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Copy-Paste Import - Temporary Students</h3>
+                <span class="close" onclick="closePasteImportModalTmp()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="paste_tmp_campus">Select Campus</label>
+                        <select name="campid_tmp" id="paste_tmp_campus" class="form-input" required>
+                            <option value="">Choose your campus...</option>
+                            <option value="UPHB">Binan Campus</option>
+                            <option value="UPHMU">Medical University</option>
+                            <option value="UPHG">GMA Campus</option>
+                            <option value="UPHM">Manila Campus</option>
+                            <option value="PHCP">Pangasinan Campus</option>
+                            <option value="UPHI">Isabela Campus</option>
+                            <option value="UPHR">Roxas Campus</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="paste_data_tmp">Paste Student Data</label>
+                        <textarea name="paste_data_tmp" id="paste_data_tmp" class="form-input" rows="15" placeholder="Copy data from Excel/Spreadsheet and paste here...
+Format: Locator Number&#9;Date&#9;Student Name
+Example:
+26417244&#9;2026-07-15 00:00:00.0&#9;Santos, Manuel , O
+26417245&#9;2026-07-15 00:00:00.0&#9;Dela Cruz, Juan
+26417246&#9;2026-07-15 00:00:00.0&#9;Reyes, Jose" required></textarea>
+                    </div>
+                    <div class="info-section">
+                        <h4>Instructions</h4>
+                        <ul>
+                            <li>Select cells in Excel/Spreadsheet and copy (Ctrl+C)</li>
+                            <li>Paste directly into the text area above (Ctrl+V)</li>
+                            <li>Each row represents one student record</li>
+                            <li>Column 1: Locator Number (must be unique)</li>
+                            <li>Column 2: Date (ignored)</li>
+                            <li>Column 3: Student Name</li>
+                            <li>Supports tab-separated data from Excel</li>
+                        </ul>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closePasteImportModalTmp()">Cancel</button>
+                        <button type="submit" name="btnsubmit_paste_tmp" class="btn btn-primary">Import Data</button>
                     </div>
                 </form>
             </div>
@@ -1793,6 +1956,16 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
 
         function closeCSVNewEnrollModal() {
             document.getElementById('csvNewEnrollModal').style.display = 'none';
+        }
+
+        // Copy-Paste Import Modal (Temporary Students)
+        function openPasteImportModalTmp() {
+            document.getElementById('pasteImportModalTmp').style.display = 'block';
+            document.getElementById('paste_tmp_campus').value = temporaryCurrentCampus;
+        }
+
+        function closePasteImportModalTmp() {
+            document.getElementById('pasteImportModalTmp').style.display = 'none';
         }
 
         // Close modals when clicking outside
