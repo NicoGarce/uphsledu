@@ -90,11 +90,6 @@ include 'app/includes/header.php';
                                                 <span>School Portal</span>
                                                 <small>gti-binan.uphsl.edu.ph:8339</small>
                                             </a>
-                                            <a href="http://gti-allied.uphsl.edu.ph:8340/PARENTS_STUDENTS/parents_student_index.htm" target="_blank" class="gti-btn medical-btn">
-                                                <i class="fas fa-user-md"></i>
-                                                <span>Medical University</span>
-                                                <small>gti-allied.uphsl.edu.ph:8340</small>
-                                            </a>
                                         </div>
                                         
                                         <h4>First Time Login (Default Account):</h4>
@@ -126,9 +121,9 @@ include 'app/includes/header.php';
                                             </div>
                                             
                                             <div class="method-section">
-                                                <h5><i class="fas fa-hand-pointer"></i> Method 2: Via Direct Buttons Above</h5>
+                                                <h5><i class="fas fa-hand-pointer"></i> Method 2: Via Direct Button Above</h5>
                                                 <ol class="instruction-steps">
-                                                    <li>Click on either "School Portal" or "Medical University" button above</li>
+                                                    <li>Click on the "School Portal" button above</li>
                                                     <li>You will be taken directly to the GTI login page</li>
                                                     <li>Enter your student number as both username and password</li>
                                                     <li>Click "Login" to access your account</li>
@@ -136,10 +131,9 @@ include 'app/includes/header.php';
                                             </div>
                                             
                                             <div class="method-section">
-                                                <h5><i class="fas fa-link"></i> Method 3: Via Direct Links</h5>
+                                                <h5><i class="fas fa-link"></i> Method 3: Via Direct Link</h5>
                                                 <div class="direct-links">
                                                     <p><strong>School Portal:</strong> <a href="http://gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm" target="_blank">gti-binan.uphsl.edu.ph:8339/PARENTS_STUDENTS/parents_student_index.htm</a></p>
-                                                    <p><strong>Medical University:</strong> <a href="http://gti-allied.uphsl.edu.ph:8340/PARENTS_STUDENTS/parents_student_index.htm" target="_blank">gti-allied.uphsl.edu.ph:8340/PARENTS_STUDENTS/parents_student_index.htm</a></p>
                                                 </div>
                                             </div>
                                             
@@ -181,12 +175,6 @@ include 'app/includes/header.php';
                                                             <span class="option-format">UPHB + Desired Username</span>
                                                         </div>
                                                     </div>
-                                                    <div class="username-option">
-                                                        <div class="option-label">
-                                                            <span class="option-button medical-option">Medical University</span>
-                                                            <span class="option-format">UPHMU + Desired Username</span>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             
@@ -213,7 +201,7 @@ include 'app/includes/header.php';
                                                 <h5><i class="fas fa-exclamation-triangle"></i> Important Reminder:</h5>
                                                 <p><strong>Write down your new username and password in a safe place!</strong> You will need these credentials every time you log into GTI. We recommend saving them in a secure password manager or writing them down and keeping them in a safe location.</p>
                                                 <ul>
-                                                    <li>Your username format: <code>UPHB-[your-choice]</code> or <code>UPHMU-[your-choice]</code></li>
+                                                    <li>Your username format: <code>UPHB-[your-choice]</code></li>
                                                     <li>Your password: The secure password you created</li>
                                                     <li>Keep these credentials private and don't share them with others</li>
                                                 </ul>

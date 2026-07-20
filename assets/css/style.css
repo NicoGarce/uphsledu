@@ -6645,10 +6645,15 @@ section, .section {
 
 /* GTI Specific Styles */
 .gti-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: center;
     gap: 1.5rem;
     margin: 1.5rem 0;
+}
+
+.gti-buttons .gti-btn {
+    width: 100%;
+    max-width: 400px;
 }
 
 .gti-btn {
