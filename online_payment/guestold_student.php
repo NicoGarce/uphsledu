@@ -122,8 +122,8 @@ if (isSectionInMaintenance('online-payment', 'guestold-student')) {
 	// Handle AJAX verification request
 	if (isset($_POST["verify_student"])) {
 		// Clear any previous output
-		if (ob_get_level()) {
-			ob_clean();
+		while (ob_get_level()) {
+			ob_end_clean();
 		}
 		
 		// Set proper headers
@@ -131,20 +131,56 @@ if (isSectionInMaintenance('online-payment', 'guestold-student')) {
 		
 		$studno = isset($_POST['studentno']) ? trim($_POST['studentno']) : '';
 		$campid = isset($_POST['campid']) ? $_POST['campid'] : '';
+		
+		// Validate inputs
+		if ($studno === '') {
+			echo json_encode(['success' => false, 'message' => 'Student number is required.']);
+			exit;
+		}
+		
+		if ($campid === '') {
+			echo json_encode(['success' => false, 'message' => 'Campus selection is required.']);
+			exit;
+		}
+		
 		$table = mapCampusToTable($campid);
 		
 		if ($table === null) {
 			echo json_encode(['success' => false, 'message' => 'Invalid campus selected.']);
-		} else if (!tableExists($con, $table)) {
+			exit;
+		}
+		
+		if (!tableExists($con, $table)) {
 			echo json_encode(['success' => false, 'message' => 'Campus database not available.']);
-		} else {
+			exit;
+		}
+		
+		// Enable error reporting for debugging
+		error_reporting(E_ALL);
+		ini_set('display_errors', 0);
+		
+		try {
 			$studentName = findStudentByNumber($con, $studno, $campid);
+			
 			if ($studentName && $studno !== '') {
-				echo json_encode(['success' => true, 'name' => $studentName, 'message' => 'Student verified successfully!']);
+				// Ensure the name is properly encoded for JSON
+				$studentName = mb_convert_encoding($studentName, 'UTF-8', 'UTF-8');
+				$jsonResponse = json_encode(['success' => true, 'name' => $studentName, 'message' => 'Student verified successfully!']);
+				
+				if ($jsonResponse === false) {
+					echo json_encode(['success' => false, 'message' => 'Error encoding student data. Please contact support.']);
+					error_log("JSON encode error for student: " . $studno . " - " . json_last_error_msg());
+				} else {
+					echo $jsonResponse;
+				}
 			} else {
 				echo json_encode(['success' => false, 'message' => 'Student number not found. Please check your student number and campus selection.']);
 			}
+		} catch (Exception $e) {
+			echo json_encode(['success' => false, 'message' => 'An error occurred while verifying student. Please try again.']);
+			error_log("Student verification error for " . $studno . ": " . $e->getMessage());
 		}
+		
 		exit;
 	}
 
@@ -697,7 +733,31 @@ function verifyStudent() {
 		method: 'POST',
 		body: formData
 	})
-	.then(response => response.json())
+	.then(response => {
+		// Check if response is OK
+		if (!response.ok) {
+			throw new Error('Server returned ' + response.status);
+		}
+		
+		// Check if response has content
+		const contentType = response.headers.get('content-type');
+		if (!contentType || !contentType.includes('application/json')) {
+			throw new Error('Server did not return JSON. Content-Type: ' + contentType);
+		}
+		
+		return response.text().then(text => {
+			if (!text || text.trim() === '') {
+				throw new Error('Server returned empty response');
+			}
+			try {
+				return JSON.parse(text);
+			} catch (e) {
+				console.error('JSON Parse Error:', e);
+				console.error('Response text:', text);
+				throw new Error('Invalid JSON response from server');
+			}
+		});
+	})
 	.then(data => {
 		if (data.success) {
 			// Don't set isStudentVerified to true yet - wait for user confirmation
@@ -737,7 +797,9 @@ function verifyStudent() {
 		isStudentVerified = false;
                 resultDiv.innerHTML = '<div class="verification-error">✗ Error verifying student. Please try again.</div>';
 		document.getElementById('submit-help').innerHTML = 'Please verify your student number before proceeding';
-		console.error('Error:', error);
+		console.error('Verification Error:', error);
+		console.error('Student Number:', studentno);
+		console.error('Campus:', campid);
 		toggleSubmit();
 		// Scroll to verification result
 		setTimeout(function() {
