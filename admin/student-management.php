@@ -318,17 +318,25 @@ function processBatch($con, $table, $batchData, $lineNumbers = [], $studentNumbe
         
         if (!empty($newBatchData)) {
             $values = implode(',', $newBatchData);
-            $sql = "INSERT INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
-                    VALUES {$values} ON DUPLICATE KEY UPDATE `lname`=VALUES(`lname`), `fname`=VALUES(`fname`), `course`=VALUES(`course`)";
+            $sql = "INSERT IGNORE INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
+                    VALUES {$values}";
             
             if (mysqli_query($con, $sql)) {
                 $imported = mysqli_affected_rows($con);
+                $skipped = count($newBatchData) - $imported;
+                
+                // Track which student numbers were duplicates
+                $existingStudentNumbers = array_diff($newStudentNumbers, array_slice($newStudentNumbers, 0, $imported));
+                foreach ($existingStudentNumbers as $index => $studentNumber) {
+                    $lineNumber = isset($newLineNumbers[$index]) ? $newLineNumbers[$index] : 'Unknown';
+                    $duplicateRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' (duplicate - skipped)";
+                }
             } else {
                 $dbError = mysqli_error($con);
                 error_log("Batch insert failed for enrolled students: " . $dbError);
                 foreach ($newBatchData as $index => $record) {
-                    $sql = "INSERT INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
-                            VALUES {$record} ON DUPLICATE KEY UPDATE `lname`=VALUES(`lname`), `fname`=VALUES(`fname`), `course`=VALUES(`course`)";
+                    $sql = "INSERT IGNORE INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) 
+                            VALUES {$record}";
                     
                     $lineNumber = isset($newLineNumbers[$index]) ? $newLineNumbers[$index] : 'Unknown';
                     $studentNumber = isset($newStudentNumbers[$index]) ? $newStudentNumbers[$index] : 'Unknown';
@@ -338,7 +346,7 @@ function processBatch($con, $table, $batchData, $lineNumbers = [], $studentNumbe
                             $imported++;
                         } else {
                             $skipped++;
-                            $duplicateRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' (duplicate - updated)";
+                            $duplicateRecords[] = "Row {$lineNumber}: Student Number '{$studentNumber}' (duplicate - skipped)";
                         }
                     } else {
                         $skipped++;
@@ -411,15 +419,16 @@ function processBatchTmp($con, $table, $batchValues, $batchLocators) {
     }
 
     if (!empty($newValues)) {
-        $sql = "INSERT INTO `{$table}` (`locator_num`,`stud_name`) VALUES " . implode(',', $newValues) . " ON DUPLICATE KEY UPDATE stud_name=VALUES(stud_name)";
+        $sql = "INSERT IGNORE INTO `{$table}` (`locator_num`,`stud_name`) VALUES " . implode(',', $newValues);
         if (@mysqli_query($con, $sql)) {
             $affected = mysqli_affected_rows($con);
             $inserted += $affected;
+            $skipped += count($newValues) - $affected;
         } else {
             $dbError = mysqli_error($con);
             error_log("Batch insert failed for temporary students: " . $dbError);
             foreach ($newValues as $v) {
-                $ins = "INSERT INTO `{$table}` (`locator_num`,`stud_name`) VALUES {$v} ON DUPLICATE KEY UPDATE stud_name=VALUES(stud_name)";
+                $ins = "INSERT IGNORE INTO `{$table}` (`locator_num`,`stud_name`) VALUES {$v}";
                 if (@mysqli_query($con, $ins)) { 
                     $inserted += mysqli_affected_rows($con); 
                 } else { 
@@ -649,13 +658,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $course = !empty($_POST['course']) ? "'" . mysqli_real_escape_string($con, $_POST['course']) . "'" : 'NULL';
         
         if ($table && !empty($studNum) && !empty($lname) && !empty($fname)) {
-            $sql = "INSERT INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) VALUES ('{$studNum}', '{$lname}', '{$fname}', {$course}) ON DUPLICATE KEY UPDATE `lname`='{$lname}', `fname`='{$fname}', `course`={$course}";
-            if (mysqli_query($con, $sql)) {
-                $success = "Student added successfully!";
+            // Check if student number already exists
+            $checkSql = "SELECT `stud_num` FROM `{$table}` WHERE `stud_num` = '{$studNum}' LIMIT 1";
+            $checkResult = mysqli_query($con, $checkSql);
+            
+            if ($checkResult && mysqli_num_rows($checkResult) > 0) {
+                $error = "Student number '{$studNum}' already exists in the database. Duplicate records are not allowed.";
             } else {
-                $dbError = mysqli_error($con);
-                error_log("Failed to add enrolled student: " . $dbError);
-                $error = "Failed to add student: " . htmlspecialchars($dbError);
+                $sql = "INSERT INTO `{$table}` (`stud_num`, `lname`, `fname`, `course`) VALUES ('{$studNum}', '{$lname}', '{$fname}', {$course})";
+                if (mysqli_query($con, $sql)) {
+                    $success = "Student added successfully!";
+                } else {
+                    $dbError = mysqli_error($con);
+                    error_log("Failed to add enrolled student: " . $dbError);
+                    $error = "Failed to add student: " . htmlspecialchars($dbError);
+                }
             }
         } else {
             $error = "Please fill in all required fields.";
@@ -701,13 +718,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $studName = mysqli_real_escape_string($con, $_POST['stud_name']);
         
         if ($table && !empty($locatorNum) && !empty($studName)) {
-            $sql = "INSERT INTO `{$table}` (`locator_num`, `stud_name`) VALUES ('{$locatorNum}', '{$studName}') ON DUPLICATE KEY UPDATE `stud_name`='{$studName}'";
-            if (mysqli_query($con, $sql)) {
-                $success = "Temporary student added successfully!";
+            // Check if locator number already exists
+            $checkSql = "SELECT `locator_num` FROM `{$table}` WHERE `locator_num` = '{$locatorNum}' LIMIT 1";
+            $checkResult = mysqli_query($con, $checkSql);
+            
+            if ($checkResult && mysqli_num_rows($checkResult) > 0) {
+                $error = "Locator number '{$locatorNum}' already exists in the database. Duplicate records are not allowed.";
             } else {
-                $dbError = mysqli_error($con);
-                error_log("Failed to add temporary student: " . $dbError);
-                $error = "Failed to add temporary student: " . htmlspecialchars($dbError);
+                $sql = "INSERT INTO `{$table}` (`locator_num`, `stud_name`) VALUES ('{$locatorNum}', '{$studName}')";
+                if (mysqli_query($con, $sql)) {
+                    $success = "Temporary student added successfully!";
+                } else {
+                    $dbError = mysqli_error($con);
+                    error_log("Failed to add temporary student: " . $dbError);
+                    $error = "Failed to add temporary student: " . htmlspecialchars($dbError);
+                }
             }
         } else {
             $error = "Please fill in all required fields.";
