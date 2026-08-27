@@ -403,45 +403,89 @@ include 'app/includes/header.php';
 
 .board-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
 .board-member {
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease;
-    backdrop-filter: blur(5px);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(28, 77, 161, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    text-align: left;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
     z-index: 2;
     position: relative;
+    border: 1px solid rgba(28, 77, 161, 0.08);
+    display: flex;
+    flex-direction: column;
+    min-height: 180px;
+}
+
+.board-member::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 20px 20px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .board-member:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(28, 77, 161, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.board-member:hover::before {
+    opacity: 1;
+}
+
+.member-header {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(28, 77, 161, 0.08);
 }
 
 .member-name {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin-bottom: 0.5rem;
-}
-
-.member-position {
-    font-size: 0.9rem;
-    color: var(--secondary-color);
-    font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
 }
 
 .member-qualifications {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-light);
-    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.member-position {
+    font-size: 0.8rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.member-position span {
+    display: block;
+    padding: 0.4rem 0;
+    border-left: 3px solid rgba(82, 123, 189, 0.3);
+    padding-left: 0.75rem;
+    margin-bottom: 0.25rem;
+    transition: border-color 0.2s ease;
+}
+
+.board-member:hover .member-position span {
+    border-color: var(--secondary-color);
 }
 
 .campus-grid {
@@ -877,16 +921,31 @@ include 'app/includes/header.php';
         grid-template-columns: 1fr;
     }
     
+    .board-member {
+        padding: 1.5rem;
+        min-height: auto;
+    }
+    
+    .member-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+    }
+    
     .member-name {
         font-size: 1rem;
     }
     
-    .member-position {
-        font-size: 0.85rem;
+    .member-qualifications {
+        font-size: 0.75rem;
     }
     
-    .member-qualifications {
-        font-size: 0.8rem;
+    .member-position {
+        font-size: 0.75rem;
+    }
+    
+    .member-position span {
+        padding: 0.3rem 0;
+        padding-left: 0.6rem;
     }
     
     .campus-grid {
@@ -1394,63 +1453,205 @@ include 'app/includes/header.php';
                 </div>
                 <div class="board-grid">
                     <div class="board-member">
-                        <div class="member-name">Dr./BGen. Antonio Laperal Tamayo, GSC, FPCHA, Ph.D.</div>
-                        <div class="member-position">Chairman of the Board, CEO and President</div>
+                        <div class="member-header">
+                            <div class="member-name">Dr./BGen. Antonio Laperal Tamayo</div>
+                            <div class="member-qualifications">GSC, FPCHA, Ph.D.</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Chairman of the Board, CEO and President</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Ma. Theresa T. Salazar, MD, MS</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Mr. Mariano L. Tamayo</div>
+                            <div class="member-qualifications">BFA</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for GMA Campus</span>
+                            <span>Vice Chairman, UPHSL and GMA Campus</span>
+                            <span>Corporate Secretary, University Savings Bank Inc.</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Marianito L. Tamayo, BSFA</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Dr./Lt. Col. Arcadio L. Tamayo</div>
+                            <div class="member-qualifications">MSHE, M.D, Ph.D</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Biñan</span>
+                            <span>UPH-Dr. Jose G. Tamayo Medical University Foundation, Inc.</span>
+                            <span>Vice Chairman, UPH-Dr. Jose G. Tamayo Medical University Foundation, Inc.</span>
+                            <span>Chancellor/Executive Vice President, UPH-DIGT Medical University Foundation, Inc.</span>
+                            <span>Regent/Board Liaison Director for Malasiqui</span>
+                            <span>Vice Chairman, Perpetual Help College, Pangasinan</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Arcadio L. Tamayo, MD, PhD</div>
-                        <div class="member-position">Chancellor & EVP</div>
+                        <div class="member-header">
+                            <div class="member-name">Mr. Manuel L. Tamayo</div>
+                            <div class="member-qualifications">BSC, MBA</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Jonelta Memorial Parks, Inc.</span>
+                            <span>Regent/Board Liaison Director for Perpetual Help College of Manila</span>
+                            <span>Regent/Board Liaison Director for Tamayo Agricultural Development Corp.</span>
+                            <span>Vice Chairman/Executive Vice President, Perpetual Help College of Manila</span>
+                            <span>Chief Operating Officer, Jonelta Memorial Parks, Inc.</span>
+                            <span>Corporate Secretary, Jonelta Memorial Parks, Inc.</span>
+                            <span>Corporate Secretary, Perpetual Help College, Manila</span>
+                            <span>Corporate Secretary, UPHSL</span>
+                            <span>Corporate Secretary, Latas Deco</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Roberto L. Tamayo, BSC, EdD</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Ms. Marcia Ana L. Tamayo</div>
+                            <div class="member-qualifications">BS ARCH, MBA, CS, IL</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Jonelta Audit</span>
+                            <span>Vice Chairman, Latas Deco</span>
+                            <span>Vice Chairman, University Insurance Agency</span>
+                            <span>Corporate Secretary, Pangasinan</span>
+                            <span>Vice President for External Affairs, Jonelta System</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Manuel L. Tamayo, BSC</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Dr. Florencia T. Tampoya</div>
+                            <div class="member-qualifications">MD FAAFP</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for USA</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Maj. Rafael L. Tamayo, BSC, MBA</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Maj. Maria Consorcia L. Tamayo</div>
+                            <div class="member-qualifications">BSC</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Jonelta Finance</span>
+                            <span>Executive Vice President, Latas Deco</span>
+                            <span>Corporate Secretary, UPH-Dr. Jose G. Tamayo Medical University Foundation, Inc.</span>
+                            <span>Chairman, University Savings Bank Inc.</span>
+                            <span>Chairman, Committee on Finance, Jonelta System</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Marcia Ana L. Tamayo, BSC ARCH</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Dr/Lt. Col. Victor L. Tamayo</div>
+                            <div class="member-qualifications">MD, MHA</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Biñan, Malasiqui and Manila Hospitals</span>
+                            <span>Board Treasurer</span>
+                            <span>Board Liaison Director, Sol y Viento Mountain Hot Springs Resort, Inc.</span>
+                            <span>Vice Chairman, Jonelta Memorial Parks, Inc.</span>
+                            <span>Vice Chairman, University Savings Bank, Inc.</span>
+                            <span>Managing Director, University Supply Center</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Ma. Florencia T. Tampoya, MD FAAFP</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Dr. Ma. Theresa T. Salazar</div>
+                            <div class="member-qualifications">MD, MS</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Board Member</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Jose Mauro L. Tamayo, BSC</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Mr. Marianito L. Tamayo</div>
+                            <div class="member-qualifications">BSFA</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Board Member</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Ma. Consorcia L. Tamayo, BSC</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Major Roberto L. Tamayo</div>
+                            <div class="member-qualifications">BSC, EdD</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Board Member</span>
+                        </div>
                     </div>
                     
                     <div class="board-member">
-                        <div class="member-name">Maj. Victor L. Tamayo, MD, MHA</div>
-                        <div class="member-position">Board Member</div>
+                        <div class="member-header">
+                            <div class="member-name">Lt. Col. Rafael L. Tamayo</div>
+                            <div class="member-qualifications">BSC, MBA</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Board Member</span>
+                        </div>
+                    </div>
+                    
+                    <div class="board-member">
+                        <div class="member-header">
+                            <div class="member-name">Arch. Nestor Roquet. Salazar</div>
+                            <div class="member-qualifications"></div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Latas Deco</span>
+                            <span>Head of Planning & Development</span>
+                        </div>
+                    </div>
+                    
+                    <div class="board-member">
+                        <div class="member-header">
+                            <div class="member-name">Atty. Jose Orriccio Odon S. Tamayo</div>
+                            <div class="member-qualifications"></div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director</span>
+                            <span>Chief Legal Officer, Jonelta System</span>
+                        </div>
+                    </div>
+                    
+                    <div class="board-member">
+                        <div class="member-header">
+                            <div class="member-name">Dr. John Paul G. Tamayo</div>
+                            <div class="member-qualifications">Ph.D</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Human Resource, Jonelta System</span>
+                        </div>
+                    </div>
+                    
+                    <div class="board-member">
+                        <div class="member-header">
+                            <div class="member-name">Mr. Jose Mauro Samuel P. Tamayo II</div>
+                            <div class="member-qualifications">BSBA</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Regent/Board Liaison Director for Agriculture</span>
+                            <span>Vice President for Sports, Jonelta System</span>
+                            <span>(Adviser: Mariano L. Tamayo)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="board-member">
+                        <div class="member-header">
+                            <div class="member-name">Mr. Jose Mauro L. Tamayo</div>
+                            <div class="member-qualifications">BSC</div>
+                        </div>
+                        <div class="member-position">
+                            <span>Board Member</span>
+                        </div>
                     </div>
                 </div>
             </div>
