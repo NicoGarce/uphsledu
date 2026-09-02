@@ -96,6 +96,43 @@ function renderResearchTitle($title, $department) {
     return htmlspecialchars($title);
 }
 
+// Function to get the list of College Research Journals (PDFs) to display as a
+// bookshelf. Drop journal PDFs into assets/documents/pdfs/journals/ and they
+// will automatically appear here — no code changes required.
+function getResearchJournals() {
+    global $base_path;
+
+    $journalsDir = __DIR__ . '/../assets/documents/pdfs/journals/';
+
+    if (!is_dir($journalsDir)) {
+        return [];
+    }
+
+    $files = glob($journalsDir . '*.pdf');
+    $journals = [];
+
+    foreach ($files as $file) {
+        $filename = basename($file, '.pdf');
+
+        // Turn "CAS_Research_Journal_Vol_1-2024" style filenames into a readable title
+        $title = str_replace(['_', '-'], ' ', $filename);
+        $title = preg_replace('/\s+/', ' ', trim($title));
+        $title = ucwords(strtolower($title));
+
+        $journals[] = [
+            'title' => $title,
+            'path'  => $base_path . 'assets/documents/pdfs/journals/' . basename($file),
+        ];
+    }
+
+    // Keep the shelf alphabetized
+    usort($journals, function ($a, $b) {
+        return strcasecmp($a['title'], $b['title']);
+    });
+
+    return $journals;
+}
+
 include '../app/includes/header.php';
 ?>
 
@@ -233,6 +270,233 @@ body {
 /* Mission Vision Section */
 .mission-vision-section {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* ===================================================================
+   Research Section Tabs (Overview / College Research Journals)
+   =================================================================== */
+.research-tabs-section {
+    background: white;
+    padding: 1.75rem 0 0;
+    border-bottom: 1px solid rgba(44, 90, 160, 0.08);
+}
+
+.research-tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: 720px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.research-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.95rem 2rem;
+    background: #f4f6f9;
+    border: 2px solid transparent;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    color: #5c6773;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.research-tab-btn i {
+    font-size: 1rem;
+}
+
+.research-tab-btn:hover {
+    background: rgba(44, 90, 160, 0.1);
+    color: var(--primary-color);
+}
+
+.research-tab-btn.active {
+    background: linear-gradient(135deg, var(--primary-color), #1a3d7a);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 -4px 12px rgba(44, 90, 160, 0.2);
+}
+
+.research-tab-panel {
+    display: none;
+}
+
+.research-tab-panel.active {
+    display: block;
+    animation: researchTabFadeIn 0.4s ease;
+}
+
+@keyframes researchTabFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 576px) {
+    .research-tabs-nav {
+        gap: 0.5rem;
+    }
+
+    .research-tab-btn {
+        padding: 0.75rem 1.1rem;
+        font-size: 0.85rem;
+        flex: 1 1 auto;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+/* ===================================================================
+   College Research Journals — Amazon-style book shelf
+   =================================================================== */
+.journals-section {
+    background: white;
+}
+
+.journal-shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 2.5rem 2rem;
+    max-width: 1200px;
+    margin: 2rem auto 0;
+}
+
+.journal-book {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.journal-cover-link {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+}
+
+.journal-cover {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background: linear-gradient(135deg, #eef1f5, #dfe4ea);
+    border-radius: 3px 8px 8px 3px;
+    box-shadow:
+        -3px 0 0 rgba(0, 0, 0, 0.08) inset,
+        0 6px 16px rgba(0, 0, 0, 0.15),
+        0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.journal-cover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0));
+    z-index: 2;
+}
+
+.journal-book:hover .journal-cover {
+    transform: translateY(-6px) rotate(-1deg);
+    box-shadow:
+        -3px 0 0 rgba(0, 0, 0, 0.1) inset,
+        0 16px 28px rgba(0, 0, 0, 0.22),
+        0 4px 10px rgba(0, 0, 0, 0.14);
+}
+
+.journal-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.journal-cover-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #eef1f5, #dfe4ea);
+    transition: opacity 0.2s ease;
+}
+
+.journal-cover-loading.hidden {
+    display: none;
+}
+
+.journal-info {
+    margin-top: 0.85rem;
+    width: 100%;
+}
+
+.journal-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1.35;
+    margin: 0 0 0.4rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+.journal-view-link {
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.2s ease;
+}
+
+.journal-view-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.journals-empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: #888;
+}
+
+.journals-empty i {
+    font-size: 3rem;
+    color: rgba(44, 90, 160, 0.25);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.journals-empty code {
+    background: rgba(44, 90, 160, 0.08);
+    color: var(--primary-color);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .journal-shelf {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 1.75rem 1.25rem;
+    }
+
+    .journal-title {
+        font-size: 0.8rem;
+    }
 }
 
 /* ICMRSDG 2025 Documentation Section */
@@ -661,6 +925,22 @@ body {
             </div>
         </div>
     </section>
+
+    <!-- Research Section Tabs -->
+    <section class="research-tabs-section">
+        <div class="container">
+            <div class="research-tabs-nav">
+                <button type="button" class="research-tab-btn active" data-tab="overview" onclick="switchResearchTab('overview')">
+                    <i class="fas fa-flask"></i> Overview
+                </button>
+                <button type="button" class="research-tab-btn" data-tab="journals" onclick="switchResearchTab('journals')">
+                    <i class="fas fa-book"></i> College Research Journals
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div id="tab-overview" class="research-tab-panel active">
 
     <!-- News Carousel and Video Section -->
     <section class="news-video-section">
@@ -2793,6 +3073,45 @@ body {
             </div>
         </div>
     </section>
+
+    </div><!-- /#tab-overview -->
+
+    <!-- College Research Journals Tab -->
+    <div id="tab-journals" class="research-tab-panel">
+        <section class="content-section journals-section">
+            <div class="container">
+                <h2 class="section-title">College Research Journals</h2>
+                <p class="section-subtitle">Browse our published journals and conference proceedings — tap a cover to open the full document.</p>
+                <?php $journals = getResearchJournals(); ?>
+                <?php if (!empty($journals)): ?>
+                <div class="journal-shelf">
+                    <?php foreach ($journals as $journal): ?>
+                    <div class="journal-book">
+                        <a href="<?php echo htmlspecialchars($journal['path']); ?>" target="_blank" class="journal-cover-link" title="<?php echo htmlspecialchars($journal['title']); ?>">
+                            <div class="journal-cover" data-pdf="<?php echo htmlspecialchars($journal['path']); ?>">
+                                <canvas class="journal-canvas"></canvas>
+                                <div class="journal-cover-loading"><i class="fas fa-spinner fa-spin"></i></div>
+                            </div>
+                        </a>
+                        <div class="journal-info">
+                            <h4 class="journal-title"><?php echo htmlspecialchars($journal['title']); ?></h4>
+                            <a href="<?php echo htmlspecialchars($journal['path']); ?>" target="_blank" class="journal-view-link">
+                                <i class="fas fa-eye"></i> View PDF
+                            </a>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div class="journals-empty">
+                    <i class="fas fa-book-open"></i>
+                    <p>No research journals have been uploaded yet. Add PDF files to <code>assets/documents/pdfs/journals/</code> and they will appear here automatically.</p>
+                </div>
+                <?php endif; ?>
+            </div>
+        </section>
+    </div><!-- /#tab-journals -->
+
 </main>
 
 <script>
@@ -2805,6 +3124,92 @@ function showDepartmentMobile(departmentId) {
     
     // Show selected department table
     document.getElementById(departmentId).style.display = 'block';
+}
+</script>
+
+<!-- PDF.js — used to render the first page of each journal PDF as its "book cover" -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+// Switch between the "Research Overview" and "College Research Journals" tabs
+function switchResearchTab(tab) {
+    document.querySelectorAll('.research-tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    document.querySelectorAll('.research-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    const panel = document.getElementById('tab-' + tab);
+    if (panel) panel.classList.add('active');
+
+    const btn = document.querySelector('.research-tab-btn[data-tab="' + tab + '"]');
+    if (btn) btn.classList.add('active');
+
+    // Lazily render journal covers the first time that tab is opened
+    if (tab === 'journals') {
+        renderJournalCovers();
+    }
+}
+
+// Render the first page of each journal PDF into its canvas "cover"
+let journalCoversInitialized = false;
+function renderJournalCovers() {
+    if (journalCoversInitialized || !window.pdfjsLib) return;
+    journalCoversInitialized = true;
+
+    const covers = document.querySelectorAll('.journal-cover[data-pdf]');
+
+    const renderCover = (coverEl) => {
+        const url = coverEl.getAttribute('data-pdf');
+        const canvas = coverEl.querySelector('.journal-canvas');
+        const loadingEl = coverEl.querySelector('.journal-cover-loading');
+        if (!url || !canvas) return;
+
+        pdfjsLib.getDocument(url).promise
+            .then(pdf => pdf.getPage(1))
+            .then(page => {
+                const containerWidth = coverEl.clientWidth || 200;
+                const unscaledViewport = page.getViewport({ scale: 1 });
+                // Render at 2x the display width for a crisp cover on retina screens
+                const scale = (containerWidth * 2) / unscaledViewport.width;
+                const viewport = page.getViewport({ scale });
+
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                const ctx = canvas.getContext('2d');
+                return page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            })
+            .then(() => {
+                if (loadingEl) loadingEl.classList.add('hidden');
+            })
+            .catch(err => {
+                console.log('Could not render journal cover:', err);
+                if (loadingEl) {
+                    loadingEl.innerHTML = '<i class="fas fa-file-pdf"></i>';
+                }
+            });
+    };
+
+    // Only render covers as they scroll into view, to avoid loading every PDF at once
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    renderCover(entry.target);
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '200px' });
+
+        covers.forEach(cover => observer.observe(cover));
+    } else {
+        covers.forEach(renderCover);
+    }
 }
 </script>
 
