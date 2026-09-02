@@ -134,7 +134,7 @@ body {
         <div class="container">
             <div class="intro-content">
                 <div class="intro-logo">
-                    <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="Quality Assurance Logo">
+                    <img src="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" alt="Quality Assurance Logo">
                 </div>
                 <h2>Quality Assurance</h2>
                 <p class="intro-description">We are committed to maintaining the highest standards of quality in all our academic programs and services. Our Quality Assurance department ensures continuous improvement and excellence across the university.</p>

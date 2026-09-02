@@ -421,7 +421,7 @@ if (isset($_GET["transid"])) {
     }
 
     </script> 
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" as="image" type="image/png">
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="shortcut icon" type="image/png" href="images/logo.png">
     <link rel="icon" type="image/png" href="<?php echo $base_path; ?>assets/images/Logos/logo.png?v=2" sizes="32x32">

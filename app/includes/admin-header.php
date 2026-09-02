@@ -49,7 +49,7 @@ $base_path = $GLOBALS['base_path'];
         <div class="nav-container">
             <div class="nav-logo">
                 <a href="../">
-                    <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="logo-img">
+                    <img src="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             <div class="nav-menu">
@@ -101,7 +101,7 @@ $base_path = $GLOBALS['base_path'];
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="sidebar-logo">
-                <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="UPHSL" class="sidebar-logo-img">
+                <img src="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" alt="UPHSL" class="sidebar-logo-img">
                 <span class="sidebar-title">Admin Panel</span>
             </div>
             <button class="sidebar-close" id="sidebarClose">

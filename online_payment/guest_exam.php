@@ -451,7 +451,7 @@ function updateFees() {
     <div class="container">
         <div class="header">
             <div class="logo">
-                <img src="../assets/images/Logos/Logo2025.png" alt="UPHSL Logo 2025">
+                <img src="../assets/images/Logos/2026_Logo.png" alt="UPHSL Logo 2025">
             </div>
             <div class="university-name">University of Perpetual Help System</div>
             <div class="page-title">Entrance Exam Payment</div>

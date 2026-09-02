@@ -201,7 +201,7 @@ $navbar_items_config = [
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <!-- Preload critical logo image to prevent text flash -->
-    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" as="image" type="image/png">
+    <link rel="preload" href="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" as="image" type="image/png">
     
     <?php
     // Conditional preloading based on current page
@@ -745,7 +745,7 @@ $navbar_items_config = [
             logoImg.onload = function() {
                 document.documentElement.classList.add('logo-loaded');
             };
-            logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/Logo2025.png';
+            logoImg.src = '<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png';
         })();
         
         // Handle logo image loading to prevent alt text flash (no shimmer)
@@ -1161,7 +1161,7 @@ $navbar_items_config = [
             <!-- First Column: Logo -->
             <div class="nav-logo">
         <a href="<?php echo $base_path; ?>">
-            <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="logo-img">
+            <img src="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" alt="University of Perpetual Help System" class="logo-img">
         </a>
             </div>
             
@@ -1533,7 +1533,7 @@ $navbar_items_config = [
     <div class="mobile-sidebar" id="mobile-sidebar">
         <div class="mobile-sidebar-header">
             <div class="mobile-sidebar-logo">
-                <img src="<?php echo $base_path; ?>assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="mobile-logo-img">
+                <img src="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" alt="University of Perpetual Help System" class="mobile-logo-img">
                 <h2 class="mobile-site-name">UNIVERSITY OF PERPETUAL HELP SYSTEM LAGUNA</h2>
             </div>
             <button class="mobile-sidebar-close" id="mobile-sidebar-close">

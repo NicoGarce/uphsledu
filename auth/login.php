@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="auth-card">
             <div class="auth-header">
                 <div class="auth-logo">
-                    <img src="../assets/images/Logos/Logo2025.png" alt="University of Perpetual Help System" class="logo-img">
+                    <img src="../assets/images/Logos/2026_Logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </div>
                 <h1 class="auth-title">Welcome Back</h1>
                 <p class="auth-subtitle">Sign in to your account</p>
