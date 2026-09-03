@@ -133,6 +133,50 @@ function getResearchJournals() {
     return $journals;
 }
 
+// Function to get News & Articles vertical images (3:4).
+// Drop images into assets/images/research/news-articles/ and they will
+// automatically appear in the News & Articles tab — no code changes required.
+function getNewsArticles() {
+    global $base_path;
+
+    $dir = __DIR__ . '/../assets/images/research/news-articles/';
+
+    if (!is_dir($dir)) {
+        return [];
+    }
+
+    $files = glob($dir . '*.{jpg,jpeg,png,webp,gif,JPG,JPEG,PNG,WEBP,GIF}', GLOB_BRACE);
+    if (!$files) {
+        return [];
+    }
+
+    $articles = [];
+
+    foreach ($files as $file) {
+        $filename = pathinfo($file, PATHINFO_FILENAME);
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+
+        // Turn "2024_Q1_Research_Highlight" style filenames into a readable title
+        $title = str_replace(['_', '-'], ' ', $filename);
+        $title = preg_replace('/\s+/', ' ', trim($title));
+        $title = ucwords(strtolower($title));
+
+        $articles[] = [
+            'title'    => $title,
+            'filename' => basename($file),
+            'path'     => $base_path . 'assets/images/research/news-articles/' . basename($file),
+            'mtime'    => filemtime($file),
+        ];
+    }
+
+    // Newest first — so freshly added posters appear at the top
+    usort($articles, function ($a, $b) {
+        return $b['mtime'] <=> $a['mtime'];
+    });
+
+    return $articles;
+}
+
 include '../app/includes/header.php';
 ?>
 
@@ -285,7 +329,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 0.75rem;
-    max-width: 720px;
+    max-width: 860px;
     margin: 0 auto;
     flex-wrap: wrap;
 }
@@ -496,6 +540,407 @@ body {
 
     .journal-title {
         font-size: 0.8rem;
+    }
+}
+
+/* ===================================================================
+   News & Articles — 3:4 vertical poster grid
+   =================================================================== */
+.news-articles-section {
+    background: white;
+}
+
+.news-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.75rem;
+    max-width: 1200px;
+    margin: 2rem auto 0;
+}
+
+.news-article-card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #eef1f5;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    isolation: isolate;
+}
+
+.news-article-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 32px rgba(0, 0, 0, 0.18);
+}
+
+.news-article-card:focus-visible {
+    outline: 3px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
+.news-article-img-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: linear-gradient(135deg, #eef1f5, #dfe4ea);
+}
+
+.news-article-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.5s ease, opacity 0.4s ease;
+    opacity: 0;
+}
+
+.news-article-img.is-loaded {
+    opacity: 1;
+}
+
+.news-article-img.is-error {
+    opacity: 0;
+}
+
+.news-article-card:hover .news-article-img.is-loaded {
+    transform: scale(1.06);
+}
+
+/* fallback icon when image fails */
+.news-article-fallback {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.6rem;
+    color: #8a95a8;
+    background: linear-gradient(135deg, #eef1f5, #dfe4ea);
+    z-index: 0;
+}
+
+.news-article-fallback i {
+    font-size: 2.2rem;
+    opacity: 0.7;
+}
+
+.news-article-fallback span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.news-article-card.is-error .news-article-fallback {
+    display: flex;
+}
+
+.news-article-card.is-error .news-article-img {
+    display: none;
+}
+
+.news-article-overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 3.5rem 1rem 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 18%, rgba(0,0,0,0.45) 55%, transparent 100%);
+    color: white;
+    z-index: 1;
+}
+
+.news-article-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.45);
+}
+
+.news-article-hint {
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.news-article-hint i {
+    font-size: 0.7rem;
+}
+
+/* Shimmer placeholder while image loads - only when card is loading */
+.news-article-img-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.38) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: newsArticleShimmer 1.5s infinite;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.news-article-card.is-loading .news-article-img-wrap::after {
+    opacity: 1;
+}
+
+@keyframes newsArticleShimmer {
+    100% { transform: translateX(100%); }
+}
+
+/* Empty state – reuses journals-empty look but scoped */
+.news-articles-empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: #888;
+}
+
+.news-articles-empty i {
+    font-size: 3rem;
+    color: rgba(44, 90, 160, 0.25);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.news-articles-empty code {
+    background: rgba(44, 90, 160, 0.08);
+    color: var(--primary-color);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    word-break: break-all;
+}
+
+/* Lightbox for News & Articles — polished */
+.news-article-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(6, 12, 24, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem 3.5rem;
+    animation: researchTabFadeIn 0.25s ease;
+}
+
+.news-article-lightbox.show {
+    display: flex;
+}
+
+.news-article-lightbox-viewport {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: none;
+    cursor: default;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.news-article-lightbox-img {
+    max-width: min(92vw, 540px);
+    max-height: 86vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.3);
+    background: #0b1220;
+    display: block;
+    cursor: zoom-in;
+    transition: transform 0.28s cubic-bezier(0.2, 0, 0.2, 1);
+    transform-origin: center center;
+    will-change: transform;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.news-article-lightbox-img.is-zoomed {
+    cursor: grab;
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+}
+
+.news-article-lightbox-img.is-zoomed:active {
+    cursor: grabbing;
+}
+
+.news-article-lightbox-toolbar {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(20,20,20,0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 999px;
+    padding: 0.35rem 0.45rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    z-index: 10002;
+}
+
+.news-article-zoom-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.news-article-zoom-btn:hover {
+    background: white;
+    color: #111;
+    transform: scale(1.05);
+}
+
+.news-article-zoom-btn:active {
+    transform: scale(0.96);
+}
+
+.news-article-zoom-level {
+    min-width: 52px;
+    text-align: center;
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0 0.2rem;
+}
+
+/* close — glass pill, SVG centered perfectly */
+.news-article-lightbox-close {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(30, 30, 30, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    transition: all 0.2s ease;
+    z-index: 10001;
+}
+
+.news-article-lightbox-close:hover {
+    background: rgba(255,255,255,0.95);
+    color: #1a1a1a;
+    transform: scale(1.06);
+}
+
+.news-article-lightbox-close:active {
+    transform: scale(0.96);
+}
+
+.news-article-lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(30,30,30,0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    transition: all 0.2s ease;
+    z-index: 10001;
+}
+
+.news-article-lightbox-nav:hover {
+    background: rgba(255,255,255,0.95);
+    color: #1a1a1a;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.news-article-lightbox-prev { left: 1rem; }
+.news-article-lightbox-next { right: 1rem; }
+
+@media (max-width: 992px) {
+    .news-articles-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .news-articles-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .news-article-title {
+        font-size: 0.85rem;
+        -webkit-line-clamp: 2;
+    }
+
+    .news-article-lightbox-img {
+        max-width: 88vw;
+    }
+
+    .news-article-lightbox-nav {
+        width: 40px;
+        height: 40px;
+    }
+
+    .news-article-lightbox-prev { left: 0.5rem; }
+    .news-article-lightbox-next { right: 0.5rem; }
+}
+
+@media (max-width: 480px) {
+    .news-articles-grid {
+        gap: 0.75rem;
+    }
+
+    .news-article-card {
+        border-radius: 12px;
+    }
+
+    .news-article-overlay {
+        padding: 2.5rem 0.75rem 0.75rem;
     }
 }
 
@@ -935,6 +1380,9 @@ body {
                 </button>
                 <button type="button" class="research-tab-btn" data-tab="journals" onclick="switchResearchTab('journals')">
                     <i class="fas fa-book"></i> College Research Journals
+                </button>
+                <button type="button" class="research-tab-btn" data-tab="news-articles" onclick="switchResearchTab('news-articles')">
+                    <i class="fas fa-newspaper"></i> News & Articles
                 </button>
             </div>
         </div>
@@ -3112,6 +3560,76 @@ body {
         </section>
     </div><!-- /#tab-journals -->
 
+    <!-- News & Articles Tab — 3:4 vertical posters -->
+    <div id="tab-news-articles" class="research-tab-panel">
+        <section class="content-section news-articles-section">
+            <div class="container">
+                <h2 class="section-title">News & Articles</h2>
+                <?php $newsArticles = getNewsArticles(); ?>
+                <?php if (!empty($newsArticles)): ?>
+                <div class="news-articles-grid">
+                    <?php foreach ($newsArticles as $idx => $article): ?>
+                    <article class="news-article-card is-loading" tabindex="0" role="button"
+                        data-index="<?php echo $idx; ?>"
+                        data-src="<?php echo htmlspecialchars($article['path']); ?>"
+                        data-title="<?php echo htmlspecialchars($article['title']); ?>"
+                        aria-label="View <?php echo htmlspecialchars($article['title']); ?>">
+                        <div class="news-article-img-wrap">
+                            <img class="news-article-img"
+                                src="<?php echo htmlspecialchars($article['path']); ?>"
+                                alt="<?php echo htmlspecialchars($article['title']); ?>"
+                                decoding="async" fetchpriority="high">
+                            <div class="news-article-fallback" aria-hidden="true">
+                                <i class="fas fa-image"></i>
+                                <span>Image unavailable</span>
+                            </div>
+                        </div>
+                        <div class="news-article-overlay">
+                            <h3 class="news-article-title"><?php echo htmlspecialchars($article['title']); ?></h3>
+                            <span class="news-article-hint"><i class="fas fa-expand"></i> Tap to enlarge</span>
+                        </div>
+                    </article>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div class="news-articles-empty">
+                    <i class="fas fa-images"></i>
+                    <p>No news &amp; articles have been uploaded yet.<br>Add <strong>3:4 vertical images</strong> to <code>assets/images/research/news-articles/</code> and they will appear here automatically.</p>
+                    <p style="margin-top:1rem; font-size:0.85rem; color:#999;">Recommended size: 1080 × 1440 px (or any 3:4 ratio) — JPG, PNG or WEBP.</p>
+                </div>
+                <?php endif; ?>
+            </div>
+        </section>
+    </div><!-- /#tab-news-articles -->
+
+    <!-- Lightbox for News & Articles — with zoom -->
+    <div class="news-article-lightbox" id="newsArticleLightbox" aria-hidden="true">
+        <button class="news-article-lightbox-close" id="newsArticleLightboxClose" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <button class="news-article-lightbox-nav news-article-lightbox-prev" id="newsArticleLightboxPrev" aria-label="Previous">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="news-article-lightbox-viewport" id="newsArticleLightboxViewport">
+            <img class="news-article-lightbox-img" id="newsArticleLightboxImg" src="" alt="" draggable="false">
+        </div>
+        <button class="news-article-lightbox-nav news-article-lightbox-next" id="newsArticleLightboxNext" aria-label="Next">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        <div class="news-article-lightbox-toolbar" id="newsArticleLightboxToolbar" aria-label="Zoom controls">
+            <button class="news-article-zoom-btn" id="newsArticleZoomOut" aria-label="Zoom out">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+            <span class="news-article-zoom-level" id="newsArticleZoomLevel">100%</span>
+            <button class="news-article-zoom-btn" id="newsArticleZoomIn" aria-label="Zoom in">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+            <button class="news-article-zoom-btn" id="newsArticleZoomReset" aria-label="Reset zoom" title="Reset">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+            </button>
+        </div>
+    </div>
+
 </main>
 
 <script>
@@ -3134,7 +3652,7 @@ if (window.pdfjsLib) {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
-// Switch between the "Research Overview" and "College Research Journals" tabs
+// Switch between Overview / College Research Journals / News & Articles
 function switchResearchTab(tab) {
     document.querySelectorAll('.research-tab-panel').forEach(panel => {
         panel.classList.remove('active');
@@ -3153,7 +3671,20 @@ function switchResearchTab(tab) {
     if (tab === 'journals') {
         renderJournalCovers();
     }
+
+    // Deep-link support — keep URL hash in sync without scrolling
+    if (history.replaceState) {
+        history.replaceState(null, '', '#' + tab);
+    }
 }
+
+// Open correct tab from URL hash on page load (e.g. /research.php#news-articles)
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = (location.hash || '').replace('#', '');
+    if (hash && ['overview', 'journals', 'news-articles'].includes(hash)) {
+        switchResearchTab(hash);
+    }
+});
 
 // Render the first page of each journal PDF into its canvas "cover"
 let journalCoversInitialized = false;
@@ -3211,6 +3742,372 @@ function renderJournalCovers() {
         covers.forEach(renderCover);
     }
 }
+
+// ================================================================
+// News & Articles — thumbnail fade-in + lightbox for 3:4 posters
+// ================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.news-article-card');
+
+    // Fix grey thumbnails: ensure images fade in even when tab was display:none (native lazy defers)
+    // Use eager loading + explicit load/error handling so grey background disappears immediately
+    cards.forEach(card => {
+        const img = card.querySelector('.news-article-img');
+        if (!img) return;
+        const markLoaded = () => {
+            card.classList.remove('is-loading');
+            img.classList.add('is-loaded');
+            card.classList.remove('is-error');
+        };
+        const markError = () => {
+            card.classList.remove('is-loading');
+            img.classList.remove('is-loaded');
+            img.classList.add('is-error');
+            card.classList.add('is-error');
+        };
+        if (img.complete) {
+            if (img.naturalWidth > 0) markLoaded();
+            else markError();
+        } else {
+            img.addEventListener('load', markLoaded, { once: true });
+            img.addEventListener('error', markError, { once: true });
+        }
+    });
+
+    // When user switches to News & Articles tab, any images still in loading state (due to display:none deferral)
+    // are forced to reload by re-assigning src - ensures no perpetual grey cards
+    const origSwitch = window.switchResearchTab;
+    if (typeof origSwitch === 'function') {
+        window.switchResearchTab = function(tab) {
+            origSwitch(tab);
+            if (tab === 'news-articles') {
+                requestAnimationFrame(() => {
+                    cards.forEach(card => {
+                        const img = card.querySelector('.news-article-img');
+                        if (!img) return;
+                        if (!img.classList.contains('is-loaded') && !card.classList.contains('is-error')) {
+                            // force browser to retry decoding now that container is visible
+                            const src = img.getAttribute('src');
+                            if (img.complete && img.naturalWidth === 0) {
+                                img.src = '';
+                                img.src = src;
+                            }
+                        }
+                    });
+                });
+            }
+        };
+    }
+
+    const lightbox = document.getElementById('newsArticleLightbox');
+    if (!cards.length || !lightbox) return;
+
+    const viewport = document.getElementById('newsArticleLightboxViewport');
+    const imgEl = document.getElementById('newsArticleLightboxImg');
+    const closeBtn = document.getElementById('newsArticleLightboxClose');
+    const prevBtn = document.getElementById('newsArticleLightboxPrev');
+    const nextBtn = document.getElementById('newsArticleLightboxNext');
+    const zoomInBtn = document.getElementById('newsArticleZoomIn');
+    const zoomOutBtn = document.getElementById('newsArticleZoomOut');
+    const zoomResetBtn = document.getElementById('newsArticleZoomReset');
+    const zoomLevelEl = document.getElementById('newsArticleZoomLevel');
+
+    const items = Array.from(cards).map(c => ({
+        src: c.getAttribute('data-src'),
+        title: c.getAttribute('data-title') || ''
+    }));
+
+    let current = 0;
+
+    // --- zoom state ---
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragPanX = 0;
+    let dragPanY = 0;
+    const MIN_SCALE = 1;
+    const MAX_SCALE = 4;
+    const STEP = 0.35;
+
+    function updateZoom() {
+        if (scale <= 1) {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+            imgEl.style.transform = '';
+            imgEl.classList.remove('is-zoomed');
+        } else {
+            imgEl.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            imgEl.classList.add('is-zoomed');
+        }
+        if (zoomLevelEl) zoomLevelEl.textContent = Math.round(scale * 100) + '%';
+    }
+
+    function setScale(newScale) {
+        const clamped = Math.min(MAX_SCALE, Math.max(MIN_SCALE, newScale));
+        scale = clamped;
+        if (scale === 1) {
+            panX = 0;
+            panY = 0;
+        } else {
+            clampPan();
+        }
+        updateZoom();
+    }
+
+    function resetZoom() {
+        scale = 1;
+        panX = 0;
+        panY = 0;
+        updateZoom();
+    }
+
+    function openLightbox(index) {
+        current = (index + items.length) % items.length;
+        const item = items[current];
+        resetZoom();
+        imgEl.src = item.src;
+        imgEl.alt = item.title;
+        lightbox.classList.add('show');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        const showNav = items.length > 1;
+        prevBtn.style.display = showNav ? 'flex' : 'none';
+        nextBtn.style.display = showNav ? 'flex' : 'none';
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('show');
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        // delay clearing src to avoid flash
+        setTimeout(() => { if (!lightbox.classList.contains('show')) imgEl.src = ''; }, 200);
+        resetZoom();
+    }
+
+    function showPrev() { openLightbox(current - 1); }
+    function showNext() { openLightbox(current + 1); }
+
+    cards.forEach((card, i) => {
+        card.addEventListener('click', () => openLightbox(i));
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openLightbox(i);
+            }
+        });
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
+    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+
+    // --- zoom controls ---
+    if (zoomInBtn) zoomInBtn.addEventListener('click', (e) => { e.stopPropagation(); setScale(scale + STEP); });
+    if (zoomOutBtn) zoomOutBtn.addEventListener('click', (e) => { e.stopPropagation(); setScale(scale - STEP); });
+    if (zoomResetBtn) zoomResetBtn.addEventListener('click', (e) => { e.stopPropagation(); resetZoom(); });
+
+    // click image to toggle zoom (quick zoom in/out) — suppress after drag/pinch
+    if (imgEl) {
+        imgEl.addEventListener('click', (e) => {
+            if (imgEl._suppressClick) return;
+            e.stopPropagation();
+            if (scale === 1) setScale(2.4);
+            else resetZoom();
+        });
+        imgEl.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            resetZoom();
+        });
+    }
+
+    // --- stable zoom: wheel + toolbar + click toggle ---
+    let wheelRaf = null;
+    if (viewport) {
+        viewport.addEventListener('wheel', (e) => {
+            if (!lightbox.classList.contains('show')) return;
+            e.preventDefault();
+            // smooth, smaller step and coalesce via rAF to avoid jitter
+            const dir = e.deltaY > 0 ? -1 : 1;
+            if (wheelRaf) cancelAnimationFrame(wheelRaf);
+            wheelRaf = requestAnimationFrame(() => {
+                setScale(scale + dir * 0.18);
+                wheelRaf = null;
+            });
+        }, { passive: false });
+    }
+
+    // clamp pan so image never flies completely out of view
+    function clampPan() {
+        if (scale <= 1 || !viewport || !imgEl) return;
+        // base rendered size at scale=1 (without transform)
+        const vpW = viewport.clientWidth;
+        const vpH = viewport.clientHeight;
+        // img natural display size at scale 1
+        const rect = imgEl.getBoundingClientRect();
+        // rect includes current scale, so divide out
+        const baseW = rect.width / scale;
+        const baseH = rect.height / scale;
+        const scaledW = baseW * scale;
+        const scaledH = baseH * scale;
+        const maxX = Math.max(0, (scaledW - vpW) / 2 + 40); // +40 soft margin
+        const maxY = Math.max(0, (scaledH - vpH) / 2 + 40);
+        panX = Math.max(-maxX, Math.min(maxX, panX));
+        panY = Math.max(-maxY, Math.min(maxY, panY));
+    }
+
+    // unified pointer handling (covers mouse + single touch drag; pinch handled separately)
+    let hasMoved = false;
+    function onPointerDown(e) {
+        // ignore pinch (2 fingers) — let pinch handlers take over
+        if (e.touches && e.touches.length === 2) return;
+        if (scale <= 1) return;
+        // only left button / single touch
+        if (e.button !== undefined && e.button !== 0) return;
+        isDragging = true;
+        hasMoved = false;
+        dragStartX = (e.touches ? e.touches[0].clientX : e.clientX);
+        dragStartY = (e.touches ? e.touches[0].clientY : e.clientY);
+        dragPanX = panX;
+        dragPanY = panY;
+        imgEl.style.transition = 'none';
+        if (viewport.setPointerCapture && e.pointerId !== undefined) {
+            try { viewport.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+    }
+    function onPointerMove(e) {
+        if (!isDragging || scale <= 1) return;
+        const curX = (e.touches ? e.touches[0].clientX : e.clientX);
+        const curY = (e.touches ? e.touches[0].clientY : e.clientY);
+        if (curX === undefined || curY === undefined) return;
+        const dx = curX - dragStartX;
+        const dy = curY - dragStartY;
+        if (Math.hypot(dx, dy) > 3) hasMoved = true;
+        panX = dragPanX + dx;
+        panY = dragPanY + dy;
+        clampPan();
+        imgEl.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+        if (zoomLevelEl) zoomLevelEl.textContent = Math.round(scale * 100) + '%';
+    }
+    function onPointerUp(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        imgEl.style.transition = 'transform 0.28s cubic-bezier(0.2, 0, 0.2, 1)';
+        // if we dragged, suppress next click toggle
+        if (hasMoved) {
+            // mark to ignore click that fires after drag
+            imgEl._suppressClick = true;
+            setTimeout(() => { imgEl._suppressClick = false; }, 0);
+        }
+        clampPan();
+        updateZoom();
+    }
+
+    if (viewport) {
+        // use pointer events where available, fallback to mouse/touch
+        viewport.addEventListener('pointerdown', onPointerDown);
+        viewport.addEventListener('mousedown', onPointerDown);
+        viewport.addEventListener('touchstart', onPointerDown, { passive: true });
+    }
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchend', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+
+    // pinch zoom — separate, stable
+    let pinchStartDist = 0;
+    let pinchStartScale = 1;
+    let isPinching = false;
+    if (viewport) {
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                isPinching = true;
+                isDragging = false; // cancel drag
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                pinchStartDist = Math.hypot(dx, dy);
+                pinchStartScale = scale;
+                imgEl.style.transition = 'none';
+                e.preventDefault();
+            }
+        }, { passive: false });
+        viewport.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2 && isPinching) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const dist = Math.hypot(dx, dy);
+                if (pinchStartDist > 0) {
+                    const factor = dist / pinchStartDist;
+                    // damp factor to avoid jump
+                    const newScale = pinchStartScale * factor;
+                    setScale(newScale);
+                    clampPan();
+                    if (zoomLevelEl) zoomLevelEl.textContent = Math.round(scale * 100) + '%';
+                    // keep transform in sync while pinching (no transition)
+                    imgEl.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+                }
+                e.preventDefault();
+            }
+        }, { passive: false });
+        viewport.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2 && isPinching) {
+                isPinching = false;
+                imgEl.style.transition = 'transform 0.28s cubic-bezier(0.2, 0, 0.2, 1)';
+                clampPan();
+                updateZoom();
+            }
+        });
+    }
+
+    // backdrop click closes — ignore when zoomed or after drag/pinch
+    lightbox.addEventListener('click', (e) => {
+        if (isDragging || isPinching || hasMoved) return;
+        if (e.target === lightbox || e.target === viewport) closeLightbox();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('show')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === '+' || e.key === '=') { e.preventDefault(); setScale(scale + STEP); clampPan(); updateZoom(); }
+        if (e.key === '-' || e.key === '_') { e.preventDefault(); setScale(scale - STEP); clampPan(); updateZoom(); }
+        if (e.key === '0') { e.preventDefault(); resetZoom(); }
+        if (scale > 1) {
+            const panStep = 40;
+            if (e.key === 'ArrowLeft') { e.preventDefault(); panX += panStep; clampPan(); updateZoom(); }
+            if (e.key === 'ArrowRight') { e.preventDefault(); panX -= panStep; clampPan(); updateZoom(); }
+            if (e.key === 'ArrowUp') { e.preventDefault(); panY += panStep; clampPan(); updateZoom(); }
+            if (e.key === 'ArrowDown') { e.preventDefault(); panY -= panStep; clampPan(); updateZoom(); }
+        } else {
+            if (e.key === 'ArrowLeft') showPrev();
+            if (e.key === 'ArrowRight') showNext();
+        }
+    });
+
+    // swipe to navigate when not zoomed/pinching/dragging
+    let touchStartX = 0;
+    let touchStartY = 0;
+    lightbox.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        if (scale > 1 || isPinching) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    lightbox.addEventListener('touchend', (e) => {
+        if (scale > 1 || isPinching || isDragging) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+            if (dx > 0) showPrev(); else showNext();
+        }
+    }, { passive: true });
+});
 </script>
 
 <?php include '../app/includes/footer.php'; ?>
