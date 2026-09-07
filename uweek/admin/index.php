@@ -92,16 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $categories = $pdo->query("SELECT * FROM uweek_categories ORDER BY sort_order ASC, id ASC")->fetchAll();
-$liveCounts = getUWeekLiveCounts(2);
 $stats = [
     'total_cats' => count($categories),
     'total_events' => (int)$pdo->query("SELECT COUNT(*) FROM uweek_events")->fetchColumn(),
     'enabled_events' => (int)$pdo->query("SELECT COUNT(*) FROM uweek_events WHERE is_enabled=1")->fetchColumn(),
     'disabled_events' => (int)$pdo->query("SELECT COUNT(*) FROM uweek_events WHERE is_enabled=0")->fetchColumn(),
-    'live_total' => (int)($liveCounts['total'] ?? 0),
-    'live_brackets' => (int)($liveCounts['brackets_total'] ?? 0),
-    'live_overview' => (int)($liveCounts['overview'] ?? 0),
-    'live_schedules' => (int)($liveCounts['schedules'] ?? 0),
 ];
 $grouped = [];
 foreach ($categories as $cat) {
@@ -254,6 +249,7 @@ input:checked + .slider:before{transform:translateX(18px)}
 </nav>
 
 <div class="uweek-admin-wrap">
+  <?php echo CSRF::field(); ?>
   <div class="dash-head">
     <div>
       <h1>University Week 2026 Admin</h1>
@@ -273,19 +269,6 @@ input:checked + .slider:before{transform:translateX(18px)}
     <div class="stat-card"><div class="stat-icon"><i class="fas fa-list"></i></div><div class="stat-content"><h3><?php echo $stats['total_events']; ?></h3><p>Total Events</p></div></div>
     <div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-eye"></i></div><div class="stat-content"><h3><?php echo $stats['enabled_events']; ?></h3><p>Enabled</p></div></div>
     <div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626)"><i class="fas fa-eye-slash"></i></div><div class="stat-content"><h3><?php echo $stats['disabled_events']; ?></h3><p>Disabled</p></div></div>
-    <div class="stat-card" id="liveCard" style="border-color:#16a34a;"><div class="stat-icon" style="background:linear-gradient(135deg,#16a34a,#15803d)"><i class="fas fa-circle" style="font-size:.7rem;animation:livePulse 1.6s infinite"></i></div><div class="stat-content"><h3 id="liveTotal"><?php echo $stats['live_total']; ?></h3><p><span class="live-dot"></span>Live Viewers</p></div></div>
-  </div>
-  <div id="liveBreakdown" style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
-    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:.78rem;font-weight:700;">
-      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:var(--primary);border-radius:50%;display:inline-block"></span> Brackets: <strong id="liveBrackets"><?php echo $stats['live_brackets']; ?></strong></span>
-      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#10b981;border-radius:50%;display:inline-block"></span> Overview: <strong id="liveOverview"><?php echo $stats['live_overview']; ?></strong></span>
-      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#f59e0b;border-radius:50%;display:inline-block"></span> Schedules: <strong id="liveSchedules"><?php echo $stats['live_schedules']; ?></strong></span>
-      <span style="color:var(--muted);font-weight:600;">(last 2 min)</span>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <span id="liveUpdated" style="font-size:.70rem;color:var(--muted);">Updated just now</span>
-      <button class="btn btn-sm" style="background:#fff;border:1px solid var(--line);" onclick="refreshLive()"><i class="fas fa-sync"></i> Refresh</button>
-    </div>
   </div>
 
   <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
@@ -303,20 +286,16 @@ input:checked + .slider:before{transform:translateX(18px)}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <form method="POST" style="display:flex;align-items:center;gap:8px;" onsubmit="return false;">
-          <?php echo CSRF::field(); ?>
-          <input type="hidden" name="action" value="toggle_category">
-          <input type="hidden" name="category_id" value="<?php echo $cat['id']; ?>">
-          <label class="switch" title="Enable/disable category"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$cat['is_enabled']===1 ? 'checked' : ''; ?> onchange="toggleCategoryAjax(this, <?php echo $cat['id']; ?>)"><span class="slider"></span></label>
-          <span class="cat-status" style="font-size:.78rem;font-weight:700;color:<?php echo (int)$cat['is_enabled']===1 ? '#059669' : '#dc2626'; ?>"><?php echo (int)$cat['is_enabled']===1 ? 'Enabled' : 'Disabled'; ?></span>
-        </form>
+        <button type="button" class="btn btn-sm" style="background:<?php echo (int)$cat['is_enabled']===1 ? '#10b981' : '#ef4444'; ?>;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:700;font-size:.70rem;cursor:pointer;" onclick="toggleCategory(<?php echo $cat['id']; ?>, <?php echo (int)$cat['is_enabled']; ?>, this)">
+          <?php echo (int)$cat['is_enabled']===1 ? 'Enabled' : 'Disabled'; ?>
+        </button>
         <span style="background:#f1f5f9;padding:4px 8px;border-radius:999px;font-size:.72rem;font-weight:700;"><?php echo count($events); ?> events</span>
       </div>
     </summary>
     <div style="border-top:1px solid var(--line);padding:10px 12px;background:#f8fafc;display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;">
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-primary btn-sm" onclick="bulkToggleAjax(<?php echo $cat['id']; ?>, 'enable', this)">Enable All</button>
-        <button class="btn btn-secondary btn-sm" onclick="bulkToggleAjax(<?php echo $cat['id']; ?>, 'disable', this)">Disable All</button>
+        <button class="btn btn-primary btn-sm" onclick="bulkToggle(<?php echo $cat['id']; ?>, 'enable', this)">Enable All</button>
+        <button class="btn btn-secondary btn-sm" onclick="bulkToggle(<?php echo $cat['id']; ?>, 'disable', this)">Disable All</button>
       </div>
       <button class="btn" style="background:#fff;border:1px solid var(--line);" onclick="openCatEdit(<?php echo $cat['id']; ?>, <?php echo htmlspecialchars(json_encode($cat['label']), ENT_QUOTES); ?>, <?php echo (int)$cat['is_enabled']; ?>, <?php echo (int)$cat['sort_order']; ?>)">Edit Category</button>
     </div>
@@ -328,12 +307,9 @@ input:checked + .slider:before{transform:translateX(18px)}
               $shortUrl = $shortBase . urlencode($ev['slug']); ?>
           <tr>
             <td data-label="Visible">
-              <form method="POST" style="margin:0;" onsubmit="return false;">
-                <?php echo CSRF::field(); ?>
-                <input type="hidden" name="action" value="toggle_event">
-                <input type="hidden" name="event_id" value="<?php echo $ev['id']; ?>">
-                <label class="switch small" title="Show/hide on public"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$ev['is_enabled']===1 ? 'checked' : ''; ?> onchange="toggleEventAjax(this, <?php echo $ev['id']; ?>)"><span class="slider"></span></label>
-              </form>
+              <button type="button" class="btn btn-sm" style="background:<?php echo (int)$ev['is_enabled']===1 ? '#10b981' : '#ef4444'; ?>;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:700;font-size:.70rem;cursor:pointer;" onclick="toggleEvent(<?php echo $ev['id']; ?>, <?php echo (int)$ev['is_enabled']; ?>, this)">
+                <?php echo (int)$ev['is_enabled']===1 ? 'Enabled' : 'Disabled'; ?>
+              </button>
             </td>
             <td data-label="Code"><span style="background:#f1f5f9;padding:4px 7px;border-radius:6px;font-weight:800;font-size:.74rem;color:var(--primary);"><?php echo htmlspecialchars($ev['code'] ?: '—'); ?></span></td>
             <td data-label="Event"><div style="font-weight:700;color:var(--text);line-height:1.1;"><?php echo htmlspecialchars($ev['title']); ?></div><div style="font-size:.72rem;color:var(--muted);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?php echo htmlspecialchars($ev['description'] ?: 'No description'); ?></div><?php if((int)$ev['is_enabled']===0) echo '<span style="font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;">Hidden</span>'; ?></td>
@@ -370,6 +346,12 @@ input:checked + .slider:before{transform:translateX(18px)}
 
 <div id="uweekToast" role="status" aria-live="polite"></div>
 <script>
+// NOTE: This admin's backend handler file is ajax-uweek.php (see the code you use
+// for authorization/CSRF/toggle_event/bulk_toggle_events). All XHR calls below now
+// point there instead of the nonexistent "ajax.php", which was causing every
+// toggle click to fail with "Method Not Allowed".
+var AJAX_ENDPOINT = window.location.pathname.replace(/\/[^\/]*$/, '/ajax-uweek.php');
+
 function showToast(m){const t=document.getElementById('uweekToast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2300);}
 function copyShort(url){ if(navigator.clipboard){ navigator.clipboard.writeText(url).then(()=>showToast('Short link copied: '+url)); } else { prompt('Copy link:', url); } }
 function shareAdmin(){
@@ -389,106 +371,267 @@ function getCsrfToken(el){
   t = t ? t.querySelector('input[name="_token"]') : document.querySelector('input[name="_token"]');
   return t ? t.value : <?php echo json_encode(CSRF::token()); ?>;
 }
-function toggleEventAjax(chk,eventId){
-  var enabled=chk.checked?1:0;
-  var token=getCsrfToken(chk);
-  var scrollY=window.scrollY;
-  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'toggle_event',event_id:eventId,is_enabled:enabled})})
-  .then(r=>r.json()).then(d=>{
-    if(!d.success){ chk.checked=!chk.checked; showToast(d.error||'Failed'); return; }
-    showToast(enabled?'Event enabled':'Event disabled');
-    // update Hidden badge in row
-    var row=chk.closest('tr');
-    if(row){
-      var badge=row.querySelector('td[data-label="Event"] span');
-      // Find existing Hidden badge or create handling: simplest toggle visibility of Hidden span
-      var hidden=row.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
-      if(!enabled){
-        if(!hidden){
-          var td=row.querySelector('td[data-label="Event"]');
-          var s=document.createElement('span');
-          s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
-          s.textContent='Hidden';
-          td.querySelector('div').appendChild(s);
+function toggleEvent(eventId, currentEnabled, btn){
+  var newEnabled = currentEnabled ? 0 : 1;
+  var token = document.querySelector('input[name="_token"]').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', AJAX_ENDPOINT, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          var d = JSON.parse(xhr.responseText);
+          if(!d.success){ showToast(d.error||'Failed'); return; }
+          showToast(newEnabled?'Event enabled':'Event disabled');
+          btn.textContent = newEnabled ? 'Enabled' : 'Disabled';
+          btn.style.background = newEnabled ? '#10b981' : '#ef4444';
+          btn.onclick = function() { toggleEvent(eventId, newEnabled, btn); };
+          // update Hidden badge in row
+          var row=btn.closest('tr');
+          if(row){
+            var hidden=row.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
+            if(!newEnabled){
+              if(!hidden){
+                var td=row.querySelector('td[data-label="Event"]');
+                var s=document.createElement('span');
+                s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
+                s.textContent='Hidden';
+                td.querySelector('div').appendChild(s);
+              }
+            } else if(hidden){ hidden.remove(); }
+          }
+        } catch(e) {
+          showToast('Server error');
         }
-      } else if(hidden){ hidden.remove(); }
+      } else {
+        showToast('Network error');
+      }
     }
-    window.scrollTo(0, scrollY);
-  })
-  .catch(()=>{ chk.checked=!chk.checked; showToast('Network error'); window.scrollTo(0, scrollY); });
+  };
+  var params = '_token=' + encodeURIComponent(token) + '&action=toggle_event&event_id=' + eventId + '&is_enabled=' + newEnabled;
+  xhr.send(params);
 }
+function toggleCategory(catId, currentEnabled, btn){
+  var newEnabled = currentEnabled ? 0 : 1;
+  var token = document.querySelector('input[name="_token"]').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', AJAX_ENDPOINT, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          var d = JSON.parse(xhr.responseText);
+          if(!d.success){ showToast(d.error||'Failed'); return; }
+          showToast(newEnabled?'Category enabled':'Category disabled');
+          btn.textContent = newEnabled ? 'Enabled' : 'Disabled';
+          btn.style.background = newEnabled ? '#10b981' : '#ef4444';
+          btn.onclick = function() { toggleCategory(catId, newEnabled, btn); };
+        } catch(e) {
+          showToast('Server error');
+        }
+      } else {
+        showToast('Network error');
+      }
+    }
+  };
+  var params = '_token=' + encodeURIComponent(token) + '&action=toggle_category&category_id=' + catId + '&is_enabled=' + newEnabled;
+  xhr.send(params);
+}
+function bulkToggle(catId, bulk, btn){
+  var enable = bulk==='enable'?1:0;
+  var token = document.querySelector('input[name="_token"]').value;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', AJAX_ENDPOINT, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          var d = JSON.parse(xhr.responseText);
+          if(!d.success){ showToast(d.error||'Failed'); return; }
+          showToast(enable?'All events enabled':'All events disabled');
+          // update all buttons in this category details
+          var details = btn ? btn.closest('details') : document;
+          if(details){
+            details.querySelectorAll('td[data-label="Visible"] button').forEach(function(b){
+              b.textContent = enable ? 'Enabled' : 'Disabled';
+              b.style.background = enable ? '#10b981' : '#ef4444';
+            });
+            // update Hidden badges: remove or add
+            details.querySelectorAll('tbody tr').forEach(function(tr){
+              var hidden=tr.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
+              if(!enable && !hidden){
+                var td=tr.querySelector('td[data-label="Event"]');
+                if(td){
+                  var s=document.createElement('span');
+                  s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
+                  s.textContent='Hidden';
+                  var div=td.querySelector('div');
+                  if(div) div.appendChild(s);
+                }
+              } else if(enable && hidden){ hidden.remove(); }
+            });
+          }
+        } catch(e) {
+          showToast('Server error');
+        }
+      } else {
+        showToast('Network error');
+      }
+    }
+  };
+  var params = '_token=' + encodeURIComponent(token) + '&action=bulk_toggle_events&category_id=' + catId + '&bulk=' + bulk;
+  xhr.send(params);
+}
+function submitToggleForm(form, eventId, currentEnabled){
+  var checkbox = form.querySelector('input[type="checkbox"]');
+  var newEnabled = checkbox.checked ? 1 : 0;
+  form.querySelector('input[name="is_enabled"]').value = newEnabled;
+  var formData = new FormData(form);
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', AJAX_ENDPOINT, true);
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          var d = JSON.parse(xhr.responseText);
+          if(!d.success){ checkbox.checked = !checkbox.checked; showToast(d.error||'Failed'); return; }
+          showToast(newEnabled?'Event enabled':'Event disabled');
+          // update Hidden badge in row
+          var row=form.closest('tr');
+          if(row){
+            var hidden=row.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
+            if(!newEnabled){
+              if(!hidden){
+                var td=row.querySelector('td[data-label="Event"]');
+                var s=document.createElement('span');
+                s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
+                s.textContent='Hidden';
+                td.querySelector('div').appendChild(s);
+              }
+            } else if(hidden){ hidden.remove(); }
+          }
+        } catch(e) {
+          checkbox.checked = !checkbox.checked;
+          showToast('Server error');
+        }
+      } else {
+        checkbox.checked = !checkbox.checked;
+        showToast('Network error');
+      }
+    }
+  };
+  xhr.send(formData);
+  return false;
+}
+
+// Attach event listeners to event checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('input[name="is_enabled"]').forEach(function(chk) {
+    var eventId = chk.getAttribute('data-event-id');
+    if(!eventId) {
+      var parentTd = chk.closest('td');
+      if(parentTd) {
+        var hiddenInput = parentTd.querySelector('input[type="hidden"][name="event_id"]');
+        if(hiddenInput) eventId = hiddenInput.value;
+      }
+    }
+    if(eventId) {
+      chk.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleEventAjax(chk, eventId);
+      });
+    }
+  });
+});
 function toggleCategoryAjax(chk,catId){
   var enabled=chk.checked?1:0;
   var token=getCsrfToken(chk);
   var scrollY=window.scrollY;
   var statusEl = chk.closest('form') ? chk.closest('form').querySelector('.cat-status') : null;
-  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'toggle_category',category_id:catId,is_enabled:enabled})})
-  .then(r=>r.json()).then(d=>{
-    if(!d.success){ chk.checked=!chk.checked; showToast(d.error||'Failed'); return; }
-    showToast(enabled?'Category enabled':'Category disabled');
-    if(statusEl){ statusEl.textContent=enabled?'Enabled':'Disabled'; statusEl.style.color=enabled?'#059669':'#dc2626'; }
-    window.scrollTo(0, scrollY);
-  })
-  .catch(()=>{ chk.checked=!chk.checked; showToast('Network error'); window.scrollTo(0, scrollY); });
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', AJAX_ENDPOINT, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          var d = JSON.parse(xhr.responseText);
+          if(!d.success){ chk.checked=!chk.checked; showToast(d.error||'Failed'); return; }
+          showToast(enabled?'Category enabled':'Category disabled');
+          if(statusEl){ statusEl.textContent=enabled?'Enabled':'Disabled'; statusEl.style.color=enabled?'#059669':'#dc2626'; }
+          window.scrollTo(0, scrollY);
+        } catch(e) {
+          chk.checked=!chk.checked;
+          showToast('Server error');
+        }
+      } else {
+        chk.checked=!chk.checked;
+        showToast('Network error');
+      }
+    }
+  };
+  var params = '_token=' + encodeURIComponent(token) + '&action=toggle_category&category_id=' + catId + '&is_enabled=' + enabled;
+  xhr.send(params);
 }
 function bulkToggleAjax(catId, bulk, btn){
   var token=getCsrfToken(btn);
   var scrollY=window.scrollY;
   var enable = bulk==='enable'?1:0;
   if(btn) btn.disabled=true;
-  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'bulk_toggle_events',category_id:catId,bulk:bulk})})
-  .then(r=>r.json()).then(d=>{
-    if(!d.success){ showToast(d.error||'Failed'); return; }
-    showToast(enable?'All events enabled':'All events disabled');
-    // update all switches in this category details
-    var details = btn ? btn.closest('details') : document;
-    if(details){
-      details.querySelectorAll('input[name="is_enabled"]').forEach(function(cb){
-        // Only event checkboxes (small switch) inside this details
-        if(cb.closest('td')) cb.checked=!!enable;
-      });
-      // update Hidden badges: remove or add
-      details.querySelectorAll('tbody tr').forEach(function(tr){
-        var hidden=tr.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
-        if(!enable && !hidden){
-          var td=tr.querySelector('td[data-label="Event"]');
-          if(td){
-            var s=document.createElement('span');
-            s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
-            s.textContent='Hidden';
-            var div=td.querySelector('div');
-            if(div) div.appendChild(s);
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', AJAX_ENDPOINT, true);
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        try {
+          var d = JSON.parse(xhr.responseText);
+          if(!d.success){ showToast(d.error||'Failed'); return; }
+          showToast(enable?'All events enabled':'All events disabled');
+          // update all switches in this category details
+          var details = btn ? btn.closest('details') : document;
+          if(details){
+            details.querySelectorAll('input[name="is_enabled"]').forEach(function(cb){
+              // Only event checkboxes (small switch) inside this details
+              if(cb.closest('td')) cb.checked=!!enable;
+            });
+            // update Hidden badges: remove or add
+            details.querySelectorAll('tbody tr').forEach(function(tr){
+              var hidden=tr.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
+              if(!enable && !hidden){
+                var td=tr.querySelector('td[data-label="Event"]');
+                if(td){
+                  var s=document.createElement('span');
+                  s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
+                  s.textContent='Hidden';
+                  var div=td.querySelector('div');
+                  if(div) div.appendChild(s);
+                }
+              } else if(enable && hidden){ hidden.remove(); }
+            });
           }
-        } else if(enable && hidden){ hidden.remove(); }
-      });
+          window.scrollTo(0, scrollY);
+        } catch(e) {
+          showToast('Server error');
+        }
+      } else {
+        showToast('Network error');
+      }
     }
-    window.scrollTo(0, scrollY);
-  })
-  .catch(()=> showToast('Network error'))
-  .finally(()=>{ if(btn) btn.disabled=false; window.scrollTo(0, scrollY); });
+  };
+  var params = '_token=' + encodeURIComponent(token) + '&action=bulk_toggle_events&category_id=' + catId + '&bulk=' + bulk;
+  xhr.send(params);
+  if(btn) btn.disabled=false;
 }
-function refreshLive(){
-  var token=getCsrfToken(document.body);
-  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'get_live_counts'})})
-  .then(r=>r.json()).then(d=>{
-    if(!d.success) return;
-    var c=d.counts;
-    var totalEl=document.getElementById('liveTotal');
-    var bEl=document.getElementById('liveBrackets');
-    var oEl=document.getElementById('liveOverview');
-    var sEl=document.getElementById('liveSchedules');
-    var uEl=document.getElementById('liveUpdated');
-    if(totalEl) totalEl.textContent=c.total ?? 0;
-    if(bEl) bEl.textContent=c.brackets_total ?? 0;
-    if(oEl) oEl.textContent=c.overview ?? 0;
-    if(sEl) sEl.textContent=c.schedules ?? 0;
-    if(uEl) uEl.textContent='Updated just now';
-    // subtle pulse on update
-    if(totalEl){ totalEl.style.transform='scale(1.08)'; setTimeout(()=>totalEl.style.transform='',180); }
-  }).catch(()=>{});
-}
-setInterval(refreshLive, 15000);
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refreshLive(); });
 </script>
 </body>
 </html>
