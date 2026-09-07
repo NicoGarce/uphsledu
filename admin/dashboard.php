@@ -286,6 +286,16 @@ if ($userRole === 'super_admin' || $userRole === 'admin') {
                     </a>
                 <?php endif; ?>
                 
+                <?php if (isAdmin() || isSuperAdmin()): ?>
+                    <a href="<?php echo $base_path; ?>uweek/admin/" class="action-card" style="border-color: var(--primary-color);">
+                        <i class="fas fa-trophy" style="color: var(--primary-color);"></i>
+                        <span>UWeek Brackets</span>
+                    </a>
+                    <a href="<?php echo $base_path; ?>uweek/" class="action-card" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>View Public UWeek</span>
+                    </a>
+                <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>
                     <a href="accounts.php" class="action-card">
                         <i class="fas fa-users-cog"></i>

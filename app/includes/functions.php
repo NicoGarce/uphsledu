@@ -1214,4 +1214,53 @@ function generateUniqueCareerSlug($position, $excludeId = null) {
     return generateUniqueSlug($position, 'careers_postings', $excludeId);
 }
 
+// ===================== UWeek Helpers =====================
+function getUWeekCategories($onlyEnabled = false) {
+    $pdo = getDBConnection();
+    $sql = "SELECT * FROM uweek_categories";
+    if ($onlyEnabled) $sql .= " WHERE is_enabled = 1";
+    $sql .= " ORDER BY sort_order ASC, id ASC";
+    $stmt = $pdo->query($sql);
+    return $stmt ? $stmt->fetchAll() : [];
+}
+
+function getUWeekCategoryBySlug($slug) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT * FROM uweek_categories WHERE slug = ?");
+    $stmt->execute([$slug]);
+    return $stmt->fetch();
+}
+
+function getUWeekEvents($categoryId = null, $onlyEnabled = false) {
+    $pdo = getDBConnection();
+    $sql = "SELECT e.*, c.slug as category_slug, c.label as category_label, c.name as category_name
+            FROM uweek_events e JOIN uweek_categories c ON e.category_id = c.id";
+    $conds = [];
+    $params = [];
+    if ($categoryId !== null) { $conds[] = "e.category_id = ?"; $params[] = (int)$categoryId; }
+    if ($onlyEnabled) { $conds[] = "e.is_enabled = 1"; $conds[] = "c.is_enabled = 1"; }
+    if (!empty($conds)) $sql .= " WHERE " . implode(" AND ", $conds);
+    $sql .= " ORDER BY e.sort_order ASC, e.id ASC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll();
+}
+
+function getUWeekEventBySlug($slug) {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT e.*, c.slug as category_slug, c.label as category_label FROM uweek_events e JOIN uweek_categories c ON e.category_id = c.id WHERE e.slug = ?");
+    $stmt->execute([$slug]);
+    return $stmt->fetch();
+}
+
+function getUWeekGrouped($onlyEnabled = true) {
+    $cats = getUWeekCategories($onlyEnabled);
+    $grouped = [];
+    foreach ($cats as $cat) {
+        $events = getUWeekEvents((int)$cat['id'], $onlyEnabled);
+        $grouped[] = ['category' => $cat, 'events' => $events];
+    }
+    return $grouped;
+}
+
 

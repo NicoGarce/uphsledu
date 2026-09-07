@@ -12,6 +12,10 @@ require_once __DIR__ . '/../config/paths.php';
 
 // Get current page name for active state detection
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
+// Handle uweek/admin folder – treat its index as 'uweek'
+if (strpos($_SERVER['REQUEST_URI'], 'uweek/admin') !== false) {
+    $current_page = 'uweek';
+}
 
 // Use the automatically detected base path
 $base_path = $GLOBALS['base_path'];
@@ -48,49 +52,52 @@ $base_path = $GLOBALS['base_path'];
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="../">
+                <a href="<?php echo $base_path; ?>">
                     <img src="<?php echo $base_path; ?>assets/images/Logos/2026_Logo.png" alt="University of Perpetual Help System" class="logo-img">
                 </a>
             </div>
             <div class="nav-menu">
-                <a href="../" class="nav-link">Home</a>
+                <a href="<?php echo $base_path; ?>" class="nav-link">Home</a>
                 <?php if (isHR()): ?>
-                    <a href="dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
-                    <a href="careers.php" class="nav-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers Posting</a>
+                    <a href="<?php echo $base_path; ?>admin/dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
+                    <a href="<?php echo $base_path; ?>admin/careers.php" class="nav-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers Posting</a>
                 <?php elseif (isAuthor()): ?>
-                    <a href="author-dashboard.php" class="nav-link <?php echo ($current_page == 'author-dashboard') ? 'active' : ''; ?>">Dashboard</a>
+                    <a href="<?php echo $base_path; ?>admin/author-dashboard.php" class="nav-link <?php echo ($current_page == 'author-dashboard') ? 'active' : ''; ?>">Dashboard</a>
                 <?php elseif (isAdmin() || isSuperAdmin()): ?>
-                    <a href="dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
+                    <a href="<?php echo $base_path; ?>admin/dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
                 <?php endif; ?>
                 <?php if (isAuthor() || isAdmin() || isSuperAdmin()): ?>
-                    <a href="posts.php" class="nav-link <?php echo ($current_page == 'posts') ? 'active' : ''; ?>">Post Management</a>
-                    <a href="sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
-                    <a href="sdg-full-report.php" class="nav-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">SDG Full Report</a>
+                    <a href="<?php echo $base_path; ?>admin/posts.php" class="nav-link <?php echo ($current_page == 'posts') ? 'active' : ''; ?>">Post Management</a>
+                    <a href="<?php echo $base_path; ?>admin/sdg-initiatives.php" class="nav-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">SDG Initiatives</a>
+                    <a href="<?php echo $base_path; ?>admin/sdg-full-report.php" class="nav-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">SDG Full Report</a>
+                <?php endif; ?>
+                <?php if (isAdmin() || isSuperAdmin()): ?>
+                    <a href="<?php echo $base_path; ?>uweek/admin/" class="nav-link <?php echo ($current_page == 'uweek') ? 'active' : ''; ?>"><i class="fas fa-trophy" style="margin-right:4px;"></i> UWeek</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin() && !isHR()): ?>
-                    <a href="careers.php" class="nav-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers Posting</a>
+                    <a href="<?php echo $base_path; ?>admin/careers.php" class="nav-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">Careers Posting</a>
                 <?php endif; ?>
                 <?php if (isSuperAdmin()): ?>
-                    <a href="accounts.php" class="nav-link icon-only <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>" title="Account Management">
+                    <a href="<?php echo $base_path; ?>admin/accounts.php" class="nav-link icon-only <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>" title="Account Management">
                         <i class="fas fa-users-cog"></i>
                     </a>
-                    <a href="payment-monitoring.php" class="nav-link icon-only <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>" title="Payment Monitoring">
+                    <a href="<?php echo $base_path; ?>admin/payment-monitoring.php" class="nav-link icon-only <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>" title="Payment Monitoring">
                         <i class="fas fa-credit-card"></i>
                     </a>
-                    <a href="student-management.php" class="nav-link icon-only <?php echo ($current_page == 'student-management') ? 'active' : ''; ?>" title="Student Management">
+                    <a href="<?php echo $base_path; ?>admin/student-management.php" class="nav-link icon-only <?php echo ($current_page == 'student-management') ? 'active' : ''; ?>" title="Student Management">
                         <i class="fas fa-user-graduate"></i>
                     </a>
-                    <a href="database-export.php" class="nav-link icon-only <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>" title="Database Export">
+                    <a href="<?php echo $base_path; ?>admin/database-export.php" class="nav-link icon-only <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>" title="Database Export">
                         <i class="fas fa-database"></i>
                     </a>
-                    <a href="settings.php" class="nav-link icon-only <?php echo ($current_page == 'settings') ? 'active' : ''; ?>" title="Settings">
+                    <a href="<?php echo $base_path; ?>admin/settings.php" class="nav-link icon-only <?php echo ($current_page == 'settings') ? 'active' : ''; ?>" title="Settings">
                         <i class="fas fa-cog"></i>
                     </a>
                 <?php endif; ?>
             </div>
             <div class="user-menu">
                 <span class="user-name"><?php echo htmlspecialchars($user['first_name']); ?></span>
-                <a href="../auth/logout.php" class="nav-link icon-only" title="Logout">
+                <a href="<?php echo $base_path; ?>auth/logout.php" class="nav-link icon-only" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
@@ -124,27 +131,27 @@ $base_path = $GLOBALS['base_path'];
                 <div class="nav-section">
                     <div class="nav-section-title">Main</div>
                     <?php if (isHR()): ?>
-                    <a href="dashboard.php" class="sidebar-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/dashboard.php" class="sidebar-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="../" class="sidebar-link">
+                    <a href="<?php echo $base_path; ?>" class="sidebar-link">
                         <i class="fas fa-home"></i>
                         <span>View Website</span>
                     </a>
                     <?php elseif (isAuthor()): ?>
-                    <a href="author-dashboard.php" class="sidebar-link <?php echo ($current_page == 'author-dashboard') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/author-dashboard.php" class="sidebar-link <?php echo ($current_page == 'author-dashboard') ? 'active' : ''; ?>">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                     <?php elseif (isAdmin() || isSuperAdmin()): ?>
-                    <a href="dashboard.php" class="sidebar-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/dashboard.php" class="sidebar-link <?php echo ($current_page == 'dashboard') ? 'active' : ''; ?>">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span>
                     </a>
                     <?php endif; ?>
                     <?php if (!isHR()): ?>
-                    <a href="../" class="sidebar-link">
+                    <a href="<?php echo $base_path; ?>" class="sidebar-link">
                         <i class="fas fa-home"></i>
                         <span>View Website</span>
                     </a>
@@ -154,7 +161,7 @@ $base_path = $GLOBALS['base_path'];
                 <?php if (isHR() || isSuperAdmin()): ?>
                 <div class="nav-section">
                     <div class="nav-section-title">Careers</div>
-                    <a href="careers.php" class="sidebar-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/careers.php" class="sidebar-link <?php echo ($current_page == 'careers') ? 'active' : ''; ?>">
                         <i class="fas fa-briefcase"></i>
                         <span>Careers Posting</span>
                     </a>
@@ -164,17 +171,30 @@ $base_path = $GLOBALS['base_path'];
                 <?php if (isAuthor() || isAdmin() || isSuperAdmin()): ?>
                 <div class="nav-section">
                     <div class="nav-section-title">Post Management</div>
-                    <a href="posts.php" class="sidebar-link <?php echo ($current_page == 'posts') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/posts.php" class="sidebar-link <?php echo ($current_page == 'posts') ? 'active' : ''; ?>">
                         <i class="fas fa-edit"></i>
                         <span>Manage Posts</span>
                     </a>
-                    <a href="sdg-initiatives.php" class="sidebar-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/sdg-initiatives.php" class="sidebar-link <?php echo ($current_page == 'sdg-initiatives') ? 'active' : ''; ?>">
                         <i class="fas fa-globe-americas"></i>
                         <span>SDG Initiatives</span>
                     </a>
-                    <a href="sdg-full-report.php" class="sidebar-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/sdg-full-report.php" class="sidebar-link <?php echo ($current_page == 'sdg-full-report') ? 'active' : ''; ?>">
                         <i class="fas fa-file-pdf"></i>
                         <span>SDG Full Report</span>
+                    </a>
+                </div>
+                <?php endif; ?>
+                <?php if (isAdmin() || isSuperAdmin()): ?>
+                <div class="nav-section">
+                    <div class="nav-section-title">University Week</div>
+                    <a href="<?php echo $base_path; ?>uweek/admin/" class="sidebar-link <?php echo ($current_page == 'uweek') ? 'active' : ''; ?>">
+                        <i class="fas fa-trophy"></i>
+                        <span>UWeek Brackets</span>
+                    </a>
+                    <a href="<?php echo $base_path; ?>uweek/" target="_blank" class="sidebar-link">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>View Public UWeek</span>
                     </a>
                 </div>
                 <?php endif; ?>
@@ -182,29 +202,29 @@ $base_path = $GLOBALS['base_path'];
                 <?php if (isSuperAdmin()): ?>
                 <div class="nav-section">
                     <div class="nav-section-title">Account Management</div>
-                    <a href="accounts.php" class="sidebar-link <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/accounts.php" class="sidebar-link <?php echo ($current_page == 'accounts') ? 'active' : ''; ?>">
                         <i class="fas fa-users-cog"></i>
                         <span>Manage Accounts</span>
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">System</div>
-                    <a href="settings.php" class="sidebar-link <?php echo ($current_page == 'settings') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/settings.php" class="sidebar-link <?php echo ($current_page == 'settings') ? 'active' : ''; ?>">
                         <i class="fas fa-cog"></i>
                         <span>Settings</span>
                     </a>
-                    <a href="database-export.php" class="sidebar-link <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/database-export.php" class="sidebar-link <?php echo ($current_page == 'database-export') ? 'active' : ''; ?>">
                         <i class="fas fa-database"></i>
                         <span>Database Export</span>
                     </a>
                 </div>
                 <div class="nav-section">
                     <div class="nav-section-title">Payment System</div>
-                    <a href="payment-monitoring.php" class="sidebar-link <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/payment-monitoring.php" class="sidebar-link <?php echo ($current_page == 'payment-monitoring') ? 'active' : ''; ?>">
                         <i class="fas fa-credit-card"></i>
                         <span>Payment Monitoring</span>
                     </a>
-                    <a href="student-management.php" class="sidebar-link <?php echo ($current_page == 'student-management') ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_path; ?>admin/student-management.php" class="sidebar-link <?php echo ($current_page == 'student-management') ? 'active' : ''; ?>">
                         <i class="fas fa-user-graduate"></i>
                         <span>Student Management</span>
                     </a>
@@ -213,7 +233,7 @@ $base_path = $GLOBALS['base_path'];
                 
                 <div class="nav-section">
                     <div class="nav-section-title">Account</div>
-                    <a href="../auth/logout.php" class="sidebar-link logout">
+                    <a href="<?php echo $base_path; ?>auth/logout.php" class="sidebar-link logout">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </a>
