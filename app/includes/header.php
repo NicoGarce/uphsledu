@@ -1240,7 +1240,7 @@ $navbar_items_config = [
                                 <a href="<?php echo $base_path; ?>uweek/" class="dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'uweek') !== false && strpos($_SERVER['REQUEST_URI'], 'schedules') === false && !isset($_GET['view']) && empty($_GET['cat']) && empty($_GET['event']) && empty($_GET['e']) ? 'active' : (isset($_GET['view']) && $_GET['view']==='overview' ? 'active' : '')); ?>">Overview</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('uweek', 'brackets')): ?>
-                                <a href="<?php echo $base_path; ?>uweek/?view=brackets" class="dropdown-link <?php echo (isset($_GET['view']) && $_GET['view']==='brackets') || !empty($_GET['cat']) || !empty($_GET['event']) || !empty($_GET['e']) ? 'active' : ''; ?>">Brackets</a>
+                                <a href="<?php echo $base_path; ?>uweek/scores.php" class="dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'scores.php') !== false || strpos($_SERVER['REQUEST_URI'], 'uweek/scores') !== false) ? 'active' : ''; ?>">Brackets</a>
                                 <?php endif; ?>
                                 <?php if (isNavbarItemVisible('uweek', 'schedules')): ?>
                                 <a href="<?php echo $base_path; ?>uweek/schedules.php" class="dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'schedules') !== false) ? 'active' : ''; ?>">Schedules</a>
@@ -1592,7 +1592,7 @@ $navbar_items_config = [
                         <a href="<?php echo $base_path; ?>uweek/" class="mobile-dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'uweek') !== false && strpos($_SERVER['REQUEST_URI'], 'schedules') === false && !isset($_GET['view']) && empty($_GET['cat']) && empty($_GET['event']) && empty($_GET['e']) ? 'active' : (isset($_GET['view']) && $_GET['view']==='overview' ? 'active' : '')); ?>">Overview</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('uweek', 'brackets')): ?>
-                        <a href="<?php echo $base_path; ?>uweek/?view=brackets" class="mobile-dropdown-link <?php echo (isset($_GET['view']) && $_GET['view']==='brackets') || !empty($_GET['cat']) || !empty($_GET['event']) || !empty($_GET['e']) ? 'active' : ''; ?>">Brackets</a>
+                        <a href="<?php echo $base_path; ?>uweek/scores.php" class="mobile-dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'scores.php') !== false) ? 'active' : ''; ?>">Brackets</a>
                         <?php endif; ?>
                         <?php if (isNavbarItemVisible('uweek', 'schedules')): ?>
                         <a href="<?php echo $base_path; ?>uweek/schedules.php" class="mobile-dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'schedules') !== false) ? 'active' : ''; ?>">Schedules</a>
