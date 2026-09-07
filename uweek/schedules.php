@@ -245,6 +245,11 @@ function shareSchedule(){
   else if(navigator.clipboard){ navigator.clipboard.writeText(shareUrl).then(()=>showToast('Link copied: '+shareUrl)); }
   else prompt('Copy link:', shareUrl);
 }
+(function(){
+  function ping(){ fetch('track.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({page:'schedules'})}).catch(()=>{}); }
+  ping(); setInterval(ping, 30000);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) ping(); });
+})();
 // Real tabs – only one day visible at a time
 const pills = document.querySelectorAll('.day-pill');
 const sections = document.querySelectorAll('.day-section');

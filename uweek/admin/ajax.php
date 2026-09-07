@@ -49,6 +49,22 @@ try {
         $stmt->execute([$isEnabled, $catId]);
         echo json_encode(['success' => true, 'is_enabled' => $isEnabled]);
         exit;
+    } elseif ($action === 'bulk_toggle_events') {
+        $catId = (int)($_POST['category_id'] ?? 0);
+        $bulk = $_POST['bulk'] ?? '';
+        if ($catId <= 0 || !in_array($bulk, ['enable','disable'])) {
+            echo json_encode(['success' => false, 'error' => 'Invalid parameters']);
+            exit;
+        }
+        $enable = $bulk === 'enable' ? 1 : 0;
+        $stmt = $pdo->prepare("UPDATE uweek_events SET is_enabled = ? WHERE category_id = ?");
+        $stmt->execute([$enable, $catId]);
+        echo json_encode(['success' => true, 'is_enabled' => $enable, 'category_id' => $catId]);
+        exit;
+    } elseif ($action === 'get_live_counts') {
+        $counts = getUWeekLiveCounts(2);
+        echo json_encode(['success' => true, 'counts' => $counts]);
+        exit;
     } else {
         echo json_encode(['success' => false, 'error' => 'Unknown action']);
         exit;

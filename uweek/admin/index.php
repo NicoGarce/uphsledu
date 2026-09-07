@@ -92,11 +92,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $categories = $pdo->query("SELECT * FROM uweek_categories ORDER BY sort_order ASC, id ASC")->fetchAll();
+$liveCounts = getUWeekLiveCounts(2);
 $stats = [
     'total_cats' => count($categories),
     'total_events' => (int)$pdo->query("SELECT COUNT(*) FROM uweek_events")->fetchColumn(),
     'enabled_events' => (int)$pdo->query("SELECT COUNT(*) FROM uweek_events WHERE is_enabled=1")->fetchColumn(),
     'disabled_events' => (int)$pdo->query("SELECT COUNT(*) FROM uweek_events WHERE is_enabled=0")->fetchColumn(),
+    'live_total' => (int)($liveCounts['total'] ?? 0),
+    'live_brackets' => (int)($liveCounts['brackets_total'] ?? 0),
+    'live_overview' => (int)($liveCounts['overview'] ?? 0),
+    'live_schedules' => (int)($liveCounts['schedules'] ?? 0),
 ];
 $grouped = [];
 foreach ($categories as $cat) {
@@ -148,10 +153,12 @@ a{color:inherit}
 .dash-head p{margin:6px 0 0;color:var(--muted);font-size:.82rem;line-height:1.5;max-width:640px}
 @media(max-width:640px){.dash-head{padding:14px} .dash-head h1{font-size:1.25rem}}
 /* Stats – tournament cards */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
-@media(max-width:1024px){.stats-grid{gap:10px}}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px;}
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(3,1fr);gap:10px}}
 @media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;gap:10px}}
+.live-dot{width:9px;height:9px;background:#16a34a;border-radius:50%;box-shadow:0 0 0 6px rgba(22,163,74,.18);animation:livePulse 1.6s infinite;display:inline-block;vertical-align:middle;margin-right:6px}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.28)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
 .stat-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 10px rgba(0,0,0,.04);transition:.15s;position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary);opacity:.9}
 .stat-card:nth-child(3)::before{background:#10b981}
@@ -266,6 +273,19 @@ input:checked + .slider:before{transform:translateX(18px)}
     <div class="stat-card"><div class="stat-icon"><i class="fas fa-list"></i></div><div class="stat-content"><h3><?php echo $stats['total_events']; ?></h3><p>Total Events</p></div></div>
     <div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-eye"></i></div><div class="stat-content"><h3><?php echo $stats['enabled_events']; ?></h3><p>Enabled</p></div></div>
     <div class="stat-card"><div class="stat-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626)"><i class="fas fa-eye-slash"></i></div><div class="stat-content"><h3><?php echo $stats['disabled_events']; ?></h3><p>Disabled</p></div></div>
+    <div class="stat-card" id="liveCard" style="border-color:#16a34a;"><div class="stat-icon" style="background:linear-gradient(135deg,#16a34a,#15803d)"><i class="fas fa-circle" style="font-size:.7rem;animation:livePulse 1.6s infinite"></i></div><div class="stat-content"><h3 id="liveTotal"><?php echo $stats['live_total']; ?></h3><p><span class="live-dot"></span>Live Viewers</p></div></div>
+  </div>
+  <div id="liveBreakdown" style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:.78rem;font-weight:700;">
+      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:var(--primary);border-radius:50%;display:inline-block"></span> Brackets: <strong id="liveBrackets"><?php echo $stats['live_brackets']; ?></strong></span>
+      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#10b981;border-radius:50%;display:inline-block"></span> Overview: <strong id="liveOverview"><?php echo $stats['live_overview']; ?></strong></span>
+      <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;background:#f59e0b;border-radius:50%;display:inline-block"></span> Schedules: <strong id="liveSchedules"><?php echo $stats['live_schedules']; ?></strong></span>
+      <span style="color:var(--muted);font-weight:600;">(last 2 min)</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span id="liveUpdated" style="font-size:.70rem;color:var(--muted);">Updated just now</span>
+      <button class="btn btn-sm" style="background:#fff;border:1px solid var(--line);" onclick="refreshLive()"><i class="fas fa-sync"></i> Refresh</button>
+    </div>
   </div>
 
   <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
@@ -283,20 +303,20 @@ input:checked + .slider:before{transform:translateX(18px)}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <form method="POST" style="display:flex;align-items:center;gap:8px;">
+        <form method="POST" style="display:flex;align-items:center;gap:8px;" onsubmit="return false;">
           <?php echo CSRF::field(); ?>
           <input type="hidden" name="action" value="toggle_category">
           <input type="hidden" name="category_id" value="<?php echo $cat['id']; ?>">
-          <label class="switch" title="Enable/disable category"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$cat['is_enabled']===1 ? 'checked' : ''; ?> onchange="this.form.submit()"><span class="slider"></span></label>
-          <span style="font-size:.78rem;font-weight:700;color:<?php echo (int)$cat['is_enabled']===1 ? '#059669' : '#dc2626'; ?>"><?php echo (int)$cat['is_enabled']===1 ? 'Enabled' : 'Disabled'; ?></span>
+          <label class="switch" title="Enable/disable category"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$cat['is_enabled']===1 ? 'checked' : ''; ?> onchange="toggleCategoryAjax(this, <?php echo $cat['id']; ?>)"><span class="slider"></span></label>
+          <span class="cat-status" style="font-size:.78rem;font-weight:700;color:<?php echo (int)$cat['is_enabled']===1 ? '#059669' : '#dc2626'; ?>"><?php echo (int)$cat['is_enabled']===1 ? 'Enabled' : 'Disabled'; ?></span>
         </form>
         <span style="background:#f1f5f9;padding:4px 8px;border-radius:999px;font-size:.72rem;font-weight:700;"><?php echo count($events); ?> events</span>
       </div>
     </summary>
     <div style="border-top:1px solid var(--line);padding:10px 12px;background:#f8fafc;display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;">
       <div style="display:flex;gap:8px;">
-        <form method="POST" style="display:inline;"><?php echo CSRF::field(); ?><input type="hidden" name="action" value="bulk_toggle_events"><input type="hidden" name="category_id" value="<?php echo $cat['id']; ?>"><input type="hidden" name="bulk" value="enable"><button class="btn btn-primary btn-sm">Enable All</button></form>
-        <form method="POST" style="display:inline;"><?php echo CSRF::field(); ?><input type="hidden" name="action" value="bulk_toggle_events"><input type="hidden" name="category_id" value="<?php echo $cat['id']; ?>"><input type="hidden" name="bulk" value="disable"><button class="btn btn-secondary btn-sm">Disable All</button></form>
+        <button class="btn btn-primary btn-sm" onclick="bulkToggleAjax(<?php echo $cat['id']; ?>, 'enable', this)">Enable All</button>
+        <button class="btn btn-secondary btn-sm" onclick="bulkToggleAjax(<?php echo $cat['id']; ?>, 'disable', this)">Disable All</button>
       </div>
       <button class="btn" style="background:#fff;border:1px solid var(--line);" onclick="openCatEdit(<?php echo $cat['id']; ?>, <?php echo htmlspecialchars(json_encode($cat['label']), ENT_QUOTES); ?>, <?php echo (int)$cat['is_enabled']; ?>, <?php echo (int)$cat['sort_order']; ?>)">Edit Category</button>
     </div>
@@ -308,11 +328,11 @@ input:checked + .slider:before{transform:translateX(18px)}
               $shortUrl = $shortBase . urlencode($ev['slug']); ?>
           <tr>
             <td data-label="Visible">
-              <form method="POST" style="margin:0;">
+              <form method="POST" style="margin:0;" onsubmit="return false;">
                 <?php echo CSRF::field(); ?>
                 <input type="hidden" name="action" value="toggle_event">
                 <input type="hidden" name="event_id" value="<?php echo $ev['id']; ?>">
-                <label class="switch small" title="Show/hide on public"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$ev['is_enabled']===1 ? 'checked' : ''; ?> onchange="this.form.submit()"><span class="slider"></span></label>
+                <label class="switch small" title="Show/hide on public"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$ev['is_enabled']===1 ? 'checked' : ''; ?> onchange="toggleEventAjax(this, <?php echo $ev['id']; ?>)"><span class="slider"></span></label>
               </form>
             </td>
             <td data-label="Code"><span style="background:#f1f5f9;padding:4px 7px;border-radius:6px;font-weight:800;font-size:.74rem;color:var(--primary);"><?php echo htmlspecialchars($ev['code'] ?: '—'); ?></span></td>
@@ -364,14 +384,111 @@ function closeEdit(){ document.getElementById('editModal').style.display='none';
 function openCatEdit(id,label,enabled,sort){ document.getElementById('c_id').value=id; document.getElementById('c_label').value=label; document.getElementById('c_enabled').checked=enabled===1; document.getElementById('c_sort').value=sort; document.getElementById('catModal').style.display='block'; }
 function closeCat(){ document.getElementById('catModal').style.display='none'; }
 window.onclick=function(e){ if(e.target===document.getElementById('editModal')) closeEdit(); if(e.target===document.getElementById('catModal')) closeCat(); }
+function getCsrfToken(el){
+  var t = el && el.closest ? el.closest('form') : null;
+  t = t ? t.querySelector('input[name="_token"]') : document.querySelector('input[name="_token"]');
+  return t ? t.value : <?php echo json_encode(CSRF::token()); ?>;
+}
 function toggleEventAjax(chk,eventId){
   var enabled=chk.checked?1:0;
-  var tokenInput = chk.closest('form') ? chk.closest('form').querySelector('input[name="_token"]') : null;
-  var token = tokenInput ? tokenInput.value : <?php echo json_encode(CSRF::token()); ?>;
+  var token=getCsrfToken(chk);
+  var scrollY=window.scrollY;
   fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'toggle_event',event_id:eventId,is_enabled:enabled})})
-  .then(r=>r.json()).then(d=>{ if(!d.success){ alert(d.error||'Failed'); chk.checked=!chk.checked; } else showToast(enabled?'Enabled':'Disabled'); })
-  .catch(()=>chk.closest('form').submit());
+  .then(r=>r.json()).then(d=>{
+    if(!d.success){ chk.checked=!chk.checked; showToast(d.error||'Failed'); return; }
+    showToast(enabled?'Event enabled':'Event disabled');
+    // update Hidden badge in row
+    var row=chk.closest('tr');
+    if(row){
+      var badge=row.querySelector('td[data-label="Event"] span');
+      // Find existing Hidden badge or create handling: simplest toggle visibility of Hidden span
+      var hidden=row.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
+      if(!enabled){
+        if(!hidden){
+          var td=row.querySelector('td[data-label="Event"]');
+          var s=document.createElement('span');
+          s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
+          s.textContent='Hidden';
+          td.querySelector('div').appendChild(s);
+        }
+      } else if(hidden){ hidden.remove(); }
+    }
+    window.scrollTo(0, scrollY);
+  })
+  .catch(()=>{ chk.checked=!chk.checked; showToast('Network error'); window.scrollTo(0, scrollY); });
 }
+function toggleCategoryAjax(chk,catId){
+  var enabled=chk.checked?1:0;
+  var token=getCsrfToken(chk);
+  var scrollY=window.scrollY;
+  var statusEl = chk.closest('form') ? chk.closest('form').querySelector('.cat-status') : null;
+  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'toggle_category',category_id:catId,is_enabled:enabled})})
+  .then(r=>r.json()).then(d=>{
+    if(!d.success){ chk.checked=!chk.checked; showToast(d.error||'Failed'); return; }
+    showToast(enabled?'Category enabled':'Category disabled');
+    if(statusEl){ statusEl.textContent=enabled?'Enabled':'Disabled'; statusEl.style.color=enabled?'#059669':'#dc2626'; }
+    window.scrollTo(0, scrollY);
+  })
+  .catch(()=>{ chk.checked=!chk.checked; showToast('Network error'); window.scrollTo(0, scrollY); });
+}
+function bulkToggleAjax(catId, bulk, btn){
+  var token=getCsrfToken(btn);
+  var scrollY=window.scrollY;
+  var enable = bulk==='enable'?1:0;
+  if(btn) btn.disabled=true;
+  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'bulk_toggle_events',category_id:catId,bulk:bulk})})
+  .then(r=>r.json()).then(d=>{
+    if(!d.success){ showToast(d.error||'Failed'); return; }
+    showToast(enable?'All events enabled':'All events disabled');
+    // update all switches in this category details
+    var details = btn ? btn.closest('details') : document;
+    if(details){
+      details.querySelectorAll('input[name="is_enabled"]').forEach(function(cb){
+        // Only event checkboxes (small switch) inside this details
+        if(cb.closest('td')) cb.checked=!!enable;
+      });
+      // update Hidden badges: remove or add
+      details.querySelectorAll('tbody tr').forEach(function(tr){
+        var hidden=tr.querySelector('td[data-label="Event"] span[style*="fee2e2"]');
+        if(!enable && !hidden){
+          var td=tr.querySelector('td[data-label="Event"]');
+          if(td){
+            var s=document.createElement('span');
+            s.style.cssText='font-size:.68rem;background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:999px;font-weight:700;margin-left:4px;';
+            s.textContent='Hidden';
+            var div=td.querySelector('div');
+            if(div) div.appendChild(s);
+          }
+        } else if(enable && hidden){ hidden.remove(); }
+      });
+    }
+    window.scrollTo(0, scrollY);
+  })
+  .catch(()=> showToast('Network error'))
+  .finally(()=>{ if(btn) btn.disabled=false; window.scrollTo(0, scrollY); });
+}
+function refreshLive(){
+  var token=getCsrfToken(document.body);
+  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'get_live_counts'})})
+  .then(r=>r.json()).then(d=>{
+    if(!d.success) return;
+    var c=d.counts;
+    var totalEl=document.getElementById('liveTotal');
+    var bEl=document.getElementById('liveBrackets');
+    var oEl=document.getElementById('liveOverview');
+    var sEl=document.getElementById('liveSchedules');
+    var uEl=document.getElementById('liveUpdated');
+    if(totalEl) totalEl.textContent=c.total ?? 0;
+    if(bEl) bEl.textContent=c.brackets_total ?? 0;
+    if(oEl) oEl.textContent=c.overview ?? 0;
+    if(sEl) sEl.textContent=c.schedules ?? 0;
+    if(uEl) uEl.textContent='Updated just now';
+    // subtle pulse on update
+    if(totalEl){ totalEl.style.transform='scale(1.08)'; setTimeout(()=>totalEl.style.transform='',180); }
+  }).catch(()=>{});
+}
+setInterval(refreshLive, 15000);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refreshLive(); });
 </script>
 </body>
 </html>

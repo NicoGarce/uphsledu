@@ -113,6 +113,11 @@ const shareUrl = <?php echo json_encode((isset($_SERVER['HTTPS']) && $_SERVER['H
 function showToast(m){const t=document.getElementById('uweekToast');t.textContent=m;t.classList.add('show');clearTimeout(t._hide);t._hide=setTimeout(()=>t.classList.remove('show'),2200);}
 function shareScores(){ if(navigator.share){navigator.share({title:'University Week 2026 – Live Scores', url: shareUrl}).catch(()=>{});} else if(navigator.clipboard){navigator.clipboard.writeText(shareUrl).then(()=>showToast('Link copied: '+shareUrl))} else prompt('Copy link:',shareUrl); }
 document.getElementById('topShareBtn')?.addEventListener('click', shareScores);
+(function(){
+  function ping(){ fetch('track.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({page:'overview'})}).catch(()=>{}); }
+  ping(); setInterval(ping, 30000);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) ping(); });
+})();
 </script>
 </body>
 </html>

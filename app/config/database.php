@@ -440,6 +440,22 @@ function initializeDatabase() {
             }
         }
 
+        // Ensure uweek live viewers table exists
+        try {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS uweek_viewers (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                ip VARCHAR(45) NOT NULL,
+                page_key VARCHAR(100) NOT NULL,
+                user_agent VARCHAR(255) DEFAULT NULL,
+                last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY uniq_ip_page (ip, page_key),
+                KEY idx_last_seen (last_seen),
+                KEY idx_page_key (page_key)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        } catch (Exception $e) {
+            error_log('UWeek viewers table creation failed: ' . $e->getMessage());
+        }
+
         // Seed UWeek categories and events if empty
         try {
             $stmt = $pdo->query("SELECT COUNT(*) as cnt FROM uweek_categories");

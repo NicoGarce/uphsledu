@@ -227,6 +227,13 @@ const shareTitle = <?php echo json_encode($shareTitle); ?>;
 function showToast(m){const t=document.getElementById('uweekToast');t.textContent=m;t.classList.add('show');clearTimeout(t._hide);t._hide=setTimeout(()=>t.classList.remove('show'),2200);}
 function shareShort(){ if(navigator.share){navigator.share({title:shareTitle,url:shareUrl}).catch(()=>{});} else if(navigator.clipboard){navigator.clipboard.writeText(shareUrl).then(()=>showToast('Short link copied: '+shareUrl))} else prompt('Copy link:',shareUrl);}
 document.getElementById('topShareBtn')?.addEventListener('click',shareShort);
+// Live viewer heartbeat – keeps admin count live without reload
+(function(){
+  const pageKey = <?php echo json_encode( $activeEvent ? 'brackets:'.$activeEvent['slug'] : 'brackets' ); ?>;
+  function ping(){ fetch('track.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({page: pageKey})}).catch(()=>{}); }
+  ping(); setInterval(ping, 30000);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) ping(); });
+})();
 </script>
 </body>
 </html>

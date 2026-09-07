@@ -1265,4 +1265,71 @@ function getUWeekGrouped($onlyEnabled = true) {
     return $grouped;
 }
 
+// ===================== UWeek Live Viewers =====================
+function trackUWeekViewer($pageKey) {
+    try {
+        $pdo = getDBConnection();
+        $pageKey = trim(substr($pageKey ?? '', 0, 100));
+        if ($pageKey === '') $pageKey = 'unknown';
+        // Only allow known keys
+        $allowed = ['brackets','overview','schedules','scores'];
+        $base = explode(':', $pageKey)[0];
+        if (!in_array($base, $allowed) && !in_array($pageKey, $allowed)) {
+            // Allow brackets:slug variants
+            if (strpos($pageKey, 'brackets:') !== 0) $pageKey = 'brackets';
+        }
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ip = trim($parts[0]);
+        } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = trim($_SERVER['HTTP_CLIENT_IP']);
+        }
+        $ip = substr($ip, 0, 45);
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) $ip = '0.0.0.0';
+        $ua = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
+        $stmt = $pdo->prepare("INSERT INTO uweek_viewers (ip, page_key, user_agent, last_seen) VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE last_seen = NOW(), user_agent = VALUES(user_agent)");
+        $stmt->execute([$ip, $pageKey, $ua]);
+        // Cleanup stale (>5 min) occasionally (10% chance to reduce writes)
+        if (mt_rand(1,10) === 1) {
+            $pdo->exec("DELETE FROM uweek_viewers WHERE last_seen < DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+        }
+        return true;
+    } catch (Exception $e) {
+        error_log('trackUWeekViewer failed: ' . $e->getMessage());
+        return false;
+    }
+}
+
+function getUWeekLiveCounts($windowMinutes = 2) {
+    try {
+        $pdo = getDBConnection();
+        $windowMinutes = max(1, min(10, (int)$windowMinutes));
+        // Per page
+        $stmt = $pdo->prepare("SELECT page_key, COUNT(*) as cnt FROM uweek_viewers WHERE last_seen >= DATE_SUB(NOW(), INTERVAL ? MINUTE) GROUP BY page_key");
+        $stmt->execute([$windowMinutes]);
+        $perPage = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        // Total distinct IPs
+        $stmt2 = $pdo->prepare("SELECT COUNT(DISTINCT ip) as total FROM uweek_viewers WHERE last_seen >= DATE_SUB(NOW(), INTERVAL ? MINUTE)");
+        $stmt2->execute([$windowMinutes]);
+        $total = (int)$stmt2->fetchColumn();
+        // Total per base page (brackets combined)
+        $bracketsTotal = 0;
+        foreach ($perPage as $k=>$v) {
+            if ($k === 'brackets' || strpos($k, 'brackets:') === 0) $bracketsTotal += (int)$v;
+        }
+        return [
+            'total' => $total,
+            'per_page' => $perPage,
+            'brackets_total' => $bracketsTotal,
+            'overview' => (int)($perPage['overview'] ?? $perPage['scores'] ?? 0),
+            'schedules' => (int)($perPage['schedules'] ?? 0),
+            'window_minutes' => $windowMinutes,
+        ];
+    } catch (Exception $e) {
+        error_log('getUWeekLiveCounts failed: ' . $e->getMessage());
+        return ['total'=>0,'per_page'=>[],'brackets_total'=>0,'overview'=>0,'schedules'=>0,'window_minutes'=>$windowMinutes];
+    }
+}
+
 
