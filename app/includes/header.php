@@ -183,6 +183,10 @@ $navbar_items_config = [
         'sdg-16' => 'SDG 16',
         'sdg-17' => 'SDG 17',
         'sdg-full-report' => 'SDG Full Report'
+    ],
+    'uweek' => [
+        'brackets' => 'Brackets',
+        'schedules' => 'Schedules'
     ]
 ];
 ?>
@@ -1220,6 +1224,27 @@ $navbar_items_config = [
                         <a href="<?php echo $base_path; ?>" class="nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
                     </div>
                     <?php endif; ?>
+                    <?php if (isNavbarItemVisible('uweek')): ?>
+                    <div class="nav-item dropdown">
+                        <a href="<?php echo $base_path; ?>uweek/" class="nav-link dropdown-toggle <?php echo (strpos($_SERVER['REQUEST_URI'], 'uweek') !== false) ? 'active' : ''; ?>">U-Week <i class="fas fa-chevron-down desktop-chevron"></i></a>
+                        <div class="dropdown-menu">
+                            <?php 
+                            $uweek_subitems = isset($navbar_items_config['uweek']) ? $navbar_items_config['uweek'] : [];
+                            if (areAllNavbarSubItemsDisabled('uweek', $uweek_subitems)): ?>
+                                <div class="dropdown-placeholder">
+                                    <span class="dropdown-placeholder-text">No U-Week pages available at this time.</span>
+                                </div>
+                            <?php else: ?>
+                                <?php if (isNavbarItemVisible('uweek', 'brackets')): ?>
+                                <a href="<?php echo $base_path; ?>uweek/" class="dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'uweek') !== false && strpos($_SERVER['REQUEST_URI'], 'schedules') === false) ? 'active' : ''; ?>">Brackets</a>
+                                <?php endif; ?>
+                                <?php if (isNavbarItemVisible('uweek', 'schedules')): ?>
+                                <a href="<?php echo $base_path; ?>uweek/schedules.php" class="dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'schedules') !== false) ? 'active' : ''; ?>">Schedules</a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                     
                     <?php if (isNavbarItemVisible('programs')): ?>
                     <div class="nav-item dropdown">
@@ -1546,6 +1571,27 @@ $navbar_items_config = [
             <?php if (isNavbarItemVisible('home')): ?>
             <div class="mobile-nav-item">
                 <a href="<?php echo $base_path; ?>" class="mobile-nav-link <?php echo ($current_page == 'index') ? 'active' : ''; ?>">Home</a>
+            </div>
+            <?php endif; ?>
+            <?php if (isNavbarItemVisible('uweek')): ?>
+            <div class="mobile-nav-item mobile-dropdown">
+                <a href="<?php echo $base_path; ?>uweek/" class="mobile-nav-link mobile-dropdown-toggle <?php echo (strpos($_SERVER['REQUEST_URI'], 'uweek') !== false) ? 'active' : ''; ?>">U-Week <i class="fas fa-chevron-down mobile-chevron"></i></a>
+                <div class="mobile-dropdown-menu">
+                    <?php 
+                    $uweek_subitems = isset($navbar_items_config['uweek']) ? $navbar_items_config['uweek'] : [];
+                    if (areAllNavbarSubItemsDisabled('uweek', $uweek_subitems)): ?>
+                        <div class="dropdown-placeholder">
+                            <span class="dropdown-placeholder-text">No U-Week pages available at this time.</span>
+                        </div>
+                    <?php else: ?>
+                        <?php if (isNavbarItemVisible('uweek', 'brackets')): ?>
+                        <a href="<?php echo $base_path; ?>uweek/" class="mobile-dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'uweek') !== false && strpos($_SERVER['REQUEST_URI'], 'schedules') === false) ? 'active' : ''; ?>">Brackets</a>
+                        <?php endif; ?>
+                        <?php if (isNavbarItemVisible('uweek', 'schedules')): ?>
+                        <a href="<?php echo $base_path; ?>uweek/schedules.php" class="mobile-dropdown-link <?php echo (strpos($_SERVER['REQUEST_URI'], 'schedules') !== false) ? 'active' : ''; ?>">Schedules</a>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
             </div>
             <?php endif; ?>
             

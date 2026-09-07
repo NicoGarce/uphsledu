@@ -346,6 +346,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // No changes detected, no need to save
             $success = 'No changes detected. Settings remain unchanged.';
         }
+    } elseif (isset($_POST['action']) && $_POST['action'] === 'save_uweek_settings') {
+        $hasChanges = false;
+        $uweek_check = [
+            'uweek_enabled' => getSetting('uweek_enabled', '1'),
+            'navbar_item_uweek' => getSetting('navbar_item_uweek', '1'),
+            'navbar_item_uweek_brackets' => getSetting('navbar_item_uweek_brackets', '1'),
+            'navbar_item_uweek_schedules' => getSetting('navbar_item_uweek_schedules', '1'),
+        ];
+        $new_uweek = [
+            'uweek_enabled' => isset($_POST['uweek_enabled']) ? '1' : '0',
+            'navbar_item_uweek' => isset($_POST['navbar_item_uweek']) ? '1' : '0',
+            'navbar_item_uweek_brackets' => isset($_POST['navbar_item_uweek_brackets']) ? '1' : '0',
+            'navbar_item_uweek_schedules' => isset($_POST['navbar_item_uweek_schedules']) ? '1' : '0',
+        ];
+        foreach ($uweek_check as $k => $v) { if ($v !== $new_uweek[$k]) { $hasChanges = true; break; } }
+        $password = $_POST['uweek_password'] ?? '';
+        if ($hasChanges) {
+            if (empty($password)) {
+                $error = 'Password verification is required to save U-Week settings';
+            } elseif (!password_verify($password, $user['password'])) {
+                $error = 'Invalid password. Please enter your current password to save settings.';
+            } else {
+                $saved = 0;
+                if (setSetting('uweek_enabled', $new_uweek['uweek_enabled'], 'boolean', 'Enable/disable U-Week app for public viewing', $_SESSION['user_id'])) $saved++;
+                if (setSetting('navbar_item_uweek', $new_uweek['navbar_item_uweek'], 'boolean', 'Enable/disable U-Week navbar item', $_SESSION['user_id'])) $saved++;
+                if (setSetting('navbar_item_uweek_brackets', $new_uweek['navbar_item_uweek_brackets'], 'boolean', 'Enable/disable U-Week Brackets submenu', $_SESSION['user_id'])) $saved++;
+                if (setSetting('navbar_item_uweek_schedules', $new_uweek['navbar_item_uweek_schedules'], 'boolean', 'Enable/disable U-Week Schedules submenu', $_SESSION['user_id'])) $saved++;
+                if ($saved > 0) $success = 'U-Week settings saved successfully!';
+                else $error = 'Failed to save U-Week settings.';
+            }
+        } else {
+            $success = 'No changes detected. Settings remain unchanged.';
+        }
     }
 }
 
@@ -473,6 +506,13 @@ $navbar_items_config = [
             'sdg-16' => 'SDG 16',
             'sdg-17' => 'SDG 17',
             'sdg-full-report' => 'SDG Full Report'
+        ]
+    ],
+    'uweek' => [
+        'name' => 'U-Week',
+        'subitems' => [
+            'brackets' => 'Brackets',
+            'schedules' => 'Schedules'
         ]
     ]
 ];
@@ -805,25 +845,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             <p class="dashboard-subtitle">Manage website-wide settings and configurations</p>
         </div>
 
-        <!-- Quick Navigation & Search -->
-        <div class="settings-section" id="settings-quicknav">
-            <div class="settings-card">
-                <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
-                    <div style="display:flex;gap:8px;align-items:center;flex:1;min-width:220px;">
-                        <a href="#section-general" class="btn quicknav-link" data-target="section-general">General</a>
-                        <a href="#section-contact" class="btn quicknav-link" data-target="section-contact">Contact</a>
-                        <a href="#section-social" class="btn quicknav-link" data-target="section-social">Social</a>
-                        <a href="#section-library-programs" class="btn quicknav-link" data-target="section-library-programs">Library</a>
-                    </div>
-                    <div style="display:flex;gap:8px;align-items:center;">
-                        <input id="settings_search" type="search" placeholder="Search settings..." class="form-input" style="min-width:220px;max-width:420px;padding:8px 12px;">
-                        <button id="settings_search_clear" class="btn" type="button">Clear</button>
-                    </div>
-                </div>
-                <p class="settings-description" style="margin-top:10px;">Quickly jump to a settings card or search to filter settings cards by name or description.</p>
-            </div>
-        </div>
-
         <?php if ($error): ?>
             <div class="alert alert-error">
                 <i class="fas fa-exclamation-circle"></i>
@@ -838,8 +859,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             </div>
         <?php endif; ?>
 
+        <!-- Tabs as dropdown beside search -->
+        <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.04);">
+            <div style="display:flex;gap:8px;align-items:center;flex:1;min-width:220px;max-width:320px;">
+                <label for="settings_tab_select" style="font-weight:700;font-size:.82rem;white-space:nowrap;">Section:</label>
+                <select id="settings_tab_select" class="form-input" style="flex:1;padding:7px 10px;">
+                    <option value="section-uweek">U-Week</option>
+                    <option value="section-general">General</option>
+                    <option value="section-contact">Contact</option>
+                    <option value="section-social">Social</option>
+                    <option value="section-library-programs">Library Programs</option>
+                    <option value="section-library-cas">Library CAS</option>
+                    <option value="section-display">Display</option>
+                    <option value="section-post">Post</option>
+                    <option value="section-maintenance">Maintenance</option>
+                    <option value="section-navbar">Navbar</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex:1;min-width:220px;max-width:420px;">
+                <input id="settings_search" type="search" placeholder="Search settings..." class="form-input" style="flex:1;padding:8px 10px;">
+            </div>
+        </div>
+
+        <div>
+            
         <!-- General Information Section -->
-        <div id="section-general" class="settings-section">
+        <div id="section-general" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -900,7 +945,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Contact Information Section -->
-        <div id="section-contact" class="settings-section">
+        <div id="section-contact" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -988,7 +1033,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Social Media Links Section -->
-        <div id="section-social" class="settings-section">
+        <div id="section-social" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1067,7 +1112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Library Programs Manager -->
-        <div id="section-library-programs" class="settings-section">
+        <div id="section-library-programs" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header no-divider-bottom">
                     <h2>
@@ -1184,7 +1229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Library CAS Manager (Current Awareness Services) -->
-        <div id="section-library-cas" class="settings-section">
+        <div id="section-library-cas" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header no-divider-bottom">
                     <h2>
@@ -1297,8 +1342,149 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
             </div>
         </div>
 
+        <!-- University Week 2026 Settings -->
+        <div id="section-uweek" class="settings-section settings-panel active">
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2>
+                        <i class="fas fa-trophy"></i>
+                        University Week 2026
+                    </h2>
+                    <p class="settings-description">Control University Week visibility — turn the whole app on/off for public viewing and manage its navbar items. This is separate from maintenance mode.</p>
+                </div>
+                <?php
+                    $uweek_app_enabled = getSetting('uweek_enabled', '1');
+                    $uweek_nav_visible = getSetting('navbar_item_uweek', '1');
+                    $uweek_brackets_visible = getSetting('navbar_item_uweek_brackets', '1');
+                    $uweek_schedules_visible = getSetting('navbar_item_uweek_schedules', '1');
+                ?>
+                <form method="POST" action="" class="settings-form" id="uweek-settings-form" novalidate>
+                    <?php echo CSRF::field(); ?>
+                    <input type="hidden" name="action" value="save_uweek_settings">
+                    <div class="section-maintenance-list">
+                        <div class="section-maintenance-group" style="border-left:4px solid var(--primary-color);">
+                            <label class="switch-label-compact">
+                                <div class="switch-container-small">
+                                    <input type="checkbox" name="uweek_enabled" id="uweek_enabled" value="1" <?php echo $uweek_app_enabled === '1' ? 'checked' : ''; ?> onchange="updateUweekStatus()">
+                                    <span class="switch-slider-small"></span>
+                                </div>
+                                <span class="switch-text-compact">
+                                    <strong>University Week App</strong>
+                                    <small id="uweek-app-status" class="status-badge" style="<?php echo $uweek_app_enabled === '1' ? 'background:#dcfce7;color:#166534;' : 'background:#fee2e2;color:#991b1b;'; ?>"><?php echo $uweek_app_enabled === '1' ? 'Enabled – Visible to public' : 'Disabled – Hidden from public'; ?></small>
+                                </span>
+                            </label>
+                            <p style="margin:6px 0 0 50px;font-size:.82rem;color:var(--text-light);">When disabled, <code>/uweek/</code> and <code>/uweek/schedules.php</code> show “currently unavailable” and the U-Week nav item is hidden regardless of navbar toggles.</p>
+                        </div>
+                        <div class="section-maintenance-group">
+                            <label class="switch-label-compact">
+                                <div class="switch-container-small">
+                                    <input type="checkbox" name="navbar_item_uweek" id="navbar_item_uweek" value="1" <?php echo $uweek_nav_visible === '1' ? 'checked' : ''; ?> onchange="updateUweekStatus()">
+                                    <span class="switch-slider-small"></span>
+                                </div>
+                                <span class="switch-text-compact">
+                                    <strong>Show in Navbar</strong>
+                                    <small id="uweek-nav-status" class="status-badge" style="<?php echo $uweek_nav_visible === '1' ? 'background:#dbeafe;color:#1e40af;' : 'background:#e5e7eb;color:#6b7280;'; ?>"><?php echo $uweek_nav_visible === '1' ? 'Visible' : 'Hidden'; ?></small>
+                                </span>
+                            </label>
+                            <p style="margin:6px 0 0 50px;font-size:.82rem;color:var(--text-light);">Controls the top-level <strong>U-Week</strong> menu. Sub-items below are only effective when this is visible and the app is enabled.</p>
+                        </div>
+                        <div class="section-subpages" style="margin-top:4px;">
+                            <div class="subpage-item">
+                                <label class="switch-label-compact">
+                                    <div class="switch-container-small">
+                                        <input type="checkbox" name="navbar_item_uweek_brackets" id="navbar_item_uweek_brackets" value="1" <?php echo $uweek_brackets_visible === '1' ? 'checked' : ''; ?> onchange="updateUweekStatus()">
+                                        <span class="switch-slider-small"></span>
+                                    </div>
+                                    <span class="switch-text-compact">
+                                        <span>Brackets</span>
+                                        <small id="uweek-brackets-status" class="status-badge-small" style="<?php echo $uweek_brackets_visible === '1' ? 'background:#dbeafe;color:#1e40af;' : 'background:#e5e7eb;color:#6b7280;'; ?>"><?php echo $uweek_brackets_visible === '1' ? 'Visible' : 'Hidden'; ?></small>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="subpage-item">
+                                <label class="switch-label-compact">
+                                    <div class="switch-container-small">
+                                        <input type="checkbox" name="navbar_item_uweek_schedules" id="navbar_item_uweek_schedules" value="1" <?php echo $uweek_schedules_visible === '1' ? 'checked' : ''; ?> onchange="updateUweekStatus()">
+                                        <span class="switch-slider-small"></span>
+                                    </div>
+                                    <span class="switch-text-compact">
+                                        <span>Schedules</span>
+                                        <small id="uweek-schedules-status" class="status-badge-small" style="<?php echo $uweek_schedules_visible === '1' ? 'background:#dbeafe;color:#1e40af;' : 'background:#e5e7eb;color:#6b7280;'; ?>"><?php echo $uweek_schedules_visible === '1' ? 'Visible' : 'Hidden'; ?></small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="uweek-password-verification-group" style="display:none;">
+                        <label for="uweek_password" class="form-label"><i class="fas fa-lock"></i> Password Verification</label>
+                        <input type="password" name="uweek_password" id="uweek_password" class="form-input" placeholder="Enter your password to save U-Week settings" autocomplete="current-password">
+                        <small class="form-help">Password verification is required to save U-Week settings for security purposes.</small>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save U-Week Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+        function updateUweekStatus(){
+            var app = document.getElementById('uweek_enabled');
+            var nav = document.getElementById('navbar_item_uweek');
+            var br = document.getElementById('navbar_item_uweek_brackets');
+            var sch = document.getElementById('navbar_item_uweek_schedules');
+            var appSt = document.getElementById('uweek-app-status');
+            var navSt = document.getElementById('uweek-nav-status');
+            var brSt = document.getElementById('uweek-brackets-status');
+            var schSt = document.getElementById('uweek-schedules-status');
+            if(app && appSt){ appSt.textContent = app.checked ? 'Enabled – Visible to public' : 'Disabled – Hidden from public'; appSt.style.background = app.checked ? '#dcfce7' : '#fee2e2'; appSt.style.color = app.checked ? '#166534' : '#991b1b'; }
+            if(nav && navSt){ navSt.textContent = nav.checked ? 'Visible' : 'Hidden'; navSt.style.background = nav.checked ? '#dbeafe' : '#e5e7eb'; navSt.style.color = nav.checked ? '#1e40af' : '#6b7280'; }
+            if(br && brSt){ brSt.textContent = br.checked ? 'Visible' : 'Hidden'; brSt.style.background = br.checked ? '#dbeafe' : '#e5e7eb'; brSt.style.color = br.checked ? '#1e40af' : '#6b7280'; }
+            if(sch && schSt){ schSt.textContent = sch.checked ? 'Visible' : 'Hidden'; schSt.style.background = sch.checked ? '#dbeafe' : '#e5e7eb'; schSt.style.color = sch.checked ? '#1e40af' : '#6b7280'; }
+            checkUweekChanges();
+        }
+        (function(){
+            window._uweekOriginal = null;
+            function snapUweek(){
+                window._uweekOriginal = {
+                    app: document.getElementById('uweek_enabled')?.checked ? '1' : '0',
+                    nav: document.getElementById('navbar_item_uweek')?.checked ? '1' : '0',
+                    br: document.getElementById('navbar_item_uweek_brackets')?.checked ? '1' : '0',
+                    sch: document.getElementById('navbar_item_uweek_schedules')?.checked ? '1' : '0'
+                };
+            }
+            window.checkUweekChanges = function(){
+                if(!window._uweekOriginal) snapUweek();
+                var cur = {
+                    app: document.getElementById('uweek_enabled')?.checked ? '1' : '0',
+                    nav: document.getElementById('navbar_item_uweek')?.checked ? '1' : '0',
+                    br: document.getElementById('navbar_item_uweek_brackets')?.checked ? '1' : '0',
+                    sch: document.getElementById('navbar_item_uweek_schedules')?.checked ? '1' : '0'
+                };
+                var changed = cur.app !== window._uweekOriginal.app || cur.nav !== window._uweekOriginal.nav || cur.br !== window._uweekOriginal.br || cur.sch !== window._uweekOriginal.sch;
+                var grp = document.getElementById('uweek-password-verification-group');
+                var inp = document.getElementById('uweek_password');
+                if(grp && inp){ grp.style.display = changed ? 'block' : 'none'; inp.required = changed; if(!changed) inp.value=''; }
+            };
+            document.addEventListener('DOMContentLoaded', function(){
+                snapUweek();
+                ['uweek_enabled','navbar_item_uweek','navbar_item_uweek_brackets','navbar_item_uweek_schedules'].forEach(function(id){
+                    var el=document.getElementById(id); if(el) el.addEventListener('change', checkUweekChanges);
+                });
+                var form=document.getElementById('uweek-settings-form');
+                if(form) form.addEventListener('submit', function(e){
+                    var grp=document.getElementById('uweek-password-verification-group');
+                    if(grp && grp.style.display !== 'none'){
+                        var pw=document.getElementById('uweek_password');
+                        if(pw && !pw.value.trim()){ e.preventDefault(); alert('Password verification is required to save U-Week settings.'); pw.focus(); }
+                    }
+                });
+            });
+        })();
+        </script>
+
         <!-- Display Settings Section -->
-        <div id="section-display" class="settings-section">
+        <div id="section-display" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1368,7 +1554,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Post Settings Section -->
-        <div id="section-post" class="settings-section">
+        <div id="section-post" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1423,7 +1609,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Section Maintenance Switches -->
-        <div id="section-maintenance" class="settings-section">
+        <div id="section-maintenance" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1553,7 +1739,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         </div>
 
         <!-- Navbar Visibility Switches -->
-        <div id="section-navbar" class="settings-section">
+        <div id="section-navbar" class="settings-section settings-panel">
             <div class="settings-card">
                 <div class="settings-card-header">
                     <h2>
@@ -1586,6 +1772,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                     
                     <div class="section-maintenance-list">
                         <?php foreach ($navbar_items_config as $key => $item): ?>
+                            <?php if ($key === 'uweek') continue; ?>
                             <div class="section-maintenance-group">
                                 <div class="section-maintenance-main">
                                     <label class="switch-label-compact">
@@ -2271,6 +2458,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         /* Modal-specific sizing */
         #editModal .settings-card h2 { font-size: 1.15rem; }
         #modal_edit_status { font-size: 0.95rem; }
+
+        /* Search highlight – show all, highlight matches */
+        .search-highlight { outline: 2px solid #ffc63e !important; background: #fffbeb !important; box-shadow: 0 4px 12px rgba(255,198,62,.18) !important; }
+        .search-highlight .settings-card-header h2 { color: #92400e !important; }
+        mark.search-mark { background: #fef08a; color: #713f12; padding: 1px 3px; border-radius: 3px; font-weight: 700; }
+        .search-dim { opacity: .45; filter: grayscale(10%); }
+
+        /* Tabs – easy navigation, no long scroll */
+        .settings-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.04);position:sticky;top:72px;z-index:12}
+        .settings-tab{padding:8px 14px;border-radius:999px;border:1.5px solid #e5e7eb;background:#f8fafc;color:var(--text-dark);font-weight:600;font-size:.82rem;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+        .settings-tab:hover{border-color:var(--primary-color);color:var(--primary-color);background:#eef2ff}
+        .settings-tab.active{background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));color:#fff;border-color:var(--primary-color);box-shadow:0 2px 8px rgba(28,77,161,.18)}
+        .settings-panel{display:none}
+        .settings-panel.active{display:block;animation:fadeIn .18s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)}}
+        @media(max-width:768px){.settings-tabs{top:56px;padding:10px;gap:6px;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none} .settings-tabs::-webkit-scrollbar{display:none} .settings-tab{flex:0 0 auto}}
+
+        /* New settings layout – sidebar + main, easy navigation – no long scroll */
+        .settings-layout{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+        .settings-sidebar{position:sticky;top:88px;align-self:start;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);max-height:calc(100vh - 100px);overflow:auto}
+        .settings-sidebar-title{font-weight:700;font-size:.82rem;letter-spacing:.4px;text-transform:uppercase;color:var(--text-dark);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+        .settings-sidebar-title i{color:var(--primary-color)}
+        .settings-nav{display:flex;flex-direction:column;gap:6px}
+        .settings-nav a{padding:8px 10px;border-radius:8px;background:#f8fafc;border:1px solid transparent;color:var(--text-dark);text-decoration:none;font-weight:600;font-size:.84rem;display:flex;align-items:center;gap:8px;transition:.15s}
+        .settings-nav a:hover{background:#eef2ff;border-color:var(--primary-color);color:var(--primary-color)}
+        .settings-nav a.active{background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));color:#fff;border-color:var(--primary-color);box-shadow:0 2px 8px rgba(28,77,161,.18)}
+        .settings-nav a .nav-count{margin-left:auto;font-size:.70rem;background:rgba(0,0,0,.08);padding:2px 6px;border-radius:999px}
+        .settings-nav a.active .nav-count{background:rgba(255,255,255,.22)}
+        .settings-main{display:flex;flex-direction:column;gap:24px}
+        .settings-search-box{margin-bottom:14px}
+        .settings-search-box .form-input{width:100%}
+        @media(max-width:1024px){.settings-layout{grid-template-columns:220px 1fr;gap:16px}}
+        @media(max-width:768px){
+          .settings-layout{grid-template-columns:1fr}
+          .settings-sidebar{position:relative;top:auto;max-height:none}
+          .settings-nav{flex-direction:row;flex-wrap:wrap;gap:6px}
+          .settings-nav a{flex:1 1 calc(50% - 6px);justify-content:center;padding:8px 10px;font-size:.80rem}
+        }
+        @media(max-width:480px){.settings-nav a{flex:1 1 100%}}
+
+        /* New settings layout – sidebar + main, easy navigation */
+        .settings-layout{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+        .settings-sidebar{position:sticky;top:88px;align-self:start;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);max-height:calc(100vh - 100px);overflow:auto}
+        .settings-sidebar-title{font-weight:700;font-size:.82rem;letter-spacing:.4px;text-transform:uppercase;color:var(--text-dark);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+        .settings-sidebar-title i{color:var(--primary-color)}
+        .settings-nav{display:flex;flex-direction:column;gap:6px}
+        .settings-nav a{padding:8px 10px;border-radius:8px;background:#f8fafc;border:1px solid transparent;color:var(--text-dark);text-decoration:none;font-weight:600;font-size:.84rem;display:flex;align-items:center;gap:8px;transition:.15s}
+        .settings-nav a:hover{background:#eef2ff;border-color:var(--primary-color);color:var(--primary-color)}
+        .settings-nav a.active{background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));color:#fff;border-color:var(--primary-color);box-shadow:0 2px 8px rgba(28,77,161,.18)}
+        .settings-nav a .nav-count{margin-left:auto;font-size:.70rem;background:rgba(0,0,0,.08);padding:2px 6px;border-radius:999px}
+        .settings-nav a.active .nav-count{background:rgba(255,255,255,.22)}
+        .settings-main{display:flex;flex-direction:column;gap:24px}
+        .settings-search-box{margin-bottom:14px}
+        .settings-search-box .form-input{width:100%}
+        @media(max-width:1024px){.settings-layout{grid-template-columns:220px 1fr;gap:16px}}
+        @media(max-width:768px){
+          .settings-layout{grid-template-columns:1fr}
+          .settings-sidebar{position:relative;top:auto;max-height:none}
+          .settings-nav{flex-direction:row;flex-wrap:wrap;gap:6px}
+          .settings-nav a{flex:1 1 calc(50% - 6px);justify-content:center;padding:8px 10px;font-size:.80rem}
+        }
+        @media(max-width:480px){.settings-nav a{flex:1 1 100%}}
     </style>
 
     <script>
@@ -3368,25 +3617,214 @@ document.addEventListener('DOMContentLoaded', function(){
         });
     });
 
-    // Search/filter settings cards
+    // Tabs as dropdown beside search
+    var tabSelect = document.getElementById('settings_tab_select');
+    function showTab(target){
+        document.querySelectorAll('.settings-panel').forEach(function(panel){
+            var isActive = panel.id === target;
+            panel.classList.toggle('active', isActive);
+            panel.hidden = !isActive;
+            panel.style.display = isActive ? '' : 'none';
+        });
+        if(tabSelect) tabSelect.value = target;
+        history.replaceState(null,'','#'+target);
+    }
+    if(tabSelect){
+        tabSelect.addEventListener('change', function(){
+            showTab(this.value);
+        });
+    }
+    // Init from hash or first tab
+    (function(){
+        var hash = location.hash ? location.hash.slice(1) : '';
+        var initial = document.getElementById(hash) && document.getElementById(hash).classList.contains('settings-panel') ? hash : 'section-uweek';
+        showTab(initial);
+        if(tabSelect) tabSelect.value = initial;
+    })();
+    window.addEventListener('hashchange', function(){
+        var hid = location.hash.slice(1);
+        if(document.getElementById(hid) && document.getElementById(hid).classList.contains('settings-panel')){
+            showTab(hid);
+            if(tabSelect) tabSelect.value = hid;
+        }
+    });
+
+    // Search – show ALL, highlight matches for every card
     var search = document.getElementById('settings_search');
     var clear = document.getElementById('settings_search_clear');
-    function filterSettings(){
-        var q = (search && search.value || '').toLowerCase().trim();
-        document.querySelectorAll('.settings-section').forEach(function(section){
-            if (section.id === 'settings-quicknav') { section.style.display = ''; return; }
-            var card = section.querySelector('.settings-card');
-            if (!card) return;
-            var title = (card.querySelector('h2') && card.querySelector('h2').innerText) || '';
-            var desc = (card.querySelector('.settings-description') && card.querySelector('.settings-description').innerText) || '';
-            var sub = Array.from(card.querySelectorAll('h3')).map(function(h){ return h.innerText; }).join(' ');
-            var hay = (title + ' ' + desc + ' ' + sub).toLowerCase();
-            if (!q || hay.indexOf(q) !== -1) {
-                section.style.display = '';
-            } else {
-                section.style.display = 'none';
-            }
+    // Store original HTML for restore
+    function getCardText(card){
+        var title = (card.querySelector('h2') && card.querySelector('h2').innerText) || '';
+        var desc = (card.querySelector('.settings-description') && card.querySelector('.settings-description').innerText) || '';
+        var sub = Array.from(card.querySelectorAll('h3')).map(function(h){ return h.innerText; }).join(' ');
+        var labels = Array.from(card.querySelectorAll('.form-label, .switch-text-compact strong, .switch-text-compact span')).map(function(el){ return el.innerText; }).join(' ');
+        return (title + ' ' + desc + ' ' + sub + ' ' + labels).toLowerCase();
+    }
+    function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function removeHighlights(card){
+        card.querySelectorAll('mark.search-mark').forEach(function(m){
+            var parent = m.parentNode;
+            parent.replaceChild(document.createTextNode(m.textContent), m);
+            parent.normalize();
         });
+    }
+    function highlightText(card, q){
+        if(!q) return;
+        var re = new RegExp('('+escapeRegExp(q)+')','gi');
+        var walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT, null, false);
+        var nodes = [];
+        var node;
+        while(node = walker.nextNode()){
+            if(node.parentNode && node.parentNode.closest && node.parentNode.closest('mark.search-mark')) continue;
+            if(node.parentNode && ['SCRIPT','STYLE','TEXTAREA','INPUT','SELECT','BUTTON'].indexOf(node.parentNode.tagName) !== -1) continue;
+            if(node.nodeValue.toLowerCase().indexOf(q.toLowerCase()) !== -1) nodes.push(node);
+        }
+        nodes.forEach(function(textNode){
+            var span = document.createElement('span');
+            span.innerHTML = textNode.nodeValue.replace(re, '<mark class="search-mark">$1</mark>');
+            var frag = document.createDocumentFragment();
+            var temp = document.createElement('div');
+            temp.innerHTML = span.innerHTML;
+            while(temp.firstChild) frag.appendChild(temp.firstChild);
+            textNode.parentNode.replaceChild(frag, textNode);
+        });
+    }
+    // Store original order for restore
+    var originalOrder = [];
+    var orderCaptured = false;
+    function captureOrder(){
+        if(orderCaptured) return;
+        document.querySelectorAll('.settings-section').forEach(function(s){
+            if(s.id !== 'settings-quicknav') originalOrder.push(s);
+        });
+        orderCaptured = true;
+    }
+    function filterSettings(){
+        captureOrder();
+        var q = (search && search.value || '').trim();
+        var qLower = q.toLowerCase();
+        var matchCount = 0;
+        var isTabMode = document.querySelector('.settings-tabs') && document.querySelector('.settings-panel');
+        if(isTabMode){
+            // In tab mode: show/hide panels and highlight tabs
+            document.querySelectorAll('.settings-panel').forEach(function(panel){
+                var card = panel.querySelector('.settings-card');
+                if(!card) return;
+                removeHighlights(card);
+                card.classList.remove('search-highlight');
+                panel.classList.remove('search-dim');
+                panel.style.display = '';
+                if(!q){
+                    // No search: restore tab state – only active panel visible
+                    var isActive = panel.classList.contains('active');
+                    panel.style.display = isActive ? '' : 'none';
+                    panel.hidden = !isActive;
+                    return;
+                }
+                var hay = getCardText(card);
+                if(hay.indexOf(qLower) !== -1){
+                    card.classList.add('search-highlight');
+                    highlightText(card, q);
+                    panel.style.display = '';
+                    panel.hidden = false;
+                    matchCount++;
+                } else {
+                    panel.classList.add('search-dim');
+                    panel.style.display = 'none';
+                    panel.hidden = true;
+                }
+            });
+            // Highlight matching dropdown options
+            var tabSel = document.getElementById('settings_tab_select');
+            if(tabSel){
+                Array.from(tabSel.options).forEach(function(opt){
+                    var panel = document.getElementById(opt.value);
+                    var card = panel ? panel.querySelector('.settings-card') : null;
+                    if(!card) return;
+                    var hay = getCardText(card);
+                    if(q && hay.indexOf(qLower) !== -1){
+                        opt.style.background = '#fef08a';
+                        opt.style.fontWeight = '700';
+                    } else if(q){
+                        opt.style.background = '';
+                        opt.style.fontWeight = '';
+                    } else {
+                        opt.style.background = '';
+                        opt.style.fontWeight = '';
+                    }
+                });
+            }
+            if(q && matchCount){
+                // Show all matching panels, hide tab single-active logic
+                document.querySelectorAll('.settings-panel').forEach(function(p){
+                    if(!p.hidden) p.classList.add('active');
+                    else p.classList.remove('active');
+                });
+            } else if(!q){
+                // Restore single active tab
+                var hash = location.hash ? location.hash.slice(1) : 'section-uweek';
+                var initial = document.getElementById(hash) && document.getElementById(hash).classList.contains('settings-panel') ? hash : 'section-uweek';
+                document.querySelectorAll('.settings-tab').forEach(function(b){ b.classList.toggle('active', b.dataset.tab===initial); });
+                document.querySelectorAll('.settings-panel').forEach(function(p){
+                    var isActive = p.id===initial;
+                    p.classList.toggle('active', isActive);
+                    p.hidden = !isActive;
+                    p.style.display = isActive ? '' : 'none';
+                });
+            }
+        } else {
+            // Fallback: old layout with sidebar or stacked sections
+            var matching = [];
+            var nonMatching = [];
+            document.querySelectorAll('.settings-section').forEach(function(section){
+                if (section.id === 'settings-quicknav') return;
+                var card = section.querySelector('.settings-card');
+                if (!card) return;
+                section.style.display = '';
+                removeHighlights(card);
+                card.classList.remove('search-highlight');
+                section.classList.remove('search-dim');
+                if (!q) {
+                    nonMatching.push(section);
+                    return;
+                }
+                var hay = getCardText(card);
+                if (hay.indexOf(qLower) !== -1) {
+                    card.classList.add('search-highlight');
+                    highlightText(card, q);
+                    matching.push(section);
+                    matchCount++;
+                } else {
+                    section.classList.add('search-dim');
+                    nonMatching.push(section);
+                }
+            });
+            var container = document.getElementById('settings-quicknav')?.parentNode;
+            if(container && q){
+                matching.forEach(function(s){ container.appendChild(s); });
+                nonMatching.forEach(function(s){ container.appendChild(s); });
+                var quicknav = document.getElementById('settings-quicknav');
+                var header = document.querySelector('.dashboard-header');
+                if(quicknav && header && header.nextElementSibling !== quicknav) header.after(quicknav);
+                if(matching.length){
+                    var first = matching[0];
+                    var y = first.getBoundingClientRect().top + window.pageYOffset - 20;
+                    window.scrollTo({top: y, behavior:'smooth'});
+                }
+            } else if(container && !q && originalOrder.length){
+                originalOrder.forEach(function(s){ container.appendChild(s); });
+                var quicknav2 = document.getElementById('settings-quicknav');
+                var header2 = document.querySelector('.dashboard-header');
+                if(quicknav2 && header2 && header2.nextElementSibling !== quicknav2) header2.after(quicknav2);
+            }
+        }
+        if (search) {
+            if (q) {
+                search.placeholder = matchCount ? matchCount + ' match' + (matchCount!==1?'es':'') + (isTabMode ? ' shown' : ' on top') : 'No matches';
+            } else {
+                search.placeholder = 'Search settings...';
+            }
+        }
     }
     if (search) search.addEventListener('input', filterSettings);
     if (clear) clear.addEventListener('click', function(){ if (search) search.value=''; filterSettings(); if (search) search.focus(); });
