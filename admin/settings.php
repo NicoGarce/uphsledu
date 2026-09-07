@@ -351,12 +351,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uweek_check = [
             'uweek_enabled' => getSetting('uweek_enabled', '1'),
             'navbar_item_uweek' => getSetting('navbar_item_uweek', '1'),
+            'navbar_item_uweek_overview' => getSetting('navbar_item_uweek_overview', '1'),
             'navbar_item_uweek_brackets' => getSetting('navbar_item_uweek_brackets', '1'),
             'navbar_item_uweek_schedules' => getSetting('navbar_item_uweek_schedules', '1'),
         ];
         $new_uweek = [
             'uweek_enabled' => isset($_POST['uweek_enabled']) ? '1' : '0',
             'navbar_item_uweek' => isset($_POST['navbar_item_uweek']) ? '1' : '0',
+            'navbar_item_uweek_overview' => isset($_POST['navbar_item_uweek_overview']) ? '1' : '0',
             'navbar_item_uweek_brackets' => isset($_POST['navbar_item_uweek_brackets']) ? '1' : '0',
             'navbar_item_uweek_schedules' => isset($_POST['navbar_item_uweek_schedules']) ? '1' : '0',
         ];
@@ -371,6 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $saved = 0;
                 if (setSetting('uweek_enabled', $new_uweek['uweek_enabled'], 'boolean', 'Enable/disable U-Week app for public viewing', $_SESSION['user_id'])) $saved++;
                 if (setSetting('navbar_item_uweek', $new_uweek['navbar_item_uweek'], 'boolean', 'Enable/disable U-Week navbar item', $_SESSION['user_id'])) $saved++;
+                if (setSetting('navbar_item_uweek_overview', $new_uweek['navbar_item_uweek_overview'], 'boolean', 'Enable/disable U-Week Overview submenu', $_SESSION['user_id'])) $saved++;
                 if (setSetting('navbar_item_uweek_brackets', $new_uweek['navbar_item_uweek_brackets'], 'boolean', 'Enable/disable U-Week Brackets submenu', $_SESSION['user_id'])) $saved++;
                 if (setSetting('navbar_item_uweek_schedules', $new_uweek['navbar_item_uweek_schedules'], 'boolean', 'Enable/disable U-Week Schedules submenu', $_SESSION['user_id'])) $saved++;
                 if ($saved > 0) $success = 'U-Week settings saved successfully!';
@@ -509,12 +512,13 @@ $navbar_items_config = [
         ]
     ],
     'uweek' => [
-        'name' => 'U-Week',
-        'subitems' => [
-            'brackets' => 'Brackets',
-            'schedules' => 'Schedules'
-        ]
-    ]
+                    'name' => 'U-Week',
+                    'subitems' => [
+                        'overview' => 'Overview',
+                        'brackets' => 'Brackets',
+                        'schedules' => 'Schedules'
+                    ]
+                ]
 ];
 
 $navbar_visibility = [];
@@ -1355,6 +1359,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                 <?php
                     $uweek_app_enabled = getSetting('uweek_enabled', '1');
                     $uweek_nav_visible = getSetting('navbar_item_uweek', '1');
+                    $uweek_overview_visible = getSetting('navbar_item_uweek_overview', '1');
                     $uweek_brackets_visible = getSetting('navbar_item_uweek_brackets', '1');
                     $uweek_schedules_visible = getSetting('navbar_item_uweek_schedules', '1');
                 ?>
@@ -1389,6 +1394,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                             <p style="margin:6px 0 0 50px;font-size:.82rem;color:var(--text-light);">Controls the top-level <strong>U-Week</strong> menu. Sub-items below are only effective when this is visible and the app is enabled.</p>
                         </div>
                         <div class="section-subpages" style="margin-top:4px;">
+                            <div class="subpage-item">
+                                <label class="switch-label-compact">
+                                    <div class="switch-container-small">
+                                        <input type="checkbox" name="navbar_item_uweek_overview" id="navbar_item_uweek_overview" value="1" <?php echo $uweek_overview_visible === '1' ? 'checked' : ''; ?> onchange="updateUweekStatus()">
+                                        <span class="switch-slider-small"></span>
+                                    </div>
+                                    <span class="switch-text-compact">
+                                        <span>Overview</span>
+                                        <small id="uweek-overview-status" class="status-badge-small" style="<?php echo $uweek_overview_visible === '1' ? 'background:#dbeafe;color:#1e40af;' : 'background:#e5e7eb;color:#6b7280;'; ?>"><?php echo $uweek_overview_visible === '1' ? 'Visible' : 'Hidden'; ?></small>
+                                    </span>
+                                </label>
+                            </div>
                             <div class="subpage-item">
                                 <label class="switch-label-compact">
                                     <div class="switch-container-small">
@@ -1431,14 +1448,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
         function updateUweekStatus(){
             var app = document.getElementById('uweek_enabled');
             var nav = document.getElementById('navbar_item_uweek');
+            var ov = document.getElementById('navbar_item_uweek_overview');
             var br = document.getElementById('navbar_item_uweek_brackets');
             var sch = document.getElementById('navbar_item_uweek_schedules');
             var appSt = document.getElementById('uweek-app-status');
             var navSt = document.getElementById('uweek-nav-status');
+            var ovSt = document.getElementById('uweek-overview-status');
             var brSt = document.getElementById('uweek-brackets-status');
             var schSt = document.getElementById('uweek-schedules-status');
             if(app && appSt){ appSt.textContent = app.checked ? 'Enabled – Visible to public' : 'Disabled – Hidden from public'; appSt.style.background = app.checked ? '#dcfce7' : '#fee2e2'; appSt.style.color = app.checked ? '#166534' : '#991b1b'; }
             if(nav && navSt){ navSt.textContent = nav.checked ? 'Visible' : 'Hidden'; navSt.style.background = nav.checked ? '#dbeafe' : '#e5e7eb'; navSt.style.color = nav.checked ? '#1e40af' : '#6b7280'; }
+            if(ov && ovSt){ ovSt.textContent = ov.checked ? 'Visible' : 'Hidden'; ovSt.style.background = ov.checked ? '#dbeafe' : '#e5e7eb'; ovSt.style.color = ov.checked ? '#1e40af' : '#6b7280'; }
             if(br && brSt){ brSt.textContent = br.checked ? 'Visible' : 'Hidden'; brSt.style.background = br.checked ? '#dbeafe' : '#e5e7eb'; brSt.style.color = br.checked ? '#1e40af' : '#6b7280'; }
             if(sch && schSt){ schSt.textContent = sch.checked ? 'Visible' : 'Hidden'; schSt.style.background = sch.checked ? '#dbeafe' : '#e5e7eb'; schSt.style.color = sch.checked ? '#1e40af' : '#6b7280'; }
             checkUweekChanges();
@@ -1449,6 +1469,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                 window._uweekOriginal = {
                     app: document.getElementById('uweek_enabled')?.checked ? '1' : '0',
                     nav: document.getElementById('navbar_item_uweek')?.checked ? '1' : '0',
+                    ov: document.getElementById('navbar_item_uweek_overview')?.checked ? '1' : '0',
                     br: document.getElementById('navbar_item_uweek_brackets')?.checked ? '1' : '0',
                     sch: document.getElementById('navbar_item_uweek_schedules')?.checked ? '1' : '0'
                 };
@@ -1458,17 +1479,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && in_array
                 var cur = {
                     app: document.getElementById('uweek_enabled')?.checked ? '1' : '0',
                     nav: document.getElementById('navbar_item_uweek')?.checked ? '1' : '0',
+                    ov: document.getElementById('navbar_item_uweek_overview')?.checked ? '1' : '0',
                     br: document.getElementById('navbar_item_uweek_brackets')?.checked ? '1' : '0',
                     sch: document.getElementById('navbar_item_uweek_schedules')?.checked ? '1' : '0'
                 };
-                var changed = cur.app !== window._uweekOriginal.app || cur.nav !== window._uweekOriginal.nav || cur.br !== window._uweekOriginal.br || cur.sch !== window._uweekOriginal.sch;
+                var changed = cur.app !== window._uweekOriginal.app || cur.nav !== window._uweekOriginal.nav || cur.ov !== window._uweekOriginal.ov || cur.br !== window._uweekOriginal.br || cur.sch !== window._uweekOriginal.sch;
                 var grp = document.getElementById('uweek-password-verification-group');
                 var inp = document.getElementById('uweek_password');
                 if(grp && inp){ grp.style.display = changed ? 'block' : 'none'; inp.required = changed; if(!changed) inp.value=''; }
             };
             document.addEventListener('DOMContentLoaded', function(){
                 snapUweek();
-                ['uweek_enabled','navbar_item_uweek','navbar_item_uweek_brackets','navbar_item_uweek_schedules'].forEach(function(id){
+                ['uweek_enabled','navbar_item_uweek','navbar_item_uweek_overview','navbar_item_uweek_brackets','navbar_item_uweek_schedules'].forEach(function(id){
                     var el=document.getElementById(id); if(el) el.addEventListener('change', checkUweekChanges);
                 });
                 var form=document.getElementById('uweek-settings-form');

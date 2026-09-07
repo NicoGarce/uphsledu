@@ -65,6 +65,19 @@ $hasEmbed = $embedSrc !== '';
 $shareSlug = $activeEvent['slug'] ?? '';
 $shareUrl = ($shareSlug !== '') ? ( (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $base_path . 'uweek/?e=' . urlencode($shareSlug) ) : ( (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . $base_path . 'uweek/' );
 $shareTitle = $activeEvent ? ($activeEvent['title'] . ' – University Week 2026') : 'University Week 2026';
+$uweek_enabled = getSetting('uweek_enabled', '1') === '1';
+$uweek_overview_visible = getSetting('navbar_item_uweek_overview', '1') === '1';
+$uweek_brackets_visible = getSetting('navbar_item_uweek_brackets', '1') === '1';
+$requestedView = $_GET['view'] ?? '';
+$hasBracketParams = !empty($_GET['cat']) || !empty($_GET['event']) || !empty($_GET['e']) || $requestedView === 'brackets';
+if ($requestedView === 'overview' && $uweek_overview_visible) $view = 'overview';
+elseif ($requestedView === 'brackets' && $uweek_brackets_visible) $view = 'brackets';
+elseif ($hasBracketParams && $uweek_brackets_visible) $view = 'brackets';
+elseif ($uweek_overview_visible) $view = 'overview';
+elseif ($uweek_brackets_visible) $view = 'brackets';
+else $view = 'overview';
+if ($view === 'overview' && !$uweek_overview_visible) $view = $uweek_brackets_visible ? 'brackets' : 'overview';
+if ($view === 'brackets' && !$uweek_brackets_visible) $view = $uweek_overview_visible ? 'overview' : 'brackets';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -211,10 +224,40 @@ a{color:inherit}
 <section class="uweek-hero" aria-label="University Week banner"></section>
 <div class="uweek-livebar"><span><span class="dot" aria-hidden="true"></span> Live • University Week 2026</span></div>
 <div class="uweek-subnav" aria-label="Section navigation">
-  <a href="<?php echo $base_path; ?>uweek/" class="active">Brackets</a>
-  <a href="<?php echo $base_path; ?>uweek/schedules.php">Schedules</a>
+  <?php if ($uweek_overview_visible): ?><a href="<?php echo $base_path; ?>uweek/?view=overview" class="<?php echo $view==='overview' ? 'active' : ''; ?>">Overview</a><?php endif; ?>
+  <?php if ($uweek_brackets_visible): ?><a href="<?php echo $base_path; ?>uweek/?view=brackets" class="<?php echo $view==='brackets' ? 'active' : ''; ?>">Brackets</a><?php endif; ?>
+  <?php if (getSetting('navbar_item_uweek_schedules','1')==='1'): ?><a href="<?php echo $base_path; ?>uweek/schedules.php">Schedules</a><?php endif; ?>
 </div>
 
+<?php if (!$uweek_enabled): ?>
+<div class="uweek-wrap">
+  <div class="empty-state" style="margin-top:18px;">
+    <h3>University Week 2026 is currently unavailable</h3>
+    <p>The University Week app is currently turned off for public viewing. Please check back later.</p>
+  </div>
+</div>
+<?php elseif ($view === 'overview'): ?>
+<div class="uweek-wrap">
+  <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06);padding:22px;">
+    <h2 style="margin:0 0 8px;font-family:'Barlow Semi Condensed',sans-serif;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--primary);font-size:1.35rem;">Welcome to University Week 2026</h2>
+    <p style="margin:0 0 14px;color:var(--muted);line-height:1.6;max-width:720px;">Celebrate talent, sportsmanship and Perpetualite spirit. Follow live brackets, check schedules, and share results with your team.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <a href="?view=brackets" style="padding:9px 14px;border-radius:999px;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;text-decoration:none;font-weight:800;font-size:.84rem;box-shadow:0 4px 12px rgba(28,77,161,.18);">View Brackets</a>
+      <a href="<?php echo $base_path; ?>uweek/schedules.php" style="padding:9px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--line);color:var(--text);text-decoration:none;font-weight:700;font-size:.84rem;">View Schedules</a>
+      <button type="button" onclick="shareShort()" style="padding:9px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-weight:700;font-size:.84rem;cursor:pointer;">Share</button>
+    </div>
+  </div>
+  <div style="margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
+    <?php foreach ($allCategories as $cat): $cnt = count(getUWeekEvents((int)$cat['id'], true)); ?>
+      <a href="?view=brackets&cat=<?php echo urlencode($cat['slug']); ?>" style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-decoration:none;color:var(--text);box-shadow:0 2px 10px rgba(0,0,0,.04);display:block;">
+        <div style="font-weight:800;color:var(--primary);font-family:'Barlow Semi Condensed',sans-serif;letter-spacing:.2px;text-transform:uppercase;font-size:.95rem;"><?php echo htmlspecialchars($cat['label']); ?></div>
+        <div style="font-size:.82rem;color:var(--muted);margin-top:4px;"><?php echo $cnt; ?> events • <?php echo htmlspecialchars($cat['name']); ?></div>
+        <div style="margin-top:10px;font-weight:700;font-size:.78rem;color:var(--primary);">Browse →</div>
+      </a>
+    <?php endforeach; ?>
+  </div>
+</div>
+<?php else: ?>
 <div class="uweek-wrap">
   <?php if (empty($allCategories)): ?>
     <div class="empty-state"><h3>No events configured yet</h3><p>Please check back soon.</p></div>
@@ -303,6 +346,7 @@ a{color:inherit}
     </div>
   <?php endif; ?>
 </div>
+<?php endif; ?>
 
 <footer class="uweek-footer">
   <div>© <?php echo date('Y'); ?> University of Perpetual Help System Laguna • <a href="<?php echo $base_path; ?>">Back to Website</a> • <a href="<?php echo $base_path; ?>uweek/">University Week 2026</a></div>

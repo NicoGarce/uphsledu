@@ -11,6 +11,7 @@ $base_path = $GLOBALS['base_path'] ?? '/uphsledu/';
 $page_title = 'University Week 2026 – Schedule';
 $shareUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . $base_path . 'uweek/schedules.php';
 $shareTitle = 'University Week 2026 – Schedule';
+$uweek_enabled = getSetting('uweek_enabled', '1') === '1';
 
 // Structured schedule data
 $schedule = [
@@ -196,6 +197,14 @@ a{color:inherit}
   </div>
 </nav>
 
+<?php if (!$uweek_enabled): ?>
+<div class="uweek-wrap">
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:32px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.05);">
+    <h3 style="margin:0 0 8px;color:var(--primary);font-family:'Barlow Semi Condensed',sans-serif;text-transform:uppercase;">University Week 2026 is currently unavailable</h3>
+    <p style="color:var(--muted);max-width:560px;margin:0 auto;">The University Week app is currently turned off for public viewing. Please check back later.</p>
+  </div>
+</div>
+<?php else: ?>
 <div class="uweek-wrap">
   <?php foreach ($schedule as $idx => $day): $anchor = 'day-' . $idx; ?>
   <section class="day-section" id="<?php echo $anchor; ?>">
@@ -220,6 +229,7 @@ a{color:inherit}
   </section>
   <?php endforeach; ?>
 </div>
+<?php endif; ?>
 
 <footer class="uweek-footer">
   <div>© <?php echo date('Y'); ?> University of Perpetual Help System Laguna • <a href="<?php echo $base_path; ?>">Back to Website</a> • <a href="<?php echo $base_path; ?>uweek/">University Week 2026</a></div>
