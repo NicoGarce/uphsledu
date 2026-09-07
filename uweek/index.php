@@ -14,9 +14,14 @@ $page_title = 'University Week 2026 – Brackets';
 $shortEvent = $_GET['e'] ?? '';
 if ($shortEvent !== '') {
     $evByShort = getUWeekEventBySlug($shortEvent);
-    if ($evByShort) {
-        $_GET['event'] = $shortEvent;
-        $_GET['cat'] = $evByShort['category_slug'];
+    // Only allow short links to enabled events/categories
+    if ($evByShort && (int)($evByShort['is_enabled'] ?? 1) === 1) {
+        // Check category is also enabled
+        $catCheck = getUWeekCategoryBySlug($evByShort['category_slug']);
+        if ($catCheck && (int)($catCheck['is_enabled'] ?? 1) === 1) {
+            $_GET['event'] = $shortEvent;
+            $_GET['cat'] = $evByShort['category_slug'];
+        }
     }
 }
 $allCategories = getUWeekCategories(true);

@@ -312,7 +312,7 @@ input:checked + .slider:before{transform:translateX(18px)}
                 <?php echo CSRF::field(); ?>
                 <input type="hidden" name="action" value="toggle_event">
                 <input type="hidden" name="event_id" value="<?php echo $ev['id']; ?>">
-                <label class="switch small" title="Show/hide on public"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$ev['is_enabled']===1 ? 'checked' : ''; ?> onchange="toggleEventAjax(this, <?php echo $ev['id']; ?>)"><span class="slider"></span></label>
+                <label class="switch small" title="Show/hide on public"><input type="checkbox" name="is_enabled" value="1" <?php echo (int)$ev['is_enabled']===1 ? 'checked' : ''; ?> onchange="this.form.submit()"><span class="slider"></span></label>
               </form>
             </td>
             <td data-label="Code"><span style="background:#f1f5f9;padding:4px 7px;border-radius:6px;font-weight:800;font-size:.74rem;color:var(--primary);"><?php echo htmlspecialchars($ev['code'] ?: '—'); ?></span></td>
@@ -366,7 +366,9 @@ function closeCat(){ document.getElementById('catModal').style.display='none'; }
 window.onclick=function(e){ if(e.target===document.getElementById('editModal')) closeEdit(); if(e.target===document.getElementById('catModal')) closeCat(); }
 function toggleEventAjax(chk,eventId){
   var enabled=chk.checked?1:0;
-  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:<?php echo json_encode(CSRF::token()); ?>,action:'toggle_event',event_id:eventId,is_enabled:enabled})})
+  var tokenInput = chk.closest('form') ? chk.closest('form').querySelector('input[name="_token"]') : null;
+  var token = tokenInput ? tokenInput.value : <?php echo json_encode(CSRF::token()); ?>;
+  fetch('ajax.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({_token:token,action:'toggle_event',event_id:eventId,is_enabled:enabled})})
   .then(r=>r.json()).then(d=>{ if(!d.success){ alert(d.error||'Failed'); chk.checked=!chk.checked; } else showToast(enabled?'Enabled':'Disabled'); })
   .catch(()=>chk.closest('form').submit());
 }

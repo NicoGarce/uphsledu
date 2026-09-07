@@ -1246,9 +1246,11 @@ function getUWeekEvents($categoryId = null, $onlyEnabled = false) {
     return $stmt->fetchAll();
 }
 
-function getUWeekEventBySlug($slug) {
+function getUWeekEventBySlug($slug, $onlyEnabled = false) {
     $pdo = getDBConnection();
-    $stmt = $pdo->prepare("SELECT e.*, c.slug as category_slug, c.label as category_label FROM uweek_events e JOIN uweek_categories c ON e.category_id = c.id WHERE e.slug = ?");
+    $sql = "SELECT e.*, c.slug as category_slug, c.label as category_label, c.is_enabled as category_is_enabled FROM uweek_events e JOIN uweek_categories c ON e.category_id = c.id WHERE e.slug = ?";
+    if ($onlyEnabled) $sql .= " AND e.is_enabled = 1 AND c.is_enabled = 1";
+    $stmt = $pdo->prepare($sql);
     $stmt->execute([$slug]);
     return $stmt->fetch();
 }
